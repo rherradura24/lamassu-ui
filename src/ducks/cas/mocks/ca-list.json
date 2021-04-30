@@ -1,0 +1,14 @@
+{
+    "name": "CA-1",
+    "serial_number": "1234-123-123-1234",
+    "subject_ds": {
+        "C": "ES",
+        "O": "Ikerlan",
+        "OU": "ZPD",
+        "CN": "ca.ikerlan.es"
+    },
+    "status": "issued",
+    "validFrom": "30/04/2021 10:30:00+02:00",
+    "validTo": "30/04/2023 10:30:00+02:00",
+    "crt": "amazingCRT"
+}
