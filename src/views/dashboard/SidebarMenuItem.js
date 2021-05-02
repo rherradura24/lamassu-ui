@@ -30,7 +30,6 @@ export function MenuItem({ active, link, title, icon, children, style, onSelect,
     }
 
     const cPrimary = theme.palette.primary;
-    console.log(collapsed);
     return (
         <div style={{borderLeft: selected ? selectedBorderWidth + "px solid " + cPrimary.main : ""}}>
             <List style={{padding: 0}}>
@@ -78,7 +77,6 @@ export function MenuSectionTitle({ title, collapsed }) {
 
 export function MenuSeparator({}) {
     const theme = useTheme();
-    console.log(theme);
     return (
         <div style={{borderTop: theme.palette.type == "light" ? "1px solid #ddd" : "1px solid #555"}}/>
     )

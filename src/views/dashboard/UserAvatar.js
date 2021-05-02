@@ -14,9 +14,6 @@ const UserAvatar = ({ username }) => {
         }
     }
 
-    //console.log(await keycloak.loadUserInfo());
-    //console.log(await keycloak.loadUserProfile());
-
     const handleClose = (event) => {
         setAnchorEl(null);
     }

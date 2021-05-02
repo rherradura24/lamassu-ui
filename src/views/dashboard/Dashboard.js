@@ -15,9 +15,9 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import CertificatesListView from "views/CertCard";
 import { useState } from "react";
 import RightSideBar from "views/RightSidebar";
+import CAList from "views/CA";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -45,7 +45,7 @@ const Dashboard = ({ }) => {
               <Paper style={{borderRadius: 0, height: "100%", background: darkTheme ? "#4c4c4c" : ""}}>
                 <Switch>
                   <Route exact path="/" render={(props) => <ContentWrapper><RightSideBar /></ContentWrapper>} />
-                  <Route exact path="/ca/certs" render={(props) => <ContentWrapper><CertificatesListView /></ContentWrapper>} />
+                  <Route exact path="/ca/certs" render={(props) => <ContentWrapper><CAList /></ContentWrapper>} />
                 </Switch>
               </Paper> 
             </Box>

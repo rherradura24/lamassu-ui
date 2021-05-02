@@ -15,7 +15,6 @@ const AppBar = ({ className, background }) => {
   const { keycloak, initialized } = useKeycloak()
   const [lang, setLang] = useState("en")
   const { t, i18n } = useTranslation()
-  console.log(t, i18n );
 
   return (
     <Box className={className} style={{background: background, display: "flex", alignItems: "center", padding: "5px 10px", justifyContent: "space-between"}}>
