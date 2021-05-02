@@ -13,35 +13,35 @@ const RightSideBar = ({ }) => {
   const theme = useTheme();
 
   return (
-    <Box component={Paper} elevation={10} style={{height: "calc(100% - 50px)", width: 600, borderRadius: 0, position: "absolute", right: 0}}>
-        <div style={{padding:"5px 10px", height: 40, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-          <Typography>Certificado 45-68-25-a2-02-b1-c1-5a</Typography>
-          <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-          <Tooltip title="Download cert">
-            <IconButton>
-              <GetAppIcon/>
-            </IconButton>
+    <Box component={Paper} elevation={10} style={{height: "100%", width: 600, borderRadius: 0, position: "absolute", right: 0}}>
+      <div style={{padding:"5px 10px", height: 40, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+        <Typography>Certificado 45-68-25-a2-02-b1-c1-5a</Typography>
+        <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <Tooltip title="Download cert">
+          <IconButton>
+            <GetAppIcon/>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Revoke cert">
+          <IconButton>
+            <DeleteIcon/>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Close">
+          <IconButton>
+            <CloseIcon/>
+          </IconButton>
           </Tooltip>
-          <Tooltip title="Revoke cert">
-            <IconButton>
-              <DeleteIcon/>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Close">
-            <IconButton>
-              <CloseIcon/>
-            </IconButton>
-            </Tooltip>
-          </div>
         </div>
-        <div style={{overflowY: "auto", height: "calc(100% - 50px)"}}>
-          <div style={{background: "#333", padding: 10}}>
-            <code style={{color: "white"}}>
-              {crt.key}
-            </code>
-          </div>
-          <DenseTable />
+      </div>
+      <div style={{overflowY: "auto", height: "100%"}}>
+        <div style={{background: "#333", padding: 10}}>
+          <code style={{color: "white"}}>
+            {crt.key}
+          </code>
         </div>
+        <DenseTable data={[]}/>
+      </div>
     </Box>  
   );
 }

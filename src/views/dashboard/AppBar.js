@@ -4,21 +4,21 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { blue } from '@material-ui/core/colors';
 import { useKeycloak } from '@react-keycloak/web'
 
-import { Badge, Grid, MenuItem, Select, Typography } from "@material-ui/core";
+import { Badge, Box, Grid, MenuItem, Select, Typography } from "@material-ui/core";
 import UserAvatar from "./UserAvatar";
 
 import { useTranslation } from 'react-i18next'
 import { useState } from "react";
 
 
-const AppBar = ({ background }) => {
+const AppBar = ({ className, background }) => {
   const { keycloak, initialized } = useKeycloak()
   const [lang, setLang] = useState("en")
   const { t, i18n } = useTranslation()
   console.log(t, i18n );
 
   return (
-    <Grid item xs={12} style={{background: background, height: 50, display: "flex", alignItems: "center", padding: "5px 10px", justifyContent: "space-between"}}>
+    <Box className={className} style={{background: background, display: "flex", alignItems: "center", padding: "5px 10px", justifyContent: "space-between"}}>
       <div style={{background: "white", borderRadius: 10, height:30, width: 120, display: "flex", justifyContent: "center", alignItems: "center"}}>
         <Typography variant="button">Lamassu IoT</Typography>
       </div>
@@ -42,7 +42,7 @@ const AppBar = ({ background }) => {
 
         <UserAvatar username="hsaiz"/>
       </div>
-    </Grid>
+    </Box>
   );
 }
 

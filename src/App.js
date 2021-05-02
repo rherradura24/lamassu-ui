@@ -6,7 +6,7 @@ import { SnackbarProvider } from 'notistack';
 import { ReactKeycloakProvider } from '@react-keycloak/web'
 import keycloak, {keycloakProps} from './keycloak'
 
-import Dashboard from "views/dashboard";
+import Dashboard from "views/Dashboard";
 import { useState } from 'react';
 
 const store = configureStore();

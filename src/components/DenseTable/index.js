@@ -5,19 +5,17 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { makeStyles } from '@material-ui/core';
 
-export default function DenseTable() {
-  
-    const data = [
-        {label : "Serial Number", content: "27-a5-b8-01-55-74-d1-cc"},
-        {label : "Status", content: "Issued"},
-        {label : "Issuer", content: "ra.ikerlan.es"},
-        {label : "Valid From", content: "24-04-2021 15:30:00+02:00"},
-        {label : "Valid To", content: "24-04-2022 16:20:00+02:00"},
-        {label : "Subject DN", content: "demo.ikerlan.es"},
-        {label : "Common Name", content: "CN=demo.ikerlan.es"},
-        {label : "CA", content: "ca.ikerlan.es"},
-    ]
+const useStyles = makeStyles({
+  root: {
+    paddingLeft: 0,
+  }, // a style rule
+});
+
+export default function DenseTable({ data }) {
+    
+  const classes = useStyles();
 
     return (
       <TableContainer>
@@ -25,7 +23,7 @@ export default function DenseTable() {
           <TableBody>
             {data.map((row) => (
               <TableRow key={row.label}>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" className={classes.root}>
                   {row.label}
                 </TableCell>
                 <TableCell align="left">{row.content}</TableCell>

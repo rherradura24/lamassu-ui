@@ -11,4 +11,14 @@ const casReducer = (state = { list: [] }, action) => {
   }
 };
 
+const getSelector = (state) => state.cas
+
+const getCAs = (state) => {
+  return getSelector(state).list
+}
+
 export default casReducer;
+
+export {
+  getCAs,
+}

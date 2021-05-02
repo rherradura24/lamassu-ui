@@ -23,7 +23,7 @@ import "./SideBar.css"
 import { Button, Grid, Paper } from "@material-ui/core";
 
 
-const SideBar = ({ darkTheme, onTogleDark }) => {
+const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
   const { keycloak, initialized } = useKeycloak()
   const { t, i18n } = useTranslation()
 
@@ -31,10 +31,10 @@ const SideBar = ({ darkTheme, onTogleDark }) => {
   const [ collapsed , setCollapsed ] = useState(false);
 
   return (
-    <Paper style={{height: "calc( 100% - 50px)", borderRadius: 0}}>
-      <Grid item className="sidebar-wrapper" style={{width: collapsed ? 50 : 250}}>
+    <Paper style={{borderRadius: 0}}>
+      <Grid item className="sidebar-wrapper">
         <div>
-          <MenuButton title="Collapse" icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed)}} collapsed={collapsed}/> 
+          <MenuButton title="Collapse" icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed); onCollapse(collapsed)}} collapsed={collapsed}/> 
           <MenuSeparator/>
           <MenuItem 
             title={t("home")} 
