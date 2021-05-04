@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   }, // a style rule
 });
 
-export default function DenseTable({ data }) {
+export default function DenseTable({ data, dense }) {
     
   const classes = useStyles();
 
@@ -23,7 +23,7 @@ export default function DenseTable({ data }) {
           <TableBody>
             {data.map((row) => (
               <TableRow key={row.label}>
-                <TableCell component="th" scope="row" className={classes.root}>
+                <TableCell component="th" scope="row" className={dense && classes.root}>
                   {row.label}
                 </TableCell>
                 <TableCell align="left">{row.content}</TableCell>

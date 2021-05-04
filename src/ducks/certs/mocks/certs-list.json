@@ -1,0 +1,129 @@
+[
+    {
+        "serial_number": "1201-123-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "revoked",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "8975-123-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "issued",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "9814-123-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "expired",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "3456-025-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "expired",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "2840-123-098-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "revoked",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "9601-123-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "issued",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "1201-898-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "issued",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "1201-123-123-8210",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "issued",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    },
+    {
+        "serial_number": "5510-123-123-1234",
+        "subject_dn": {
+            "country": "ES",
+            "state": "Gipuzkoa",
+            "organization": "demo",
+            "organization_unit": "test",
+            "common_name": "ca.demo.es"
+        },
+        "status": "expired",
+        "validFrom": "30/04/2021 10:30:00+02:00",
+        "validTo": "30/04/2023 10:30:00+02:00",
+        "crt": "-----BEGIN CERTIFICATE REQUEST-----\nMIICpzCCAY8CAQAwHzEQMA4GA1UEAwwHZGVtby5lczELMAkGA1UEBhMCVVMwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+RA4WZnNEPFrM1cS1FjSoG+f7\nFMwunxCRd1+wUe86x0AY7idEyBvZfmyZJXInRyqBz1c7LjkMxLgVSZSnSGo5cXZ5\n/7eYiGsV5FoZpUyKXKEk1hGO5DFiaPEzR+plZ12PXUc3Z18yr/S9CauLlCDb0ODP\nXOvQjKKRVlo9JMVw4JsgR5xC5wqnLnHegcfIWPzh+/lXL8gu59X+MXjDCpjSdh1W\njnBCqQ/C8pMj9RREt4MV+bj52/UJxDLjczh02JEyEZhK86fNCzvc74Q7VCtXHEZm\nTfyElv6DCliG42e9lZ1K7SwyFAE+M6dfrjZKqoFOIbWJFY1t+JNC7a4FxnadAgMB\nAAGgQzBBBgkqhkiG9w0BCQ4xNDAyMA4GA1UdDwEB/wQEAwIFoDAgBgNVHSUBAf8E\nFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADggEBAGm4ObOQ\nWQaFlmagOnmFN2E7xZ3dTlnKn4dIg9tXEquO0l7rXei3bdX8a+RpKHSOWe7cWsA5\nr9C+qg3HIS/K4vmEPin9LP5a1tmxTq9IC6GHI689wOn/gZWOQWayRTwX/TADyq9l\nJyVCtUUVoCQfEowct70FVly6a2LcOO3lqHWJSGIvA5iwM8G4br43DYZYd0KZiWB0\nR5CbL5yHcMrESQ/PDuQRWBualhDuAvzMdnZTuaknCgTRZu5w+YCx55bFMCkHJYKP\nnYrsER/tOnFtGy/0idU2Bc9ClLyQdMTv+wuGKYJef+80IGrUJdvP49z8/lHVPQfw\nVV/JFsDCf4Ykyh0=\n-----END CERTIFICATE REQUEST-----"
+    }
+    
+]

@@ -4,16 +4,16 @@ import { createStore, applyMiddleware } from 'redux';
 import { combineEpics } from 'redux-observable';
 import { combineReducers, compose } from 'redux';
 
-import { casReducer, casEpic } from 'ducks/cas';
+import { certsReducer, certsEpic } from 'ducks/certs';
 
 const epics = [
-  ...Object.values(casEpic),
+  ...Object.values(certsEpic),
 ];
 
 const rootEpic = combineEpics(...epics);
 
 const rootReducer = combineReducers({
-  cas: casReducer,
+  certs: certsReducer,
 });
 
 const epicMiddleware = createEpicMiddleware();

@@ -14,7 +14,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 
-const CertCard = ({ title, status, certData, styles }) => {
+const CertCard = ({ title, status, certData, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={} }) => {
   const theme = useTheme()
   const verbs = {
     GET: green[400],
@@ -56,30 +56,30 @@ const CertCard = ({ title, status, certData, styles }) => {
         </div>
       </div>
       <CardContent>
-        <DenseTable data={denseTableData}/>
+        <DenseTable dense={true} data={denseTableData}/>
       </CardContent>
       <CardActions disableSpacing>
         <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
           <div>
             <Tooltip title="Emmited certs">
-              <IconButton>
+              <IconButton onClick={onListEmmitedClick}>
                 <ListIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Download CA cert">
-              <IconButton>
+              <IconButton onClick={onDownloadClick}>
                 <GetAppIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Inspect CA">
-              <IconButton>
+              <IconButton onClick={onInspectClick}>
                   <VisibilityIcon />
                 </IconButton>
             </Tooltip>
           </div>
           <div>
             <Tooltip title="Revoke CA">
-              <IconButton>
+              <IconButton onClick={onRevokeClick}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
