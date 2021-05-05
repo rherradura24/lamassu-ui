@@ -18,9 +18,9 @@
         "subject_dn": {
             "country": "ES",
             "state": "Gipuzkoa",
-            "organization": "demo",
+            "organization": "ikerlan",
             "organization_unit": "test",
-            "common_name": "ca.demo.es"
+            "common_name": "ca.ikerlan.es"
         },
         "status": "issued",
         "validFrom": "30/04/2021 10:30:00+02:00",
@@ -31,7 +31,7 @@
         "serial_number": "9814-123-123-1234",
         "subject_dn": {
             "country": "ES",
-            "state": "Gipuzkoa",
+            "state": "Bizkaia",
             "organization": "demo",
             "organization_unit": "test",
             "common_name": "ca.demo.es"
@@ -59,10 +59,10 @@
         "serial_number": "2840-123-098-1234",
         "subject_dn": {
             "country": "ES",
-            "state": "Gipuzkoa",
-            "organization": "demo",
-            "organization_unit": "test",
-            "common_name": "ca.demo.es"
+            "state": "Bizkaia",
+            "organization": "ikerlan",
+            "organization_unit": "zpd",
+            "common_name": "ca.ikerlan.es"
         },
         "status": "revoked",
         "validFrom": "30/04/2021 10:30:00+02:00",
@@ -88,9 +88,9 @@
         "subject_dn": {
             "country": "ES",
             "state": "Gipuzkoa",
-            "organization": "demo",
-            "organization_unit": "test",
-            "common_name": "ca.demo.es"
+            "organization": "lks",
+            "organization_unit": "next",
+            "common_name": "ca.lks.es"
         },
         "status": "issued",
         "validFrom": "30/04/2021 10:30:00+02:00",
@@ -101,7 +101,7 @@
         "serial_number": "1201-123-123-8210",
         "subject_dn": {
             "country": "ES",
-            "state": "Gipuzkoa",
+            "state": "Bizkaia",
             "organization": "demo",
             "organization_unit": "test",
             "common_name": "ca.demo.es"

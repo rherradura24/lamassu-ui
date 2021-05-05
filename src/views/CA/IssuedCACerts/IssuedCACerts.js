@@ -2,7 +2,7 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { Box, Fade, makeStyles, Paper } from '@material-ui/core';
+import { Box, Chip, Fade, makeStyles, Paper } from '@material-ui/core';
 import { green, orange, red } from '@material-ui/core/colors';
 import { DataGrid, GridToolbar } from '@material-ui/data-grid';
 import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
@@ -10,6 +10,29 @@ import CertInspectorSideBar from 'views/CertInspectorSideBar';
 import { LamassuModal } from 'components/Modal';
 import { useState } from 'react';
 import downloadFile from "utils/FileDownloader";
+import { styled, withStyles } from '@material-ui/core/styles';
+
+const OkChip = withStyles({
+    outlinedPrimary:{
+        border:'1px solid ' + green[400],
+        color: green[400]
+    }
+})(Chip)
+
+const WarnChip = withStyles({
+    outlinedPrimary:{
+        border:'1px solid ' + orange[400],
+        color: orange[400]
+    }
+})(Chip)
+
+const ErrChip = withStyles({
+    outlinedPrimary:{
+        border:'1px solid ' + red[400],
+        color: red[400]
+    }
+})(Chip)
+
 const useStyles = makeStyles((theme) => ({
     grid: {
         display: "grid",
@@ -30,6 +53,12 @@ const useStyles = makeStyles((theme) => ({
     rightSidebar: {
         gridRow: 1,
         gridColumn: 3,
+    },
+    cell:{
+        "& .MuiDataGrid-cell": {
+            outline: "none!important",
+            cursor: "pointer"
+        }
     }
 }))
 
@@ -58,29 +87,23 @@ const IssuedCACerts = ({certsData}) => {
 
     const columns = [
         { field: 'id', headerName: 'Serial Number', width: 200 },
-        { field: 'subjectDN', headerName: 'Subject Distinguished Name', width: 500 },
+        { field: 'c', headerName: 'Country', width: 120 },
+        { field: 's', headerName: 'State', width: 120 },
+        { field: 'o', headerName: 'Organization', width: 200 },
+        { field: 'ou', headerName: 'Organization Unit', width: 200 },
+        { field: 'cn', headerName: 'Common Name', width: 200 },
         { 
             field: 'status', 
             headerName: 'Status', 
             width: 100,
             renderCell: (params) => {
-                var mainColor, backgroundColor, status;
                 if (params.value == "expired") {
-                    mainColor = orange[600]
-                    status = "Expired"
+                    return <WarnChip size="small" color="primary" variant="outlined" label={"Expired"}/>
                 } else if (params.value == "revoked"){
-                    mainColor = red[400]
-                    status = "Revoked"
+                    return <ErrChip size="small" color="primary" variant="outlined" label={"Revoked"}/>
                 } else {    // sttatus == issued
-                    mainColor = green[400]
-                    status = "Issued"
+                    return <OkChip size="small" color="primary" variant="outlined" label={"Issued"}/>
                 }
-                return (
-                    <div style={{border: "1.5px solid " + mainColor, color: mainColor, display: "flex", borderRadius: 15, fontSize: "12px",
-                        justifyContent: "center", alignItems: "center", height: 25, width: 80}}>
-                        {status}
-                    </div>
-                )
             }
         },
         { field: 'validFrom', headerName: 'Valid From', type: "dateTime", width: 200 },
@@ -90,7 +113,11 @@ const IssuedCACerts = ({certsData}) => {
     const data = certsData.map(certData => {
         return {
             id: certData.serial_number,
-            subjectDN: JSON.stringify(certData.subject_dn),
+            c: certData.subject_dn.country,
+            s: certData.subject_dn.state,
+            o: certData.subject_dn.organization	,
+            ou: certData.subject_dn.organization_unit,
+            cn: certData.subject_dn.common_name,
             status: certData.status,
             validFrom: certData.validFrom,
             validTo: certData.validTo
@@ -111,6 +138,7 @@ const IssuedCACerts = ({certsData}) => {
                     </Breadcrumbs>
                     <Box component={Paper} style={{height: "100%", marginTop: 20}}>
                         <DataGrid
+                            classes={{root: classes.cell}}
                             autoHeight={true}
                             components={{
                                 Toolbar: GridToolbar,
