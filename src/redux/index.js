@@ -5,6 +5,7 @@ import { combineEpics } from 'redux-observable';
 import { combineReducers, compose } from 'redux';
 
 import { certsReducer, certsEpic } from 'ducks/certs';
+import { notificationsReducer } from "ducks/notifications"
 
 const epics = [
   ...Object.values(certsEpic),
@@ -14,6 +15,7 @@ const rootEpic = combineEpics(...epics);
 
 const rootReducer = combineReducers({
   certs: certsReducer,
+  notifications: notificationsReducer
 });
 
 const epicMiddleware = createEpicMiddleware();

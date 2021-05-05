@@ -7,7 +7,7 @@ import { green, orange, red } from '@material-ui/core/colors';
 import { DataGrid, GridToolbar } from '@material-ui/data-grid';
 import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
 import CertInspectorSideBar from 'views/CertInspectorSideBar';
-import { LamassuModal } from 'components/Modal';
+import { LamassuModalCertRevocation } from 'components/Modal';
 import { useState } from 'react';
 import downloadFile from "utils/FileDownloader";
 import { styled, withStyles } from '@material-ui/core/styles';
@@ -69,10 +69,10 @@ const IssuedCACerts = ({certsData}) => {
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
     const [rightSidebarCertId, setRightSidebarCertId] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
-    const [modalInfo, setModalInfo] = useState({})
+    const [modalCerId, setModalCertId] = useState(null)
 
     const handleCertRevocationClick = (certId) => {
-        setModalInfo({title: "Revoke CA: " + certId, msg: "You are about to revoke a CA. By revoing the certificate, you will also revoke al emmited certificates."})
+        setModalCertId(certId)
         setModalOpen(true)
     }
     
@@ -168,7 +168,7 @@ const IssuedCACerts = ({certsData}) => {
                     </Fade>
                 )
             }
-            <LamassuModal open={modalOpen} handleClose={()=>setModalOpen(false)} {...modalInfo}/>
+            <LamassuModalCertRevocation open={modalOpen} handleRevocation={()=>{setModalOpen(false)}} handleClose={()=>setModalOpen(false)} certId={modalCerId}/>
         </Box>
     )
 }

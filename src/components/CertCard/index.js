@@ -23,8 +23,6 @@ const CertCard = ({ title, status, certData, onDownloadClick, onRevokeClick, onI
     DELETE: red[400],
   }
   
-  console.log(certData);
-
   const keys = Object.keys(certData)
   const denseTableData = []
   keys.forEach(key => {

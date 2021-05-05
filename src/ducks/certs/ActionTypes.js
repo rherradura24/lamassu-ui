@@ -16,3 +16,19 @@ export const GET_CERTS_ERROR = prefix + 'GET_CERTS_ERROR';
 export const GET_CERT = prefix + 'GET_CERT';
 export const GET_CERT_SUCCESS = prefix + 'GET_CERT_SUCCESS';
 export const GET_CERT_ERROR = prefix + 'GET_CERT_ERROR';
+
+export const REVOKE_CERT = prefix + 'REVOKE_CERT';
+export const REVOKE_CERT_SUCCESS = prefix + 'REVOKE_CERT_SUCCESS';
+export const REVOKE_CERT_ERROR = prefix + 'REVOKE_CERT_ERROR';
+
+export const CREATE_CA = prefix + 'CREATE_CA';
+export const CREATE_CA_SUCCESS = prefix + 'CREATE_CA_SUCCESS';
+export const CREATE_CA_ERROR = prefix + 'CREATE_CA_ERROR';
+
+export const IMPORT_CA = prefix + 'IMPORT_CA';
+export const IMPORT_CA_SUCCESS = prefix + 'IMPORT_CA_SUCCESS';
+export const IMPORT_CA_ERROR = prefix + 'IMPORT_CA_ERROR';
+
+export const CREATE_CERT = prefix + 'CREATE_CERT';
+export const CREATE_CERT_SUCCESS = prefix + 'CREATE_CERT_SUCCESS';
+export const CREATE_CERT_ERROR = prefix + 'CREATE_CERT_ERROR';

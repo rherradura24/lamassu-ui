@@ -13,6 +13,27 @@ export const getCA = (caId) => {
     })
 }
 
+export const revokeCA = (payload) => {
+    console.log("REVOKING", payload);
+    return new Promise((resolve, reject)=>{
+        resolve(payload)
+    })
+}
+
+export const createCA = (payload) => {
+    console.log("CREATING", payload);
+    return new Promise((resolve, reject)=>{
+        resolve(payload)
+    })
+}
+
+export const importCA = (payload) => {
+    console.log("IMPORTING", payload);
+    return new Promise((resolve, reject)=>{
+        resolve(payload)
+    })
+}
+
 export const getCerts = () => {
     return new Promise((resolve, reject)=>{
         resolve(certsList)

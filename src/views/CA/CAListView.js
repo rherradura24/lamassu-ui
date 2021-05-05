@@ -2,12 +2,15 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { Box, Fade, makeStyles, Slide } from "@material-ui/core";
+import { Box, Button, Fade, makeStyles, Slide } from "@material-ui/core";
 import { CertCard } from "components/CertCard";
-import { LamassuModal } from "components/Modal";
+import { LamassuModalCertRevocation, LamassuModalPolyphormic } from "components/Modal";
 import { useState } from "react";
 import downloadFile from "utils/FileDownloader";
 import CertInspectorSideBar from "views/CertInspectorSideBar";
+
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 const useStyles = makeStyles((theme) => ({
     grid: {
@@ -32,18 +35,43 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const CAList = ({casData, onCertInspect}) => {
-    console.log(casData);
+const CAList = ({casData, importCA, createCA, revokeCA}) => {
     const classes = useStyles();
 
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
     const [rightSidebarCertId, setRightSidebarCertId] = useState(null)
-    const [modalOpen, setModalOpen] = useState(false)
-    const [modalInfo, setModalInfo] = useState({})
+    const [modalInfo, setModalInfo] = useState({open: false, type: null})
 
+    const resetModal = () =>{
+        setModalInfo({
+            open: false,
+            type: null,
+        })
+    }
+
+    const handleCaCreateClick = () => {
+        setModalInfo({
+            open: true,
+            type: "caCreate",
+            handleSubmit: (data)=>{createCA(data); resetModal()}
+        })
+    }
+
+    const handleCaImportClick = () => {
+        setModalInfo({
+            open: true,
+            type: "certImport",
+            handleSubmit: (crt)=>{importCA(crt); resetModal()}
+        })
+    }
+    
     const handleCertRevocationClick = (certId) => {
-        setModalInfo({title: "Revoke CA: " + certId, msg: "You are about to revoke a CA. By revoing the certificate, you will also revoke al emmited certificates."})
-        setModalOpen(true)
+        setModalInfo({
+            open: true,
+            type: "certRevoke",
+            handleRevocation: ()=>{revokeCA(certId); resetModal()},
+            certId: certId
+        })
     }
     
     const handleCertInspect = (certId) => {
@@ -58,12 +86,31 @@ const CAList = ({casData, onCertInspect}) => {
         <>
             <Box className={classes.grid}>
                 <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content} style={{padding: 20}}>
-                    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-                        <Link color="inherit" href="/" >
-                        Home
-                        </Link>
-                        <Typography color="textPrimary">CAs</Typography>
-                    </Breadcrumbs>
+                    <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+                            <Link color="inherit" href="/" >
+                                Home
+                            </Link>
+                            <Typography color="textPrimary">CAs</Typography>
+                        </Breadcrumbs>
+                        <Box>
+                            <Button
+                                color="default"
+                                startIcon={<AddCircleIcon />}
+                                style={{marginRight: 10}}
+                                onClick={handleCaCreateClick}
+                            >
+                                Create CA
+                            </Button>
+                            <Button
+                                color="default"
+                                startIcon={<CloudUploadIcon />}
+                                onClick={handleCaImportClick}
+                            >
+                                Import CA
+                            </Button>
+                        </Box>
+                    </Box>
 
                     <Box style={{display: "flex", flexWrap: "wrap", marginTop: 20}}>
                     {
@@ -99,7 +146,7 @@ const CAList = ({casData, onCertInspect}) => {
                         </Fade>
                     )
                 }
-                <LamassuModal open={modalOpen} handleClose={()=>setModalOpen(false)} {...modalInfo}/>
+                <LamassuModalPolyphormic handleClose={()=>resetModal()} {...modalInfo}/>
             </Box>
         </>
     )

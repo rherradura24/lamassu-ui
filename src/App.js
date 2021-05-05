@@ -8,6 +8,7 @@ import keycloak, {keycloakProps} from './keycloak'
 
 import Dashboard from "views/dashboard";
 import { useState } from 'react';
+import NotificationService from 'components/NotificationService';
 
 const store = configureStore();
 
@@ -33,7 +34,8 @@ function App({ }) {
       autoRefreshToken={true}
     >
       <Provider store={store}>
-        <SnackbarProvider maxSnack={3}>
+        <SnackbarProvider preventDuplicate maxSnack={3}>
+          <NotificationService />
           <Dashboard />
         </SnackbarProvider>
       </Provider>

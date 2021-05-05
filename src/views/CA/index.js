@@ -10,7 +10,11 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onMount: ()=>{ dispatch(certsActions.getCAs()) }
+  onMount: ()=>{ dispatch(certsActions.getCAs()) },
+  
+  importCA: (crt)=>{ dispatch(certsActions.importCA(crt)) },
+  createCA: (data)=>{ console.log(data);dispatch(certsActions.createCA(data)) },
+  revokeCA: (certId)=>{ dispatch(certsActions.revokeCert(certId)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CAListView));

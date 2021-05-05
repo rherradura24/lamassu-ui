@@ -3,7 +3,7 @@ import { from as rxjsFrom } from 'rxjs';
 
 
 export const PREFIX_SUCCESS = "_SUCCESS";
-export const PREFIX_FAIL = "_FAIL";
+export const PREFIX_FAIL = "_ERROR";
 
 const succeed = (actionType) => actionType + PREFIX_SUCCESS;
 const failed = (actionType) => actionType + PREFIX_FAIL;
