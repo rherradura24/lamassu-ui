@@ -2,7 +2,6 @@ import { Box, Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useRef, useState } from "react";
 import { MenuSeparator } from "views/dashboard/SidebarMenuItem";
 import { LamassuModal } from "./LamassuModal";
-
 const LamassuModalCertImport = ({open, handleClose, handleSubmit}) => {
 
     const inputFileRef = useRef(null);
@@ -17,7 +16,7 @@ const LamassuModalCertImport = ({open, handleClose, handleSubmit}) => {
             reader.readAsText(files[0], "UTF-8");
             reader.onload = (evt) => {
                 var content = evt.target.result;
-                setCertContent(content)   
+                setCertContent(content)
             }
         }else{
             console.log("Nofile");
@@ -72,6 +71,7 @@ const LamassuModalCertImport = ({open, handleClose, handleSubmit}) => {
                         value={certContent}
                         onChange={(ev)=>{setCertContent(ev.target.value)}}
                     />
+
                 </Box>
             }
         />

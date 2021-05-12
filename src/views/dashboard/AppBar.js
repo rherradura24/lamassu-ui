@@ -13,6 +13,7 @@ import { useState } from "react";
 
 const AppBar = ({ className, background }) => {
   const { keycloak, initialized } = useKeycloak()
+  console.log(keycloak);
   const [lang, setLang] = useState("en")
   const { t, i18n } = useTranslation()
 
@@ -39,7 +40,7 @@ const AppBar = ({ className, background }) => {
           <NotificationsIcon style={{color: "#F1F2F8"}}/>
         </Badge>
 
-        <UserAvatar username="hsaiz"/>
+        <UserAvatar username={keycloak.tokenParsed.preferred_username}/>
       </div>
     </Box>
   );

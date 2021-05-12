@@ -23,7 +23,7 @@ export default function DenseTable({ data, dense }) {
           <TableBody>
             {data.map((row) => (
               <TableRow key={row.label}>
-                <TableCell component="th" scope="row" className={dense && classes.root}>
+                <TableCell component="th" scope="row" className={dense && classes.root} width={150}>
                   {row.label}
                 </TableCell>
                 <TableCell align="left">{row.content}</TableCell>

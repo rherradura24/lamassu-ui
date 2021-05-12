@@ -19,6 +19,7 @@ import CertInspectorSideBar from "views/CertInspectorSideBar";
 import CAListView from "views/CA";
 import Home from "views/home";
 import IssuedCACerts from "views/CA/IssuedCACerts";
+import { CertChecker } from "views/Utils/CertChecker";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -49,6 +50,10 @@ const Dashboard = ({ }) => {
       },
       appbar:{
         background: "#1272E9"
+      },
+      certInspector:{
+        tabs: "#bbb",
+        separator: "#eee"
       }
     },
     ...overrides
@@ -59,16 +64,20 @@ const Dashboard = ({ }) => {
     palette: {
       type: darkTheme ? 'dark' : 'light',
       primary: {
-        main: "#02B6DC",
+        main: "#25ee32", //02B6DC
       },
       secondary: {
-        main: "#2F657B",
+        main: "#25ee32", //2F657B
       },
       background: {
         default: "#525252"
       },
       appbar:{
         background: "#313131"
+      },
+      certInspector:{
+        tabs: "#222",
+        separator: "#525252"
       }
     },
     ...overrides
@@ -90,6 +99,7 @@ const Dashboard = ({ }) => {
                   <Route exact path="/" render={(props) => <Home />} />
                   <Route exact path="/ca/certs" render={(props) => <CAListView />} />
                   <Route exact path="/ca/issued-certs" render={(props) => <IssuedCACerts />} />
+                  <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
                 </Switch>
               </Paper> 
             </Box>
