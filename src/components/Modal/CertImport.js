@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useRef, useState } from "react";
-import { MenuSeparator } from "views/dashboard/SidebarMenuItem";
+import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 import { LamassuModal } from "./LamassuModal";
 const LamassuModalCertImport = ({open, handleClose, handleSubmit}) => {
 

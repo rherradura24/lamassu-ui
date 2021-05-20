@@ -1,9 +1,14 @@
 import caList from "./mocks/ca-list.json";
 import certsList from "./mocks/certs-list.json";
 
+import keycloak from "keycloak";
 export const getCAs = () => {
-    return new Promise((resolve, reject)=>{
-        resolve(caList)
+    return fetch(window._env_.REACT_APP_CA_API + "/v1/cas", {
+        headers: {
+            "Authorization": "Bearer " + keycloak.token
+        }
+    }).then(resp => {
+        return resp.json()
     })
 }
 

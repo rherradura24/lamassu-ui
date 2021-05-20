@@ -7,7 +7,7 @@ import {
     KeyboardTimePicker,
     KeyboardDatePicker,
   } from '@material-ui/pickers';
-import { MenuItem } from "views/dashboard/SidebarMenuItem";
+import { MenuItem } from "views/Dashboard/SidebarMenuItem";
   
 const LamassuModalDmsCreation = ({open, handleClose, handleSubmit}) => {
     

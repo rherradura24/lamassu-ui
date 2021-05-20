@@ -2,6 +2,7 @@
 import * as actions from "./ActionTypes"
 
 const certsReducer = (state = { list: {} }, action) => {
+  console.log(action.type, action.payload);
   switch (action.type) {
     case actions.GET_CAS_SUCCESS:
       var currentList = state.list

@@ -116,11 +116,18 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                     {
                         casData.map(caData => {
                             return (
-                                <CertCard title={caData.name} 
+                                <CertCard title={caData.ca_name} 
                                     status={caData.status} 
-                                    keyBits={caData.keyBits}
-                                    keyType={caData.keyType}
-                                    certData={Object.assign({}, caData.subject_dn, {keyType: caData.keyType, keyBits: caData.keyBits})}
+                                    keyBits={caData.key_bits}
+                                    keyType={caData.key_type}
+                                    certData={{
+                                        country: caData.country,
+                                        state: caData.province,
+                                        locality: caData.locality,
+                                        organization: caData.organization,
+                                        keyType: caData.key_type, 
+                                        keyBits: caData.key_bits
+                                    }}
                                     key={caData.serial_number} 
                                     styles={{margin: 10}}
                                     onDownloadClick={()=>{handleCertDownload(caData.serial_number, caData.crt)}}
