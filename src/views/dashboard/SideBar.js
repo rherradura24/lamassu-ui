@@ -36,41 +36,47 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
         <div>
           <MenuButton title="Collapse" icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed); onCollapse(collapsed)}} collapsed={collapsed}/> 
           <MenuSeparator/>
-          <MenuItem 
-            title={t("home")} 
-            link="/"
-            collapsed={collapsed}
-            active={selectedPath}
-            onSelect={(link)=>{setSelectedPath(link)}} 
-            icon={<DashboardOutlinedIcon/>}
-          />
-          <MenuSeparator/>
-          <MenuSectionTitle title="certificate authorities" collapsed={collapsed}/>
-          <MenuItem 
-            title="CAs" 
-            link="/ca/certs" 
-            active={selectedPath}
-            collapsed={collapsed}
-            onSelect={(link)=>{setSelectedPath(link)}} 
-            icon={<AccountBalanceOutlinedIcon/>}
-          />
-          <MenuItem 
-            title="Certificates issued by CAs"
-            link="/ca/issued-certs" 
-            active={selectedPath}
-            collapsed={collapsed}
-            onSelect={(link)=>{setSelectedPath(link)}} 
-            icon={<ListAltOutlinedIcon/>}
-          />
-          <MenuItem 
-            title="CRL"
-            link="/ca/crl" 
-            active={selectedPath}
-            collapsed={collapsed}
-            onSelect={(link)=>{setSelectedPath(link)}} 
-            icon={<BlockOutlinedIcon/>}
-          />
-          <MenuSeparator/>
+          {
+            keycloak.tokenParsed.realm_access.roles.includes("admin") && (
+              <>
+                <MenuItem 
+                  title={t("home")} 
+                  link="/"
+                  collapsed={collapsed}
+                  active={selectedPath}
+                  onSelect={(link)=>{setSelectedPath(link)}} 
+                  icon={<DashboardOutlinedIcon/>}
+                />
+                <MenuSeparator/>
+                <MenuSectionTitle title="certificate authorities" collapsed={collapsed}/>
+                <MenuItem 
+                  title="CAs" 
+                  link="/ca/certs" 
+                  active={selectedPath}
+                  collapsed={collapsed}
+                  onSelect={(link)=>{setSelectedPath(link)}} 
+                  icon={<AccountBalanceOutlinedIcon/>}
+                />
+                <MenuItem 
+                  title="Certificates issued by CAs"
+                  link="/ca/issued-certs" 
+                  active={selectedPath}
+                  collapsed={collapsed}
+                  onSelect={(link)=>{setSelectedPath(link)}} 
+                  icon={<ListAltOutlinedIcon/>}
+                />
+                <MenuItem 
+                  title="CRL"
+                  link="/ca/crl" 
+                  active={selectedPath}
+                  collapsed={collapsed}
+                  onSelect={(link)=>{setSelectedPath(link)}} 
+                  icon={<BlockOutlinedIcon/>}
+                />
+                <MenuSeparator/>
+              </>
+            )
+          }
           <MenuSectionTitle title="device manufacturing systems" collapsed={collapsed}/>
           <MenuItem 
             title="List of DMS" 

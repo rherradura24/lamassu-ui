@@ -7,7 +7,7 @@ import { green, orange, red } from '@material-ui/core/colors';
 import { DataGrid, GridToolbar } from '@material-ui/data-grid';
 import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
 import CertInspectorSideBar from 'views/CertInspectorSideBar';
-import { LamassuModalCertRevocation } from 'components/Modal';
+import { LamassuModalCertRevocation, LamassuModalPolyphormic } from 'components/Modal';
 import { useState } from 'react';
 import downloadFile from "utils/FileDownloader";
 import { styled, withStyles } from '@material-ui/core/styles';
@@ -168,7 +168,7 @@ const IssuedCACerts = ({certsData}) => {
                     </Fade>
                 )
             }
-            <LamassuModalCertRevocation open={modalOpen} handleRevocation={()=>{setModalOpen(false)}} handleClose={()=>setModalOpen(false)} certId={modalCerId}/>
+            <LamassuModalPolyphormic type="certRevoke" open={modalOpen} handleRevocation={()=>{setModalOpen(false)}} handleClose={()=>setModalOpen(false)} certId={modalCerId}/>
         </Box>
     )
 }

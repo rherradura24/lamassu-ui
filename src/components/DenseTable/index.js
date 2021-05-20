@@ -13,7 +13,33 @@ const useStyles = makeStyles({
   }, // a style rule
 });
 
-export default function DenseTable({ data, dense }) {
+function uncamelize(str, separator) {
+  // Assume default separator is a single space.
+  if(typeof(separator) == "undefined") {
+    separator = " ";
+  }
+  // Replace all capital letters by separator followed by lowercase one
+  var str = str.replace(/[A-Z]/g, function (letter) 
+  {
+    return separator + letter.toLowerCase();
+  });
+  // Remove first separator
+  return str.replace("/^" + separator + "/", '');
+}
+
+function capitalizeFirstLetter(words) {
+  var separateWord = words.toLowerCase().split(' ');
+  for (var i = 0; i < separateWord.length; i++) {
+     separateWord[i] = separateWord[i].charAt(0).toUpperCase() +
+     separateWord[i].substring(1);
+  }
+  return separateWord.join(' ');
+}
+
+
+export default function DenseTable({ data, dense, parseRowTitle=false }) {
+
+
     
   const classes = useStyles();
 
@@ -24,7 +50,7 @@ export default function DenseTable({ data, dense }) {
             {data.map((row) => (
               <TableRow key={row.label}>
                 <TableCell component="th" scope="row" className={dense && classes.root} width={150}>
-                  {row.label}
+                  {capitalizeFirstLetter(uncamelize(row.label.replace("_", " ")))}
                 </TableCell>
                 <TableCell align="left">{row.content}</TableCell>
               </TableRow>

@@ -118,7 +118,9 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                             return (
                                 <CertCard title={caData.name} 
                                     status={caData.status} 
-                                    certData={caData.subject_dn}
+                                    keyBits={caData.keyBits}
+                                    keyType={caData.keyType}
+                                    certData={Object.assign({}, caData.subject_dn, {keyType: caData.keyType, keyBits: caData.keyBits})}
                                     key={caData.serial_number} 
                                     styles={{margin: 10}}
                                     onDownloadClick={()=>{handleCertDownload(caData.serial_number, caData.crt)}}

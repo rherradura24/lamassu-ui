@@ -41,6 +41,8 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   console.log(certId, certData);
   var metadataTable = []
   const certParsed = Certificate.fromPEM(certData.crt)
+  
+  console.log(certParsed);
   metadataTable.push({
     label: "Serial Number",
     content: certParsed.serialNumber
@@ -66,12 +68,13 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
     content: certParsed.dnsNames.length == 0 ? "None" : certParsed.dnsNames.map(dnsName =>  <Chip color="primary" label={dnsName} variant="outlined" size="small" style={{marginRight: 5}}/>)
   });
   
-  metadataTable.push({
+  var validityTable = []
+  validityTable.push({
     label: "Valid From",
     content: JSON.stringify(certParsed.validFrom)
   });
 
-  metadataTable.push({
+  validityTable.push({
     label: "Valid To",
     content: JSON.stringify(certParsed.validTo)
   });
@@ -124,6 +127,10 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
         <div style={{overflowY: "auto"}}>
           <TabPanel value="0" style={{padding: 0}}>
             <DenseTable data={metadataTable} dense={false}/>
+            <Box style={{background: theme.palette.certInspector.separator, padding: 10}}>
+              <Typography>Validity</Typography>
+            </Box>
+            <DenseTable data={validityTable} dense={false}/>
             <Box style={{background: theme.palette.certInspector.separator, padding: 10}}>
               <Typography>Subject Distinguished Name</Typography>
             </Box>

@@ -1,13 +1,11 @@
 import { connect } from "react-redux";
-import { useKeycloak } from '@react-keycloak/web'
 import AppBar from './AppBar'
 import SideBar from './SideBar'
 import "./Dashboard.css"
-import { Box, Button, Grid, Paper } from "@material-ui/core";
-import { createMuiTheme, useTheme } from '@material-ui/core/styles';
+import { Box, Paper } from "@material-ui/core";
+import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 
-import blue from '@material-ui/core/colors/blue';
 
 import {
   BrowserRouter as Router,
@@ -15,11 +13,11 @@ import {
   Route,
 } from "react-router-dom";
 import { useState } from "react";
-import CertInspectorSideBar from "views/CertInspectorSideBar";
 import CAListView from "views/CA";
 import Home from "views/home";
 import IssuedCACerts from "views/CA/IssuedCACerts";
 import { CertChecker } from "views/Utils/CertChecker";
+import DMSList from "views/DMS";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -64,10 +62,10 @@ const Dashboard = ({ }) => {
     palette: {
       type: darkTheme ? 'dark' : 'light',
       primary: {
-        main: "#25ee32", //02B6DC
+        main: "#02B6DC", //02B6DC //25ee32
       },
       secondary: {
-        main: "#25ee32", //2F657B
+        main: "#2F657B", //2F657B  //25ee32
       },
       background: {
         default: "#525252"
@@ -99,6 +97,7 @@ const Dashboard = ({ }) => {
                   <Route exact path="/" render={(props) => <Home />} />
                   <Route exact path="/ca/certs" render={(props) => <CAListView />} />
                   <Route exact path="/ca/issued-certs" render={(props) => <IssuedCACerts />} />
+                  <Route exact path="/dms/list" render={(props) => <DMSList />} />
                   <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
                 </Switch>
               </Paper> 

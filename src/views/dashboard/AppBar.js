@@ -40,7 +40,10 @@ const AppBar = ({ className, background }) => {
           <NotificationsIcon style={{color: "#F1F2F8"}}/>
         </Badge>
 
-        <UserAvatar username={keycloak.tokenParsed.preferred_username}/>
+        <UserAvatar 
+          username={keycloak.tokenParsed.email ? keycloak.tokenParsed.email : keycloak.tokenParsed.preferred_username}
+          roles={keycloak.tokenParsed.realm_access.roles.filter(role=>role!="offline_access" && role!="uma_authorization")}
+        />
       </div>
     </Box>
   );

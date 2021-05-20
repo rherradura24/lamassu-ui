@@ -12,17 +12,12 @@ import ListIcon from '@material-ui/icons/List';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
-
-const CertCard = ({ title, status, certData, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={} }) => {
+const CertCard = ({ title, status, certData, keyType, keyBits, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
   const theme = useTheme()
-  const verbs = {
-    GET: green[400],
-    POST: blue[400],
-    PUT: orange[400],
-    DELETE: red[400],
-  }
-  
+   
   const keys = Object.keys(certData)
   const denseTableData = []
   keys.forEach(key => {
@@ -41,6 +36,29 @@ const CertCard = ({ title, status, certData, onDownloadClick, onRevokeClick, onI
     statusColor = orange[400]
   }
 
+  var strengthElement
+  console.log(keyBits, keyType);
+  if (keyType == "rsa") {
+    if (keyBits <= 2048) {
+      strengthElement = (<>
+        <Typography variant="button">Key Strength: low</Typography>
+      </>)
+    }else if (keyBits > 2048 && keyBits < 3072){
+      strengthElement = (<>
+        <Typography variant="button">Key Strength: medium</Typography>
+      </>)
+    }else{
+      strengthElement = (<>
+        <Typography variant="button">Key Strength: high</Typography>
+      </>)
+    }
+  }else{
+    strengthElement = (<>
+      <Typography variant="button">Key Strength: unknown</Typography>
+    </>)
+  }
+
+
   return (
     <Card style={{width: 500, borderTop: "3px solid " + theme.palette.primary.main, ...styles}}>
       <div style={{padding:10 , height: 40, display: "flex", alignItems: "center", justifyContent: "space-between"}}>
@@ -54,8 +72,11 @@ const CertCard = ({ title, status, certData, onDownloadClick, onRevokeClick, onI
         </div>
       </div>
       <CardContent>
-        <DenseTable dense={true} data={denseTableData}/>
+        <DenseTable dense={true} data={denseTableData} parseRowTitle={true}/>
       </CardContent>
+      <Box style={{padding:20, display: "flex"}}>
+        {strengthElement}
+      </Box>
       <CardActions disableSpacing>
         <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
           <div>
