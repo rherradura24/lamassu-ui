@@ -15,10 +15,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
-const CertCard = ({ title, status, certData, keyType, keyBits, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
+const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
   const theme = useTheme()
    
   const keys = Object.keys(certData)
+  console.log(certData);
   const denseTableData = []
   keys.forEach(key => {
     denseTableData.push({
@@ -36,27 +37,54 @@ const CertCard = ({ title, status, certData, keyType, keyBits, onDownloadClick, 
     statusColor = orange[400]
   }
 
+  const low = (
+    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+      <Typography variant="button">Key Strength: </Typography>
+      <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#FFB1AA" : "#6d504e"}}>
+        <Typography variant="button" style={{color: "red"}}>Low</Typography>
+      </Box>
+    </Box>
+  )
+  const medium = (
+    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+      <Typography variant="button">Key Strength: </Typography>
+      <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#FFE9C4" : "#635d55"}}>
+          <Typography variant="button" style={{color: "orange"}}>Medium</Typography>
+        </Box>
+      </Box>
+  )
+  const high = (
+    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+       <Typography variant="button">Key Strength: </Typography>
+        <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#D0F9DB" : "#4a6952"}}>
+          <Typography variant="button" style={{color: theme.palette.type === "light" ? "green" : "#25ee32"}}>High</Typography>
+        </Box>
+    </Box>
+  )
+
+  const unknown = (
+    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+       <Typography variant="button">Key Strength: </Typography>
+        <Box style={{marginLeft: 5}}>
+          <Typography variant="button">Unknown</Typography>
+        </Box>
+    </Box>
+  )
+
+
   var strengthElement
-  console.log(keyBits, keyType);
-  if (keyType == "rsa") {
-    if (keyBits <= 2048) {
-      strengthElement = (<>
-        <Typography variant="button">Key Strength: low</Typography>
-      </>)
-    }else if (keyBits > 2048 && keyBits < 3072){
-      strengthElement = (<>
-        <Typography variant="button">Key Strength: medium</Typography>
-      </>)
-    }else{
-      strengthElement = (<>
-        <Typography variant="button">Key Strength: high</Typography>
-      </>)
-    }
+  console.log(theme.palette.type);
+  if (keyStrength == "low"){
+      strengthElement = low
+  }else if (keyStrength == "medium"){
+    strengthElement = medium
+  }else if (keyStrength == "high"){
+    strengthElement = high  
   }else{
-    strengthElement = (<>
-      <Typography variant="button">Key Strength: unknown</Typography>
-    </>)
+    strengthElement = unknown
   }
+
+  
 
 
   return (

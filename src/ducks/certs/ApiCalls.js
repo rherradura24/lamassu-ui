@@ -27,8 +27,15 @@ export const revokeCA = (payload) => {
 
 export const createCA = (payload) => {
     console.log("CREATING", payload);
-    return new Promise((resolve, reject)=>{
-        resolve(payload)
+    return fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + keycloak.token,
+        },
+        body: JSON.stringify(payload.crt)
+    }).then(resp => {
+        return resp.json()
     })
 }
 

@@ -26,14 +26,19 @@ export const revokeCert = (cerId) => ({
 export const createCA = (certData) => ({
     type: t.CREATE_CA,
     payload: { 
-        country: certData.country,
-        state: certData.state,
-        city: certData.city,
-        organization: certData.organization,
-        organizationUnit: certData.organizationUnit,
-        commonName: certData.commonName,
-        validFrom: certData.validFrom,
-        validTo: certData.validTo,
+        caName: certData.caName,
+        crt: {
+            country: certData.country,
+            state: certData.state,
+            locality: certData.city,
+            organization: certData.organization,
+            organization_unit: certData.organizationUnit,
+            common_name: certData.commonName,
+            key_type: certData.keyType,
+            key_bits: certData.keyBits,
+            validFrom: certData.validFrom,
+            validTo: certData.validTo,
+        }
     },
 })  
 

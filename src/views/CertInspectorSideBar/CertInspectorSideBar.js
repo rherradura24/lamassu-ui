@@ -5,8 +5,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import DenseTable from "components/DenseTable";
 import {Certificate, PrivateKey, PublicKey} from "@fidm/x509"
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
+import { green, grey, orange, red } from '@material-ui/core/colors';
 
 function uncamelize(str, separator) {
   // Assume default separator is a single space.
@@ -31,12 +31,24 @@ function capitalizeFirstLetter(words) {
   return separateWord.join(' ');
 }
 
-const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certId, certData, className="" }) => {
+const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certId, certName, certData, className="" }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState("0")
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  var stengthColor;
+if (certData.key_strength == "high") {
+  stengthColor = green[400]
+}else if(certData.key_strength == "medium"){
+  stengthColor = orange[400]
+}else if(certData.key_strength == "low"){
+  stengthColor = red[400]
+}else{
+  stengthColor = grey[400]
+}
+
 
   console.log(certId, certData);
   var metadataTable = []
@@ -56,6 +68,21 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   metadataTable.push({
     label: "Signature Algorithm",
     content: certParsed.signatureAlgorithm
+  });
+
+  metadataTable.push({
+    label: "Key Type",
+    content: certData.key_type
+  });
+
+  metadataTable.push({
+    label: "Key Bits",
+    content: certData.key_bits
+  });
+
+  metadataTable.push({
+    label: "Key Strength",
+    content: <Chip label={certData.key_strength} variant="outlined" size="small" style={{color: stengthColor, border: "1px solid " + stengthColor}} />
   });
 
   metadataTable.push({
@@ -99,7 +126,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   return (
     <Box component={Paper} elevation={10} className={className} style={{height: "100%", borderRadius: 0}}>
       <div style={{padding:"5px 10px", height: 40, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-        <Typography>{`Certificado ${certId}`}</Typography>
+        <Typography>{`Certificado ${certName}`}</Typography>
         <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
           <Tooltip title="Download cert">
             <IconButton onClick={handleDownload}>
@@ -141,14 +168,18 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
             <DenseTable data={issuerTable} dense={false}/>
           </TabPanel>
           <TabPanel value="1" style={{padding: 0}}>
-            <div style={{background: "#333", padding: 10}}>
-              <code style={{color: "white", fontSize: "small"}}>
-                {certData.crt}
-              </code>
+            <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
+                <code style={{color: "white", fontSize: "small"}}>
+                  {certData.crt}
+                </code>
             </div>
           </TabPanel>
           <TabPanel value="2" style={{padding: 0}}>
-            Item 3
+            <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
+                <code style={{color: "white", fontSize: "small"}}>
+                  {certData.pub_key}
+                </code>
+              </div>
           </TabPanel>
         </div>
       </TabContext>

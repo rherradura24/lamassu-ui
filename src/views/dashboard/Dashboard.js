@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import AppBar from './AppBar'
 import SideBar from './SideBar'
 import "./Dashboard.css"
-import { Box, Paper } from "@material-ui/core";
+import { Box, Paper, Typography } from "@material-ui/core";
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 
@@ -62,10 +62,10 @@ const Dashboard = ({ }) => {
     palette: {
       type: darkTheme ? 'dark' : 'light',
       primary: {
-        main: "#02B6DC", //02B6DC //25ee32
+        main: "#25ee32", //02B6DC //25ee32
       },
       secondary: {
-        main: "#2F657B", //2F657B  //25ee32
+        main: "#25ee32", //2F657B  //25ee32
       },
       background: {
         default: "#525252"
@@ -88,7 +88,15 @@ const Dashboard = ({ }) => {
     <ThemeProvider theme={theme}>
       <Router>
         <Box className={collapsed ? "dashboard-layout-collapsed" : "dashboard-layout"}>  
-          <AppBar className="header" background={theme.palette.appbar.background}/>
+          <AppBar 
+            className="header" 
+            background={theme.palette.appbar.background}
+            logo={
+              <div style={{background: "white", borderRadius: 10, height:30, width: 120, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <Typography variant="button">Lamassu IoT</Typography>
+              </div>
+            }
+          />
           <SideBar className="sidebar" darkTheme={darkTheme} onTogleDark={()=>{setDarkTheme(!darkTheme)}} onCollapse={()=>{setCollapsed(!collapsed)}}/>
           <Box className="content">
             <Box className={"main-content"} >

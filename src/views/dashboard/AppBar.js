@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { useState } from "react";
 
 
-const AppBar = ({ className, background }) => {
+const AppBar = ({ className, background, logo }) => {
   const { keycloak, initialized } = useKeycloak()
   console.log(keycloak);
   const [lang, setLang] = useState("en")
@@ -19,9 +19,7 @@ const AppBar = ({ className, background }) => {
 
   return (
     <Box className={className} style={{background: background, display: "flex", alignItems: "center", padding: "5px 10px", justifyContent: "space-between"}}>
-      <div style={{background: "white", borderRadius: 10, height:30, width: 120, display: "flex", justifyContent: "center", alignItems: "center"}}>
-        <Typography variant="button">Lamassu IoT</Typography>
-      </div>
+      {logo}
       <div style={{background: background, height: 50, display: "flex", alignItems: "center", justifyContent: "flex-end"}}>
         <Select
           labelId="demo-simple-select-label"

@@ -50,7 +50,9 @@ export default function DenseTable({ data, dense, parseRowTitle=false }) {
             {data.map((row) => (
               <TableRow key={row.label}>
                 <TableCell component="th" scope="row" className={dense && classes.root} width={150}>
-                  {capitalizeFirstLetter(uncamelize(row.label.replace("_", " ")))}
+                  {
+                    parseRowTitle == false ? row.label : capitalizeFirstLetter(uncamelize(row.label.replace("_", " ")))
+                  }
                 </TableCell>
                 <TableCell align="left">{row.content}</TableCell>
               </TableRow>

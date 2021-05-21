@@ -82,6 +82,8 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
         downloadFile("CA-"+certId+".crt", certContent)
     }
 
+    const selectedCert = casData.filter(cert=> cert.serial_number == rightSidebarCertId)[0]
+
     return (
         <>
             <Box className={classes.grid}>
@@ -118,11 +120,10 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                             return (
                                 <CertCard title={caData.ca_name} 
                                     status={caData.status} 
-                                    keyBits={caData.key_bits}
-                                    keyType={caData.key_type}
+                                    keyStrength={caData.key_strength}
                                     certData={{
                                         country: caData.country,
-                                        state: caData.province,
+                                        state: caData.state,
                                         locality: caData.locality,
                                         organization: caData.organization,
                                         keyType: caData.key_type, 
@@ -130,7 +131,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                                     }}
                                     key={caData.serial_number} 
                                     styles={{margin: 10}}
-                                    onDownloadClick={()=>{handleCertDownload(caData.serial_number, caData.crt)}}
+                                    onDownloadClick={()=>{handleCertDownload(caData.ca_name, caData.crt)}}
                                     onInspectClick={()=>{setRightSidebarCertId(caData.serial_number); handleCertInspect()}}
                                     onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number)}}
                                     onListEmmitedClick={()=>{}}
@@ -145,11 +146,12 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                         <Fade timeout={500} in={rightSidebarOpen}>
                             <div>
                                 <CertInspectorSideBar 
-                                    className={classes.rightSidebar} 
+                                    className={classes.rightSidebar}
+                                    certName={selectedCert.ca_name}
                                     certId={rightSidebarCertId}
                                     handleClose={()=>{setRightSidebarOpen(false)}} 
                                     handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId)}} 
-                                    handleDownload={()=>{handleCertDownload(rightSidebarCertId, casData.filter(cert=> cert.serial_number == rightSidebarCertId)[0].crt)}} 
+                                    handleDownload={()=>{handleCertDownload(selectedCert.ca_name, selectedCert.crt)}} 
                                 />
                             </div>
                         </Fade>
