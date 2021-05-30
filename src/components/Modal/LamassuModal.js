@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
 
-const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, actions = [{title: "OK", primary: true, onClick: ()=>{}}], maxWidth="sm" }) => {
+const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, actions = [{title: "OK", primary: true, disabledBtn: false, onClick: ()=>{}}] }) => {
 
     return (
         <Dialog
@@ -42,8 +42,13 @@ const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, act
             {
                 actions.map(action => {
                     const params = action.primary ? {variant: "contained", autoFocus: true} : {} ;
-                    return(
-                        <Button onClick={action.onClick} color="primary" {...params} key={action.title}>
+                    console.log(action.disabledBtn.disabled)
+                    return action.disabledBtn ? (
+                        <Button onClick={action.onClick} disabled color="primary" {...params} key={action.title} >
+                            {action.title}
+                        </Button>
+                    ) : (
+                        <Button onClick={action.onClick} color="primary" {...params} key={action.title} >
                             {action.title}
                         </Button>
                     )

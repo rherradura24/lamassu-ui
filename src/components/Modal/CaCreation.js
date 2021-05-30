@@ -17,11 +17,12 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
     const [org, setOrg] = useState("")
     const [orgUnit, setOrgUnit] = useState("")
     const [cn, setCN] = useState("")
-    const [validFrom, setValidFrom] = useState(new Date(Date.now()))
-    const [validTo, setValidTo] = useState(new Date(Date.now() + (1000 * 60 * 60 * 24 * 365)))
+    const [ttlValue, setTtlValue] = useState(365) 
+    const [ttlUnit, setTtlUnit] = useState(24)//24 = days | 24*365 = years 
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
     
+    const disabled = caName == ""
     return (
         <LamassuModal
             title={"Creating new CA"}
@@ -33,6 +34,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     {
                         title: "Create CA",
                         primary: true,
+                        disabledBtn: disabled,
                         onClick: ()=>{handleSubmit({
                             caName: caName,
                             country: country, 
@@ -41,8 +43,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                             organization: org, 
                             organizationUnit: orgUnit, 
                             commonName: cn, 
-                            validFrom: validFrom, 
-                            validTo: validTo,
+                            ttl: parseInt(ttlValue)*ttlUnit+"h",
                             keyType: keyType,
                             keyBits: parseInt(keyBits)
                         })}
@@ -58,32 +59,25 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     <TextField margin="dense" id="org" label="Organization" fullWidth value={org} onChange={ev=>{setOrg(ev.target.value)}}/>
                     <TextField margin="dense" id="orgUnit" label="Organization Unit" fullWidth value={orgUnit} onChange={ev=>{setOrgUnit(ev.target.value)}}/>
                     <TextField margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
-                    <Box>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                            <Grid container justify="space-between">
-                                <KeyboardDatePicker
-                                    disableToolbar
-                                    variant="inline"
-                                    format="DD/MM/yyyy"
-                                    margin="normal"
-                                    label="Valid From"
-                                    value={validFrom}
-                                    onChange={setValidFrom}
-                                />
-                                <KeyboardDatePicker
-                                    disableToolbar
-                                    variant="inline"
-                                    format="DD/MM/yyyy"
-                                    margin="normal"
-                                    label="Valid From"
-                                    value={validTo}
-                                    minDate={validFrom}
-                                    onChange={setValidTo}
-                                />
-                            </Grid>
-                        </MuiPickersUtilsProvider>
-                    </Box>
-                    <Grid container justify="space-between">
+                    <Grid container justify="space-between" alignItems="center">
+                        <TextField margin="dense" id="ttl" label="Time To Live" type="number" style={{width: 235}} value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
+                        <FormControl style={{width: 235}}>
+                        <InputLabel id="key-type-label">Time To Units</InputLabel>
+                                <Select
+                                    labelId="ttl-unit-label"
+                                    value={ttlUnit}
+                                    onChange={ev=>{setTtlUnit(ev.target.value)}}
+                                    autoWidth={false}
+                                    fullWidth
+                                >
+                                    <MenuItem value={1}>Hours</MenuItem>
+                                    <MenuItem value={24}>Days</MenuItem>
+                                    <MenuItem value={24*365}>Years</MenuItem>
+                                </Select>
+                            </FormControl>
+                    </Grid>
+                    <Grid container justify="space-between" alignItems="center">
+                        <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                         <FormControl style={{width: 235}}>
                             <InputLabel id="key-type-label">Key Type</InputLabel>
                             <Select
@@ -97,7 +91,6 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                                 <MenuItem value="ec">ECDSA</MenuItem>
                             </Select>
                         </FormControl>
-                        <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                     </Grid>
                 </Box>
             }

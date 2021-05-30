@@ -36,8 +36,7 @@ export const createCA = (certData) => ({
             common_name: certData.commonName,
             key_type: certData.keyType,
             key_bits: certData.keyBits,
-            validFrom: certData.validFrom,
-            validTo: certData.validTo,
+            ttl: certData.ttl,
         }
     },
 })  
