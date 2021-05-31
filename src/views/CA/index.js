@@ -12,8 +12,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onMount: ()=>{ dispatch(certsActions.getCAs()) },
   
-  importCA: (crt)=>{ dispatch(certsActions.importCA(crt)) },
-  createCA: (data)=>{ console.log(data);dispatch(certsActions.createCA(data)) },
+  importCA: (caName, bundle)=>{ dispatch(certsActions.importCA(caName, bundle)) },
+  createCA: (data)=>{ dispatch(certsActions.createCA(data)) },
   revokeCA: (certId)=>{ dispatch(certsActions.revokeCert(certId)) }
 })
 

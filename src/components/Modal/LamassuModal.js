@@ -7,10 +7,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
 
-const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, actions = [{title: "OK", primary: true, onClick: ()=>{}}] }) => {
+const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, actions = [{title: "OK", primary: true, onClick: ()=>{}}], maxWidth="sm" }) => {
 
     return (
         <Dialog
+            maxWidth={maxWidth}
             open={open}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"

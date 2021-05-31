@@ -14,20 +14,14 @@ const makeRequestWithActions = (fetchPromise, actionType, meta={}) =>
         if (data && !data.error) {
           return {
             type: succeed(actionType),
-            payload: data,
-            meta,
-          };
-        } else if (!data) {
-          return {
-            type: failed(actionType),
-            payload: "undefined data",
-            meta,
+            payload: data.json,
+            meta: meta,
           };
         } else {
           return {
             type: failed(actionType),
-            payload: "error ocurred",
-            meta,
+            payload: "Error: " + data.error,
+            meta: meta,
           };
         }
       }),

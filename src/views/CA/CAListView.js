@@ -61,7 +61,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
         setModalInfo({
             open: true,
             type: "certImport",
-            handleSubmit: (crt)=>{importCA(crt); resetModal()}
+            handleSubmit: (caName, bundle)=>{importCA(caName, bundle); resetModal()}
         })
     }
     

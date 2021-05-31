@@ -32,3 +32,14 @@ export const IMPORT_CA_ERROR = prefix + 'IMPORT_CA_ERROR';
 export const CREATE_CERT = prefix + 'CREATE_CERT';
 export const CREATE_CERT_SUCCESS = prefix + 'CREATE_CERT_SUCCESS';
 export const CREATE_CERT_ERROR = prefix + 'CREATE_CERT_ERROR';
+
+export const ERORS = [
+    GET_CAS_ERROR,
+    GET_CA_ERROR,
+    GET_CERTS_ERROR,
+    GET_CERT_ERROR,
+    REVOKE_CERT_ERROR,
+    CREATE_CA_ERROR,
+    IMPORT_CA_ERROR,
+    CREATE_CERT_ERROR,
+]

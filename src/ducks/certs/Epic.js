@@ -4,6 +4,7 @@ import { makeRequestWithActions } from "ducks/utils";
 import * as actions from "./ActionTypes"
 import * as notificationActions from "ducks/notifications/ActionTypes"
 import * as certsApiCalls from "./ApiCalls";
+import { of } from 'rxjs';
 
 const getCasEpic = action$ => action$.pipe(
   ofType(actions.GET_CAS),
@@ -24,7 +25,6 @@ const notifyCreateCASuccess = action$ => action$.pipe(
   ofType(actions.CREATE_CA_SUCCESS),
   mapTo({ type: notificationActions.NOTIFY, payload: {msg: "CA successfully created", type: "success"} })
 );
-
 
 const notifyImportCASuccess = action$ => action$.pipe(
   ofType(actions.IMPORT_CA_SUCCESS),
@@ -51,8 +51,15 @@ const getCertsEpic = action$ => action$.pipe(
   mergeMap( () => makeRequestWithActions(certsApiCalls.getCerts(), actions.GET_CERTS)),
 );
 
+const notifyError = (action$, state$) => action$.pipe(
+  ofType(actions.IMPORT_CA_ERROR, actions.GET_CA_ERROR, actions.GET_CAS_ERROR, actions.CREATE_CA_ERROR ),
+  mergeMap(({ payload, meta })=> {
+    return of({ type: notificationActions.NOTIFY, payload: {msg: payload, type: "error"} })
+  })
+);
 
 export {
+  getCertsEpic,
   getCasEpic,
   getCaEpic,
   importCA,
@@ -61,6 +68,5 @@ export {
   refreshCAs,
   notifyCreateCASuccess,
   notifyImportCASuccess,
-  
-  getCertsEpic
+  notifyError,
 }

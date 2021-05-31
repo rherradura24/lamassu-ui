@@ -1,25 +1,34 @@
 
 import * as actions from "./ActionTypes"
 
-const certsReducer = (state = { list: {} }, action) => {
-  console.log(action.type, action.payload);
-  switch (action.type) {
-    case actions.GET_CAS_SUCCESS:
-      var currentList = state.list
-      action.payload.forEach(ca => {
-        currentList[ca.serial_number] = { ...ca, type: "CA" }
-      });
-      return { list: currentList, ...state };
-    
-    case actions.GET_CERTS_SUCCESS:
-      var currentList = state.list
-      action.payload.forEach(ca => {
-        currentList[ca.serial_number] = { ...ca, type: "END_CERT" }
-      });
-      return { list: currentList, ...state };
+const initialState = {
+  list: {},
+  error: null
+} 
 
-    default:
-      return state;
+const certsReducer = (state = initialState, action) => {
+  console.log(action.type, action.payload,actions.ERORS.includes(action.type));
+  if (actions.ERORS.includes(action.type)) {
+    return { ...state, error: action.payload }
+  } else {
+    switch (action.type) {
+      case actions.GET_CAS_SUCCESS:
+        var currentList = state.list
+        action.payload.forEach(ca => {
+          currentList[ca.serial_number] = { ...ca, type: "CA" }
+        });
+        return { list: currentList, ...state };
+      
+      case actions.GET_CERTS_SUCCESS:
+        var currentList = state.list
+        action.payload.forEach(ca => {
+          currentList[ca.serial_number] = { ...ca, type: "END_CERT" }
+        });
+        return { list: currentList, ...state };
+
+      default:
+        return state;
+    }
   }
 };
 

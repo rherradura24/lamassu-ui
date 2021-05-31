@@ -19,7 +19,6 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
   const theme = useTheme()
    
   const keys = Object.keys(certData)
-  console.log(certData);
   const denseTableData = []
   keys.forEach(key => {
     denseTableData.push({
@@ -73,7 +72,6 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
 
 
   var strengthElement
-  console.log(theme.palette.type);
   if (keyStrength == "low"){
       strengthElement = low
   }else if (keyStrength == "medium"){

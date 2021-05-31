@@ -42,7 +42,12 @@ export const createCA = (certData) => ({
     },
 })  
 
-export const importCA = (cert) => ({
+export const importCA = (caName, bundle) => ({
     type: t.IMPORT_CA,
-    payload: { cert: cert },
+    payload: { 
+        caName: caName,
+        bundle:{
+            pem_bundle: bundle 
+        }
+    },
 })  
