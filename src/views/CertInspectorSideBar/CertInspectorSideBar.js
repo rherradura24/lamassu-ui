@@ -177,7 +177,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
           <Tab value="0" label="Decoded Certifcate" />
           <Tab value="1" label="Certificate content"/>
           <Tab value="2" label="Public key"/>
-        </TabList >
+        </TabList>
         <div className={classes.scroll} style={{overflowY: "auto", height: "calc(100% - 100px)"}}>
           <TabPanel value="0" style={{padding: 0}}>
             <DenseTable data={metadataTable} dense={false}/>

@@ -72,8 +72,8 @@ const LamassuNotifications = ({ notificationHistory }) =>{
                         <AssignmentOutlinedIcon style={{fontSize:20, color: color.color}}/>
                     </Box>
                 </Box>
-                <Box style={{display: "flex", alignItems: "flex-start", flexDirection: "column"}}>
-                    <Typography variant="body2">{e.msg}</Typography>
+                <Box style={{display: "flex", alignItems: "flex-start", flexDirection: "column", width: 280}}>
+                    <Typography component="div" variant="body2">{e.msg}</Typography>
                     <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                         <AccessAlarmsOutlinedIcon style={{fontSize:15, color: "#999"}}/>
                         <Typography style={{color: "#999", fontSize: 13}}>{moment(e.timestamp).fromNow()}</Typography>

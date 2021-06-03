@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@material-ui/core";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@material-ui/core";
 import { useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import MomentUtils from '@date-io/moment';
@@ -7,9 +7,11 @@ import {
     KeyboardTimePicker,
     KeyboardDatePicker,
   } from '@material-ui/pickers';
+import moment from "moment";
   
 const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
-    
+    const theme = useTheme();
+
     const [caName, setCaName] = useState("")
     const [country, setCountry] = useState("")
     const [state, setState] = useState("")
@@ -26,7 +28,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
     
     const disabled = caName == ""
     const issuingPeriodPercentage = (enrollerTtlUnit * enrollerTtlValue) * 100 / (ttlUnit * ttlValue)
-
+    const now = Date.now()
     return (
         <LamassuModal
             title={"Creating new CA"}
@@ -97,17 +99,28 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                                 </Select>
                             </FormControl>
                     </Grid>
-                    <div style={{display: "flex"}}>
-                        <div style={{height:20, minWidth: 560 * (1-(issuingPeriodPercentage/100)), background: "#55C48F", borderBottomLeftRadius: 10, borderTopLeftRadius: 10}}></div>
-                        <div style={{height:20, minWidth: 560 * (issuingPeriodPercentage/100), background: "#FFB1AA", borderBottomRightRadius: 10, borderTopRightRadius: 10}}></div>
-                    </div>
-                    <div style={{display: "flex"}}>
-                        <div style={{height:50, minWidth: 560 * (1-(issuingPeriodPercentage/100))}}>
-                            <div>CA Valid from</div>
-                        </div>
-                        <div style={{height:20, minWidth: 560 * (issuingPeriodPercentage/100)}}>Issuing certs end</div>
-                        <div>CA expires at</div>
-                    </div>
+
+                    <Box style={{marginTop: 20, marginBottom:20}}>
+                        <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
+                            <Typography variant="button" style={{marginRight: 10}}>Certificate will be valid from</Typography>
+                            <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
+                                {moment(new Date(now)).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                            </Typography>
+                        </Box>
+                        <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
+                            <Typography variant="button" style={{marginRight: 10}}>Last issuing cert Date will be</Typography>
+                            <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
+                                {moment(new Date(now + ((ttlUnit*ttlValue-enrollerTtlValue*enrollerTtlUnit)*60*60*1000))).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                            </Typography>                      
+                        </Box>
+                        <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
+                            <Typography variant="button" style={{marginRight: 10}}>Certificate will be valid until</Typography>
+                            <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
+                                {moment(new Date(now + (ttlUnit*ttlValue*60*60*1000))).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                            </Typography>                   
+                         </Box>
+                    </Box>
+                    
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                         <FormControl style={{width: 235}}>

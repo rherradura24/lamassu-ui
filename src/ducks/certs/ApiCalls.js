@@ -54,9 +54,15 @@ export const createCA = async (payload) => {
             body: JSON.stringify(payload.crt)
         })
         const json = await resp.json()
-        return {
-            json: json,
-            status: resp.status
+        if (resp.status != 200) {
+            if (json) {
+                return { error: json.error }
+            }
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
         }
     } catch (er) {
         return { error: "Connection error with API server" }
@@ -74,9 +80,15 @@ export const importCA = async (payload) => {
             body: JSON.stringify(payload.bundle)
         })
         const json = await resp.json()
-        return {
-            json: json,
-            status: resp.status
+        if (resp.status != 200) {
+            if (json) {
+                return { error: json.error }
+            }
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
         }
     } catch (er) {
         console.log(er);
