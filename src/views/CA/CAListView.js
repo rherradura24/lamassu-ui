@@ -8,11 +8,25 @@ import { LamassuModalCertRevocation, LamassuModalPolyphormic } from "components/
 import { useState } from "react";
 import downloadFile from "utils/FileDownloader";
 import CertInspectorSideBar from "views/CertInspectorSideBar";
+import { useHistory } from "react-router-dom";
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 const useStyles = makeStyles((theme) => ({
+    scroll: {
+        '&::-webkit-scrollbar': {
+            width: "5px",
+        },
+        '&::-webkit-scrollbar-track': {
+            boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+            webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: theme.palette.scrollbar,
+            borderRadius: 20,
+        }
+    },
     grid: {
         display: "grid",
         gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
@@ -37,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CAList = ({casData, importCA, createCA, revokeCA}) => {
     const classes = useStyles();
+    let history = useHistory();
 
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
     const [rightSidebarCertId, setRightSidebarCertId] = useState(null)
@@ -61,16 +76,17 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
         setModalInfo({
             open: true,
             type: "certImport",
-            handleSubmit: (caName, bundle)=>{importCA(caName, bundle); resetModal()}
+            handleSubmit: (caName, bundle, ttl)=>{importCA(caName, bundle, ttl); resetModal()}
         })
     }
     
-    const handleCertRevocationClick = (certId) => {
+    const handleCertRevocationClick = (certId, certName) => {
         setModalInfo({
             open: true,
-            type: "certRevoke",
-            handleRevocation: ()=>{revokeCA(certId); resetModal()},
-            certId: certId
+            type: "caRevoke",
+            handleRevocation: ()=>{revokeCA(certName); resetModal()},
+            certId: certId,
+            certName: certName
         })
     }
     
@@ -113,8 +129,9 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                             </Button>
                         </Box>
                     </Box>
+                    
 
-                    <Box style={{display: "flex", flexWrap: "wrap", marginTop: 20}}>
+                    <Box className={classes.scroll} style={{display: "flex", flexWrap: "wrap", marginTop: 20,  height: "calc(100vh - 150px)", overflowY: "auto", scrollbarColor: "#25ee32 #f5f5f5"}}>
                     {
                         casData.map(caData => {
                             return (
@@ -133,8 +150,8 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                                     styles={{margin: 10}}
                                     onDownloadClick={()=>{handleCertDownload(caData.ca_name, caData.crt)}}
                                     onInspectClick={()=>{setRightSidebarCertId(caData.serial_number); handleCertInspect()}}
-                                    onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number)}}
-                                    onListEmmitedClick={()=>{}}
+                                    onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number, caData.ca_name)}}
+                                    onListEmmitedClick={()=>{history.push('/ca/issued-certs?issuer=' + caData.ca_name)}}
                                 /> 
                             )
                         })
@@ -150,7 +167,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                                     certName={selectedCert.ca_name}
                                     certId={rightSidebarCertId}
                                     handleClose={()=>{setRightSidebarOpen(false)}} 
-                                    handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId)}} 
+                                    handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId, selectedCert.ca_name)}} 
                                     handleDownload={()=>{handleCertDownload(selectedCert.ca_name, selectedCert.crt)}} 
                                 />
                             </div>

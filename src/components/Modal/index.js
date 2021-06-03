@@ -1,3 +1,4 @@
+import { LamassuModalCaRevocation } from "./CaRevocation";
 import { LamassuModalCertRevocation } from "./CertRevocation";
 import { LamassuModalCaCreation } from "./CaCreation";
 import { LamassuModalCertImport } from "./CertImport";
@@ -5,6 +6,17 @@ import { LamassuModalDmsCreation } from "./DmsCreation";
 
 const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
     switch (type) {
+      case "caRevoke":
+        return (
+          <LamassuModalCaRevocation 
+            open={open} 
+            handleClose={handleClose} 
+            handleRevocation={props["handleRevocation"]} 
+            certId={props["certId"]}
+            certName={props["certName"]}
+          />
+        )
+      
       case "certRevoke":
         return (
           <LamassuModalCertRevocation 
@@ -12,6 +24,8 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             handleClose={handleClose} 
             handleRevocation={props["handleRevocation"]} 
             certId={props["certId"]}
+            certCommonName={props["certCommonName"]}
+            issuerCaName={props["issuerCaName"]}
           />
         )
       

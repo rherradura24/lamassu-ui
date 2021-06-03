@@ -25,11 +25,22 @@ export const getCA = (caId) => {
     })
 }
 
-export const revokeCA = (payload) => {
-    console.log("REVOKING", payload);
-    return new Promise((resolve, reject) => {
-        resolve(payload)
-    })
+export const revokeCA = async (payload) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        return { error: "Connection error with API server" }
+    }
 }
 
 export const createCA = async (payload) => {
@@ -53,7 +64,6 @@ export const createCA = async (payload) => {
 }
 
 export const importCA = async (payload) => {
-    console.log(payload);
     try {
         const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/import/" + payload.caName, {
             method: "POST",
@@ -74,8 +84,39 @@ export const importCA = async (payload) => {
     }
 }
 
-export const getCerts = () => {
-    return new Promise((resolve, reject) => {
-        resolve(certsList)
-    })
+export const getCerts = async (payload) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/issued" , {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            }
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        console.log(er);
+        return { error: "Connection error with API server" }
+    }
+}
+
+export const revokeCert = async (payload) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName + "/cert/" + payload.serialNumber, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        return { error: "Connection error with API server" }
+    }
 }

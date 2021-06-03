@@ -1,22 +1,18 @@
 import { Typography, useTheme } from "@material-ui/core";
 import { LamassuModal } from "./LamassuModal";
-const LamassuModalCertRevocation = ({issuerCaName, certId, certCommonName, open, handleClose, handleRevocation}) => {
+const LamassuModalCaRevocation = ({certId, certName, open, handleClose, handleRevocation}) => {
     const theme = useTheme();
 
     return (
         <LamassuModal 
-            title={"Revoke Certificate: " }
+            title={"Revoke CA: " + certName}
             warnIcon={true}
-            msg={"You are about to revoke the following certificate:"}
+            msg={"You are about to revoke a CA. By revoing the certificate, you will also revoke al emmited certificates."}
             formContent={
                 (<>
                     <div>
-                        <Typography variant="button">Issuer CA Name: </Typography>
-                        <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{issuerCaName}</Typography>
-                    </div>
-                    <div>
-                        <Typography variant="button">Certificate common name: </Typography>
-                        <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{certCommonName}</Typography>
+                        <Typography variant="button">Certificate Name: </Typography>
+                        <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{certName}</Typography>
                     </div>
                     <div>
                         <Typography variant="button">Certificate ID: </Typography>
@@ -40,4 +36,4 @@ const LamassuModalCertRevocation = ({issuerCaName, certId, certCommonName, open,
     )
 }
 
-export {LamassuModalCertRevocation}
+export {LamassuModalCaRevocation}

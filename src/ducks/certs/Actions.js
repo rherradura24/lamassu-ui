@@ -9,18 +9,10 @@ export const getCA = (caId) => ({
     payload: { caId: caId },
 })  
 
-export const getCerts = () => ({
-    type: t.GET_CERTS,
-})  
 
-export const getCert = (cerId) => ({
-    type: t.GET_CERT,
-    payload: { cerId: cerId },
-})  
-
-export const revokeCert = (cerId) => ({
-    type: t.REVOKE_CERT,
-    payload: { cerId: cerId },
+export const revokeCA = (caName) => ({
+    type: t.REVOKE_CA,
+    payload: { caName: caName },
 })  
 
 export const createCA = (certData) => ({
@@ -41,12 +33,28 @@ export const createCA = (certData) => ({
     },
 })  
 
-export const importCA = (caName, bundle) => ({
+export const importCA = (caName, bundle, ttl) => ({
     type: t.IMPORT_CA,
     payload: { 
         caName: caName,
         bundle:{
-            pem_bundle: bundle 
+            pem_bundle: bundle,
+            ttl: ttl
         }
     },
+})  
+
+export const getCerts = (caName) => ({
+    type: t.GET_CERTS,
+    payload: { caName: caName },
+})  
+
+export const getCert = (cerId) => ({
+    type: t.GET_CERT,
+    payload: { cerId: cerId },
+})  
+
+export const revokeCert = (serialNumber, caName) => ({
+    type: t.REVOKE_CERT,
+    payload: { caName: caName, serialNumber: serialNumber },
 })  

@@ -43,16 +43,13 @@ const CertChecker = () => {
         if (caContent !== "" && certContent !== "") {
             try {
                 var ca = Certificate.fromPEM(caContent)
-                console.log(ca);
                 var crt = Certificate.fromPEM(certContent)
-                console.log(crt);
                 crt.checkSignature(ca)
                 setValidationResult(true)
             } catch (error) {
                 console.log(error);
                 setValidationResult(false)
             }
-            console.log(validationResult);
         }else{
             setValidationResult(null)
         }
@@ -62,7 +59,6 @@ const CertChecker = () => {
         /*Selected files data can be collected here.*/
         var files = e.target.files
         if (files.length > 0) {
-            console.log(files);
             var reader = new FileReader();
             reader.readAsText(files[0], "UTF-8");
             reader.onload = (evt) => {

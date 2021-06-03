@@ -15,13 +15,15 @@ const store = configureStore();
 function App({ }) {
 
   const onKeycloakEvent = async (event, error) => {
-    console.log(event, error);
+    console.log("%c Keycloak Event %c" + " - " + new Date(), "background:#CDF1E3; border-radius:5px;font-weight: bold;", "", event, error);
   }
-
+  
+  
+  
+  
   const onKeycloakTokens = async (tokens) => {
-    console.log("tokens", tokens);
+    console.log("%c Keycloak Tokens %c" + " - " + new Date(), "background:#CDF1E3; border-radius:5px;font-weight: bold;", "", tokens);
   }
-
 
 
   return (
@@ -35,7 +37,6 @@ function App({ }) {
     >
       <Provider store={store}>
         <SnackbarProvider preventDuplicate maxSnack={3}>
-          <NotificationService />
           <Dashboard />
         </SnackbarProvider>
       </Provider>

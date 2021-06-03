@@ -42,7 +42,6 @@ const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, act
             {
                 actions.map(action => {
                     const params = action.primary ? {variant: "contained", autoFocus: true} : {} ;
-                    console.log(action.disabledBtn.disabled)
                     return action.disabledBtn ? (
                         <Button onClick={action.onClick} disabled color="primary" {...params} key={action.title} >
                             {action.title}

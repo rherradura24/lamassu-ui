@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, IconButton, Paper, Tab, Tabs, Tooltip, Typography, useTheme } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, IconButton, makeStyles, Paper, Tab, Tabs, Tooltip, Typography, useTheme } from "@material-ui/core";
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -7,6 +7,8 @@ import DenseTable from "components/DenseTable";
 import {Certificate, PrivateKey, PublicKey} from "@fidm/x509"
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { green, grey, orange, red } from '@material-ui/core/colors';
+import moment from 'moment';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 
 function uncamelize(str, separator) {
   // Assume default separator is a single space.
@@ -31,30 +33,55 @@ function capitalizeFirstLetter(words) {
   return separateWord.join(' ');
 }
 
+const useStyles = makeStyles((theme) => ({
+  scroll: {
+      '&::-webkit-scrollbar': {
+          width: "5px",
+      },
+      '&::-webkit-scrollbar-track': {
+          boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+          webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+      },
+      '&::-webkit-scrollbar-thumb': {
+          backgroundColor: theme.palette.scrollbar,
+          borderRadius: 20,
+      }
+  }
+}))
+
 const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certId, certName, certData, className="" }) => {
   const theme = useTheme();
+  const classes = useStyles();
   const [activeTab, setActiveTab] = useState("0")
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
+  
+  var statusColor;
+  if (certData.status == "issued") {
+    statusColor = green[400]
+  }else if(certData.status == "expired"){
+    statusColor = red[400]
+  }else{
+    statusColor = grey[400]
+  }
+  
   var stengthColor;
-if (certData.key_strength == "high") {
-  stengthColor = green[400]
-}else if(certData.key_strength == "medium"){
-  stengthColor = orange[400]
-}else if(certData.key_strength == "low"){
-  stengthColor = red[400]
-}else{
-  stengthColor = grey[400]
-}
-
-
-  console.log(certId, certData);
+  if (certData.key_strength == "high") {
+    stengthColor = green[400]
+  }else if(certData.key_strength == "medium"){
+    stengthColor = orange[400]
+  }else if(certData.key_strength == "low"){
+    stengthColor = red[400]
+  }else{
+    stengthColor = grey[400]
+  }
+  
+  
   var metadataTable = []
   const certParsed = Certificate.fromPEM(certData.crt)
   
-  console.log(certParsed);
   metadataTable.push({
     label: "Serial Number",
     content: certParsed.serialNumber
@@ -62,7 +89,7 @@ if (certData.key_strength == "high") {
 
   metadataTable.push({
     label: "Status",
-    content: certParsed.status
+    content: <Chip label={certData.status} variant="outlined" size="small" style={{color: statusColor, border: "1px solid " + statusColor}} />
   });
 
   metadataTable.push({
@@ -98,12 +125,12 @@ if (certData.key_strength == "high") {
   var validityTable = []
   validityTable.push({
     label: "Valid From",
-    content: JSON.stringify(certParsed.validFrom)
+    content: <div>{moment(certParsed.validFrom).format("MMMM D YYYY, hh:mm:ss Z").toString()}</div>
   });
-
+  
   validityTable.push({
     label: "Valid To",
-    content: JSON.stringify(certParsed.validTo)
+    content: <div>{moment(certParsed.validTo).format("MMMM D YYYY, hh:mm:ss Z").toString()}</div>
   });
 
   var issuerTable = []
@@ -124,7 +151,7 @@ if (certData.key_strength == "high") {
 
 
   return (
-    <Box component={Paper} elevation={10} className={className} style={{height: "100%", borderRadius: 0}}>
+    <Box component={Paper} elevation={10} className={className} style={{height: "calc(100vh - 50px)", borderRadius: 0}}>
       <div style={{padding:"5px 10px", height: 40, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "space-between"}}>
         <Typography>{`Certificado ${certName}`}</Typography>
         <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
@@ -151,7 +178,7 @@ if (certData.key_strength == "high") {
           <Tab value="1" label="Certificate content"/>
           <Tab value="2" label="Public key"/>
         </TabList >
-        <div style={{overflowY: "auto"}}>
+        <div className={classes.scroll} style={{overflowY: "auto", height: "calc(100% - 100px)"}}>
           <TabPanel value="0" style={{padding: 0}}>
             <DenseTable data={metadataTable} dense={false}/>
             <Box style={{background: theme.palette.certInspector.separator, padding: 10}}>
@@ -169,6 +196,15 @@ if (certData.key_strength == "high") {
           </TabPanel>
           <TabPanel value="1" style={{padding: 0}}>
             <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
+                <IconButton style={{position:"absolute", right: 20}} onClick={()=>{
+                    navigator.clipboard.writeText(certData.crt).then(function() {
+                      console.log('Async: Copying to clipboard was successful!');
+                    }, function(err) {
+                      console.error('Async: Could not copy text: ', err);
+                    });                  
+                  }}>
+                  <AssignmentOutlinedIcon style={{color: "white"}}/>
+                </IconButton>
                 <code style={{color: "white", fontSize: "small"}}>
                   {certData.crt}
                 </code>
@@ -176,10 +212,19 @@ if (certData.key_strength == "high") {
           </TabPanel>
           <TabPanel value="2" style={{padding: 0}}>
             <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
-                <code style={{color: "white", fontSize: "small"}}>
-                  {certData.pub_key}
-                </code>
-              </div>
+              <IconButton style={{position:"absolute", right: 20}} onClick={()=>{
+                  navigator.clipboard.writeText(certData.pub_key).then(function() {
+                    console.log('Async: Copying to clipboard was successful!');
+                  }, function(err) {
+                    console.error('Async: Could not copy text: ', err);
+                  });                  
+                }}>
+                <AssignmentOutlinedIcon style={{color: "white"}}/>
+              </IconButton>
+              <code  style={{color: "white", fontSize: "small"}}>
+                {certData.pub_key}
+              </code>
+            </div>
           </TabPanel>
         </div>
       </TabContext>

@@ -19,10 +19,14 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
     const [cn, setCN] = useState("")
     const [ttlValue, setTtlValue] = useState(365) 
     const [ttlUnit, setTtlUnit] = useState(24)//24 = days | 24*365 = years 
+    const [enrollerTtlValue, setEnrollerTtlValue] = useState(100) 
+    const [enrollerTtlUnit, setEnrollerTtlUnit] = useState(24)//24 = days | 24*365 = years 
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
     
     const disabled = caName == ""
+    const issuingPeriodPercentage = (enrollerTtlUnit * enrollerTtlValue) * 100 / (ttlUnit * ttlValue)
+
     return (
         <LamassuModal
             title={"Creating new CA"}
@@ -43,7 +47,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                             organization: org, 
                             organizationUnit: orgUnit, 
                             commonName: cn, 
-                            ttl: parseInt(ttlValue)*ttlUnit+"h",
+                            ttl: parseInt(ttlValue)*ttlUnit,
                             keyType: keyType,
                             keyBits: parseInt(keyBits)
                         })}
@@ -62,7 +66,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="ttl" label="Time To Live" type="number" style={{width: 235}} value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
                         <FormControl style={{width: 235}}>
-                        <InputLabel id="key-type-label">Time To Units</InputLabel>
+                        <InputLabel id="key-type-label">Time To Live Units</InputLabel>
                                 <Select
                                     labelId="ttl-unit-label"
                                     value={ttlUnit}
@@ -76,6 +80,34 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                                 </Select>
                             </FormControl>
                     </Grid>
+                    <Grid container justify="space-between" alignItems="center">
+                        <TextField margin="dense" id="ttl" label="Issuing Cert Time To Live" type="number" style={{width: 235}} value={enrollerTtlValue} onChange={ev=>{setEnrollerTtlValue(ev.target.value)}}/>
+                        <FormControl style={{width: 235}}>
+                        <InputLabel id="key-type-label">Issuing Cert To Live Units</InputLabel>
+                                <Select
+                                    labelId="ttl-unit-label"
+                                    value={enrollerTtlUnit}
+                                    onChange={ev=>{setEnrollerTtlUnit(ev.target.value)}}
+                                    autoWidth={false}
+                                    fullWidth
+                                >
+                                    <MenuItem value={1}>Hours</MenuItem>
+                                    <MenuItem value={24}>Days</MenuItem>
+                                    <MenuItem value={24*365}>Years</MenuItem>
+                                </Select>
+                            </FormControl>
+                    </Grid>
+                    <div style={{display: "flex"}}>
+                        <div style={{height:20, minWidth: 560 * (1-(issuingPeriodPercentage/100)), background: "#55C48F", borderBottomLeftRadius: 10, borderTopLeftRadius: 10}}></div>
+                        <div style={{height:20, minWidth: 560 * (issuingPeriodPercentage/100), background: "#FFB1AA", borderBottomRightRadius: 10, borderTopRightRadius: 10}}></div>
+                    </div>
+                    <div style={{display: "flex"}}>
+                        <div style={{height:50, minWidth: 560 * (1-(issuingPeriodPercentage/100))}}>
+                            <div>CA Valid from</div>
+                        </div>
+                        <div style={{height:20, minWidth: 560 * (issuingPeriodPercentage/100)}}>Issuing certs end</div>
+                        <div>CA expires at</div>
+                    </div>
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                         <FormControl style={{width: 235}}>

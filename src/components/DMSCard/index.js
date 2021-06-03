@@ -4,6 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import DenseTable from 'components/DenseTable';
+import { LamassuChip } from "components/LamassuChip";
 
 export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
     const theme = useTheme()
@@ -19,11 +20,11 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
 
     var statusColor;
     if (status == "approved") {
-      statusColor = green[400]
+      statusColor = "green"
     }else if(status == "rejected"){
-      statusColor = red[400]
+      statusColor = "rejected"
     }else if(status == "pending"){
-      statusColor = orange[400]
+      statusColor = "orange"
     }
 
     return (
@@ -35,7 +36,7 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
             </Typography>
             </div>
             <div>
-            <Chip label={status} style={{background: statusColor}}/>
+                <LamassuChip status={statusColor} label={status} />
             </div>
         </div>
         <CardContent>
@@ -43,13 +44,12 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
         </CardContent>
         {
             isAdmin && status == "pending" && (
-                
-                    <CardActions disableSpacing>
-                        <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
-                            <Button variant="contained" color="primary" fullWidth style={{marginRight:10}}>Approve</Button>
-                            <Button variant="contained" fullWidth style={{marginLeft:10}}>Decline</Button>
-                        </div>
-                    </CardActions> 
+                <CardActions disableSpacing>
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
+                        <Button variant="contained" color="primary" fullWidth style={{marginRight:10}}>Approve</Button>
+                        <Button variant="contained" fullWidth style={{marginLeft:10}}>Decline</Button>
+                    </div>
+                </CardActions> 
             )
         }
     </Card>    

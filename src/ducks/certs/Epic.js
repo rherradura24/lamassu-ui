@@ -6,6 +6,8 @@ import * as notificationActions from "ducks/notifications/ActionTypes"
 import * as certsApiCalls from "./ApiCalls";
 import { of } from 'rxjs';
 
+// CAs 
+
 const getCasEpic = action$ => action$.pipe(
   ofType(actions.GET_CAS),
   mergeMap(() => makeRequestWithActions(certsApiCalls.getCAs(), actions.GET_CAS)),
@@ -31,26 +33,49 @@ const notifyImportCASuccess = action$ => action$.pipe(
   mapTo({ type: notificationActions.NOTIFY, payload: {msg: "CA successfully imported", type: "success"} })
 );
 
+const notifyRevokeCASuccess = action$ => action$.pipe(
+  ofType(actions.REVOKE_CA_SUCCESS),
+  mapTo({ type: notificationActions.NOTIFY, payload: {msg: "CA successfully revoked", type: "success"} })
+);
+
 const importCA = action$ => action$.pipe(
   ofType(actions.IMPORT_CA),
   mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.importCA(payload), actions.IMPORT_CA)),
 );
 
 const revokeCA = action$ => action$.pipe(
-  ofType(actions.REVOKE_CERT),
-  mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.revokeCA(payload), actions.REVOKE_CERT)),
+  ofType(actions.REVOKE_CA),
+  mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.revokeCA(payload), actions.REVOKE_CA)),
 );
-
-const refreshCAs = action$ => action$.pipe(
-  ofType(actions.REVOKE_CERT_SUCCESS, actions.IMPORT_CA_SUCCESS, actions.CREATE_CA_SUCCESS),
-  mergeMap(() => makeRequestWithActions(certsApiCalls.getCAs(), actions.GET_CAS)),
-);
+// Certs
 
 const getCertsEpic = action$ => action$.pipe(
   ofType(actions.GET_CERTS),
   mergeMap( () => makeRequestWithActions(certsApiCalls.getCerts(), actions.GET_CERTS)),
 );
+  
+const revokeCert = action$ => action$.pipe(
+  ofType(actions.REVOKE_CERT),
+  mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.revokeCert(payload), actions.REVOKE_CERT)),
+);
 
+const notifyRevokeCertSuccess = action$ => action$.pipe(
+  ofType(actions.REVOKE_CERT_SUCCESS),
+  mapTo({ type: notificationActions.NOTIFY, payload: {msg: "Certificate successfully revoked", type: "success"} })
+);
+  
+// Refreshers 
+const refreshCAs = action$ => action$.pipe(
+  ofType(actions.REVOKE_CA_SUCCESS, actions.IMPORT_CA_SUCCESS, actions.CREATE_CA_SUCCESS),
+  mergeMap(() => makeRequestWithActions(certsApiCalls.getCAs(), actions.GET_CAS)),
+);
+
+const refreshCerts = action$ => action$.pipe(
+  ofType(actions.REVOKE_CERT_SUCCESS),
+  mergeMap(() => makeRequestWithActions(certsApiCalls.getCerts(), actions.GET_CERTS)),
+);
+
+/// General ERROR Notify
 const notifyError = (action$, state$) => action$.pipe(
   ofType(actions.IMPORT_CA_ERROR, actions.GET_CA_ERROR, actions.GET_CAS_ERROR, actions.CREATE_CA_ERROR ),
   mergeMap(({ payload, meta })=> {
@@ -59,7 +84,6 @@ const notifyError = (action$, state$) => action$.pipe(
 );
 
 export {
-  getCertsEpic,
   getCasEpic,
   getCaEpic,
   importCA,
@@ -68,5 +92,11 @@ export {
   refreshCAs,
   notifyCreateCASuccess,
   notifyImportCASuccess,
+  notifyRevokeCASuccess,
   notifyError,
+
+  refreshCerts,
+  getCertsEpic,
+  revokeCert,
+  notifyRevokeCertSuccess,
 }

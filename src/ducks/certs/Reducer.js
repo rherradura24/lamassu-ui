@@ -7,7 +7,6 @@ const initialState = {
 } 
 
 const certsReducer = (state = initialState, action) => {
-  console.log(action.type, action.payload,actions.ERORS.includes(action.type));
   if (actions.ERORS.includes(action.type)) {
     return { ...state, error: action.payload }
   } else {
@@ -46,8 +45,12 @@ const getCAs = (state) => {
   return certs.filter(cert=> cert.type == "CA");
 }
 
+const getIssuedCertByCA = (state, caName) => {
+  const certs = getAllCerts(state)
+  return certs.filter(cert=> cert.type == "END_CERT");
+}
+
 const getCertById = (state, id) => {
-  console.log("getCertById", id);
   const certs = getAllCerts(state)
   const result = certs.filter(cert=> cert.serial_number == id);
   return result.length > 0 ? result[0] : null
@@ -58,6 +61,7 @@ export default certsReducer;
 
 export {
   getAllCerts,
+  getIssuedCertByCA,
   getCertById,
   getCAs,
 }

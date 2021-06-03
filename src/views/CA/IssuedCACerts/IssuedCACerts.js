@@ -11,27 +11,10 @@ import { LamassuModalCertRevocation, LamassuModalPolyphormic } from 'components/
 import { useState } from 'react';
 import downloadFile from "utils/FileDownloader";
 import { styled, withStyles } from '@material-ui/core/styles';
+import { LamassuChip } from 'components/LamassuChip';
+import moment from 'moment';
+import { Certificate } from '@fidm/x509';
 
-const OkChip = withStyles({
-    outlinedPrimary:{
-        border:'1px solid ' + green[400],
-        color: green[400]
-    }
-})(Chip)
-
-const WarnChip = withStyles({
-    outlinedPrimary:{
-        border:'1px solid ' + orange[400],
-        color: orange[400]
-    }
-})(Chip)
-
-const ErrChip = withStyles({
-    outlinedPrimary:{
-        border:'1px solid ' + red[400],
-        color: red[400]
-    }
-})(Chip)
 
 const useStyles = makeStyles((theme) => ({
     grid: {
@@ -63,21 +46,29 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const IssuedCACerts = ({certsData}) => {
+const IssuedCACerts = ({certsData, revokeCert}) => {
     const classes = useStyles()
-
+        
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
-    const [rightSidebarCertId, setRightSidebarCertId] = useState(null)
+    const [rightSidebarCert, setRightSidebarCert] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
-    const [modalCerId, setModalCertId] = useState(null)
+    const [modalCert, setModalCert] = useState(null)
 
-    const handleCertRevocationClick = (certId) => {
-        setModalCertId(certId)
+    const handleCertRevocationClick = (certId, cn, issuerCaName) => {
+        setModalCert({certId: certId, certCommonName: cn, issuerCaName: issuerCaName})
         setModalOpen(true)
+    }
+    const handleCertRevocationSubmit = (certId, issuerCaName) => {
+        revokeCert(certId, issuerCaName)
+        setModalOpen(false)
     }
     
     const handleCertInspect = (certId) => {
-        setRightSidebarCertId(certId)
+        const cert = certsData.filter(cert=> cert.serial_number == certId)[0]
+        setRightSidebarCert({
+            certId: certId,
+            cert: cert
+        })
         setRightSidebarOpen(true)
     }
 
@@ -87,42 +78,66 @@ const IssuedCACerts = ({certsData}) => {
 
     const columns = [
         { field: 'id', headerName: 'Serial Number', width: 200 },
-        { field: 'c', headerName: 'Country', width: 120 },
-        { field: 's', headerName: 'State', width: 120 },
-        { field: 'o', headerName: 'Organization', width: 200 },
-        { field: 'ou', headerName: 'Organization Unit', width: 200 },
-        { field: 'cn', headerName: 'Common Name', width: 200 },
+        { field: 'issuer', headerName: 'Issuer', width: 250 },
+        { field: 'common_name', headerName: 'Common Name', width: 200 },
         { 
             field: 'status', 
             headerName: 'Status', 
             width: 100,
             renderCell: (params) => {
                 if (params.value == "expired") {
-                    return <WarnChip size="small" color="primary" variant="outlined" label={"Expired"}/>
+                    return <LamassuChip label={"Expired"} status={"orange"} rounded={false} />
                 } else if (params.value == "revoked"){
-                    return <ErrChip size="small" color="primary" variant="outlined" label={"Revoked"}/>
+                    return <LamassuChip label={"Revoked"} status={"red"} rounded={false} />
                 } else {    // sttatus == issued
-                    return <OkChip size="small" color="primary" variant="outlined" label={"Issued"}/>
+                    return <LamassuChip label={"Issued"} status={"green"} rounded={false} />
                 }
             }
         },
-        { field: 'validFrom', headerName: 'Valid From', type: "dateTime", width: 200 },
-        { field: 'validTo', type: "dateTime", headerName: 'Valid To', width: 200 }
+        { field: 'key_type', headerName: 'Key Type', width: 110 },
+        { field: 'key_bits', headerName: 'Key Bits', width: 110 },
+        { 
+            field: 'key_strength', 
+            headerName: 'Key Strength', 
+            width: 140,
+            renderCell: (params) => {
+                if (params.value == "medium") {
+                    return <LamassuChip label={params.value} status={"orange"} rounded={false} />
+                } else if (params.value == "low"){
+                    return <LamassuChip label={params.value} status={"red"} rounded={false} />
+                } else {    // sttatus == issued
+                    return <LamassuChip label={params.value} status={"green"} rounded={false} />
+                }
+            }
+        },
+        { field: 'valid_from', headerName: 'Valid from', width: 250 },
+        { field: 'valid_to', headerName: 'Valid until', width: 250 },
       ];
+    
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const issuerFilter = urlParams.get('issuer')
 
     const data = certsData.map(certData => {
+        const certParsed = Certificate.fromPEM(certData.crt)
+
         return {
             id: certData.serial_number,
-            c: certData.subject_dn.country,
-            s: certData.subject_dn.state,
-            o: certData.subject_dn.organization	,
-            ou: certData.subject_dn.organization_unit,
-            cn: certData.subject_dn.common_name,
+            issuer: certData.ca_name,
+            common_name: certData.common_name,
             status: certData.status,
-            validFrom: certData.validFrom,
-            validTo: certData.validTo
+            key_type: certData.key_type,
+            key_bits: certData.key_bits,
+            key_strength: certData.key_strength,
+            valid_from: moment(certParsed.validFrom).format("MMMM D YYYY, hh:mm:ss Z").toString(),
+            valid_to: moment(certParsed.validTo).format("MMMM D YYYY, hh:mm:ss Z").toString()
         }
     })
+    const filterModel = {
+        items:[
+            { columnField: 'issuer', operatorValue: 'equals', value: issuerFilter },
+        ]
+    }
     return (
         <Box className={classes.grid}>
             <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content}>
@@ -144,8 +159,10 @@ const IssuedCACerts = ({certsData}) => {
                                 Toolbar: GridToolbar,
                                 NoRowsOverlay: EmptyOverlayGrid
                             }}
+                            {...issuerFilter != null ? {filterModel: filterModel} : {}}
                             rows={data}
                             columns={columns}
+                            pageSize={12}
                             onRowClick={(param, ev)=>{
                                 handleCertInspect(param.id)
                             }}
@@ -159,16 +176,16 @@ const IssuedCACerts = ({certsData}) => {
                         <div>
                             <CertInspectorSideBar 
                                 className={classes.rightSidebar} 
-                                certId={rightSidebarCertId}
+                                certId={rightSidebarCert.certId}
                                 handleClose={()=>{setRightSidebarOpen(false)}} 
-                                handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId)}} 
-                                handleDownload={()=>{handleCertDownload(rightSidebarCertId, certsData.filter(cert=> cert.serial_number == rightSidebarCertId)[0].crt)}} 
+                                handleRevoke={()=>{handleCertRevocationClick(rightSidebarCert.certId,rightSidebarCert.cert.common_name, rightSidebarCert.cert.ca_name)}} 
+                                handleDownload={()=>{handleCertDownload(rightSidebarCert.certId, rightSidebarCert.cert.crt)}} 
                             />
                         </div>
                     </Fade>
                 )
             }
-            <LamassuModalPolyphormic type="certRevoke" open={modalOpen} handleRevocation={()=>{setModalOpen(false)}} handleClose={()=>setModalOpen(false)} certId={modalCerId}/>
+            <LamassuModalPolyphormic type="certRevoke" open={modalOpen} handleRevocation={()=>{handleCertRevocationSubmit(modalCert.certId, modalCert.issuerCaName)}} handleClose={()=>setModalOpen(false)} {...modalCert}/>
         </Box>
     )
 }

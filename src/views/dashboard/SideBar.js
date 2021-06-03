@@ -21,14 +21,20 @@ import { useTranslation } from 'react-i18next'
 
 import "./SideBar.css"
 import { Button, Grid, Paper } from "@material-ui/core";
+import { useLocation } from "react-router";
 
 
 const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
   const { keycloak, initialized } = useKeycloak()
   const { t, i18n } = useTranslation()
 
-  const [ selectedPath , setSelectedPath ] = useState(window.location.pathname);
+  const routerLocation = useLocation();
+  const [ selectedPath , setSelectedPath ] = useState(routerLocation.pathname);
   const [ collapsed , setCollapsed ] = useState(false);
+
+  useEffect(() => {
+    setSelectedPath(routerLocation.pathname)
+  }, [routerLocation.pathname]);
 
   return (
     <Paper style={{borderRadius: 0}}>

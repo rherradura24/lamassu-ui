@@ -4,16 +4,16 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { blue } from '@material-ui/core/colors';
 import { useKeycloak } from '@react-keycloak/web'
 
-import { Badge, Box, Grid, MenuItem, Select, Typography } from "@material-ui/core";
+import {  Box, MenuItem, Select, Typography } from "@material-ui/core";
 import UserAvatar from "./UserAvatar";
 
 import { useTranslation } from 'react-i18next'
 import { useState } from "react";
+import LamassuNotifications from "./LamassuNotifications";
 
 
 const AppBar = ({ className, background, logo }) => {
   const { keycloak, initialized } = useKeycloak()
-  console.log(keycloak);
   const [lang, setLang] = useState("en")
   const { t, i18n } = useTranslation()
 
@@ -33,10 +33,8 @@ const AppBar = ({ className, background, logo }) => {
           <MenuItem value={"en"}>EN</MenuItem>
           <MenuItem value={"eus"}>EUS</MenuItem>
         </Select>
-
-        <Badge badgeContent={4} color="primary" style={{marginRight: 30}}>
-          <NotificationsIcon style={{color: "#F1F2F8"}}/>
-        </Badge>
+        
+        <LamassuNotifications />
 
         <UserAvatar 
           username={keycloak.tokenParsed.email ? keycloak.tokenParsed.email : keycloak.tokenParsed.preferred_username}

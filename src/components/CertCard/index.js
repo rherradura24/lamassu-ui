@@ -12,8 +12,7 @@ import ListIcon from '@material-ui/icons/List';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import {LamassuChip} from "components/LamassuChip"
 
 const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
   const theme = useTheme()
@@ -26,64 +25,39 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
       content: certData[key]
     })
   });
-  
-  var statusColor;
-  if (status == "issued") {
-    statusColor = green[400]
-  }else if(status == "expired"){
-    statusColor = red[400]
-  }else if(status == "revoked"){
-    statusColor = orange[400]
-  }
-
-  const low = (
-    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-      <Typography variant="button">Key Strength: </Typography>
-      <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#FFB1AA" : "#6d504e"}}>
-        <Typography variant="button" style={{color: "red"}}>Low</Typography>
-      </Box>
-    </Box>
-  )
-  const medium = (
-    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-      <Typography variant="button">Key Strength: </Typography>
-      <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#FFE9C4" : "#635d55"}}>
-          <Typography variant="button" style={{color: "orange"}}>Medium</Typography>
-        </Box>
-      </Box>
-  )
-  const high = (
-    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-       <Typography variant="button">Key Strength: </Typography>
-        <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5 , background: theme.palette.type == "light" ? "#D0F9DB" : "#4a6952"}}>
-          <Typography variant="button" style={{color: theme.palette.type === "light" ? "green" : "#25ee32"}}>High</Typography>
-        </Box>
-    </Box>
-  )
-
-  const unknown = (
-    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-       <Typography variant="button">Key Strength: </Typography>
-        <Box style={{marginLeft: 5}}>
-          <Typography variant="button">Unknown</Typography>
-        </Box>
-    </Box>
-  )
 
 
-  var strengthElement
-  if (keyStrength == "low"){
-      strengthElement = low
-  }else if (keyStrength == "medium"){
-    strengthElement = medium
-  }else if (keyStrength == "high"){
-    strengthElement = high  
-  }else{
-    strengthElement = unknown
-  }
 
-  
+  var strengthElement = (strengthString) => {
+    var txt = "Unknown"
+    var color = "unknown"
+    if (strengthString == "low"){
+      txt = "Low"
+      color = "red"
+    }else if (strengthString == "medium"){
+      txt = "Medium"
+      color = "orange"
+    }else if (strengthString == "high"){
+      txt = "High"
+      color = "green"
+    }  
+    return (
+      <LamassuChip label={txt} status={color} rounded={false}/>
+  )}
 
+  var statusElement = (status) => {
+    var txt = "Unknown"
+    var color = "unknown"
+    if (status == "issued"){
+      txt = "Issued"
+      color = "green"
+    }else if (status == "expired"){
+      txt = "Expired"
+      color = "red"
+    }
+    return (
+      <LamassuChip label={txt} status={color}/>
+  )}
 
   return (
     <Card style={{width: 500, borderTop: "3px solid " + theme.palette.primary.main, ...styles}}>
@@ -94,14 +68,17 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
           </Typography>
         </div>
         <div>
-          <Chip label={status} style={{background: statusColor}}/>
+          {statusElement(status)}
         </div>
       </div>
       <CardContent>
         <DenseTable dense={true} data={denseTableData} parseRowTitle={true}/>
       </CardContent>
       <Box style={{padding:20, display: "flex"}}>
-        {strengthElement}
+        <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Typography variant="button">Key Strength: </Typography>
+            {strengthElement(keyStrength)}
+        </Box>
       </Box>
       <CardActions disableSpacing>
         <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>

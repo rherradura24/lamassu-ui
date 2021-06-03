@@ -56,7 +56,6 @@ const DMSList = ({ dmsListData }) => {
 
     }
 
-    console.log(dmsListData);
     return (
         <>
             <Box className={classes.grid}>
