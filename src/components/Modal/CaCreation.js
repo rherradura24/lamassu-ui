@@ -49,7 +49,8 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                             organization: org, 
                             organizationUnit: orgUnit, 
                             commonName: cn, 
-                            ttl: parseInt(ttlValue)*ttlUnit,
+                            caTtl: parseInt(ttlValue)*ttlUnit,
+                            enrollerTtl: parseInt(enrollerTtlValue)*enrollerTtlUnit,
                             keyType: keyType,
                             keyBits: parseInt(keyBits)
                         })}

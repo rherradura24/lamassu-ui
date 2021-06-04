@@ -28,7 +28,8 @@ export const createCA = (certData) => ({
             common_name: certData.commonName,
             key_type: certData.keyType,
             key_bits: certData.keyBits,
-            ttl: certData.ttl,
+            ca_ttl: certData.caTtl,
+            enroller_ttl: certData.enrollerTtl,
         }
     },
 })  
