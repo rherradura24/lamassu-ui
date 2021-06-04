@@ -1,33 +1,15 @@
 version: '3.3'
 
-volumes:
-  postgres_data:
-      driver: local
-      
 services:
-  postgres:
-    image: postgres:12
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  webapp:
+    image: lamassu-front:latest
+    
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      REACT_APP_AUTH_ENDPOINT: https://lamassu.zpd.ikerlan.es:8443/auth
+      REACT_APP_AUTH_REALM: "lamassu"
+      REACT_APP_AUTH_CLIENT_ID: "frontend"
+      REACT_APP_CA_API: "https://localhost:8087"
+      REACT_APP_DMS_API: "http://dlt0.konnekt.ikerlan.es:5000/"
     ports:
-      - 5432:5432
+      - 8000:80
 
-  auth:
-    image: jboss/keycloak:12.0.4
-    environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgres
-      DB_DATABASE: postgres
-      DB_USER: admin
-      DB_PASSWORD: admin
-      DB_SCHEMA: public
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-    ports:
-        - 8080:8080
-    depends_on:
-      - postgres
