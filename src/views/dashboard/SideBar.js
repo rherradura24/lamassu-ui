@@ -15,6 +15,8 @@ import AccountBalanceOutlinedIcon from '@material-ui/icons/AccountBalanceOutline
 import BlockOutlinedIcon from '@material-ui/icons/BlockOutlined';
 import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
 import RouterOutlinedIcon from '@material-ui/icons/RouterOutlined';
+import TimelineOutlinedIcon from '@material-ui/icons/TimelineOutlined';
+import ChatOutlinedIcon from '@material-ui/icons/ChatOutlined';
 
 import { MenuButton, MenuItem, MenuSectionTitle, MenuSeparator }  from "./SidebarMenuItem"
 import { useTranslation } from 'react-i18next'
@@ -117,6 +119,24 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
             collapsed={collapsed}
             onSelect={(link)=>{setSelectedPath(link)}} 
             icon={<BuildOutlinedIcon/>}
+          />
+          <MenuSeparator/>
+          <MenuSectionTitle title="Lamassu infrstructure" collapsed={collapsed}/>
+          <MenuItem 
+            title="Service status" 
+            link="/status" 
+            active={selectedPath}
+            collapsed={collapsed}
+            onSelect={(link)=>{setSelectedPath(link)}} 
+            icon={<TimelineOutlinedIcon/>}
+          />
+          <MenuItem 
+            title="Logs" 
+            link="/logs" 
+            active={selectedPath}
+            collapsed={collapsed}
+            onSelect={(link)=>{setSelectedPath(link)}} 
+            icon={<ChatOutlinedIcon/>}
           />
           <MenuSeparator/>
           <MenuButton title={darkTheme ? t("theme.light") : t("theme.dark")} icon={darkTheme ? <Brightness5OutlinedIcon/> : <Brightness2OutlinedIcon/>} onClick={onTogleDark} collapsed={collapsed}/> 

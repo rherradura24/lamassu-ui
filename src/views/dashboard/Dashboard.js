@@ -21,6 +21,7 @@ import IssuedCACerts from "views/CA/IssuedCACerts";
 import { CertChecker } from "views/Utils/CertChecker";
 import DMSList from "views/DMS";
 import { useKeycloak } from "@react-keycloak/web";
+import ServicesStatus  from "views/SerivcesStatus";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -70,6 +71,7 @@ const Dashboard = ({ }) => {
                       <>
                         <Route path="/ca/issued-certs" render={(props) => <IssuedCACerts />} />
                         <Route exact path="/ca/certs" render={(props) => <CAListView />} /> 
+                        <Route exact path="/status" render={(props) => <ServicesStatus />} /> 
                       </>                     
                   )}
                 </Switch>
