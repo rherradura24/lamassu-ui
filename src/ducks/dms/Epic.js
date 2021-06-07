@@ -10,6 +10,24 @@ const getDmsEpic = action$ => action$.pipe(
     mergeMap(() => makeRequestWithActions(dmsApiCalls.getAllDms(), actions.GET_ALL_DMS)),
 );
 
+const createDmsEpic = action$ => action$.pipe(
+    ofType(actions.CREATE_DMS_REQUEST),
+    mergeMap(({payload}) => makeRequestWithActions(dmsApiCalls.createDms(payload), actions.CREATE_DMS_REQUEST)),
+);
+
+const notifyCreateDmsSuccess = action$ => action$.pipe(
+    ofType(actions.CREATE_DMS_REQUEST_SUCCESS),
+    mapTo({ type: notificationActions.NOTIFY, payload: {msg: "Device manufacturing system request successfully created", type: "success"} })
+);
+
+const refreshDMSs = action$ => action$.pipe(
+    ofType(actions.CREATE_DMS_REQUEST_SUCCESS),
+    mergeMap(() => makeRequestWithActions(dmsApiCalls.getAllDms(), actions.GET_ALL_DMS)),
+);
+
 export {
-    getDmsEpic
+    getDmsEpic,
+    createDmsEpic,
+    refreshDMSs,
+    notifyCreateDmsSuccess
 }

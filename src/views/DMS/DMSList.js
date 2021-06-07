@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const DMSList = ({ dmsListData }) => {
+const DMSList = ({ dmsListData, createDms }) => {
     const classes = useStyles();
     const { keycloak, initialized } = useKeycloak()
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
@@ -48,12 +48,8 @@ const DMSList = ({ dmsListData }) => {
         setModalInfo({
             open: true,
             type: "dmsCreate",
-            handleSubmit: (data)=>{/*createCA(data);*/ resetModal()}
+            handleSubmit: (name, csr)=>{createDms(name, csr); resetModal()}
         })
-    }
-
-    const handleDmsImportClick = () => {
-
     }
 
     return (
@@ -76,13 +72,6 @@ const DMSList = ({ dmsListData }) => {
                             >
                                 Create DMS
                             </Button>
-                            <Button
-                                color="default"
-                                startIcon={<CloudUploadIcon />}
-                                onClick={handleDmsImportClick}
-                            >
-                                Import DMS
-                            </Button>
                         </Box>
                     </Box>
 
@@ -92,9 +81,18 @@ const DMSList = ({ dmsListData }) => {
                             return (
                                 <DMSCard
                                     isAdmin={keycloak.tokenParsed.realm_access.roles.includes("admin")}
-                                    title={dmsData.name} 
+                                    title={dmsData.dms_name} 
                                     status={dmsData.status} 
-                                    dmsData={dmsData.subject_dn}
+                                    dmsData={{
+                                        country: dmsData.country,
+                                        state: dmsData.state,
+                                        locality: dmsData.locality,
+                                        organization: dmsData.organization,
+                                        organization_unit: dmsData.organization_unit,
+                                        common_name: dmsData.common_name,
+                                    }}
+                                    onApproval={}
+                                    onDecline={}
                                     key={dmsData.name} 
                                     styles={{margin: 10}}
                                 /> 

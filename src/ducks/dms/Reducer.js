@@ -3,11 +3,11 @@ import * as actions from "./ActionTypes"
 const dmsReducer = (state = { list: {} }, action) => {
   switch (action.type) {
     case actions.GET_ALL_DMS_SUCCESS:
-      var currentList = state.list
+      var currentList = {}
       action.payload.forEach(dms => {
-        currentList[dms.name] = dms
+        currentList[dms.id] = dms
       });
-      return { list: currentList, ...state };
+      return { ...state, list: currentList };
 
     default:
       return state;

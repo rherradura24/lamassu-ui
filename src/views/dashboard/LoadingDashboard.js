@@ -56,7 +56,7 @@ export const LoadingDashboard = ({onAlive, checkAuthServer = true}) => {
     }, [])
     return (
         <Box style={{height: "100%", width:"100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-            <img src="./lamassu.png"/>
+            <img src={window.PUBLIC_URL + "/lamassu.png" }/>
             <Box style={{marginTop: 20, display: "flex", justifyContent: "center", alignItems: "baseline"}}>
             {
                 isIniting ? (

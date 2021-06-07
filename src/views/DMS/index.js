@@ -11,6 +11,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onMount: ()=>{ dispatch(dmsActions.getAllDMS()) },
+  createDms: (name, csr)=> {dispatch(dmsActions.createDms(name, csr))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(DMSList));

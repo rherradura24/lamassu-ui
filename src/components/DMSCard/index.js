@@ -19,12 +19,13 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
     });
 
     var statusColor;
-    if (status == "approved") {
+    if (status == "APPROVED") {
       statusColor = "green"
-    }else if(status == "rejected"){
-      statusColor = "rejected"
-    }else if(status == "pending"){
+    }else if(status == "REVOKED" || status == "DENIED"){
+      statusColor = "red"
+    }else if(status == "NEW"){
       statusColor = "orange"
+      status = "PENDING"
     }
 
     return (
@@ -43,7 +44,7 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
             <DenseTable dense={true} data={denseTableData}/>
         </CardContent>
         {
-            isAdmin && status == "pending" && (
+            isAdmin && status == "PENDING" && (
                 <CardActions disableSpacing>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
                         <Button variant="contained" color="primary" fullWidth style={{marginRight:10}}>Approve</Button>
