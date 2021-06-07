@@ -12,7 +12,14 @@ export const createDms = (name, csr) => ({
     }
 })
 
-export const updateDmsStatus = (id, csr) => ({
-    type: t.UPDATE_DMS_STATUS,
-})
+export const updateDmsStatus = (id, dms, status) => {
+    dms.status = status
+    return {
+        type: t.UPDATE_DMS_STATUS,
+        payload: {
+            id: id,
+            dms: dms,
+        }
+    }
+}
   

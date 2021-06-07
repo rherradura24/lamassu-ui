@@ -6,7 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import DenseTable from 'components/DenseTable';
 import { LamassuChip } from "components/LamassuChip";
 
-export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
+export const DMSCard = ({ dmsData, title, status, isAdmin, onApproval, onDecline, styles={} }) => {
     const theme = useTheme()
     
     const keys = Object.keys(dmsData)
@@ -47,8 +47,8 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, styles={} }) => {
             isAdmin && status == "PENDING" && (
                 <CardActions disableSpacing>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
-                        <Button variant="contained" color="primary" fullWidth style={{marginRight:10}}>Approve</Button>
-                        <Button variant="contained" fullWidth style={{marginLeft:10}}>Decline</Button>
+                        <Button variant="contained" color="primary" fullWidth style={{marginRight:10}} onClick={onApproval}>Approve</Button>
+                        <Button variant="contained" fullWidth style={{marginLeft:10}} onClick={onDecline}>Decline</Button>
                     </div>
                 </CardActions> 
             )

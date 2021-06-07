@@ -32,10 +32,9 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const DMSList = ({ dmsListData, createDms }) => {
+const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
     const classes = useStyles();
     const { keycloak, initialized } = useKeycloak()
-    const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
     const [modalInfo, setModalInfo] = useState({open: false, type: null})
 
     const resetModal = () =>{
@@ -51,11 +50,29 @@ const DMSList = ({ dmsListData, createDms }) => {
             handleSubmit: (name, csr)=>{createDms(name, csr); resetModal()}
         })
     }
+    const handleDmsApproveClick = (dms) => {
+        setModalInfo({
+            open: true,
+            type: "dmsApproveRequest",
+            dmsName: dms.dms_name, 
+            dmsId: dms.id,
+            handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "APPROVED"); resetModal()}
+        })
+    }
+    const handleDmsDeclineClick = (dms) => {
+        setModalInfo({
+            open: true,
+            type: "dmsDeclineRequest",
+            dmsName: dms.dms_name, 
+            dmsId: dms.id,
+            handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "DENIED"); resetModal()}
+        })
+    }
 
     return (
         <>
             <Box className={classes.grid}>
-                <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content} style={{padding: 20}}>
+                <Box className={classes.content} style={{padding: 20}}>
                     <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                         <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
                             <Link color="inherit" href="/"  >
@@ -91,8 +108,8 @@ const DMSList = ({ dmsListData, createDms }) => {
                                         organization_unit: dmsData.organization_unit,
                                         common_name: dmsData.common_name,
                                     }}
-                                    onApproval={}
-                                    onDecline={}
+                                    onApproval={()=>{handleDmsApproveClick(dmsData)}}
+                                    onDecline={()=>{handleDmsDeclineClick(dmsData)}}
                                     key={dmsData.name} 
                                     styles={{margin: 10}}
                                 /> 

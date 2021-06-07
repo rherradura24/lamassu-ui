@@ -50,3 +50,29 @@ export const createDms = async (payload) => {
         return { error: "Connection error with API server" }
     }
 }
+
+export const updateDmsStatus = async (payload) => {
+    console.log(payload);
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.id, {
+            method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+            body: JSON.stringify(payload.dms)
+        })
+        const json = await resp.json()
+        if (resp.status != 200) {
+            if (json) {
+                return { error: json.error }
+            }
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with API server" }
+    }
+}

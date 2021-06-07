@@ -64,15 +64,19 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             open={open} 
             handleClose={handleClose} 
             handleSubmit={props["handleSubmit"]} 
+            dmsId={props["dmsId"]} 
+            dmsName={props["dmsName"]} 
           />
         )
-    
-      case "dmsDeclineRequest":
-        return (
-          <LamassuModalDmsDecline 
+        
+        case "dmsDeclineRequest":
+          return (
+            <LamassuModalDmsDecline 
             open={open} 
             handleClose={handleClose} 
             handleSubmit={props["handleSubmit"]} 
+            dmsId={props["dmsId"]} 
+            dmsName={props["dmsName"]} 
           />
         )
     
