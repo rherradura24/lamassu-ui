@@ -125,12 +125,12 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   var validityTable = []
   validityTable.push({
     label: "Valid From",
-    content: <div>{moment(certParsed.validFrom).format("MMMM D YYYY, hh:mm:ss Z").toString()}</div>
+    content: <div>{moment(certParsed.validFrom).format("MMMM D YYYY, HH:mm:ss Z").toString()}</div>
   });
   
   validityTable.push({
     label: "Valid To",
-    content: <div>{moment(certParsed.validTo).format("MMMM D YYYY, hh:mm:ss Z").toString()}</div>
+    content: <div>{moment(certParsed.validTo).format("MMMM D YYYY, HH:mm:ss Z").toString()}</div>
   });
 
   var issuerTable = []

@@ -129,7 +129,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                     </Box>
                     
 
-                    <Box className={classes.scroll} style={{display: "flex", flexWrap: "wrap", marginTop: 20,  height: "calc(100vh - 150px)", overflowY: "auto", scrollbarColor: "#25ee32 #f5f5f5"}}>
+                    <Box className={classes.scroll} style={{display: "flex", flexWrap: "wrap", marginTop: 20,  height: "calc(100vh - 150px)", overflowY: "auto"}}>
                     {
                         casData.map(caData => {
                             return (

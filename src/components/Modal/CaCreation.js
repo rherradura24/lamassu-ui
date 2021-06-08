@@ -105,19 +105,19 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                         <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
                             <Typography variant="button" style={{marginRight: 10}}>Certificate will be valid from</Typography>
                             <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
-                                {moment(new Date(now)).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                                {moment(new Date(now)).format("MMMM D YYYY, HH:mm:ss Z").toString()}
                             </Typography>
                         </Box>
                         <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
                             <Typography variant="button" style={{marginRight: 10}}>Last issuing cert Date will be</Typography>
                             <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
-                                {moment(new Date(now + ((ttlUnit*ttlValue-enrollerTtlValue*enrollerTtlUnit)*60*60*1000))).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                                {moment(new Date(now + ((ttlUnit*ttlValue-enrollerTtlValue*enrollerTtlUnit)*60*60*1000))).format("MMMM D YYYY, HH:mm:ss Z").toString()}
                             </Typography>                      
                         </Box>
                         <Box style={{display: "flex", alignItems: "center", marginBottom:5}}>
                             <Typography variant="button" style={{marginRight: 10}}>Certificate will be valid until</Typography>
                             <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: "2px 5px 2px 5px" }}>
-                                {moment(new Date(now + (ttlUnit*ttlValue*60*60*1000))).format("MMMM D YYYY, hh:mm:ss Z").toString()}
+                                {moment(new Date(now + (ttlUnit*ttlValue*60*60*1000))).format("MMMM D YYYY, HH:mm:ss Z").toString()}
                             </Typography>                   
                          </Box>
                     </Box>

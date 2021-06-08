@@ -131,8 +131,8 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
             key_type: certData.key_type,
             key_bits: certData.key_bits,
             key_strength: certData.key_strength,
-            valid_from: moment(certParsed.validFrom).format("MMMM D YYYY, hh:mm:ss Z").toString(),
-            valid_to: moment(certParsed.validTo).format("MMMM D YYYY, hh:mm:ss Z").toString()
+            valid_from: moment(certParsed.validFrom).format("MMMM D YYYY, HH:mm:ss Z").toString(),
+            valid_to: moment(certParsed.validTo).format("MMMM D YYYY, HH:mm:ss Z").toString()
         }
     })
     const filterModel = {

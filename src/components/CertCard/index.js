@@ -76,7 +76,7 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
       </CardContent>
       <Box style={{padding:20, display: "flex"}}>
         <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <Typography variant="button">Key Strength: </Typography>
+          <Typography variant="button" style={{marginRight: 5}}>Key Strength: </Typography>
             {strengthElement(keyStrength)}
         </Box>
       </Box>

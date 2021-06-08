@@ -36,11 +36,11 @@ const LamassuChip = ({ status, label, rounded=true, size="medium" }) => {
     return(
         
         rounded ? (
-            <Box style={{marginLeft: 5, padding: "0px 20px 0px 20px", borderRadius: 20 , height: 25, background: color.bg, display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Box style={{padding: "0px 20px 0px 20px", borderRadius: 20 , height: 25, background: color.bg, display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Typography variant="button" style={{color: color.txt, fontSize: 12}}>{label}</Typography>
             </Box>
         ) : (
-            <Box style={{marginLeft: 5, padding: "0px 5px 0px 5px", borderRadius: 5, height: 25, background: color.bg, display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Box style={{padding: "0px 5px 0px 5px", borderRadius: 5, height: 25, background: color.bg, display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Typography variant="button" style={{color: color.txt, fontSize: 12}}>{label}</Typography>
             </Box>
         )
