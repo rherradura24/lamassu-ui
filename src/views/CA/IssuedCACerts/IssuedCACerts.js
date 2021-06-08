@@ -14,6 +14,7 @@ import { styled, withStyles } from '@material-ui/core/styles';
 import { LamassuChip } from 'components/LamassuChip';
 import moment from 'moment';
 import { Certificate } from '@fidm/x509';
+import { useHistory } from 'react-router';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
 
 const IssuedCACerts = ({certsData, revokeCert}) => {
     const classes = useStyles()
-        
+    let history = useHistory();
+
     const [rightSidebarOpen, setRightSidebarOpen] = useState(false)
     const [rightSidebarCert, setRightSidebarCert] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
@@ -143,12 +145,8 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
             <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content}>
                 <Box style={{padding: 20}}>
                     <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-                        <Link color="inherit" href="/" >
-                            Home
-                        </Link>
-                        <Link color="inherit" href="/ca/certs" >
-                            CAs
-                        </Link>
+                        <Typography onClick={()=>{history.push("/")}} style={{cursor: "pointer"}}> Home </Typography>  
+                        <Typography onClick={()=>{history.push("/ca/certs")}} style={{cursor: "pointer"}}> CAs </Typography>  
                         <Typography color="textPrimary">Certificates issued by CAs</Typography>
                     </Breadcrumbs>
                     <Box component={Paper} style={{height: "100%", marginTop: 20}}>

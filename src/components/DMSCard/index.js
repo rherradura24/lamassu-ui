@@ -1,12 +1,14 @@
-import { Button, Chip, Typography, useTheme } from "@material-ui/core"
+import { Button, Chip, IconButton, Tooltip, Typography, useTheme } from "@material-ui/core"
 import { blue, green, orange, red } from "@material-ui/core/colors"
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import DenseTable from 'components/DenseTable';
 import { LamassuChip } from "components/LamassuChip";
+import GetAppIcon from '@material-ui/icons/GetApp';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-export const DMSCard = ({ dmsData, title, status, isAdmin, onApproval, onDecline, styles={} }) => {
+export const DMSCard = ({ dmsData, title, status, isAdmin, onApproval, onDecline, styles={}, onDownloadClick, onRevokeClick }) => {
     const theme = useTheme()
     
     const keys = Object.keys(dmsData)
@@ -49,6 +51,27 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, onApproval, onDecline
                     <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
                         <Button variant="contained" color="primary" fullWidth style={{marginRight:10}} onClick={onApproval}>Approve</Button>
                         <Button variant="contained" fullWidth style={{marginLeft:10}} onClick={onDecline}>Decline</Button>
+                    </div>
+                </CardActions> 
+            )
+        }{
+            isAdmin && status == "APPROVED" && (
+                <CardActions disableSpacing>
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
+                        <div>
+                            <Tooltip title="Download DMS cert">
+                                <IconButton onClick={onDownloadClick}>
+                                    <GetAppIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </div>
+                        <div>
+                            <Tooltip title="Revoke DMS">
+                                <IconButton onClick={onRevokeClick}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </div>
                     </div>
                 </CardActions> 
             )

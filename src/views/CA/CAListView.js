@@ -106,9 +106,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                 <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content} style={{padding: 20}}>
                     <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                         <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-                            <Link color="inherit" href="/" >
-                                Home
-                            </Link>
+                            <Typography onClick={()=>{history.push("/")}} style={{cursor: "pointer"}}> Home </Typography>  
                             <Typography color="textPrimary">CAs</Typography>
                         </Breadcrumbs>
                         <Box>

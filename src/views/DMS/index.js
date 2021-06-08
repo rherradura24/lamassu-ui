@@ -6,13 +6,17 @@ import * as dmsSelector from 'ducks/dms/Reducer';
 import DMSList from './DMSList';
 
 const mapStateToProps = (state) => ({
-  dmsListData : dmsSelector.getAllDMS(state)
+  dmsListData : dmsSelector.getAllDMS(state),
+  dmsPrivKeyResponse: dmsSelector.getLastPrivKeyResponse(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
   onMount: ()=>{ dispatch(dmsActions.getAllDMS()) },
-  createDms: (name, csr)=> {dispatch(dmsActions.createDms(name, csr))},
-  updateDmsStatus: (id, dms, status)=>{dispatch(dmsActions.updateDmsStatus(id, dms, status))}
+
+  createDmsViaCsr: (name, csr)=> {dispatch(dmsActions.createDmsViaCsr(name, csr))},
+  createDmsViaForm: (name, csrForm)=> {dispatch(dmsActions.createDmsViaForm(name, csrForm))},
+  updateDmsStatus: (id, dms, status)=>{dispatch(dmsActions.updateDmsStatus(id, dms, status))},
+  deletePrivKeyStorage: ()=> {dispatch(dmsActions.deletePrivKeyStorage())}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(DMSList));

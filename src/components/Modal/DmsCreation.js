@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
   
-const LamassuModalDmsCreation = ({open, handleClose, handleSubmit}) => {
+const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handleSubmitViaCsr}) => {
     const inputFileRef = useRef(null);
 
     const [isCsr, setIsCsr] = useState(false)
@@ -46,7 +46,22 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmit}) => {
                     {
                         title: "Create DMS",
                         primary: true,
-                        onClick: ()=>{handleSubmit(dmsName, csr)}
+                        onClick: ()=>{
+                            if(isCsr){
+                                handleSubmitViaCsr(dmsName, csr)
+                            }else{
+                                handleSubmitViaForm(dmsName, {
+                                    keyBits: keyBits,
+                                    keyType: keyType,
+                                    country: country,
+                                    state: state,
+                                    locality: city,
+                                    organization: org,
+                                    organizationUnit: orgUnit,
+                                    commonName: cn,
+                                })
+                            }
+                        }
                     }
                 ]
             }

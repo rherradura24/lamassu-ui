@@ -3,11 +3,12 @@ import { DMSCard } from "components/DMSCard"
 import Link from '@material-ui/core/Link';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { LamassuModalPolyphormic } from "components/Modal";
+import downloadFile from "utils/FileDownloader";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     grid: {
@@ -32,7 +33,9 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
+const DMSList = ({ dmsListData, dmsPrivKeyResponse, createDmsViaCsr, createDmsViaForm, updateDmsStatus, }) => {
+    let history = useHistory();
+
     const classes = useStyles();
     const { keycloak, initialized } = useKeycloak()
     const [modalInfo, setModalInfo] = useState({open: false, type: null})
@@ -47,7 +50,8 @@ const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
         setModalInfo({
             open: true,
             type: "dmsCreate",
-            handleSubmit: (name, csr)=>{createDms(name, csr); resetModal()}
+            handleSubmitViaCsr: (name, csr)=>{createDmsViaCsr(name, csr); resetModal()},
+            handleSubmitViaForm: (name, csrForm)=>{createDmsViaForm(name, csrForm); resetModal()}
         })
     }
     const handleDmsApproveClick = (dms) => {
@@ -68,6 +72,31 @@ const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
             handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "DENIED"); resetModal()}
         })
     }
+    const handleDmsRevokeClick = (dms) => {
+        setModalInfo({
+            open: true,
+            type: "dmsRevokeRequest",
+            dmsName: dms.dms_name, 
+            dmsId: dms.id,
+            handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "REVOKED"); resetModal()}
+        })
+    }
+    const handleDmsDownloadClick = (dms) => {
+        downloadFile("DMS-"+dms.dms_name+".crt", dms.crt)
+    }
+
+    useEffect(()=>{
+        if(dmsPrivKeyResponse != null){
+            setModalInfo({
+                open: true,
+                type: "dmsPrivKeyResponse",
+                dmsName: dmsPrivKeyResponse.dms_name, 
+                dmsId: dmsPrivKeyResponse.dms_id,
+                privKey: dmsPrivKeyResponse.key,
+                handleSubmit: ()=>{resetModal()}
+            })
+        }
+    }, [dmsPrivKeyResponse])
 
     return (
         <>
@@ -75,9 +104,7 @@ const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
                 <Box className={classes.content} style={{padding: 20}}>
                     <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                         <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-                            <Link color="inherit" href="/"  >
-                                Home
-                            </Link>
+                            <Typography onClick={()=>{history.push("/")}} style={{cursor: "pointer"}}> Home </Typography>  
                             <Typography color="textPrimary">DMSs</Typography>
                         </Breadcrumbs>
                         <Box>
@@ -110,6 +137,8 @@ const DMSList = ({ dmsListData, createDms, updateDmsStatus }) => {
                                     }}
                                     onApproval={()=>{handleDmsApproveClick(dmsData)}}
                                     onDecline={()=>{handleDmsDeclineClick(dmsData)}}
+                                    onDownloadClick={()=>{handleDmsDownloadClick(dmsData)}}
+                                    onRevokeClick={()=>handleDmsRevokeClick(dmsData)}
                                     key={dmsData.name} 
                                     styles={{margin: 10}}
                                 /> 

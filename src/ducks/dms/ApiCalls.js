@@ -14,8 +14,12 @@ export const getAllDms = async () => {
                 return { error: json.error }
             }
         }else{
+            var jsonData = json._embedded.csr
+            if (!Array.isArray(jsonData)){
+                jsonData = [json._embedded.csr]
+            }
             return {
-                json: json._embedded.csr,
+                json: jsonData,
                 status: resp.status
             }
         }
@@ -25,7 +29,7 @@ export const getAllDms = async () => {
 }
 
 
-export const createDms = async (payload) => {
+export const createDmsViaCsr = async (payload) => {
     try {
         const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.dmsName, {
             method: "POST",
@@ -34,6 +38,32 @@ export const createDms = async (payload) => {
                 "Authorization": "Bearer " + keycloak.token,
             },
             body: payload.csr
+        })
+        const json = await resp.json()
+        if (resp.status != 200) {
+            if (json) {
+                return { error: json.error }
+            }
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with API server" }
+    }
+}
+
+export const createDmsViaForm = async (payload) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.dmsName + "/form", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + keycloak.token,
+            },
+            body: JSON.stringify(payload.csrForm)
         })
         const json = await resp.json()
         if (resp.status != 200) {
@@ -69,6 +99,29 @@ export const updateDmsStatus = async (payload) => {
         }else{
             return {
                 json: json,
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with API server" }
+    }
+}
+
+export const getDmsCert = async (payload) => {
+    console.log(payload);
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.id + "/crt", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const text = await resp.text()
+        if (resp.status != 200) {
+            return { error: text}
+        }else{
+            return {
+                json: text,
                 status: resp.status
             }
         }

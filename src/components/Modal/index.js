@@ -5,6 +5,9 @@ import { LamassuModalCertImport } from "./CertImport";
 import { LamassuModalDmsCreation } from "./DmsCreation";
 import { LamassuModalDmsApproval } from "./DmsApproval";
 import { LamassuModalDmsDecline } from "./DmsDecline";
+import { LamassuModalDmsRevoke } from "./DmsRevoke";
+import { LamassuModalDmsCreationPrivKeyResponse } from "./DmsCreationPrivKeyResponse";
+import { LamassuModalDeviceCreation } from "./DeviceCreation";
 
 const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
     switch (type) {
@@ -54,7 +57,8 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
           <LamassuModalDmsCreation 
             open={open} 
             handleClose={handleClose} 
-            handleSubmit={props["handleSubmit"]} 
+            handleSubmitViaCsr={props["handleSubmitViaCsr"]} 
+            handleSubmitViaForm={props["handleSubmitViaForm"]}
           />
         )
     
@@ -77,6 +81,38 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             handleSubmit={props["handleSubmit"]} 
             dmsId={props["dmsId"]} 
             dmsName={props["dmsName"]} 
+          />
+        )
+
+        case "dmsRevokeRequest":
+          return (
+            <LamassuModalDmsRevoke 
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            dmsId={props["dmsId"]} 
+            dmsName={props["dmsName"]} 
+          />
+        )
+
+        case "dmsPrivKeyResponse":
+          return (
+            <LamassuModalDmsCreationPrivKeyResponse 
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            dmsId={props["dmsId"]} 
+            dmsName={props["dmsName"]} 
+            privKey={props["privKey"]} 
+          />
+        )
+
+        case "deviceCreate":
+          return (
+            <LamassuModalDeviceCreation
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
           />
         )
     

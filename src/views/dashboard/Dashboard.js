@@ -22,6 +22,8 @@ import { CertChecker } from "views/Utils/CertChecker";
 import DMSList from "views/DMS";
 import { useKeycloak } from "@react-keycloak/web";
 import ServicesStatus  from "views/SerivcesStatus";
+import { DeviceList } from "views/Devices/DeviceList";
+import { DeviceInspect } from "views/Devices/DeviceInspect";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -65,6 +67,8 @@ const Dashboard = ({ }) => {
                 <Switch>
                   <Route exact path="/" render={(props) => <Home />} />
                   <Route exact path="/dms/list" render={(props) => <DMSList />} />
+                  <Route exact path="/dms/devices" render={(props) => <DeviceList />} />
+                  <Route path="/dms/devices/" render={(props) => <DeviceInspect />} />
                   <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
                   {
                     keycloak.tokenParsed.realm_access.roles.includes("admin") && (
