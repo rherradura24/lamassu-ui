@@ -11,7 +11,6 @@ COPY ./public public
 COPY ./src src
 COPY ./jsconfig.json jsconfig.json
 #Necesary to resolve JS absolute import paths during NPM BUILD
-ENV NODE_PATH=src/ 
 
 RUN npm run build
 

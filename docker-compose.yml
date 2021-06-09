@@ -2,14 +2,14 @@ version: '3.3'
 
 services:
   webapp:
-    image: lamassu-front:latest
-    
+    build:
+      context: ./
     environment:
       REACT_APP_AUTH_ENDPOINT: https://lamassu.zpd.ikerlan.es:8443/auth
       REACT_APP_AUTH_REALM: "lamassu"
       REACT_APP_AUTH_CLIENT_ID: "frontend"
-      REACT_APP_CA_API: "https://localhost:8087"
-      REACT_APP_DMS_API: "http://dlt0.konnekt.ikerlan.es:5000/"
+      REACT_APP_CA_API: "https://lamassu.zpd.ikerlan.es:8087"
+      REACT_APP_DMS_API: "https://lamassu.zpd.ikerlan.es:8085"
     ports:
-      - 8000:80
+      - 80:80
 
