@@ -76,11 +76,26 @@ const Home = () =>{
             minorTickLength: 0,
             tickLength: 0  
         },
+        tooltip:{
+            useHTML: true,
+            formatter: function (tooltip){
+                console.log(this.point, tooltip);
+                return (
+                    <div>
+                        <div>Issued</div>
+                        <div>
+                            {JSON.stringify(this.y)}
+                        </div>
+                    </div>
+                )
+            }
+
+        },
         plotOptions:{
             areaspline: {
                 marker:{
                     enabled: false
-                }
+                },
             }
         },
         series: [{
@@ -208,7 +223,7 @@ const Home = () =>{
 
             <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
                 <Box style={{position: "relative", left: 15, top: 15}}>
-                    <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Issued Certifcates</Typography>
+                    <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Issued Certificates</Typography>
                 </Box>
                 <HighchartsReact
                     highcharts={Highcharts}
