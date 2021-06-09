@@ -5,20 +5,24 @@ import React from 'react'
 import { render } from 'react-dom'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import moment from "moment";
 
 const Home = () =>{
     const theme = useTheme()
 
-    const main = theme.palette.type == "light" ? "#3F66FE" : "#23252B"
-    const mainSecondary = theme.palette.type == "light" ? "#5878FF" : "#414248"
-    const oneDay = theme.palette.type == "light" ? "#2441B1" : "#18191D"
-    const sevenDays = theme.palette.type == "light" ? "#4198D6" : "#323538"
-    const thirtyDays = theme.palette.type == "light" ? "#4C98AF" : "#273133"
+    const main = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
+    const mainText = theme.palette.type === "light" ? "white" : "#25ee32"
+    const mainSecondary = theme.palette.type === "light" ? "#5878FF" : "#414248"
+    const oneDay = theme.palette.type === "light" ? "#2441B1" : "#18191D"
+    const sevenDays = theme.palette.type === "light" ? "#4198D6" : "#323538"
+    const thirtyDays = theme.palette.type === "light" ? "#4C98AF" : "#273133"
 
-    const plotTitle = theme.palette.type == "light" ? "#5878FF" : "white"
-    const plotLine = theme.palette.type == "light" ? "#3F66FE" : "#25ee32"
-    const plotLineDeg0 = theme.palette.type == "light" ? "#2441B1" : "#305c33"
-    const plotLineDeg1 = theme.palette.type == "light" ? "#dedede" : "#273133"
+    const plotTitle = theme.palette.type === "light" ? "#5878FF" : "white"
+    const plotLine = theme.palette.type === "light" ? "#3F66FE" : "#25ee32"
+    const plotLineDeg0 = theme.palette.type === "light" ? "#2441B1" : "#305c33"
+    const plotLineDeg1 = theme.palette.type === "light" ? "#dedede" : "#273133"
+    const plotToolipBg = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
+    const plotToolipText = theme.palette.type === "light" ? "#dedede" : "#dedede"
 
 
     const oneDayCerts =  8
@@ -31,8 +35,9 @@ const Home = () =>{
 
 
     var data = []
-    for (let i = 0; i < 25 ; i++) {
-        data.push(Math.floor(Math.random() * 2000) + 2100)
+    const chartLength = 25
+    for (let i = 0; i < chartLength ; i++) {
+        data.push([ moment().subtract(chartLength - 1 - i, "days").valueOf()  , Math.floor(Math.random() * 2000) + 2100])
     } 
 
     console.log(data);
@@ -45,7 +50,7 @@ const Home = () =>{
             margin: -5
         },
         credits:{
-            enabled: false
+            enabled: false 
         },
         title: {
           text: ''
@@ -78,16 +83,20 @@ const Home = () =>{
         },
         tooltip:{
             useHTML: true,
-            formatter: function (tooltip){
-                console.log(this.point, tooltip);
-                return (
-                    <div>
-                        <div>Issued</div>
-                        <div>
-                            {JSON.stringify(this.y)}
+            borderColor: "transparent",
+            backgroundColor:  plotToolipBg,
+            borderRadius: 7,
+            formatter: function (){
+                return`
+                    <div style="width: 85px; display: flex; flex-direction: column; align-items: center; justify-content:center; color: `+plotToolipText+` ;font-weight: bold; font-size: 16px; font-family: "Roboto", "Helvetica", "Arial", sans-serif; letter-spacing: 0em;">
+                        <div style="margin-bottom: 5px"> 
+                            `+this.y+`    
+                        </div>
+                        <div style="font-size: 11px; font-weight: 300;">
+                            `+moment(this.x).format("DD/MM/YYYY")+`   
                         </div>
                     </div>
-                )
+                `
             }
 
         },
@@ -130,7 +139,7 @@ const Home = () =>{
                         </Box>
                     </Box>
                     <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                        <Typography variant="h3" style={{color: "white", fontWeight: "bold"}}>{issuedCerts}</Typography>
+                        <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{issuedCerts}</Typography>
                         <Typography variant="h5" style={{color: "white", fontSize: 15}}>Issued Certificates</Typography>
                     </Box>
                 </Box>
