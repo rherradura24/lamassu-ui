@@ -139,36 +139,6 @@ const DeviceInspect = () => {
             msg_title: "Device Provisioned",
             msg_content: "The device has been provisioned with a newly created certificate with serial number 2a8e2e421b8a6ceca4bf25e3035bf6b1f4661e98"
         },
-        {
-            ts: 1623153600000,
-            type: "PRIV_KEY_REGENERATION",
-            msg_title: "Private key recreated",
-            msg_content: "The device has changed its private key. New certs must be manually obtained"
-        },
-        {
-            ts: 1623152100000,
-            type: "CERT_EXPIRED",
-            msg_title: "Certificate Expired",
-            msg_content: "The certificate with serial number 05cb285e3fff40a92e112bb86da7cf1b43cf1e8a has expired. New certs must be manually obtained"
-        },
-        {
-            ts: 1623148500000,
-            type: "DEVICE_PROVISIONED",
-            msg_title: "Device Provisioned",
-            msg_content: "The device has been provisioned with a newly created certificate with serial number 05cb285e3fff40a92e112bb86da7cf1b43cf1e8a"
-        },
-        {
-            ts: 1623148200000,
-            type: "CERT_REVOKED",
-            msg_title: "Certificate revocation",
-            msg_content: "The existing certificate with serial number 2a8e2e421b8a6ceca4bf25e3035bf6b1f4661e98 has been revoked"
-        },
-        {
-            ts: 1623147000000,
-            type: "DEVICE_PROVISIONED",
-            msg_title: "Device Provisioned",
-            msg_content: "The device has been provisioned with a newly created certificate with serial number 2a8e2e421b8a6ceca4bf25e3035bf6b1f4661e98"
-        },
     ]
 
     return(
@@ -187,11 +157,11 @@ const DeviceInspect = () => {
                     <Box component={Paper} style={{marginTop: 20, padding: 20, display: "flex", justifyContent: "space-between"}}>
                         <Box>
                             <Box style={{display: "flex", marginBottom: 5}}>
-                                <Typography variant="button" style={{minWidth: 150}}>Davice Alias</Typography>
+                                <Typography variant="button" style={{minWidth: 150}}>Device Alias</Typography>
                                 <Typography>Smart Sensor</Typography>
                             </Box>
                             <Box style={{display: "flex", marginBottom: 5}}>
-                                <Typography variant="button" style={{minWidth: 150}}>Davice UUID</Typography>
+                                <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
                                 <Typography>8501a-7510-e5ea1-63021</Typography>
                             </Box>
                             <Box style={{display: "flex", marginBottom: 5}}>

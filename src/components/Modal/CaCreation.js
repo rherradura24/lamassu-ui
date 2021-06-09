@@ -69,19 +69,19 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="ttl" label="Time To Live" type="number" style={{width: 235}} value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
                         <FormControl style={{width: 235}}>
-                        <InputLabel id="key-type-label">Time To Live Units</InputLabel>
-                                <Select
-                                    labelId="ttl-unit-label"
-                                    value={ttlUnit}
-                                    onChange={ev=>{setTtlUnit(ev.target.value)}}
-                                    autoWidth={false}
-                                    fullWidth
-                                >
-                                    <MenuItem value={1}>Hours</MenuItem>
-                                    <MenuItem value={24}>Days</MenuItem>
-                                    <MenuItem value={24*365}>Years</MenuItem>
-                                </Select>
-                            </FormControl>
+                            <InputLabel id="key-type-label">Time To Live Units</InputLabel>
+                            <Select
+                                labelId="ttl-unit-label"
+                                value={ttlUnit}
+                                onChange={ev=>{setTtlUnit(ev.target.value)}}
+                                autoWidth={false}
+                                fullWidth
+                            >
+                                <MenuItem value={1}>Hours</MenuItem>
+                                <MenuItem value={24}>Days</MenuItem>
+                                <MenuItem value={24*365}>Years</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="ttl" label="Issuing Cert Time To Live" type="number" style={{width: 235}} value={enrollerTtlValue} onChange={ev=>{setEnrollerTtlValue(ev.target.value)}}/>
@@ -124,6 +124,23 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     
                     <Grid container justify="space-between" alignItems="center">
                         <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
+                        <FormControl style={{width: 235}}>
+                            <InputLabel id="key-type-label">Time To Live Units</InputLabel>
+                            <Select
+                                labelId="ttl-unit-label"
+                                value={keyBits}
+                                onChange={ev=>{setKeyBits(ev.target.value)}}
+                                autoWidth={false}
+                                fullWidth
+                            >
+                                <MenuItem value={1024}>1024 (low)</MenuItem>
+                                <MenuItem value={2048}>2048 (medium)</MenuItem>
+                                <MenuItem value={3072}>3072 (high)</MenuItem>
+                                <MenuItem value={4096}>4096 (high)</MenuItem>
+                            </Select>
+                        </FormControl>
+
+
                         <FormControl style={{width: 235}}>
                             <InputLabel id="key-type-label">Key Type</InputLabel>
                             <Select

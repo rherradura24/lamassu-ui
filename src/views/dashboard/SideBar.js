@@ -103,7 +103,7 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
             icon={<RouterOutlinedIcon/>}
           />
           <MenuItem 
-            title={"Certifiactes issued by DMS"} 
+            title={"Certificates issued by DMS"} 
             link="/dms/issued-cert" 
             active={selectedPath}
             collapsed={collapsed}

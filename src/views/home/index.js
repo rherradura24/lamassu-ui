@@ -116,14 +116,14 @@ const Home = () =>{
                     </Box>
                     <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                         <Typography variant="h3" style={{color: "white", fontWeight: "bold"}}>{issuedCerts}</Typography>
-                        <Typography variant="h5" style={{color: "white", fontSize: 15}}>Issued Certifcates</Typography>
+                        <Typography variant="h5" style={{color: "white", fontSize: 15}}>Issued Certificates</Typography>
                     </Box>
                 </Box>
                 <Box style={{marginTop:50, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                     <Box component={Paper} style={{background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                         <Box>
                             <Typography variant="h3" style={{color: "white", fontSize: 25}}>{cas}</Typography>
-                            <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Certifcate Authorities</Typography>
+                            <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Certificate Authorities</Typography>
                         </Box>
                         <Box>
                             <Box style={{background: "white", borderRadius: 50, width: 30, height: 30, display: "flex", justifyContent: "center", alignItems: "center"}}>
@@ -168,7 +168,7 @@ const Home = () =>{
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Typography variant="h3" style={{color: "white", fontWeight: "bold"}}>{oneDayCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certifcates will expire in 1 day</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 1 day</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -184,7 +184,7 @@ const Home = () =>{
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Typography variant="h3" style={{color: "white", fontWeight: "bold"}}>{sevenDaysCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certifcates will expire in 7 days</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 7 days</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -200,7 +200,7 @@ const Home = () =>{
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Typography variant="h3" style={{color: "white", fontWeight: "bold"}}>{thirtyDaysCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certifcates will expire in 30 days</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 30 days</Typography>
                         </Box>
                     </Box>
                 </Box>
