@@ -6,6 +6,7 @@ import { combineReducers, compose } from 'redux';
 
 import { certsReducer, certsEpic } from 'ducks/certs';
 import { dmsReducer, dmsEpic } from 'ducks/dms';
+import { devicesReducer, devicesEpic } from 'ducks/devices';
 import { consulReducer, consulEpic } from 'ducks/consulServices';
 import { notificationsReducer } from "ducks/notifications"
 
@@ -13,6 +14,7 @@ const epics = [
   ...Object.values(certsEpic),
   ...Object.values(dmsEpic),
   ...Object.values(consulEpic),
+  ...Object.values(devicesEpic),
 ];
 
 const rootEpic = combineEpics(...epics);
@@ -21,6 +23,7 @@ const rootReducer = combineReducers({
   certs: certsReducer,
   dms: dmsReducer,
   consul: consulReducer,
+  devices: devicesReducer,
   notifications: notificationsReducer
 });
 

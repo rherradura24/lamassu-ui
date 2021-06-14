@@ -6,9 +6,11 @@ import { render } from 'react-dom'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import moment from "moment";
+import { useHistory } from "react-router-dom";
 
 const Home = () =>{
     const theme = useTheme()
+    let history = useHistory();
 
     const main = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
     const mainText = theme.palette.type === "light" ? "white" : "#25ee32"
@@ -39,8 +41,6 @@ const Home = () =>{
     for (let i = 0; i < chartLength ; i++) {
         data.push([ moment().subtract(chartLength - 1 - i, "days").valueOf()  , Math.floor(Math.random() * 2000) + 2100])
     } 
-
-    console.log(data);
 
     const options = {
         chart:{
@@ -124,27 +124,33 @@ const Home = () =>{
             ]
         }
         }]
-      }
+    }
 
     return (
         <Box style={{padding: 20, display: "flex"}}>           
             
             <Box component={Paper} style={{borderRadius:10, padding: 20, width: 300, height:550, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
-                background: main
-            }}>
+                background: main, cursor: "pointer"
+            }}
+            onClick={()=>history.push("/ca/issued-certs")}
+            >
                 <Box>
                     <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                         <Box style={{background: "white", borderRadius: 50, width:50, height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
                             <ListAltOutlinedIcon style={{fontSize: 30, color: main}}/>
                         </Box>
                     </Box>
-                    <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+                    <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}} >
                         <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{issuedCerts}</Typography>
                         <Typography variant="h5" style={{color: "white", fontSize: 15}}>Issued Certificates</Typography>
                     </Box>
                 </Box>
                 <Box style={{marginTop:50, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                    <Box component={Paper} style={{background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <Box component={Paper} style={{background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center",
+                        cursor: "pointer"
+                    }}
+                    onClick={(ev)=>{ev.stopPropagation();history.push("/ca/certs")}}
+                    >
                         <Box>
                             <Typography variant="h3" style={{color: "white", fontSize: 25}}>{cas}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Certificate Authorities</Typography>
@@ -155,7 +161,9 @@ const Home = () =>{
                             </Box>
                         </Box>
                     </Box>
-                    <Box component={Paper} style={{marginTop: 10, background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <Box component={Paper} style={{marginTop: 10, background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}
+                        onClick={(ev)=>{ev.stopPropagation();history.push("/dms/list")}}
+                    >
                         <Box>
                             <Typography variant="h3" style={{color: "white", fontSize: 25}}>{dmss}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Device Manufacturing Systems</Typography>
@@ -166,7 +174,9 @@ const Home = () =>{
                             </Box>
                         </Box>
                     </Box>
-                    <Box component={Paper} style={{marginTop: 10, background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <Box component={Paper} style={{marginTop: 10, background: mainSecondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center"}}
+                        onClick={(ev)=>{ev.stopPropagation();history.push("/dms/devices")}}
+                    >
                         <Box>
                             <Typography variant="h3" style={{color: "white", fontSize: 25}}>{device}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Devices</Typography>

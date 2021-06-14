@@ -1,5 +1,5 @@
 import { Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@material-ui/core";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
   
@@ -33,6 +33,54 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
         }
         inputFileRef.current.value = ""
     }
+
+    useEffect(()=>{
+        if (keyType == "rsa") {
+            setKeyBits(4096)
+        }else{
+            setKeyBits(384)
+        }
+    }, [keyType])
+
+    const rsaOptions = [
+        {
+            label: "1024 (low)",
+            value: 1024
+        },
+        {
+            label: "2048 (medium)",
+            value: 2048
+        },
+        {
+            label: "3072 (high)",
+            value: 3072
+        },
+        {
+            label: "4096 (high)",
+            value: 4096
+        },
+    ]
+
+    const ecdsaOptions = [
+        {
+            label: "160 (low)",
+            value: 160
+        },
+        {
+            label: "224 (medium)",
+            value: 224
+        },
+        {
+            label: "256 (high)",
+            value: 256
+        },
+        {
+            label: "384 (high)",
+            value: 384
+        },
+    ]
+
+    const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
 
     return (
         <LamassuModal 
@@ -88,7 +136,6 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                 <TextField margin="dense" id="orgUnit" label="Organization Unit" fullWidth value={orgUnit} onChange={ev=>{setOrgUnit(ev.target.value)}}/>
                                 <TextField margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
                                 <Grid container justify="space-between" alignItems="center">
-                                    <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                                     <FormControl style={{width: 235}}>
                                         <InputLabel id="key-type-label">Key Type</InputLabel>
                                         <Select
@@ -100,6 +147,20 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                         >
                                             <MenuItem value="rsa">RSA</MenuItem>
                                             <MenuItem value="ec">ECDSA</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl style={{width: 235}}>
+                                        <InputLabel id="key-type-label">Key Bits</InputLabel>
+                                        <Select
+                                            labelId="key-bits-label"
+                                            value={keyBits}
+                                            onChange={ev=>{setKeyBits(ev.target.value)}}
+                                            autoWidth={false}
+                                            fullWidth
+                                        >
+                                        {
+                                            keyBitsOptions.map(option =><MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                                        }
                                         </Select>
                                     </FormControl>
                                 </Grid>

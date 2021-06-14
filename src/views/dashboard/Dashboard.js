@@ -5,25 +5,25 @@ import "./Dashboard.css"
 import { Box, Paper, Typography } from "@material-ui/core";
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { useState } from "react";
 
 import {lightThemeConfig, darkThemeConfig} from "theme"
-
 
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
-import { useState } from "react";
+import { useKeycloak } from "@react-keycloak/web";
+
 import CAListView from "views/CA";
 import Home from "views/home";
 import IssuedCACerts from "views/CA/IssuedCACerts";
 import { CertChecker } from "views/Utils/CertChecker";
 import DMSList from "views/DMS";
-import { useKeycloak } from "@react-keycloak/web";
 import ServicesStatus  from "views/SerivcesStatus";
-import { DeviceList } from "views/Devices/DeviceList";
-import { DeviceInspect } from "views/Devices/DeviceInspect";
+import DeviceList from "views/Devices";
+import DeviceInspect from "views/Devices/DeviceInspect";
 
 const Dashboard = ({ }) => {
   const [ darkTheme, setDarkTheme ] = useState(false)
@@ -68,7 +68,7 @@ const Dashboard = ({ }) => {
                   <Route exact path="/" render={(props) => <Home />} />
                   <Route exact path="/dms/list" render={(props) => <DMSList />} />
                   <Route exact path="/dms/devices" render={(props) => <DeviceList />} />
-                  <Route path="/dms/devices/" render={(props) => <DeviceInspect />} />
+                  <Route path="/dms/devices/" render={(props) => <DeviceInspect id={props.location.pathname.split("/")[3]}/>} />
                   <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
                   {
                     keycloak.tokenParsed.realm_access.roles.includes("admin") && (

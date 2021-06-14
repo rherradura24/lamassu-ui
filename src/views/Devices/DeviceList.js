@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const DeviceList = () => {
+const DeviceList = ({ devicesData, createDevice }) => {
+    console.log(devicesData);
     let history = useHistory();
     const classes = useStyles();
     const { keycloak, initialized } = useKeycloak()
@@ -55,36 +56,13 @@ const DeviceList = () => {
         setModalInfo({
             open: true,
             type: "deviceCreate",
-            handleSubmit: ()=>{resetModal()},
+            handleSubmit: (data)=>{createDevice(data); resetModal()},
         })
     }
 
-    const data = [
-        {
-            id: "584a2-ba17-5104-871ac",
-            device_alias: "Smart sensor",
-            common_name: "sensor-584a2.smart.es",
-            dms: "Smart Factory",
-            status: "provisioned",
-            key_type: "RSA",
-            key_bits: 4096,
-            key_strength: "high"
-        },
-        {
-            id: "8501a-7510-e5ea1-63021",
-            device_alias: "Thermostat",
-            dms: "IOT Fleet",
-            common_name: "thermo.iotfleet.es",
-            status: "provisioned",
-            key_type: "ECDSA",
-            key_bits: 224,
-            key_strength: "low"
-        }
-    ]
-
     const columns = [
-        { field: 'id', headerName: 'Device UUID', width: 200 },
-        { field: 'device_alias', headerName: 'Device Alias', width: 200 },
+        { field: 'id', headerName: 'Device UUID', width: 350 },
+        { field: 'alias', headerName: 'Device Alias', width: 200 },
         { field: 'dms', headerName: 'DMS', width: 200 },
         { field: 'common_name', headerName: 'Common Name', width: 200 },
         { 
@@ -92,12 +70,12 @@ const DeviceList = () => {
             headerName: 'Status', 
             width: 150,
             renderCell: (params) => {
-                if (params.value == "expired") {
-                    return <LamassuChip label={"Expired"} status={"orange"} rounded={false} />
-                } else if (params.value == "revoked"){
-                    return <LamassuChip label={"Revoked"} status={"red"} rounded={false} />
+                if (params.value == "DEVICE_CREATED" || params.value == "CERT_EXPIRED") {
+                    return <LamassuChip label={params.value} status={"orange"} rounded={false} />
+                } else if (params.value == "CERT_REVOKED"){
+                    return <LamassuChip label={params.value} status={"red"} rounded={false} />
                 } else {    // sttatus == issued
-                    return <LamassuChip label={"Provisioned"} status={"green"} rounded={false} />
+                    return <LamassuChip label={params.value} status={"green"} rounded={false} />
                 }
             }
         },
@@ -149,7 +127,7 @@ const DeviceList = () => {
                                 Toolbar: GridToolbar,
                                 NoRowsOverlay: EmptyOverlayGrid
                             }}
-                            rows={data}
+                            rows={devicesData}
                             columns={columns}
                             pageSize={12}
                             onRowClick={(param, ev)=>{

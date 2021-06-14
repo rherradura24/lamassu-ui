@@ -1,11 +1,24 @@
-import { Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@material-ui/core";
-import { useRef, useState } from "react";
+import { Box, Button, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Switch, TextField, Tooltip } from "@material-ui/core";
+import { useEffect, useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 import { Autocomplete } from "@material-ui/lab";
-  
-const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
-    const inputFileRef = useRef(null);
+import { createLoader } from "components/utils";
+import { connect } from "react-redux";
+import CachedIcon from '@material-ui/icons/Cached';
+
+import { getAllDMS } from 'ducks/dms/Reducer';
+import * as dmsActions from 'ducks/dms/Actions';
+import { isObject } from "highcharts";
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) => {
 
     const [deviceDMS, setDeviceDMS] = useState("")
     const [deviceAlias, setDeviceAlias] = useState("")
@@ -18,15 +31,55 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
+    
+    useEffect(()=>{
+        if (keyType == "rsa") {
+            setKeyBits(4096)
+        }else{
+            setKeyBits(384)
+        }
+    }, [keyType])
 
-    const dmss= [
-        {title: "Smart Factory", id: 1},
-        {title: "IoT Fleet", id: 2},
-        {title: "Data Warehouse", id: 3},
-        {title: "DMS 1", id: 4},
-        {title: "DMS 2", id: 5},
-        {title: "DMS 3", id: 6},
+    const rsaOptions = [
+        {
+            label: "1024 (low)",
+            value: 1024
+        },
+        {
+            label: "2048 (medium)",
+            value: 2048
+        },
+        {
+            label: "3072 (high)",
+            value: 3072
+        },
+        {
+            label: "4096 (high)",
+            value: 4096
+        },
     ]
+
+    const ecdsaOptions = [
+        {
+            label: "160 (low)",
+            value: 160
+        },
+        {
+            label: "224 (medium)",
+            value: 224
+        },
+        {
+            label: "256 (high)",
+            value: 256
+        },
+        {
+            label: "384 (high)",
+            value: 384
+        },
+    ]
+
+    const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
+
 
     return (
         <LamassuModal 
@@ -40,8 +93,21 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
                     {
                         title: "Create Device",
                         primary: true,
-                        onClick: ()=>{
-                        }
+                        onClick: ()=>{handleSubmit(
+                            {
+                                uuid: deviceUUID,
+                                alias: deviceAlias,
+                                dmsId: deviceDMS.id,
+                                country: country,
+                                state: state,
+                                locality: city,
+                                org: org,
+                                orgUnit: orgUnit,
+                                commonName: cn,
+                                keyType: keyType,
+                                keyBits: keyBits,
+                            }
+                        )}
                     }
                 ]
             }
@@ -49,17 +115,30 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
                 <Box>
                     <Autocomplete
                         id="combo-box-dms"
-                        options={dmss}
+                        options={dmsList.filter(dms=>dms.status=="APPROVED")}
                         fullWidth
                         value={deviceDMS}
-                        onChange={option => setDeviceDMS(option.id)}
-                        getOptionLabel={(option) => option.title}
-                        style={{ width: 300 }}
+                        onChange={(event, newValue) => {
+                            setDeviceDMS(newValue)
+                        }}
+                        getOptionLabel={(option) => isObject(option) ? option.dms_name : ""} 
                         renderInput={(params) => <TextField {...params} label="Device Manufacturing System" fullWidth variant="standard" />}
                     />
 
                     <TextField autoFocus margin="dense" id="devName" label="Device Alias" fullWidth value={deviceAlias} onChange={(ev)=>{setDeviceAlias(ev.target.value)}} />
-                    <TextField autoFocus margin="dense" id="devUUID" label="Device UUID" fullWidth value={deviceUUID} onChange={(ev)=>{setDeviceUUID(ev.target.value)}} />
+                    <TextField autoFocus margin="dense" id="devUUID" label="Device UUID" fullWidth value={deviceUUID} onChange={(ev)=>{setDeviceUUID(ev.target.value)}}
+                        InputProps={{endAdornment: (
+                            <Tooltip title="Generate UUID">
+                                <IconButton onClick={()=>{
+                                    const uuid = uuidv4()
+                                    setDeviceUUID(uuid)
+                                }}>
+                                    <CachedIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )
+                            
+                    }} />
                     <Box style={{marginTop: 20}}>
                         <TextField autoFocus margin="dense" id="country" label="Country" fullWidth value={country} onChange={(ev)=>{setCountry(ev.target.value)}} />
                         <TextField margin="dense" id="state" label="State/Province" fullWidth value={state} onChange={ev=>{setState(ev.target.value)}}/>
@@ -68,7 +147,6 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
                         <TextField margin="dense" id="orgUnit" label="Organization Unit" fullWidth value={orgUnit} onChange={ev=>{setOrgUnit(ev.target.value)}}/>
                         <TextField margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
                         <Grid container justify="space-between" alignItems="center">
-                            <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
                             <FormControl style={{width: 235}}>
                                 <InputLabel id="key-type-label">Key Type</InputLabel>
                                 <Select
@@ -82,6 +160,20 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
                                     <MenuItem value="ec">ECDSA</MenuItem>
                                 </Select>
                             </FormControl>
+                            <FormControl style={{width: 235}}>
+                                <InputLabel id="key-type-label">Key Bits</InputLabel>
+                                <Select
+                                    labelId="key-bits-label"
+                                    value={keyBits}
+                                    onChange={ev=>{setKeyBits(ev.target.value)}}
+                                    autoWidth={false}
+                                    fullWidth
+                                >
+                                    {
+                                        keyBitsOptions.map(option =><MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
                         </Grid>
                     </Box>
                     
@@ -91,4 +183,14 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSub,ot}) => {
     )
 }
 
-export {LamassuModalDeviceCreation}
+
+const mapStateToProps = (state) => ({
+    dmsList : getAllDMS(state)
+})
+  
+const mapDispatchToProps = (dispatch) => ({
+    onMount: ()=>{ dispatch(dmsActions.getAllDMS()) },
+})
+
+const exported = connect(mapStateToProps, mapDispatchToProps)(createLoader(LamassuModalDeviceCreation));
+export {exported as LamassuModalDeviceCreation}

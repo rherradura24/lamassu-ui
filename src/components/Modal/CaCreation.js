@@ -1,5 +1,5 @@
 import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import MomentUtils from '@date-io/moment';
 import {
@@ -27,8 +27,56 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
     const [keyBits, setKeyBits] = useState(4096)
     
     const disabled = caName == ""
-    const issuingPeriodPercentage = (enrollerTtlUnit * enrollerTtlValue) * 100 / (ttlUnit * ttlValue)
     const now = Date.now()
+
+    useEffect(()=>{
+        if (keyType == "rsa") {
+            setKeyBits(4096)
+        }else{
+            setKeyBits(384)
+        }
+    }, [keyType])
+
+    const rsaOptions = [
+        {
+            label: "1024 (low)",
+            value: 1024
+        },
+        {
+            label: "2048 (medium)",
+            value: 2048
+        },
+        {
+            label: "3072 (high)",
+            value: 3072
+        },
+        {
+            label: "4096 (high)",
+            value: 4096
+        },
+    ]
+
+    const ecdsaOptions = [
+        {
+            label: "160 (low)",
+            value: 160
+        },
+        {
+            label: "224 (medium)",
+            value: 224
+        },
+        {
+            label: "256 (high)",
+            value: 256
+        },
+        {
+            label: "384 (high)",
+            value: 384
+        },
+    ]
+
+    const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
+
     return (
         <LamassuModal
             title={"Creating new CA"}
@@ -123,24 +171,6 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                     </Box>
                     
                     <Grid container justify="space-between" alignItems="center">
-                        <TextField margin="dense" id="keyBits" label="Key Bits" type="number" style={{width: 235}} value={keyBits} onChange={ev=>{setKeyBits(ev.target.value)}}/>
-                        <FormControl style={{width: 235}}>
-                            <InputLabel id="key-type-label">Time To Live Units</InputLabel>
-                            <Select
-                                labelId="ttl-unit-label"
-                                value={keyBits}
-                                onChange={ev=>{setKeyBits(ev.target.value)}}
-                                autoWidth={false}
-                                fullWidth
-                            >
-                                <MenuItem value={1024}>1024 (low)</MenuItem>
-                                <MenuItem value={2048}>2048 (medium)</MenuItem>
-                                <MenuItem value={3072}>3072 (high)</MenuItem>
-                                <MenuItem value={4096}>4096 (high)</MenuItem>
-                            </Select>
-                        </FormControl>
-
-
                         <FormControl style={{width: 235}}>
                             <InputLabel id="key-type-label">Key Type</InputLabel>
                             <Select
@@ -154,6 +184,21 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
                                 <MenuItem value="ec">ECDSA</MenuItem>
                             </Select>
                         </FormControl>
+                        <FormControl style={{width: 235}}>
+                            <InputLabel id="key-type-label">Key Bits</InputLabel>
+                            <Select
+                                labelId="key-bits-label"
+                                value={keyBits}
+                                onChange={ev=>{setKeyBits(ev.target.value)}}
+                                autoWidth={false}
+                                fullWidth
+                            >
+                            {
+                                keyBitsOptions.map(option =><MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                            }
+                            </Select>
+                        </FormControl>
+
                     </Grid>
                 </Box>
             }
