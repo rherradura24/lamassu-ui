@@ -53,6 +53,9 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
       color = "green"
     }else if (status == "expired"){
       txt = "Expired"
+      color = "orange"
+    }else if (status == "revoked"){
+      txt = "Revoked"
       color = "red"
     }
     return (
