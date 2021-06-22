@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const DMSList = ({ dmsListData, dmsPrivKeyResponse, createDmsViaCsr, createDmsViaForm, updateDmsStatus, }) => {
+const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, createDmsViaCsr, createDmsViaForm, updateDmsStatus, }) => {
     let history = useHistory();
 
     const classes = useStyles();
@@ -81,6 +81,13 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, createDmsViaCsr, createDmsVi
             handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "REVOKED"); resetModal()}
         })
     }
+    const handleDmsServiceDiscoveryInfoClick = (dms) => {
+        setModalInfo({
+            open: true,
+            type: "dmsServiceDiscoveryInfo",
+            dmsId: dms.id,
+        })
+    }
     const handleDmsDownloadClick = (dms) => {
         downloadFile("DMS-"+dms.dms_name+".crt", dms.crt)
     }
@@ -93,7 +100,7 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, createDmsViaCsr, createDmsVi
                 dmsName: dmsPrivKeyResponse.dms_name, 
                 dmsId: dmsPrivKeyResponse.dms_id,
                 privKey: dmsPrivKeyResponse.key,
-                handleSubmit: ()=>{resetModal()}
+                handleSubmit: ()=>{deletePrivKeyStorage(); resetModal()}
             })
         }
     }, [dmsPrivKeyResponse])
@@ -139,6 +146,7 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, createDmsViaCsr, createDmsVi
                                     onDecline={()=>{handleDmsDeclineClick(dmsData)}}
                                     onDownloadClick={()=>{handleDmsDownloadClick(dmsData)}}
                                     onRevokeClick={()=>handleDmsRevokeClick(dmsData)}
+                                    onServiceDiscoveryInfoClick={()=>{handleDmsServiceDiscoveryInfoClick(dmsData)}}
                                     key={dmsData.name} 
                                     styles={{margin: 10}}
                                 /> 

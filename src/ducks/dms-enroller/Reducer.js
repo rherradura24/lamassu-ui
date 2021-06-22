@@ -7,7 +7,7 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
     case actions.DELETE_LAST_PRIV_KEY:
       return { ...state, lastPrivKey: null };
 
-    case actions.GET_ALL_DMS_SUCCESS:
+    case actions.GET_ALL_DMS_ENROLLER_SUCCESS:
       var currentList = {}
       action.payload.forEach(dms => {
         currentList[dms.id] = dms
@@ -15,7 +15,7 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
 
       return { ...state, list: currentList };
 
-    case actions.CREATE_DMS_VIA_FORM_REQUEST_SUCCESS:
+    case actions.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST_SUCCESS:
       return { ...state, lastPrivKey: {
         dms_id: action.payload.csr.id,
         dms_name: action.payload.csr.dms_name, 
@@ -23,7 +23,7 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
       } 
     };
 
-    case actions.GET_DMS_CERT_SUCCESS:
+    case actions.GET_DMS_ENROLLER_CERT_SUCCESS:
       return{
         ...state,
         list: {
@@ -43,7 +43,7 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
 export default dmsReducer;
 
 
-const getSelector = (state) => state.dms;
+const getSelector = (state) => state.dmsEnroller;
 
 export const getAllDMS = (state) => {
     const dms = getSelector(state)

@@ -8,6 +8,10 @@ import { LamassuModalDmsDecline } from "./DmsDecline";
 import { LamassuModalDmsRevoke } from "./DmsRevoke";
 import { LamassuModalDmsCreationPrivKeyResponse } from "./DmsCreationPrivKeyResponse";
 import { LamassuModalDeviceCreation } from "./DeviceCreation";
+import { LamassuModalDmsServiceDiscoveryInfo } from "./DmsServiceDiscoveryInfo";
+import { LamassuModalDeviceProvision } from "./DeviceProvision";
+import { LamassuModalDeviceDelete } from "./DeviceDelete";
+import { LamassuModalDeviceCertRevocation } from "./DeviceCertRevocation";
 
 const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
     switch (type) {
@@ -106,6 +110,14 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             privKey={props["privKey"]} 
           />
         )
+        case "dmsServiceDiscoveryInfo":
+          return (
+            <LamassuModalDmsServiceDiscoveryInfo 
+              open={open} 
+              handleClose={handleClose} 
+              dmsId={props["dmsId"]} 
+          />
+        )
 
         case "deviceCreate":
           return (
@@ -113,6 +125,37 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             open={open} 
             handleClose={handleClose} 
             handleSubmit={props["handleSubmit"]} 
+          />
+        )
+        case "deviceDelete":
+          return (
+            <LamassuModalDeviceDelete
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            deviceId={props["deviceId"]} 
+            deviceName={props["deviceName"]} 
+          />
+        )
+        case "deviceCertRevocation":
+          return (
+            <LamassuModalDeviceCertRevocation
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            deviceId={props["deviceId"]} 
+            deviceName={props["deviceName"]} 
+          />
+        )
+        case "deviceProvision":
+          return (
+            <LamassuModalDeviceProvision
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            deviceId={props["deviceId"]} 
+            deviceName={props["deviceName"]} 
+            caList={props["caList"]}
           />
         )
     

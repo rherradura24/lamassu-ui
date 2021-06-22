@@ -4,12 +4,12 @@ import configureStore from './redux';
 import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 import { ReactKeycloakProvider } from '@react-keycloak/web'
-import keycloak, {keycloakProps} from './keycloak'
+import keycloak from './keycloak'
 
 import Dashboard from "views/Dashboard";
 import { useState } from 'react';
-import NotificationService from 'components/NotificationService';
 import { LoadingDashboard } from 'views/Dashboard/LoadingDashboard';
+
 
 const store = configureStore();
 
@@ -19,6 +19,23 @@ function App({ }) {
 
   const onKeycloakEvent = async (event, error) => {
     console.log("%c Keycloak Event %c" + " - " + new Date(), "background:#CDF1E3; border-radius:5px;font-weight: bold;", "", event, error);
+    if (event == "onTokenExpired") {
+      console.log('The token has exprired')
+
+      keycloak
+        .updateToken(5)
+        .then(function (refreshed) {
+          if (refreshed) {
+            console.log('Token was successfully refreshed') // '+keycloak.token);
+          } else {
+            console.log('Token is still valid')
+          }
+        })
+        .catch(function () {
+          console.log('Failed to refresh the token, or the session has expired')
+        })
+
+    }
   }
   
   const onKeycloakTokens = async (tokens) => {
@@ -33,7 +50,7 @@ function App({ }) {
         LoadingComponent={<LoadingDashboard checkAuthServer={false}/>}
         onEvent={onKeycloakEvent}
         onTokens={onKeycloakTokens}
-        autoRefreshToken={true}
+        autoRefreshToken={false}
       >
         <Provider store={store}>
           <SnackbarProvider preventDuplicate maxSnack={3}>

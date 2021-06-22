@@ -1,12 +1,18 @@
-import { Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@material-ui/core";
+import { Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper, Select, Switch, Tab, TextField, useTheme } from "@material-ui/core";
 import { useEffect, useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
+import { TabContext, TabList, TabPanel } from "@material-ui/lab";
   
 const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handleSubmitViaCsr}) => {
+    const theme = useTheme();
     const inputFileRef = useRef(null);
+    const [activeTab, setActiveTab] = useState("viaBackend")
 
-    const [isCsr, setIsCsr] = useState(false)
+    const handleTabChange = (event, newValue) => {
+        setActiveTab(newValue);
+    };
+
     const [csr, setCsr] = useState("")
     const [dmsName, setDmsName] = useState("")
     const [country, setCountry] = useState("")
@@ -17,6 +23,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
+    
 
     const onFileChange = (e) => {
         /*Selected files data can be collected here.*/
@@ -86,7 +93,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
         <LamassuModal 
         
             title={"Creating new Device Manufacturing System"}
-            msg={"To create a new DMS, please provide the apropiate information"}
+            msg={"To create a new DMS, please provide the apropiate information."}
             open={open}
             handleClose={handleClose}
             actions={
@@ -95,7 +102,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                         title: "Create DMS",
                         primary: true,
                         onClick: ()=>{
-                            if(isCsr){
+                            if(activeTab == "viaCsr"){
                                 handleSubmitViaCsr(dmsName, csr)
                             }else{
                                 handleSubmitViaForm(dmsName, {
@@ -115,21 +122,15 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
             }
             formContent={
                 <Box>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                            checked={isCsr}
-                            onChange={()=>setIsCsr(!isCsr)}
-                            color="primary"
-                            />
-                        }
-                        label="Use CSR"
-                    />
-                    <TextField autoFocus margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
-                    {
-                        !isCsr ? (
-                            <>
-                                <TextField autoFocus margin="dense" id="country" label="Country" fullWidth value={country} onChange={(ev)=>{setCountry(ev.target.value)}} />
+                    <TabContext value={activeTab}>
+                        <TabList style={{background: theme.palette.certInspector.tabs}} variant="fullWidth" value={activeTab} onChange={handleTabChange} aria-label="simple tabs example">
+                            <Tab value="viaBackend" label="Backend Provision" />
+                            <Tab value="viaCsr" label="Via CSR"/>
+                        </TabList>
+                        <Box style={{padding: 20}}>
+                            <TabPanel value="viaBackend" style={{padding:0}}>
+                                <TextField autoFocus margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
+                                <TextField margin="dense" id="country" label="Country" fullWidth value={country} onChange={(ev)=>{setCountry(ev.target.value)}} />
                                 <TextField margin="dense" id="state" label="State/Province" fullWidth value={state} onChange={ev=>{setState(ev.target.value)}}/>
                                 <TextField margin="dense" id="city" label="City" fullWidth value={city} onChange={ev=>{setCity(ev.target.value)}}/>
                                 <TextField margin="dense" id="org" label="Organization" fullWidth value={org} onChange={ev=>{setOrg(ev.target.value)}}/>
@@ -164,40 +165,42 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                            </>
-                        ) : (
-                            <Box style={{marginTop: 10}}>
-                                <Button 
-                                    variant="contained" 
-                                    fullWidth
-                                    onClick={()=>{inputFileRef.current.click() }}
-                                >
-                                    Select CSR file
-                                </Button>
-                                <input
-                                    type="file"
-                                    ref={inputFileRef}
-                                    hidden
-                                    onChange={(ev)=>onFileChange(ev)}
-                                />
-                                <Box container style={{margin: 20}}>
-                                    <MenuSeparator/>
+                            </TabPanel>
+                            <TabPanel value="viaCsr" style={{padding:0}}>
+                                <TextField autoFocus margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
+                                <Box style={{marginTop: 10}}>
+                                    <Button 
+                                        variant="contained" 
+                                        fullWidth
+                                        onClick={()=>{inputFileRef.current.click() }}
+                                    >
+                                        Select CSR file
+                                    </Button>
+                                    <input
+                                        type="file"
+                                        ref={inputFileRef}
+                                        hidden
+                                        onChange={(ev)=>onFileChange(ev)}
+                                    />
+                                    <Box container style={{margin: 20}}>
+                                        <MenuSeparator/>
+                                    </Box>
+                                    <TextField
+                                        id="standard-multiline-flexible"
+                                        label="CSR content"
+                                        multiline
+                                        rows={18}
+                                        style={{width: 500}}
+                                        inputProps={{style: {fontSize: 12, fontFamily: "monospace"}}}
+                                        variant="outlined"
+                                        fullWidth
+                                        value={csr}
+                                        onChange={(ev)=>{setCsr(ev.target.value)}}
+                                    />
                                 </Box>
-                                <TextField
-                                    id="standard-multiline-flexible"
-                                    label="CSR content"
-                                    multiline
-                                    rows={18}
-                                    style={{width: 500}}
-                                    inputProps={{style: {fontSize: 12, fontFamily: "monospace"}}}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={csr}
-                                    onChange={(ev)=>{setCsr(ev.target.value)}}
-                                />
-                            </Box>
-                        )
-                    }
+                            </TabPanel>
+                        </Box>
+                    </TabContext>
                 </Box>
             }
         />

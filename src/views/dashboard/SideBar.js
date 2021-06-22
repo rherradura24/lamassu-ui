@@ -97,6 +97,7 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
           <MenuItem 
             title="Devices" 
             link="/dms/devices" 
+            exactLink={false}
             active={selectedPath}
             collapsed={collapsed}
             onSelect={(link)=>{setSelectedPath(link)}} 

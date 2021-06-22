@@ -6,9 +6,9 @@ const LamassuModalDmsApproval = ({dmsName, dmsId, open, handleSubmit, handleClos
 
     return (
         <LamassuModal 
-            title={"Approve DMS Request: "}
+            title={"Approve DMS Request"}
             warnIcon={false}
-            msg={"You are about to approve a new Device Manufacturing System. Please review the request and confirm"}
+            msg={"You are about to approve a new Device Manufacturing System. Please review the request and confirm."}
             formContent={
                 (<>
                     <div>

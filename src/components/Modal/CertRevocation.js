@@ -5,9 +5,9 @@ const LamassuModalCertRevocation = ({issuerCaName, certId, certCommonName, open,
 
     return (
         <LamassuModal 
-            title={"Revoke Certificate: " }
+            title={"Revoke Certificate" }
             warnIcon={true}
-            msg={"You are about to revoke the following certificate:"}
+            msg={"You are about to revoke the following certificate."}
             formContent={
                 (<>
                     <div>

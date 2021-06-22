@@ -1,12 +1,8 @@
 import { Box, Breadcrumbs, Button, IconButton, makeStyles, Paper, Tab, Typography, useTheme } from "@material-ui/core"
-import { useKeycloak } from "@react-keycloak/web";
 import { LamassuModalPolyphormic } from "components/Modal"
-import { useEffect, useState } from "react";
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import {  useState } from "react";
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { useHistory } from "react-router";
-import { DataGrid, GridToolbar } from "@material-ui/data-grid";
-import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
 import { LamassuChip } from "components/LamassuChip";
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 
@@ -19,13 +15,13 @@ import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import moment from "moment";
 
-import RepeatIcon from '@material-ui/icons/Repeat';
 import TimerOffIcon from '@material-ui/icons/TimerOff';
 import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PublishIcon from '@material-ui/icons/Publish';
 import RouterOutlinedIcon from '@material-ui/icons/RouterOutlined';
 import LayersOutlinedIcon from '@material-ui/icons/LayersOutlined';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 const useStyles = makeStyles((theme) => ({
     scroll: {
@@ -64,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
+const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, revokeDeviceCert}) => {
     console.log(deviceData);
     let history = useHistory();
     const theme = useTheme();
@@ -77,6 +73,36 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
         setModalInfo({
             open: false,
             type: null,
+        })
+    }
+
+    const onProvisionDeviceClick = () =>{
+        setModalInfo({
+            open: true,
+            type: "deviceProvision",
+            caList: caList,
+            deviceId: deviceData.id,
+            deviceName: deviceData.alias,
+            handleSubmit: (caName)=>{provisionDevice(id, caName); resetModal()},
+        })
+    }
+    const onDeleteDeviceClick = () =>{
+        setModalInfo({
+            open: true,
+            type: "deviceDelete",
+            deviceId: deviceData.id,
+            deviceName: deviceData.alias,
+            handleSubmit: ()=>{deleteDevice(id); resetModal(); /*history.push("/dms/devices")*/},
+        })
+    }
+
+    const onRevokeDeviceCertClick = () =>{
+        setModalInfo({
+            open: true,
+            type: "deviceCertRevocation",
+            deviceId: deviceData.id,
+            deviceName: deviceData.alias,
+            handleSubmit: ()=>{revokeDeviceCert(id); resetModal();},
         })
     }
 
@@ -122,11 +148,11 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
     
     var statusElement = (status) => {
         var color = "unknown"
-        if (status === "DEVICE_CREATED" || status == "CERT_EXPIRED"){
+        if (status === "PENDING_PROVISION" || status == "CERT_EXPIRED"){
           color = "orange"
         }else if (status == "DEVICE_PROVISIONED"){
           color = "green"
-        }else if (status == "CERT_REVOKED"){
+        }else if (status == "CERT_REVOKED" || status == "DEVICE_DECOMISSIONED"){
           color = "red"
         } else{
             color = "unknown"
@@ -153,36 +179,65 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                         deviceData !== undefined ? (
                             <>
                                 <Box component={Paper} style={{marginTop: 20, padding: 20, display: "flex", justifyContent: "space-between"}}>
-                                    <Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Device Alias</Typography>
-                                            <Typography>{deviceData.alias}</Typography>
+                                    <Box style={{display: "flex"}}>
+                                        <Box style={{minWidth: 500}}>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Device Alias</Typography>
+                                                <Typography>{deviceData.alias}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
+                                                <Typography>{deviceData.id}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Status</Typography>
+                                                {statusElement(deviceData.status)}
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Key Type</Typography>
+                                                <Typography>{deviceData.key_type}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Key Bits</Typography>
+                                                <Typography>{deviceData.key_bits}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Key Strength</Typography>
+                                                {strengthElement(deviceData.key_strength)}
+                                            </Box>
                                         </Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
-                                            <Typography>{deviceData.id}</Typography>
+                                        <Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Country</Typography>
+                                                <Typography>{deviceData.country}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>State</Typography>
+                                                <Typography>{deviceData.state}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Locality</Typography>
+                                                <Typography>{deviceData.locality}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Organization</Typography>
+                                                <Typography>{deviceData.organization}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Organization Unit</Typography>
+                                                <Typography>{deviceData.organization_unit}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>Common Name</Typography>
+                                                <Typography>{deviceData.common_name}</Typography>
+                                            </Box>
                                         </Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Status</Typography>
-                                            {statusElement(deviceData.status)}
-                                        </Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Key Type</Typography>
-                                            <Typography>{deviceData.key_type}</Typography>
-                                        </Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Key Bits</Typography>
-                                            <Typography>{deviceData.key_bits}</Typography>
-                                        </Box>
-                                        <Box style={{display: "flex", marginBottom: 5}}>
-                                            <Typography variant="button" style={{minWidth: 150}}>Key Strength</Typography>
-                                            {strengthElement(deviceData.key_strength)}
-                                        </Box>
+                                     
                                     </Box>
                                     <Box style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
-                                        <Button variant="contained" color="primary" onClick={()=>{provisionDevice()}}>Provision Device</Button>
-                                        <Button variant="contained" color="primary" style={{marginTop: 10}}>Revoke current certificate</Button>
-                                        <Button variant="contained" color="primary" onClick={()=>{deleteDevice();history.push("/dms/devices")}} style={{marginTop: 10}}>Delete Device</Button>
+                                        <Button variant="contained" color="primary" onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
+                                        <Button variant="contained" color="primary" onClick={()=>{onRevokeDeviceCertClick()}} style={{marginTop: 10}}>Revoke current certificate</Button>
+                                        <Button variant="contained" color="primary" onClick={()=>{onDeleteDeviceClick()}} style={{marginTop: 10}}>Delete Device</Button>
                                     </Box>
                                 </Box>
                                 <Box component={Paper} style={{marginTop: 20}}>
@@ -205,7 +260,7 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                     </TimelineOppositeContent>
                                                                     <TimelineSeparator>
                                                                     {
-                                                                        log.log_type == "DEVICE_CREATED" && (
+                                                                        log.log_type == "LOG_DEVICE_CREATED" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: green.bg}}>
                                                                                     <RouterOutlinedIcon style={{ color: green.txt}}/>
@@ -214,7 +269,7 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                         )
                                                                     }
                                                                     {
-                                                                        log.log_type == "PENDING_PROVISION" && (
+                                                                        log.log_type == "LOG_PENDING_PROVISION" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: orange.bg}}>
                                                                                     <LayersOutlinedIcon style={{ color: orange.txt}}/>
@@ -224,7 +279,7 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                         )
                                                                     }
                                                                     {
-                                                                        log.log_type == "CERT_EXPIRED" && (
+                                                                        log.log_type == "LOG_CERT_EXPIRED" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: orange.bg}}>
                                                                                     <TimerOffIcon style={{ color: orange.txt}}/>
@@ -234,7 +289,7 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                         )
                                                                     }
                                                                     {
-                                                                        log.log_type == "CERT_REVOKED" && (
+                                                                        log.log_type == "LOG_CERT_REVOKED" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: red.bg}}>
                                                                                     <DeleteIcon style={{ color: red.txt}}/>
@@ -244,7 +299,7 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                         )
                                                                     }
                                                                     {
-                                                                        log.log_type == "PROVISIONED" && (
+                                                                        log.log_type == "LOG_PROVISIONED" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: green.bg}}>
                                                                                     <PublishIcon style={{ color: green.txt}}/>
@@ -253,10 +308,20 @@ const DeviceInspect = ({id, deviceData, provisionDevice, deleteDevice}) => {
                                                                             </>
                                                                         )
                                                                     }
+                                                                    {
+                                                                        log.log_type == "LOG_DEVICE_DECOMISSIONED" && (
+                                                                            <>  
+                                                                                <TimelineDot style={{background: red.bg}}>
+                                                                                    <HighlightOffIcon style={{ color: red.txt}}/>
+                                                                                </TimelineDot>
+                                                                                <TimelineConnector style={{background: red.txt}}/>
+                                                                            </>
+                                                                        )
+                                                                    }
                                                                     </TimelineSeparator>
                                                                     <TimelineContent>
                                                                         <Paper elevation={3} style={{padding: 10}}>
-                                                                            <Typography variant="button" component="h1" color="primary">{log.log_type}</Typography>
+                                                                            <Typography variant="button" component="h1" color="primary">{log.log_type.replace("LOG", "").replaceAll("_", " ")}</Typography>
                                                                             <Typography>{log.log_msg}</Typography>
                                                                         </Paper>
                                                                     </TimelineContent>

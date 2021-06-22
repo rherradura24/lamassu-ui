@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Badge, Box, Paper, Typography, useTheme } from "@material-ui/core"
@@ -130,4 +130,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(LamassuNotifications);
+export default connect(mapStateToProps)(LamassuNotifications);

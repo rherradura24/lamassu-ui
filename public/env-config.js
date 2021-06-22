@@ -4,6 +4,6 @@ window._env_ = {
     REACT_APP_AUTH_CLIENT_ID: "frontend",
     REACT_APP_CONSUL_API: "https://lamassu.zpd.ikerlan.es:8501",        
     REACT_APP_CA_API: "https://lamassu.zpd.ikerlan.es:8087",        
-    REACT_APP_DMS_API: "https://lamassu.zpd.ikerlan.es:8085",        
-    REACT_APP_DEVICES_API: "https://localhost:6085",        
+    REACT_APP_DMS_ENROLLER_API: "https://172.16.102.53:8085",        
+    REACT_APP_DEVICES_API: "https://localhost:8089",        
 }

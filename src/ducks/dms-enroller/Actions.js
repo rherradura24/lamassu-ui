@@ -1,11 +1,11 @@
 import * as t from "./ActionTypes";
 
 export const getAllDMS = () => ({
-    type: t.GET_ALL_DMS,
+    type: t.GET_ALL_DMS_ENROLLER,
 })
 
 export const createDmsViaCsr = (name, csr) => ({
-    type: t.CREATE_DMS_VIA_CSR_REQUEST,
+    type: t.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST,
     payload: {
         csr: csr,
         dmsName: name
@@ -13,7 +13,7 @@ export const createDmsViaCsr = (name, csr) => ({
 })
 
 export const createDmsViaForm = (name, csrForm) => ({
-    type: t.CREATE_DMS_VIA_FORM_REQUEST,
+    type: t.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST,
     payload: {
         csrForm: {
             "key_bits": csrForm.keyBits,
@@ -32,7 +32,7 @@ export const createDmsViaForm = (name, csrForm) => ({
 export const updateDmsStatus = (id, dms, status) => {
     dms.status = status
     return {
-        type: t.UPDATE_DMS_STATUS,
+        type: t.UPDATE_DMS_ENROLLER_STATUS,
         payload: {
             id: id,
             dms: dms,
@@ -42,7 +42,7 @@ export const updateDmsStatus = (id, dms, status) => {
 
 export const getDmsCert = (id) => {
     return {
-        type: t.GET_DMS_CERT,
+        type: t.GET_DMS_ENROLLER_CERT,
         payload: {
             id: id,
         }

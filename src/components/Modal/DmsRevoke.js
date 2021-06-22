@@ -6,9 +6,9 @@ const LamassuModalDmsRevoke = ({dmsName, dmsId, open, handleSubmit, handleClose}
 
     return (
         <LamassuModal 
-            title={"Revoke DMS Request: "}
+            title={"Revoke DMS Request"}
             warnIcon={false}
-            msg={"You are about to revoke an alredy approved Device Manufacturing System. Please review the request and confirm"}
+            msg={"You are about to revoke an alredy approved Device Manufacturing System. Please review the request and confirm."}
             formContent={
                 (<>
                     <div>

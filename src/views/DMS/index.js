@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { createLoader } from "components/utils";
-import * as dmsActions from "ducks/dms/Actions";
-import * as dmsSelector from 'ducks/dms/Reducer';
+import * as dmsActions from "ducks/dms-enroller/Actions";
+import * as dmsSelector from 'ducks/dms-enroller/Reducer';
 import DMSList from './DMSList';
 
 const mapStateToProps = (state) => ({

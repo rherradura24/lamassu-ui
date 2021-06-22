@@ -1,8 +1,6 @@
 import * as actions from "./ActionTypes"
 
 const dmsReducer = (state = { list: {}}, action) => {
-  console.log(action);
-
   switch (action.type) {
     case actions.GET_ALL_DEVICES_SUCCESS:
       var currentList = {}

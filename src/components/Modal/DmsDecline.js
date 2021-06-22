@@ -6,9 +6,9 @@ const LamassuModalDmsDecline = ({dmsName, dmsId, open, handleSubmit, handleClose
 
     return (
         <LamassuModal 
-            title={"Decline DMS Request: " }
+            title={"Decline DMS Request" }
             warnIcon={true}
-            msg={"You are about to decline a pending Device Manufacturing System. Please review the request and confirm"}
+            msg={"You are about to decline a pending Device Manufacturing System. Please review the request and confirm."}
             formContent={
                 (<>
                     <div>

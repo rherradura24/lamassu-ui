@@ -13,13 +13,13 @@ import { useTheme } from '@material-ui/core/styles';
 import "./SideBar.css";
 import { Typography } from '@material-ui/core';
 
-export function MenuItem({ active, link, title, icon, children, style, onSelect, collapsed}) {
+export function MenuItem({ active, exactLink=true, link, title, icon, children, style, onSelect, collapsed}) {
     const theme = useTheme();
     const [expand,  setExpand] = useState(false);
 
     const selectedBorderWidth = 5;
     var paddingLeftPxls = 0;
-    const selected = active === link && link !== undefined;
+    const selected = exactLink ? active === link && link !== undefined : active.startsWith(link) && link !== undefined;
     if (selected) {
         paddingLeftPxls = 10
     }else{

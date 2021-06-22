@@ -80,7 +80,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
     return (
         <LamassuModal
             title={"Creating new CA"}
-            msg={"To create a new CA certificate, please provide the apropiate information"}
+            msg={"To create a new CA certificate, please provide the apropiate information."}
             open={open}
             handleClose={handleClose}
             actions={

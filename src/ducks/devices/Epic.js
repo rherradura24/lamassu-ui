@@ -23,8 +23,7 @@ const getDeviceLogs = action$ => action$.pipe(
 
 const provisionDevice = action$ => action$.pipe(
     ofType(actions.PROVISION_DEVICE),
-    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.GET_DEVICE, {id: payload.id})),
-    mergeMap(({meta}) => makeRequestWithActions(devicesApiCalls.getDeviceById(meta), actions.GET_DEVICE)),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.PROVISION_DEVICE, {id: payload.id})),
 );
 
 const createDevice = action$ => action$.pipe(
@@ -37,9 +36,19 @@ const refreshDevices = action$ => action$.pipe(
     mergeMap(() => makeRequestWithActions(devicesApiCalls.getAllDevices(), actions.GET_ALL_DEVICES)),
 );
 
+const refreshDevice = action$ => action$.pipe(
+    ofType(actions.PROVISION_DEVICE_SUCCESS, actions.DELETE_DEVICE_SUCCESS, actions.REVOKE_DEVICE_CERT_SUCCESS),
+    mergeMap(({meta}) => makeRequestWithActions(devicesApiCalls.getDeviceById(meta), actions.GET_DEVICE)),
+);
+
+const revokeDeviceCert = action$ => action$.pipe(
+    ofType(actions.REVOKE_DEVICE_CERT),
+    mergeMap(({payload})=> makeRequestWithActions(devicesApiCalls.revokeDeviceCert(payload), actions.REVOKE_DEVICE_CERT, {id: payload.id})),
+);
+
 const deleteDevice = action$ => action$.pipe(
     ofType(actions.DELETE_DEVICE),
-    mergeMap(({payload})=> makeRequestWithActions(devicesApiCalls.deleteDevice(payload), actions.DELETE_DEVICE)),
+    mergeMap(({payload})=> makeRequestWithActions(devicesApiCalls.deleteDevice(payload), actions.DELETE_DEVICE, {id: payload.id})),
 );
 
 const notifyDeviceRemovalSuccess = (action$, state$) => action$.pipe(
@@ -61,7 +70,9 @@ export {
     getDeviceLogs,
     createDevice,
     provisionDevice,
+    revokeDeviceCert,
     refreshDevices,
+    refreshDevice,
     deleteDevice,
     notifyError,
     notifyDeviceRemovalSuccess,

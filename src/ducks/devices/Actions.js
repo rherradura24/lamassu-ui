@@ -29,6 +29,12 @@ export const deleteDevice = (id) => ({
         id: id
     }
 })
+export const revokeDeviceCert = (id) => ({
+    type: t.REVOKE_DEVICE_CERT,
+    payload: {
+        id: id
+    }
+})
 
 export const createDevice = (deviceJson) => {
     console.log(deviceJson);

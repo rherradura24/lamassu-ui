@@ -8,6 +8,7 @@ const initialState = {
 };
 
 const notificationsReducer = (state = initialState, action) => {
+    console.log(action.type);
     switch (action.type) {
         case actions.NOTIFY :
             var newHistory = state.history

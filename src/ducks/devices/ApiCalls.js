@@ -91,6 +91,24 @@ export const provisionDevice = async (payload) => {
     }
 }
 
+export const revokeDeviceCert = async (payload) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/" + payload.id + "/revoke", {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        return { error: "Connection error with Devices API server" }
+    }
+}
+
 export const deleteDevice = async (payload) => {
     try {
         const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/" + payload.id, {

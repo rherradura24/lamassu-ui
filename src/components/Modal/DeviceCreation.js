@@ -7,8 +7,8 @@ import { createLoader } from "components/utils";
 import { connect } from "react-redux";
 import CachedIcon from '@material-ui/icons/Cached';
 
-import { getAllDMS } from 'ducks/dms/Reducer';
-import * as dmsActions from 'ducks/dms/Actions';
+import { getAllDMS } from 'ducks/dms-enroller/Reducer';
+import * as dmsActions from 'ducks/dms-enroller/Actions';
 import { isObject } from "highcharts";
 
 function uuidv4() {
@@ -85,7 +85,7 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
         <LamassuModal 
         
             title={"Creating new Device"}
-            msg={"To create a new Device, please provide the apropiate information:"}
+            msg={"To create a new Device, please provide the apropiate information."}
             open={open}
             handleClose={handleClose}
             actions={

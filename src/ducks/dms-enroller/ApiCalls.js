@@ -2,7 +2,7 @@ import keycloak from "keycloak";
 
 export const getAllDms = async () => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -31,7 +31,7 @@ export const getAllDms = async () => {
 
 export const createDmsViaCsr = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.dmsName, {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.dmsName, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/pkcs10',
@@ -57,7 +57,7 @@ export const createDmsViaCsr = async (payload) => {
 
 export const createDmsViaForm = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.dmsName + "/form", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.dmsName + "/form", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export const createDmsViaForm = async (payload) => {
 export const updateDmsStatus = async (payload) => {
     console.log(payload);
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.id, {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.id, {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -110,7 +110,7 @@ export const updateDmsStatus = async (payload) => {
 export const getDmsCert = async (payload) => {
     console.log(payload);
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/csrs/" + payload.id + "/crt", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.id + "/crt", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
