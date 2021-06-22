@@ -14,13 +14,20 @@ export const getAllDms = async () => {
                 return { error: json.error }
             }
         }else{
-            var jsonData = json._embedded.csr
-            if (!Array.isArray(jsonData)){
-                jsonData = [json._embedded.csr]
-            }
-            return {
-                json: jsonData,
-                status: resp.status
+            if("_embedded" in json){
+                var jsonData = json._embedded.csr
+                if (!Array.isArray(jsonData)){
+                    jsonData = [json._embedded.csr]
+                }
+                return {
+                    json: jsonData,
+                    status: resp.status
+                }
+            }else{
+                return {
+                    json: [],
+                    status: resp.status
+                }
             }
         }
     } catch (er) {
@@ -88,6 +95,7 @@ export const updateDmsStatus = async (payload) => {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(payload.dms)
         })

@@ -31,6 +31,8 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
+
+    const disabled = deviceDMS == "" || deviceUUID == "" 
     
     useEffect(()=>{
         if (keyType == "rsa") {
@@ -93,6 +95,7 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                     {
                         title: "Create Device",
                         primary: true,
+                        disabledBtn: disabled,
                         onClick: ()=>{handleSubmit(
                             {
                                 uuid: deviceUUID,
@@ -118,15 +121,20 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                         options={dmsList.filter(dms=>dms.status=="APPROVED")}
                         fullWidth
                         value={deviceDMS}
-                        onChange={(event, newValue) => {
-                            setDeviceDMS(newValue)
+                        onChange={(event, newValue,reason) => {
+                            console.log(reason);
+                            if(reason == "clear"){
+                                setDeviceDMS("")
+                            }else{
+                                setDeviceDMS(newValue)
+                            }
                         }}
                         getOptionLabel={(option) => isObject(option) ? option.dms_name : ""} 
-                        renderInput={(params) => <TextField {...params} label="Device Manufacturing System" fullWidth variant="standard" />}
+                        renderInput={(params) => <TextField required={true} error={deviceDMS==""}{...params} label="Device Manufacturing System" fullWidth variant="standard" />}
                     />
 
-                    <TextField autoFocus margin="dense" id="devName" label="Device Alias" fullWidth value={deviceAlias} onChange={(ev)=>{setDeviceAlias(ev.target.value)}} />
-                    <TextField autoFocus margin="dense" id="devUUID" label="Device UUID" fullWidth value={deviceUUID} onChange={(ev)=>{setDeviceUUID(ev.target.value)}}
+                    <TextField margin="dense" id="devName" label="Device Alias" fullWidth value={deviceAlias} onChange={(ev)=>{setDeviceAlias(ev.target.value)}} />
+                    <TextField required={true} error={deviceUUID==""} margin="dense" id="devUUID" label="Device UUID" fullWidth value={deviceUUID} onChange={(ev)=>{setDeviceUUID(ev.target.value)}}
                         InputProps={{endAdornment: (
                             <Tooltip title="Generate UUID">
                                 <IconButton onClick={()=>{

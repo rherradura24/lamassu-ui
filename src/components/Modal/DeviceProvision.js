@@ -7,10 +7,12 @@ import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
 const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
-    const [selectedCA, setSelectedCA] = useState()
+    const [selectedCA, setSelectedCA] = useState("")
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
     const [csr, setCsr] = useState("")
 
+    const disabled = activeTab == "viaDefinedValues" ? selectedCA == "" : selectedCA == "" || csr == ""
+    console.log(disabled);
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
     };
@@ -38,6 +40,18 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
             title={"Provision Device"}
             warnIcon={false}
             msg={"You are about to issue a new certificate for the selected device. Please select the CA to issue with."}
+            open={open}
+            handleClose={handleClose}
+            actions={
+                [
+                    {
+                        title: "Provision",
+                        disabledBtn: disabled,
+                        primary: true,
+                        onClick: handleSubmit
+                    }
+                ]
+            }
             formContent={
                 (<>
                     <TabContext value={activeTab}>
@@ -52,11 +66,15 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                                     options={caList}
                                     fullWidth
                                     value={selectedCA}
-                                    onChange={(event, newValue) => {
-                                        setSelectedCA(newValue)
+                                    onChange={(event, newValue, reason) => {
+                                        if(reason == "clear"){
+                                            setSelectedCA("")
+                                        }else{  
+                                            setSelectedCA(newValue)
+                                        }
                                     }}
-                                    getOptionLabel={(option) => option.ca_name} 
-                                    renderInput={(params) => <TextField {...params} label="Certificate Authority" fullWidth variant="standard" />}
+                                    getOptionLabel={(option) => { return typeof option !== "object" ? "" : option.ca_name} }
+                                    renderInput={(params) => <TextField required={true} error={selectedCA==""} {...params} label="Certificate Authority" fullWidth variant="standard" />}
                                 />
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding: 0}}>
@@ -66,11 +84,15 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                                         options={caList}
                                         fullWidth
                                         value={selectedCA}
-                                        onChange={(event, newValue) => {
-                                            setSelectedCA(newValue)
+                                        onChange={(event, newValue,reason) => {
+                                            if(reason == "clear"){
+                                                setSelectedCA("")
+                                            }else{
+                                                setSelectedCA(newValue)
+                                            }
                                         }}
-                                        getOptionLabel={(option) => option.ca_name} 
-                                        renderInput={(params) => <TextField {...params} label="Certificate Authority" fullWidth variant="standard" />}
+                                        getOptionLabel={(option) => { return typeof option !== "object" ? "" : option.ca_name} }
+                                        renderInput={(params) => <TextField required={true} error={selectedCA==""}{...params} label="Certificate Authority" fullWidth variant="standard" />}
                                     />
                                     <Button 
                                         variant="contained" 
@@ -93,6 +115,7 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                                         id="standard-multiline-flexible"
                                         label="CSR content"
                                         multiline
+                                        required={true} error={csr==""}
                                         rows={16}
                                         style={{width: 500}}
                                         inputProps={{style: {fontSize: 12, fontFamily: "monospace", }}}
@@ -117,18 +140,7 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                     </TabContext>
                 </>)
             }
-            open={open}
-            handleClose={handleClose}
-            actions={
-                [
-                    {
-                        title: "Provision",
-                        primary: true,
-                        disabledBtn: false,
-                        onClick: handleSubmit
-                    }
-                ]
-            }
+            
         />
     )
 }

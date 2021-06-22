@@ -24,6 +24,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(4096)
     
+    const disabled = activeTab == "viaBackend" ? dmsName == "" || cn == "" : dmsName == ""
 
     const onFileChange = (e) => {
         /*Selected files data can be collected here.*/
@@ -101,6 +102,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                     {
                         title: "Create DMS",
                         primary: true,
+                        disabledBtn: disabled,
                         onClick: ()=>{
                             if(activeTab == "viaCsr"){
                                 handleSubmitViaCsr(dmsName, csr)
@@ -129,13 +131,13 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                         </TabList>
                         <Box style={{padding: 20}}>
                             <TabPanel value="viaBackend" style={{padding:0}}>
-                                <TextField autoFocus margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
+                                <TextField autoFocus required={true} error={dmsName==""} margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
                                 <TextField margin="dense" id="country" label="Country" fullWidth value={country} onChange={(ev)=>{setCountry(ev.target.value)}} />
                                 <TextField margin="dense" id="state" label="State/Province" fullWidth value={state} onChange={ev=>{setState(ev.target.value)}}/>
                                 <TextField margin="dense" id="city" label="City" fullWidth value={city} onChange={ev=>{setCity(ev.target.value)}}/>
                                 <TextField margin="dense" id="org" label="Organization" fullWidth value={org} onChange={ev=>{setOrg(ev.target.value)}}/>
                                 <TextField margin="dense" id="orgUnit" label="Organization Unit" fullWidth value={orgUnit} onChange={ev=>{setOrgUnit(ev.target.value)}}/>
-                                <TextField margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
+                                <TextField required={true} error={cn==""} margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
                                 <Grid container justify="space-between" alignItems="center">
                                     <FormControl style={{width: 235}}>
                                         <InputLabel id="key-type-label">Key Type</InputLabel>
@@ -167,7 +169,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                 </Grid>
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding:0}}>
-                                <TextField autoFocus margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
+                                <TextField autoFocus required={true} error={dmsName==""} margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
                                 <Box style={{marginTop: 10}}>
                                     <Button 
                                         variant="contained" 

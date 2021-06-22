@@ -43,6 +43,12 @@ const getCertForApprovedDms = action$ => action$.pipe(
     mergeMap(dmsId => makeRequestWithActions(dmsApiCalls.getDmsCert({id: dmsId}), actions.GET_DMS_ENROLLER_CERT, {dmsId: dmsId}))
 );
 
+const getCertWhenDmsApproved = action$ => action$.pipe(
+    ofType(actions.UPDATE_DMS_ENROLLER_STATUS_SUCCESS),
+    mergeMap(response => {return response.payload.status == "APPROVED"? [response.payload] : null}), 
+    mergeMap(dms => {console.log(dms);return makeRequestWithActions(dmsApiCalls.getDmsCert({id: dms.id}), actions.GET_DMS_ENROLLER_CERT, {dmsId: dms.id})})
+);
+
 /// General ERROR Notify
 const notifyError = (action$, state$) => action$.pipe(
     ofType(actions.GET_ALL_DMS_ENROLLER_ERROR, actions.UPDATE_DMS_ENROLLER_STATUS_ERROR, actions.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST_ERROR, actions.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST_ERROR, actions.GET_DMS_ENROLLER_CERT_ERROR ),
@@ -60,5 +66,6 @@ export {
     refreshDMSs,
     notifyCreateDmsSuccess,
     notifyError,
-    getCertForApprovedDms
+    getCertForApprovedDms,
+    getCertWhenDmsApproved,
 }
