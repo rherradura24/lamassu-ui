@@ -31,7 +31,7 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
 
     useEffect(()=>{
         if (keyType == "rsa") {
-            setKeyBits(4096)
+            setKeyBits(3072)
         }else{
             setKeyBits(384)
         }
@@ -51,16 +51,12 @@ const LamassuModalCaCreation = ({open, handleClose, handleSubmit}) => {
             value: 3072
         },
         {
-            label: "4096 (high)",
-            value: 4096
+            label: "7680 (high)",
+            value: 7680
         },
     ]
 
     const ecdsaOptions = [
-        {
-            label: "160 (low)",
-            value: 160
-        },
         {
             label: "224 (medium)",
             value: 224

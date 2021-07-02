@@ -63,10 +63,6 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
 
     const ecdsaOptions = [
         {
-            label: "160 (low)",
-            value: 160
-        },
-        {
             label: "224 (medium)",
             value: 224
         },
@@ -145,8 +141,8 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                                 </IconButton>
                             </Tooltip>
                         )
-                            
                     }} />
+                    
                     <Box style={{marginTop: 20}}>
                         <TextField autoFocus margin="dense" id="country" label="Country" fullWidth value={country} onChange={(ev)=>{setCountry(ev.target.value)}} />
                         <TextField margin="dense" id="state" label="State/Province" fullWidth value={state} onChange={ev=>{setState(ev.target.value)}}/>
@@ -184,7 +180,6 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                             </FormControl>
                         </Grid>
                     </Box>
-                    
                 </Box>
             }
         />

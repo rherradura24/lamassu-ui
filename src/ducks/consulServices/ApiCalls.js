@@ -20,7 +20,7 @@ export const getConsulServices = async() => {
         }
     } catch (er) {
         console.log(er);
-        return { error: "Connection error with Consul server" }
+        return { error: "Connection error with Consul server. " + er }
     }
 }
 
@@ -45,6 +45,6 @@ export const getServiceHealth = async(payload) => {
         }
     } catch (er) {
         console.log(er);
-        return { error: "Connection error with Consul server" }
+        return { error: "Connection error with Consul server. " + er }
     }
 }

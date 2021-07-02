@@ -5,7 +5,7 @@ import { LamassuModal } from "./LamassuModal";
 import { isObject } from "highcharts";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
-const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handleSubmit, handleClose}) => {
+const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
@@ -48,7 +48,22 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                         title: "Provision",
                         disabledBtn: disabled,
                         primary: true,
-                        onClick: handleSubmit
+                        onClick: ()=>{handleSubmit(
+                            {
+                                device_id: device.id,
+                                ca_name: selectedCA.ca_name,
+                                //dmsId: deviceDMS.id,
+                                country: device.country,
+                                state: device.state,
+                                locality: device.city,
+                                organization: device.organization,
+                                organization_unit: device.organization_unit,
+                                common_name: device.common_name,
+                                key_type: device.key_type,
+                                key_bits: device.key_bits,
+                                email: ""
+                            }
+                        )}
                     }
                 ]
             }
@@ -129,11 +144,11 @@ const LamassuModalDeviceProvision = ({caList, deviceId, deviceName, open, handle
                             <Box>
                                 <div style={{marginTop: 20}}>
                                     <Typography variant="button">Device Alias: </Typography>
-                                    <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{deviceName}</Typography>
+                                    <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{device.alias}</Typography>
                                 </div>
                                 <div>
                                     <Typography variant="button">Device UUID: </Typography>
-                                    <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{deviceId}</Typography>
+                                    <Typography variant="button" style={{background: theme.palette.type == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{device.id}</Typography>
                                 </div>
                             </Box>
                         </Box>

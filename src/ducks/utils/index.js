@@ -12,6 +12,7 @@ const makeRequestWithActions = (fetchPromise, actionType, meta={}) =>
     rxjsFrom(fetchPromise).pipe(
       map((data) => {
         console.log(data , !data.error);
+        console.log(data && !data.error);
         if (data && !data.error) {
           return {
             type: succeed(actionType),

@@ -49,6 +49,13 @@ const getCertWhenDmsApproved = action$ => action$.pipe(
     mergeMap(dms => {console.log(dms);return makeRequestWithActions(dmsApiCalls.getDmsCert({id: dms.id}), actions.GET_DMS_ENROLLER_CERT, {dmsId: dms.id})})
 );
 
+const notifyDMSCreationInProgres = (action$, state$) => action$.pipe(
+    ofType(actions.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST, actions.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST),
+    mergeMap(({ payload, meta })=> {
+      return of({ type: notificationActions.NOTIFY, payload: {msg: "DMS creation requested. Awaiting confirmation", type: "info"} })
+    })
+  );
+  
 /// General ERROR Notify
 const notifyError = (action$, state$) => action$.pipe(
     ofType(actions.GET_ALL_DMS_ENROLLER_ERROR, actions.UPDATE_DMS_ENROLLER_STATUS_ERROR, actions.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST_ERROR, actions.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST_ERROR, actions.GET_DMS_ENROLLER_CERT_ERROR ),
@@ -68,4 +75,5 @@ export {
     notifyError,
     getCertForApprovedDms,
     getCertWhenDmsApproved,
+    notifyDMSCreationInProgres,
 }

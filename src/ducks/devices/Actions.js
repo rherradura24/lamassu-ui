@@ -17,11 +17,22 @@ export const getDeviceByLogs = (id) => ({
     }
 })
 
-export const provisionDevice = (id) => ({
+export const provisionDevice = (deviceData) => ({
     type: t.PROVISION_DEVICE,
     payload: {
-        id: id
-    }
+        device_id: deviceData.device_id,
+        ca_name: deviceData.ca_name,
+        //dmsId: deviceData.id,
+        c: deviceData.country,
+        string: deviceData.state,
+        l: deviceData.city,
+        o: deviceData.organization,
+        ou: deviceData.organization_unit,
+        cn: deviceData.common_name,
+        keyAlg: deviceData.key_type,
+        keySize: deviceData.key_bits,
+        email: ""
+}
 })
 export const deleteDevice = (id) => ({
     type: t.DELETE_DEVICE,

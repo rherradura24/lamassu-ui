@@ -45,9 +45,12 @@ export const importCA = (caName, bundle, ttl) => ({
     },
 })  
 
-export const getCerts = (caName) => ({
+export const getCerts = (caName, caType) => ({
     type: t.GET_CERTS,
-    payload: { caName: caName },
+    payload: { 
+        caName: caName,
+        caType: caType
+    },
 })  
 
 export const getCert = (cerId) => ({

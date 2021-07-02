@@ -3,6 +3,10 @@ import certsList from "./mocks/certs-list.json";
 
 import keycloak from "keycloak";
 
+const parseError = (err) => {
+    return typeof err === 'object' ?  JSON.stringify(err) : err
+ }
+
 export const getCAs = async () => {
     try {
         const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/ops", {
@@ -11,12 +15,16 @@ export const getCAs = async () => {
             }
         })
         const json = await resp.json()
-        return {
-            json: json,
-            status: resp.status
+        if (resp.status !== 200) {
+            return {error: "Unexpected response from CA API server. " + parseError(json)}
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
         }
     } catch (er) {
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + parseError(er) }
     }
 }
 
@@ -40,7 +48,7 @@ export const revokeCA = async (payload) => {
             status: resp.status
         }
     } catch (er) {
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + er }
     }
 }
 
@@ -66,7 +74,7 @@ export const createCA = async (payload) => {
             }
         }
     } catch (er) {
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + er }
     }
 }
 
@@ -93,26 +101,31 @@ export const importCA = async (payload) => {
         }
     } catch (er) {
         console.log(er);
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + er }
     }
 }
 
 export const getCerts = async (payload) => {
+    console.log(payload);
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/issued" , {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/issued/" + payload.caType , {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
             }
         })
+
         const json = await resp.json()
-        return {
-            json: json,
-            status: resp.status
+        if (resp.status !== 200) {
+            return {error: "Unexpected response from CA API server. " + parseError(json)}
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
         }
     } catch (er) {
-        console.log(er);
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + parseError(er) }
     }
 }
 
@@ -130,6 +143,6 @@ export const revokeCert = async (payload) => {
             status: resp.status
         }
     } catch (er) {
-        return { error: "Connection error with API server" }
+        return { error: "Connection error with CA API server. " + er }
     }
 }

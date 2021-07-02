@@ -51,7 +51,7 @@ const revokeCA = action$ => action$.pipe(
 
 const getCertsEpic = action$ => action$.pipe(
   ofType(actions.GET_CERTS),
-  mergeMap( () => makeRequestWithActions(certsApiCalls.getCerts(), actions.GET_CERTS)),
+  mergeMap( ({payload}) => makeRequestWithActions(certsApiCalls.getCerts(payload), actions.GET_CERTS)),
 );
   
 const revokeCert = action$ => action$.pipe(

@@ -5,6 +5,8 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { useHistory } from "react-router";
 import { LamassuChip } from "components/LamassuChip";
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
+import { DataGrid, GridToolbar } from "@material-ui/data-grid";
+import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
 
 import Timeline from '@material-ui/lab/Timeline';
 import TimelineItem from '@material-ui/lab/TimelineItem';
@@ -56,12 +58,16 @@ const useStyles = makeStyles((theme) => ({
     rightSidebar: {
         gridRow: 1,
         gridColumn: 3,
-    }    
+    },
+    cell:{
+        "& .MuiDataGrid-cell": {
+            outline: "none!important",
+            cursor: "pointer"
+        }
+    } 
 }))
 
-
 const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, revokeDeviceCert}) => {
-    console.log(deviceData);
     let history = useHistory();
     const theme = useTheme();
 
@@ -81,9 +87,9 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
             open: true,
             type: "deviceProvision",
             caList: caList,
-            deviceId: deviceData.id,
-            deviceName: deviceData.alias,
-            handleSubmit: (caName)=>{provisionDevice(id, caName); resetModal()},
+            device: deviceData,
+            dmsCrt: "",
+            handleSubmit: (data)=>{provisionDevice(data); resetModal()},
         })
     }
     const onDeleteDeviceClick = () =>{
@@ -126,8 +132,39 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
         bg: theme.palette.type == "light" ? "#FFB1AA" : "#6d504e",
         txt: "red"
     }
+    
+    var gridData = []
+    if(deviceData && deviceData.certHistory){
+        deviceData.certHistory.forEach(histo => {
+            gridData.push({
+                ...histo, 
+                id: histo.serial_number,
+                valid_from: moment(histo.valid_from),
+                valid_to: moment(histo.valid_to)
+            })
+        });
+    }
+    const columns = [
+        { field: 'id', headerName: 'Serial Number', width: 400 },
+        { field: 'issuer_name', headerName: 'CA Name', width: 350 },
+        { field: 'valid_from', headerName: 'Valid from', width: 350 },
+        { field: 'valid_to', headerName: 'Valid Until', width: 350 },
+        { 
+            field: 'status', 
+            headerName: 'Status', 
+            width: 150,
+            renderCell: (params) => {
+                if (params.value == "DEVICE_CREATED" || params.value == "CERT_EXPIRED") {
+                    return <LamassuChip label={params.value} status={"orange"} rounded={false} />
+                } else if (params.value == "CERT_REVOKED"){
+                    return <LamassuChip label={params.value} status={"red"} rounded={false} />
+                } else {    // sttatus == issued
+                    return <LamassuChip label={params.value} status={"green"} rounded={false} />
+                }
+            }
+        },    
+    ]
 
-    const cert =  "-----BEGIN CERTIFICATE-----\nMIIE6jCCA9KgAwIBAgIQCjUI1VwpKwF9+K1lwA/35DANBgkqhkiG9w0BAQsFADBh\nMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\nd3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD\nQTAeFw0yMDA5MjQwMDAwMDBaFw0zMDA5MjMyMzU5NTlaME8xCzAJBgNVBAYTAlVT\nMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxKTAnBgNVBAMTIERpZ2lDZXJ0IFRMUyBS\nU0EgU0hBMjU2IDIwMjAgQ0ExMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC\nAQEAwUuzZUdwvN1PWNvsnO3DZuUfMRNUrUpmRh8sCuxkB+Uu3Ny5CiDt3+PE0J6a\nqXodgojlEVbbHp9YwlHnLDQNLtKS4VbL8Xlfs7uHyiUDe5pSQWYQYE9XE0nw6Ddn\ng9/n00tnTCJRpt8OmRDtV1F0JuJ9x8piLhMbfyOIJVNvwTRYAIuE//i+p1hJInuW\nraKImxW8oHzf6VGo1bDtN+I2tIJLYrVJmuzHZ9bjPvXj1hJeRPG/cUJ9WIQDgLGB\nAfr5yjK7tI4nhyfFK3TUqNaX3sNk+crOU6JWvHgXjkkDKa77SU+kFbnO8lwZV21r\neacroicgE7XQPUDTITAHk+qZ9QIDAQABo4IBrjCCAaowHQYDVR0OBBYEFLdrouqo\nqoSMeeq02g+YssWVdrn0MB8GA1UdIwQYMBaAFAPeUDVW0Uy7ZvCj4hsbw5eyPdFV\nMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw\nEgYDVR0TAQH/BAgwBgEB/wIBADB2BggrBgEFBQcBAQRqMGgwJAYIKwYBBQUHMAGG\nGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0aHR0cDovL2Nh\nY2VydHMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0R2xvYmFsUm9vdENBLmNydDB7BgNV\nHR8EdDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRH\nbG9iYWxSb290Q0EuY3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20v\nRGlnaUNlcnRHbG9iYWxSb290Q0EuY3JsMDAGA1UdIAQpMCcwBwYFZ4EMAQEwCAYG\nZ4EMAQIBMAgGBmeBDAECAjAIBgZngQwBAgMwDQYJKoZIhvcNAQELBQADggEBAHer\nt3onPa679n/gWlbJhKrKW3EX3SJH/E6f7tDBpATho+vFScH90cnfjK+URSxGKqNj\nOSD5nkoklEHIqdninFQFBstcHL4AGw+oWv8Zu2XHFq8hVt1hBcnpj5h232sb0HIM\nULkwKXq/YFkQZhM6LawVEWwtIwwCPgU7/uWhnOKK24fXSuhe50gG66sSmvKvhMNb\ng0qZgYOrAKHKCjxMoiWJKiKnpPMzTFuMLhoClw+dj20tlQj7T9rxkTgl4ZxuYRiH\nas6xuwAwapu3r9rxxZf+ingkquqTgLozZXq8oXfpf2kUCwA/d5KxTVtzhwoT0JzI\n8ks5T1KESaZMkE4f97Q=\n-----END CERTIFICATE-----"
 
     var strengthElement = (strengthString) => {
         var txt = "Unknown"
@@ -152,7 +189,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
           color = "orange"
         }else if (status == "DEVICE_PROVISIONED"){
           color = "green"
-        }else if (status == "CERT_REVOKED" || status == "DEVICE_DECOMISSIONED"){
+        }else if (status == "CERT_REVOKED" || status == "DEVICE_DECOMMISIONED"){
           color = "red"
         } else{
             color = "unknown"
@@ -188,6 +225,10 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                             <Box style={{display: "flex", marginBottom: 5}}>
                                                 <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
                                                 <Typography>{deviceData.id}</Typography>
+                                            </Box>
+                                            <Box style={{display: "flex", marginBottom: 5}}>
+                                                <Typography variant="button" style={{minWidth: 150}}>DMS ID</Typography>
+                                                <Typography>{deviceData.dms_id}</Typography>
                                             </Box>
                                             <Box style={{display: "flex", marginBottom: 5}}>
                                                 <Typography variant="button" style={{minWidth: 150}}>Status</Typography>
@@ -244,7 +285,8 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                     <TabContext value={activeTab}>
                                         <TabList style={{background: theme.palette.certInspector.tabs}} variant="fullWidth" value={activeTab} onChange={handleTabChange} aria-label="simple tabs example">
                                             <Tab value="0" label="Logs" />
-                                            <Tab value="1" label="Last emmited cert"/>
+                                            <Tab value="1" label="Last emitted cert"/>
+                                            <Tab value="2" label="Emitted certs history"/>
                                         </TabList>
                                         <TabPanel className={classes.scroll} value="0" style={{padding: 20, overflowY: "auto", height: "50vh"}}>
                                             {
@@ -309,7 +351,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                                                         )
                                                                     }
                                                                     {
-                                                                        log.log_type == "LOG_DEVICE_DECOMISSIONED" && (
+                                                                        log.log_type == "LOG_DEVICE_DECOMMISIONED" && (
                                                                             <>  
                                                                                 <TimelineDot style={{background: red.bg}}>
                                                                                     <HighlightOffIcon style={{ color: red.txt}}/>
@@ -335,20 +377,54 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                             }
                                         </TabPanel>
                                         <TabPanel className={classes.scroll} value="1" style={{padding: 0, overflowY: "auto"}}>
-                                        <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
-                                            <IconButton style={{position:"absolute", right: 50}} onClick={()=>{
-                                                navigator.clipboard.writeText(cert).then(function() {
-                                                    console.log('Async: Copying to clipboard was successful!');
-                                                }, function(err) {
-                                                    console.error('Async: Could not copy text: ', err);
-                                                });                  
-                                                }}>
-                                                <AssignmentOutlinedIcon style={{color: "white"}}/>
-                                            </IconButton>
-                                            <div style={{color: "white", fontSize: "small", maxWidth: 500, fontFamily: "monospace"}}>
-                                                {cert}
-                                            </div>
-                                            </div>
+                                            <Box style={{padding: 10}}>
+                                                {
+                                                    deviceData.cert ? (
+                                                        <>
+                                                            <Box style={{display: "flex"}}>
+                                                                <Typography variant="button" style={{minWidth: 150}}>CA Name</Typography>
+                                                                <Typography>{deviceData.cert.issuer_name}</Typography>
+                                                            </Box>
+                                                            <Box style={{display: "flex"}}>
+                                                                <Typography variant="button" style={{minWidth: 150}}>Serial Number</Typography>
+                                                                <Typography>{deviceData.cert.serial_number}</Typography>
+                                                            </Box>
+                                                            <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
+                                                                <IconButton style={{position:"absolute", right: 50}} onClick={()=>{
+                                                                    navigator.clipboard.writeText(deviceData.cert.crt).then(function() {
+                                                                        console.log('Async: Copying to clipboard was successful!');
+                                                                    }, function(err) {
+                                                                        console.error('Async: Could not copy text: ', err);
+                                                                    });                  
+                                                                }}>
+                                                                    <AssignmentOutlinedIcon style={{color: "white"}}/>
+                                                                </IconButton>
+                                                                <div style={{color: "white", fontSize: "small", maxWidth: 500, fontFamily: "monospace"}}>
+                                                                    {deviceData.cert.crt}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ):(
+                                                        <>
+                                                            <Typography>This device has no cert</Typography>
+                                                        </>
+                                                    )
+                                                }
+                                            </Box>
+                                        </TabPanel>
+                                        <TabPanel className={classes.scroll} value="2" style={{padding: 0, overflowY: "auto"}}>
+                                            <Box style={{height: "50vh"}}>
+                                                <DataGrid
+                                                    classes={{root: classes.cell}}
+                                                    components={{
+                                                        Toolbar: GridToolbar,
+                                                        NoRowsOverlay: EmptyOverlayGrid
+                                                    }}
+                                                    rows={gridData}
+                                                    columns={columns}
+                                                    autoPageSize={true}
+                                                />
+                                            </Box>
                                         </TabPanel>
                                     </TabContext>
                                     

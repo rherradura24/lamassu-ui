@@ -37,7 +37,7 @@ export const REVOKE_CERT = prefix + 'REVOKE_CERT';
 export const REVOKE_CERT_SUCCESS = prefix + 'REVOKE_CERT_SUCCESS';
 export const REVOKE_CERT_ERROR = prefix + 'REVOKE_CERT_ERROR';
 
-export const ERORS = [
+export const ERRORS = [
     GET_CAS_ERROR,
     GET_CA_ERROR,
     REVOKE_CA_ERROR,

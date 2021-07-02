@@ -22,7 +22,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
     const [orgUnit, setOrgUnit] = useState("")
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
-    const [keyBits, setKeyBits] = useState(4096)
+    const [keyBits, setKeyBits] = useState(3072)
     
     const disabled = activeTab == "viaBackend" ? dmsName == "" || cn == "" : dmsName == ""
 
@@ -44,7 +44,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
 
     useEffect(()=>{
         if (keyType == "rsa") {
-            setKeyBits(4096)
+            setKeyBits(3072)
         }else{
             setKeyBits(384)
         }
@@ -64,16 +64,12 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
             value: 3072
         },
         {
-            label: "4096 (high)",
-            value: 4096
+            label: "7680 (high)",
+            value: 7680
         },
     ]
 
     const ecdsaOptions = [
-        {
-            label: "160 (low)",
-            value: 160
-        },
         {
             label: "224 (medium)",
             value: 224

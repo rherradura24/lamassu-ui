@@ -69,7 +69,9 @@ const Dashboard = ({ }) => {
                   <Route exact path="/dms/list" render={(props) => <DMSList />} />
                   <Route exact path="/dms/devices" render={(props) => <DeviceList />} />
                   <Route path="/dms/devices/" render={(props) => <DeviceInspect id={props.location.pathname.split("/")[3]}/>} />
-                  <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
+                  {
+                    // <Route exact path="/utils/cert-checker" render={(props) => <CertChecker />} />
+                  }
                   {
                     keycloak.tokenParsed.realm_access.roles.includes("admin") && (
                       <>

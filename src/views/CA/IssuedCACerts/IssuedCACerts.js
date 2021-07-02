@@ -2,9 +2,8 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { Box, Chip, Fade, makeStyles, Paper } from '@material-ui/core';
+import { Box, Chip, Fade, FormControlLabel, LinearProgress, makeStyles, Paper, Switch } from '@material-ui/core';
 import { green, orange, red } from '@material-ui/core/colors';
-import { DataGrid, GridToolbar } from '@material-ui/data-grid';
 import EmptyOverlayGrid from "components/DataGridCustomComponents/EmptyOverlayGrid"
 import CertInspectorSideBar from 'views/CertInspectorSideBar';
 import { LamassuModalCertRevocation, LamassuModalPolyphormic } from 'components/Modal';
@@ -16,6 +15,17 @@ import moment from 'moment';
 import { Certificate } from '@fidm/x509';
 import { useHistory } from 'react-router';
 
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridColumnsToolbarButton,
+    GridFilterToolbarButton,
+    GridDensitySelector,
+    GridToolbarExport,
+    useGridSlotComponentProps,
+    GridOverlay,
+    GridToolbar
+  } from '@material-ui/data-grid';
 
 const useStyles = makeStyles((theme) => ({
     grid: {
@@ -47,7 +57,17 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const IssuedCACerts = ({certsData, revokeCert}) => {
+function CustomLoadingOverlay() {
+    return (
+      <GridOverlay>
+        <div style={{ position: 'absolute', top: 0, width: '100%' }}>
+          <LinearProgress />
+        </div>
+      </GridOverlay>
+    );
+  }
+
+const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
     const classes = useStyles()
     let history = useHistory();
 
@@ -55,6 +75,7 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
     const [rightSidebarCert, setRightSidebarCert] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
     const [modalCert, setModalCert] = useState(null)
+    const [includeLamassuSystemCerts, setIncludeLamassuSystemCerts] = useState(false)
 
     const handleCertRevocationClick = (certId, cn, issuerCaName) => {
         setModalCert({certId: certId, certCommonName: cn, issuerCaName: issuerCaName})
@@ -76,6 +97,15 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
 
     const handleCertDownload = (certId, certContent) => {
         downloadFile("CA-"+certId+".crt", certContent)
+    }
+
+    const handleIncludeSystemCertsChange = (checked) => {
+        setIncludeLamassuSystemCerts(checked); 
+        if (checked) {
+            reloadCerts("all")
+        }else{
+            reloadCerts("ops")
+        }
     }
 
     const columns = [
@@ -140,6 +170,7 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
             { columnField: 'issuer', operatorValue: 'equals', value: issuerFilter },
         ]
     }
+
     return (
         <Box className={classes.grid}>
             <Box className={rightSidebarOpen ? classes.contentCollapsed : classes.content}>
@@ -149,14 +180,32 @@ const IssuedCACerts = ({certsData, revokeCert}) => {
                         <Typography onClick={()=>{history.push("/ca/certs")}} style={{cursor: "pointer"}}> CAs </Typography>  
                         <Typography color="textPrimary">Certificates issued by CAs</Typography>
                     </Breadcrumbs>
-                    <Box component={Paper} style={{height: "100%", marginTop: 20}}>
+                    <Box component={Paper} style={{height: "100%", marginTop: 20, position: "relative"}}>
+                        <Box style={{position: "absolute", right: -10, top: 5}}>
+                            <Box>
+                                <FormControlLabel 
+                                    style={{position: "relative", zIndex:10}}
+                                    control={
+                                    <Switch
+                                        checked={includeLamassuSystemCerts}
+                                        onChange={(ev)=>{handleIncludeSystemCertsChange(ev.target.checked)}}
+                                        color="primary"
+                                        size="small"
+                                    />
+                                    }
+                                    label={<Typography variant="button" color="primary" style={{fontSize: "0.8125rem"}}>Include Lamassu System Certs</Typography>}
+                                />
+                            </Box>
+                        </Box>
                         <DataGrid
                             classes={{root: classes.cell}}
                             autoHeight={true}
                             components={{
+                                LoadingOverlay: CustomLoadingOverlay,
                                 Toolbar: GridToolbar,
-                                NoRowsOverlay: EmptyOverlayGrid
+                                NoRowsOverlay: EmptyOverlayGrid,
                             }}
+                            loading={loadingData}
                             {...issuerFilter != null ? {filterModel: filterModel} : {}}
                             rows={data}
                             columns={columns}

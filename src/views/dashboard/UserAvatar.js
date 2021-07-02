@@ -18,6 +18,16 @@ const UserAvatar = ({ username, roles }) => {
         setAnchorEl(null);
     }
 
+    var rolesString = ""
+    for (let i = 0; i < roles.length; i++) {
+        const role = roles[i];
+        rolesString = rolesString + role
+        if (i < roles.length - 1) {
+            rolesString = rolesString + ", "
+        }
+    }
+
+
     return(
         <>
             <Box 
@@ -34,7 +44,7 @@ const UserAvatar = ({ username, roles }) => {
                     style={{background: "transparent", margin: 10}}
                 >
                     <Typography variant="body1" style={{fontSize: 13}}>{username}</Typography>
-                    <Typography variant="body2" style={{fontSize: 12}} color="textSecondary">{roles}</Typography>
+                    <Typography variant="body2" style={{fontSize: 12}} color="textSecondary">{rolesString}</Typography>
                 </Box>
             </Box>
             <Menu

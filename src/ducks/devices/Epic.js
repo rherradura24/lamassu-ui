@@ -4,11 +4,17 @@ import { makeRequestWithActions } from "ducks/utils";
 import * as actions from "./ActionTypes"
 import * as notificationActions from "ducks/notifications/ActionTypes"
 import * as devicesApiCalls from "./ApiCalls";
+import * as dmsEnrollerApiCalls from "ducks/dms-enroller/ApiCalls";
 import { from, of } from 'rxjs';
 
 const getDevices = action$ => action$.pipe(
     ofType(actions.GET_ALL_DEVICES),
     mergeMap(() => makeRequestWithActions(devicesApiCalls.getAllDevices(), actions.GET_ALL_DEVICES)),
+);
+
+const getDeviceDmsName = action$ => action$.pipe(
+    ofType(actions.GET_ALL_DEVICES_SUCCESS),
+    mergeMap(() => {return makeRequestWithActions(dmsEnrollerApiCalls.getAllDms(), actions.GET_DEVICE_DMSs)})
 );
 
 const getDeviceById = action$ => action$.pipe(
@@ -19,6 +25,16 @@ const getDeviceById = action$ => action$.pipe(
 const getDeviceLogs = action$ => action$.pipe(
     ofType(actions.GET_DEVICE_SUCCESS),
     mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.getDeviceLogs(payload), actions.GET_DEVICE_LOGS, {id: payload.id})),
+);
+
+const getDeviceLastIssuedCert = action$ => action$.pipe(
+    ofType(actions.GET_DEVICE_SUCCESS),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.getDeviceCert(payload), actions.GET_DEVICE_LAST_ISSUED_CERT, {id: payload.id})),
+);
+
+const getDeviceCertHistory = action$ => action$.pipe(
+    ofType(actions.GET_DEVICE_SUCCESS),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.getDeviceCertHistory(payload), actions.GET_DEVICE_CERT_HISTORY, {id: payload.id})),
 );
 
 const provisionDevice = action$ => action$.pipe(
@@ -66,8 +82,11 @@ const notifyError = (action$, state$) => action$.pipe(
 
 export {
     getDevices,
+    getDeviceDmsName,
     getDeviceById,
     getDeviceLogs,
+    getDeviceCertHistory,
+    getDeviceLastIssuedCert,
     createDevice,
     provisionDevice,
     revokeDeviceCert,

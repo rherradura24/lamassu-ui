@@ -14,7 +14,7 @@ const createMapStateToProps = (state, {id}) => ({
 
 const mapDispatchToProps = (dispatch, {id}) => ({
   onMount: ()=>{ dispatch(certActions.getCAs());dispatch(devicesActions.getDeviceById(id))},
-  provisionDevice: ()=>{ dispatch(devicesActions.provisionDevice(id))},
+  provisionDevice: (data)=>{ dispatch(devicesActions.provisionDevice(data))},
   deleteDevice: ()=>{ dispatch(devicesActions.deleteDevice(id))},
   revokeDeviceCert: ()=>{ dispatch(devicesActions.revokeDeviceCert(id))},
 })

@@ -3,27 +3,34 @@ import * as actions from "./ActionTypes"
 
 const initialState = {
   list: {},
-  error: null
+  error: null,
+  loading: false
 } 
 
 const certsReducer = (state = initialState, action) => {
-  if (actions.ERORS.includes(action.type)) {
+  if (actions.ERRORS.includes(action.type)) {
     return { ...state, error: action.payload }
   } else {
     switch (action.type) {
       case actions.GET_CAS_SUCCESS:
-        var currentList = state.list
+        var currentList = {}
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "CA" }
         });
-        return { list: currentList, ...state };
+        return {...state, list: currentList };
       
+      case actions.GET_CERTS:
+        return {...state,  loading: true };
+        
+      case actions.GET_CERTS_ERROR:
+        return {...state,  loading: false };
+
       case actions.GET_CERTS_SUCCESS:
-        var currentList = state.list
+        var currentList = {}
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "END_CERT" }
         });
-        return { list: currentList, ...state };
+        return {...state, list: currentList, loading: false};
 
       default:
         return state;
@@ -32,6 +39,8 @@ const certsReducer = (state = initialState, action) => {
 };
 
 const getSelector = (state) => state.certs
+
+const getLoadingData = (state) => getSelector(state).loading
 
 const getAllCerts = (state) => {
   const certs = getSelector(state)
@@ -64,4 +73,5 @@ export {
   getIssuedCertByCA,
   getCertById,
   getCAs,
+  getLoadingData,
 }

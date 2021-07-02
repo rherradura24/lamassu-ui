@@ -28,7 +28,7 @@ const LamassuNotifications = ({ notificationHistory }) =>{
     
     const info = {
         color:"#687EEB",
-        bg:"#D4E9FF",
+        bg: theme.palette.type == "light" ? "#D4E9FF" : "#47576b"
     }
     const success= {
         bg: theme.palette.type == "light" ? "#D0F9DB" : "#4a6952",
