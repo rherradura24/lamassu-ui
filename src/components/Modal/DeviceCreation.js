@@ -30,13 +30,13 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
     const [orgUnit, setOrgUnit] = useState("")
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
-    const [keyBits, setKeyBits] = useState(4096)
+    const [keyBits, setKeyBits] = useState(3072)
 
     const disabled = deviceDMS == "" || deviceUUID == "" 
     
     useEffect(()=>{
         if (keyType == "rsa") {
-            setKeyBits(4096)
+            setKeyBits(3072)
         }else{
             setKeyBits(384)
         }
@@ -56,8 +56,8 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
             value: 3072
         },
         {
-            label: "4096 (high)",
-            value: 4096
+            label: "7680 (high)",
+            value: 7680
         },
     ]
 
@@ -149,7 +149,7 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                         <TextField margin="dense" id="city" label="City" fullWidth value={city} onChange={ev=>{setCity(ev.target.value)}}/>
                         <TextField margin="dense" id="org" label="Organization" fullWidth value={org} onChange={ev=>{setOrg(ev.target.value)}}/>
                         <TextField margin="dense" id="orgUnit" label="Organization Unit" fullWidth value={orgUnit} onChange={ev=>{setOrgUnit(ev.target.value)}}/>
-                        <TextField margin="dense" id="cn" label="Common Name" fullWidth value={cn} onChange={ev=>{setCN(ev.target.value)}}/>
+                        <TextField margin="dense" id="cn" label="Common Name" fullWidth value={deviceUUID} disabled={true}/>
                         <Grid container justify="space-between" alignItems="center">
                             <FormControl style={{width: 235}}>
                                 <InputLabel id="key-type-label">Key Type</InputLabel>

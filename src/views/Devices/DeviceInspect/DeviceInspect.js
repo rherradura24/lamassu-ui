@@ -112,6 +112,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
         })
     }
 
+
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
     };
@@ -147,16 +148,14 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
     const columns = [
         { field: 'id', headerName: 'Serial Number', width: 400 },
         { field: 'issuer_name', headerName: 'CA Name', width: 350 },
-        { field: 'valid_from', headerName: 'Valid from', width: 350 },
-        { field: 'valid_to', headerName: 'Valid Until', width: 350 },
+        //{ field: 'valid_from', headerName: 'Valid from', width: 350 },
+        //{ field: 'valid_to', headerName: 'Valid Until', width: 350 },
         { 
             field: 'status', 
             headerName: 'Status', 
             width: 150,
             renderCell: (params) => {
-                if (params.value == "DEVICE_CREATED" || params.value == "CERT_EXPIRED") {
-                    return <LamassuChip label={params.value} status={"orange"} rounded={false} />
-                } else if (params.value == "CERT_REVOKED"){
+                if (params.value == "REVOKED"){
                     return <LamassuChip label={params.value} status={"red"} rounded={false} />
                 } else {    // sttatus == issued
                     return <LamassuChip label={params.value} status={"green"} rounded={false} />

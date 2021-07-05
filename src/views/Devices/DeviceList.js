@@ -68,7 +68,7 @@ const DeviceList = ({ devicesData, createDevice }) => {
         { 
             field: 'status', 
             headerName: 'Status', 
-            width: 150,
+            width: 160,
             renderCell: (params) => {
                 if (params.value == "DEVICE_CREATED" || params.value == "CERT_EXPIRED") {
                     return <LamassuChip label={params.value} status={"orange"} rounded={false} />

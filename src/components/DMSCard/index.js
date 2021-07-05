@@ -74,21 +74,29 @@ export const DMSCard = ({ dmsData, title, status, isAdmin, onApproval, onDecline
                 <CardActions disableSpacing>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
                         <Box style={{display: "flex"}}>
-                            <Tooltip title="List Devices">
-                                <IconButton onClick={onDownloadClick} style={{maxHeight: 48}}>
-                                    <ListIcon />
-                                </IconButton>
-                            </Tooltip>
+                            {
+                                /*
+                                    <Tooltip title="List Devices">
+                                        <IconButton onClick={onDownloadClick} style={{maxHeight: 48}}>
+                                            <ListIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                 */
+                            }
                             <Tooltip title="Download DMS cert">
                                 <IconButton onClick={onDownloadClick} style={{maxHeight: 48}}>
                                     <GetAppIcon />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="Service Discovery Configuration">
-                                <IconButton onClick={onServiceDiscoveryInfoClick} style={{maxHeight: 48, maxWidth: 48}}>
-                                    <ConsulIcon color={theme.palette.type == "light" ? "#595959" : "#ffffff"}/>
-                                </IconButton>
-                            </Tooltip>
+                            {
+                                /*
+                                <Tooltip title="Service Discovery Configuration">
+                                    <IconButton onClick={onServiceDiscoveryInfoClick} style={{maxHeight: 48, maxWidth: 48}}>
+                                        <ConsulIcon color={theme.palette.type == "light" ? "#595959" : "#ffffff"}/>
+                                    </IconButton>
+                                </Tooltip>
+                                */
+                            }
                         </Box>
                         <div>
                             <Tooltip title="Revoke DMS">
