@@ -5,11 +5,11 @@ WORKDIR /app
 
 # install app dependencies
 COPY ./package.json package.json
+COPY ./jsconfig.json jsconfig.json
 RUN npm install
 
 COPY ./public public
 COPY ./src src
-COPY ./jsconfig.json jsconfig.json
 #Necesary to resolve JS absolute import paths during NPM BUILD
 
 RUN npm run build
