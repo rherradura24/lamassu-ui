@@ -8,10 +8,11 @@ import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
+    const [dmsApiUrl, setDmsApiUrl] = useState("")
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
     const [csr, setCsr] = useState("")
 
-    const disabled = activeTab == "viaDefinedValues" ? selectedCA == "" : selectedCA == "" || csr == ""
+    const disabled = activeTab == "viaDefinedValues" ? selectedCA == "" || dmsApiUrl == "" : selectedCA == "" || csr == ""
     console.log(disabled);
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
@@ -48,8 +49,8 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                         title: "Provision",
                         disabledBtn: disabled,
                         primary: true,
-                        onClick: ()=>{handleSubmit(
-                            {
+                        onClick: ()=>{handleSubmit(device.id, selectedCA.ca_name, dmsApiUrl
+                            /*{
                                 device_id: device.id,
                                 ca_name: selectedCA.ca_name,
                                 //dmsId: deviceDMS.id,
@@ -62,7 +63,7 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                                 key_type: device.key_type,
                                 key_bits: device.key_bits,
                                 email: ""
-                            }
+                            }*/
                         )}
                     }
                 ]
@@ -91,6 +92,9 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                                     getOptionLabel={(option) => { return typeof option !== "object" ? "" : option.ca_name} }
                                     renderInput={(params) => <TextField required={true} error={selectedCA==""} {...params} label="Certificate Authority" fullWidth variant="standard" />}
                                 />
+
+                                <TextField required={true} error={dmsApiUrl==""} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
+
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding: 0}}>
                                 <Box style={{marginTop: 10}}>

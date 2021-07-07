@@ -132,7 +132,7 @@ export const createDevice = async (payload) => {
         return { error: "Connection error with Devices API server. " + er }
     }
 }
-
+/*
 export const provisionDevice = async (payload) => {
     try {
         const resp = await fetch(window._env_.REACT_APP_DMS_API + "/v1/device", {
@@ -157,6 +157,28 @@ export const provisionDevice = async (payload) => {
         }
     } catch (er) {
         return { error: "Connection error with Devices API server. " + er }
+    }
+}
+*/
+export const provisionDevice = async (payload) => {
+    try {
+        const resp = await fetch(payload.dms_provision_url+"/dms-issue/"+payload.device_id+"/"+payload.ca_name, {
+            method: "POST",
+        })
+        if (resp.status == 200) {
+            return {
+                json: {data: {}},
+                status: resp.status
+            }
+        }else{
+            const txt = resp.text()
+            return {
+                json: {error: txt},
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with DMS API. " + er }
     }
 }
 

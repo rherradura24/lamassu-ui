@@ -15,7 +15,7 @@ COPY ./src src
 RUN npm run build
 
 #production environment
-FROM nginx:stable-alpine
+FROM nginx:1.20-alpine
 LABEL authors="hsaiz@ikerlan.es"
 
 COPY --from=build /app/build /usr/share/nginx/html
@@ -25,7 +25,7 @@ WORKDIR /usr/share/nginx/html
 COPY ./.env ./.env
 COPY ./env.sh .
 
-EXPOSE 80
+EXPOSE 443
 
 # Add bash
 RUN apk add --no-cache bash

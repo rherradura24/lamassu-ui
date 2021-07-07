@@ -89,7 +89,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
             caList: caList,
             device: deviceData,
             dmsCrt: "",
-            handleSubmit: (data)=>{provisionDevice(data); resetModal()},
+            handleSubmit: (deviceId, caName, dmsProvisionUrl)=>{provisionDevice(deviceId, caName, dmsProvisionUrl); resetModal()},
         })
     }
     const onDeleteDeviceClick = () =>{

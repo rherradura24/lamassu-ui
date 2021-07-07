@@ -16,7 +16,7 @@ export const getDeviceByLogs = (id) => ({
         id: id
     }
 })
-
+/*
 export const provisionDevice = (deviceData) => ({
     type: t.PROVISION_DEVICE,
     payload: {
@@ -33,6 +33,15 @@ export const provisionDevice = (deviceData) => ({
         keySize: deviceData.key_bits,
         email: ""
 }
+})
+*/
+export const provisionDevice = (deviceId, caName, dmsProvisionUrl) => ({
+    type: t.PROVISION_DEVICE,
+    payload: {
+        device_id: deviceId,
+        ca_name: caName,
+        dms_provision_url: dmsProvisionUrl
+    }
 })
 export const deleteDevice = (id) => ({
     type: t.DELETE_DEVICE,
