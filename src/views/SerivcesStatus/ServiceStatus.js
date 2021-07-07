@@ -40,7 +40,7 @@ const ServicesStatus = ({services}) => {
                                 </Box>
                             </TableCell>
                             <TableCell >
-                                https://lamassu.zpd.ikerlan.es
+                                {window.location.hostname}
                             </TableCell>
                         </TableRow>
                         ))}
