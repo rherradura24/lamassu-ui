@@ -275,7 +275,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                      
                                     </Box>
                                     <Box style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
-                                        <Button variant="contained" color="primary" onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
+                                        <Button variant="contained" color="primary" disabled={deviceData.status == "DEVICE_PROVISIONED"} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
                                         <Button variant="contained" color="primary" onClick={()=>{onRevokeDeviceCertClick()}} style={{marginTop: 10}}>Revoke current certificate</Button>
                                         <Button variant="contained" color="primary" onClick={()=>{onDeleteDeviceClick()}} style={{marginTop: 10}}>Delete Device</Button>
                                     </Box>
