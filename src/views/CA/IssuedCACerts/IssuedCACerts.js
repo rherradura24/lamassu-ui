@@ -142,17 +142,34 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
                 }
             }
         },
-        { field: 'valid_from', headerName: 'Valid from', width: 250 },
-        { field: 'valid_to', headerName: 'Valid until', width: 250 },
+        { 
+            field: 'valid_from', 
+            type: 'dateTime', 
+            headerName: 'Valid from',
+            width: 250,
+            renderCell: (params) => {
+                return moment(params.value).format("MMMM D YYYY, HH:mm:ss Z").toString()
+            }
+        },
+        { 
+            field: 'valid_to', 
+            type: 'dateTime', 
+            headerName: 'Valid until',
+            width: 250,
+            /*
+            renderCell: (params) => {
+                return moment(params.value).format("MMMM D YYYY, HH:mm:ss Z").toString()
+            }
+            */
+        },
       ];
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const issuerFilter = urlParams.get('issuer')
-
+    const expiresDays = urlParams.get('expires')
+    
     const data = certsData.map(certData => {
-        const certParsed = Certificate.fromPEM(certData.crt)
-
         return {
             id: certData.serial_number,
             issuer: certData.ca_name,
@@ -161,14 +178,25 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
             key_type: certData.key_type,
             key_bits: certData.key_bits,
             key_strength: certData.key_strength,
-            valid_from: moment(certParsed.validFrom).format("MMMM D YYYY, HH:mm:ss Z").toString(),
-            valid_to: moment(certParsed.validTo).format("MMMM D YYYY, HH:mm:ss Z").toString()
+            valid_from: new Date(moment(certData.valid_from).unix()*1000),
+            valid_to: new Date(moment(certData.valid_to).unix()*1000),
         }
     })
-    const filterModel = {
-        items:[
-            { columnField: 'issuer', operatorValue: 'equals', value: issuerFilter },
-        ]
+
+    var filterModel = null
+    if (issuerFilter != null){
+        filterModel = {
+            items:[
+                { columnField: 'issuer', operatorValue: 'equals', value: issuerFilter },
+            ]
+        }
+    }
+    if (expiresDays != null){
+        filterModel = {
+            items:[
+                { columnField: 'valid_to', operatorValue: 'before', value: moment().add(expiresDays, "days").unix()*1000 },
+            ]
+        }
     }
 
     return (
@@ -206,7 +234,7 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
                                 NoRowsOverlay: EmptyOverlayGrid,
                             }}
                             loading={loadingData}
-                            {...issuerFilter != null ? {filterModel: filterModel} : {}}
+                            {...filterModel != null ? {filterModel: filterModel} : {}}
                             rows={data}
                             columns={columns}
                             pageSize={12}

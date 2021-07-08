@@ -1,4 +1,5 @@
 
+import moment from "moment";
 import * as actions from "./ActionTypes"
 
 const initialState = {
@@ -65,6 +66,14 @@ const getCertById = (state, id) => {
   return result.length > 0 ? result[0] : null
 }
 
+const getCertsExpiringXDays = (state, daysToExpire) => {
+  const certs = getAllCerts(state)
+  const result = certs.filter(cert=> {
+    return moment(cert.valid_to).subtract(daysToExpire, "days").isBefore(moment())
+  });
+  return result
+}
+
 
 export default certsReducer;
 
@@ -74,4 +83,5 @@ export {
   getCertById,
   getCAs,
   getLoadingData,
+  getCertsExpiringXDays
 }
