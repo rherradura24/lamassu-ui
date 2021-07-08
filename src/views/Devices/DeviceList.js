@@ -74,7 +74,7 @@ const DeviceList = ({ devicesData, createDevice }) => {
                     return <LamassuChip label={params.value} status={"orange"} rounded={false} />
                 } else if (params.value == "CERT_REVOKED" || params.value == "DEVICE_DECOMMISIONED"){
                     return <LamassuChip label={params.value} status={"red"} rounded={false} />
-                } else if (params.value == "CERT_REVOKED" || params.value == "DEVICE_DECOMMISIONED"){
+                } else if (params.value == "DEVICE_PROVISIONED"){
                     return <LamassuChip label={params.value} status={"green"} rounded={false} />
                 } else {    // sttatus == issued
                     return <LamassuChip label={params.value} status={"unknown"} rounded={false} />
