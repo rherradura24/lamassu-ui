@@ -68,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, revokeDeviceCert}) => {
+    
     let history = useHistory();
     const theme = useTheme();
 

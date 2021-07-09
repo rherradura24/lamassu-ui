@@ -156,11 +156,10 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
             type: 'dateTime', 
             headerName: 'Valid until',
             width: 250,
-            /*
+            
             renderCell: (params) => {
                 return moment(params.value).format("MMMM D YYYY, HH:mm:ss Z").toString()
             }
-            */
         },
       ];
     

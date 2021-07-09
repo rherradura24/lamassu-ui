@@ -8,7 +8,7 @@ import HighchartsReact from 'highcharts-react-official'
 import moment from "moment";
 import { useHistory } from "react-router-dom";
 
-const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thirtyDaysCerts, expiringCertsTimeline}) =>{
+const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, thirtyDaysCerts, expiringCertsTimeline}) =>{
     const theme = useTheme()
     let history = useHistory();
 
@@ -29,7 +29,7 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
     var data = []
     const chartLength = 30
     for (let i = 0; i < chartLength ; i++) {
-        data.push([ moment().subtract(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().subtract(chartLength - 1 - i, "days"), "days")).length])
+        data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days")).length])
     } 
 
     const options = {
@@ -184,7 +184,7 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
                 <Box component={Paper} style={{borderRadius:10, padding: 20, width: 300, height:130, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
                         background: oneDay, cursor: "pointer"
                     }}
-                    onClick={(ev)=>{ev.stopPropagation();history.push("/ca/issued-certs?expires=1")}}
+                    onClick={(ev)=>{ev.stopPropagation();history.push("/ca/certs")}}
                 >
                     <Box>
                         <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
@@ -193,8 +193,8 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{oneDayCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 1 day</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCAs}</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>CA certificates will expire in 30 day</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -202,7 +202,7 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
                 <Box component={Paper} style={{marginTop:20, borderRadius:10, padding: 20, width: 300, height:130, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
                         background: sevenDays, cursor: "pointer"
                     }}
-                    onClick={(ev)=>{ev.stopPropagation();history.push("/ca/issued-certs?expires=7")}}
+                    onClick={(ev)=>{ev.stopPropagation();history.push("/ca/issued-certs?expires=30")}}
                 >
                     <Box>
                         <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
@@ -211,8 +211,8 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{sevenDaysCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 7 days</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysDms}</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>DMS certificates will expire in 30 days</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -230,7 +230,7 @@ const Home = ({issuedCerts, cas, dmss, devices, oneDayCerts, sevenDaysCerts, thi
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCerts}</Typography>
-                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Certificates will expire in 30 days</Typography>
+                            <Typography variant="h5" style={{color: "white", fontSize: 15}}>Device certificates will expire in 30 days</Typography>
                         </Box>
                     </Box>
                 </Box>

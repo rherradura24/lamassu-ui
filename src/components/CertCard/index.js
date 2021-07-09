@@ -13,8 +13,9 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {LamassuChip} from "components/LamassuChip"
+import moment from 'moment';
 
-const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
+const CertCard = ({ title, status, certData, keyStrength, validUntil, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
   const theme = useTheme()
    
   const keys = Object.keys(certData)
@@ -25,8 +26,6 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
       content: certData[key]
     })
   });
-
-
 
   var strengthElement = (strengthString) => {
     var txt = "Unknown"
@@ -77,10 +76,20 @@ const CertCard = ({ title, status, certData, keyStrength, onDownloadClick, onRev
       <CardContent>
         <DenseTable dense={true} data={denseTableData} parseRowTitle={true}/>
       </CardContent>
-      <Box style={{padding:20, display: "flex"}}>
+      <Box style={{padding:20, display: "flex", justifyContent: "space-between"}}>
         <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Typography variant="button" style={{marginRight: 5}}>Key Strength: </Typography>
             {strengthElement(keyStrength)}
+        </Box>
+        <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Typography variant="button" style={{marginRight: 5}}>Expires: </Typography>
+          {
+            moment(validUntil).subtract("30", "days").isBefore(moment()) ? (
+              <LamassuChip status="red" label={moment(validUntil).format("MMMM D YYYY")} rounded={false}/>
+            ):(
+              <LamassuChip status="unknown" label={moment(validUntil).format("MMMM D YYYY")} rounded={false}/>
+            )
+          }
         </Box>
       </Box>
       <CardActions disableSpacing>

@@ -15,6 +15,14 @@ const certsReducer = (state = initialState, action) => {
     switch (action.type) {
       case actions.GET_CAS_SUCCESS:
         var currentList = {}
+        //We need to keep ONLY END_CERT certs
+        var certsKeys = Object.keys(state.list)
+        var certList = certsKeys.map(key => state.list[key])
+        certList = certList.filter(cert=> cert.type == "END_CERT");
+        certList.forEach(cert => {
+          currentList[cert.serial_number]=cert
+        });
+
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "CA" }
         });
@@ -28,6 +36,14 @@ const certsReducer = (state = initialState, action) => {
 
       case actions.GET_CERTS_SUCCESS:
         var currentList = {}
+        //We need to keep ONLY CA certs
+        certsKeys = Object.keys(state.list)
+        var certList = certsKeys.map(key => state.list[key])
+        certList = certList.filter(cert=> cert.type == "CA");
+        certList.forEach(cert => {
+          currentList[cert.serial_number]=cert
+        });
+
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "END_CERT" }
         });
@@ -55,7 +71,7 @@ const getCAs = (state) => {
   return certs.filter(cert=> cert.type == "CA");
 }
 
-const getIssuedCertByCA = (state, caName) => {
+const getIssuedCertByCAs = (state) => {
   const certs = getAllCerts(state)
   return certs.filter(cert=> cert.type == "END_CERT");
 }
@@ -67,7 +83,15 @@ const getCertById = (state, id) => {
 }
 
 const getCertsExpiringXDays = (state, daysToExpire) => {
-  const certs = getAllCerts(state)
+  const certs = getIssuedCertByCAs(state)
+  const result = certs.filter(cert=> {
+    return moment(cert.valid_to).subtract(daysToExpire, "days").isBefore(moment())
+  });
+  return result
+}
+
+const getCAsExpiringXDays = (state, daysToExpire) => {
+  const certs = getCAs(state)
   const result = certs.filter(cert=> {
     return moment(cert.valid_to).subtract(daysToExpire, "days").isBefore(moment())
   });
@@ -79,9 +103,10 @@ export default certsReducer;
 
 export {
   getAllCerts,
-  getIssuedCertByCA,
+  getIssuedCertByCAs,
   getCertById,
   getCAs,
   getLoadingData,
-  getCertsExpiringXDays
+  getCertsExpiringXDays,
+  getCAsExpiringXDays
 }

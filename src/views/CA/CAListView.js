@@ -136,6 +136,7 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                                 <CertCard title={caData.ca_name} 
                                     status={caData.status} 
                                     keyStrength={caData.key_strength}
+                                    validUntil={caData.valid_to}
                                     certData={{
                                         country: caData.country,
                                         state: caData.state,

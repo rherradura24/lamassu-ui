@@ -18,8 +18,8 @@ const LamassuChip = ({ status, label, rounded=true, size="medium" }) => {
         txt: "red"
     }
     const unknownColor = {
-        bg: theme.palette.type == "light" ? "#FFB1AA" : "#6d504e",
-        txt: "red"
+        bg: theme.palette.type == "light" ? "#eee" : "#eee",
+        txt: "black"
     }
 
     var color = unknownColor

@@ -1,3 +1,5 @@
+import { Certificate } from "@fidm/x509";
+import moment from "moment";
 import * as actions from "./ActionTypes"
 
 const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
@@ -55,4 +57,15 @@ export const getAllDMS = (state) => {
 export const getLastPrivKeyResponse = (state) => {
   const dms = getSelector(state)
   return dms.lastPrivKey
+}
+
+export const getDMSsExpiringXDays = (state, daysToExpire) => {
+  const dmss = getAllDMS(state)
+  const result = dmss.filter(dms=> {
+    if (dms.crt) {
+      const cert = Certificate.fromPEM(dms.crt)
+      return moment(cert.validTo).subtract(daysToExpire, "days").isBefore(moment())
+    }
+  });
+  return result
 }
