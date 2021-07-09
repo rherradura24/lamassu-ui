@@ -191,9 +191,10 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
         }
     }
     if (expiresDays != null){
+        const date = moment().add(expiresDays, "days")
         filterModel = {
             items:[
-                { columnField: 'valid_to', operatorValue: 'before', value: moment().add(expiresDays, "days").unix()*1000 },
+                { columnField: 'valid_to', operatorValue: 'before', value: date.format("YYYY-MM-DD")+"T"+ date.format("HH:mm")},
             ]
         }
     }
