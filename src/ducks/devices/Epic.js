@@ -39,7 +39,7 @@ const getDeviceCertHistory = action$ => action$.pipe(
 
 const provisionDevice = action$ => action$.pipe(
     ofType(actions.PROVISION_DEVICE),
-    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.PROVISION_DEVICE, {id: payload.id})),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.PROVISION_DEVICE, {id: payload.device_id})),
 );
 
 const createDevice = action$ => action$.pipe(

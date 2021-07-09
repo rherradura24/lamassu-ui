@@ -115,7 +115,7 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
         { 
             field: 'status', 
             headerName: 'Status', 
-            width: 100,
+            width: 125,
             renderCell: (params) => {
                 if (params.value == "expired") {
                     return <LamassuChip label={"Expired"} status={"orange"} rounded={false} />
@@ -146,19 +146,19 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
             field: 'valid_from', 
             type: 'dateTime', 
             headerName: 'Valid from',
-            width: 250,
+            width: 125,
             renderCell: (params) => {
-                return moment(params.value).format("MMMM D YYYY, HH:mm:ss Z").toString()
+                return moment(params.value).format("MMMM D YYYY").toString()
             }
         },
         { 
             field: 'valid_to', 
             type: 'dateTime', 
             headerName: 'Valid until',
-            width: 250,
+            width: 125,
             
             renderCell: (params) => {
-                return moment(params.value).format("MMMM D YYYY, HH:mm:ss Z").toString()
+                return moment(params.value).format("MMMM D YYYY").toString()
             }
         },
       ];
