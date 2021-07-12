@@ -10,13 +10,13 @@ import { getCAsExpiringXDays, getCAs , getCertsExpiringXDays, getIssuedCertByCAs
 import { Home } from './Home';
 
 const mapStateToProps = (state) => ({
-  issuedCerts: getIssuedCertByCAs(state).length,
-  cas: getCAs(state).length,
-  dmss: getAllDMS(state).length,
-  devices: getDevices(state).length,
-  thirtyDaysCAs: getCAsExpiringXDays(state, 30).length,
-  thirtyDaysDms: getDMSsExpiringXDays(state, 30).length,
-  thirtyDaysCerts: getCertsExpiringXDays(state, 30).length,
+  issuedCerts: getIssuedCertByCAs(state),
+  cas: getCAs(state),
+  dmss: getAllDMS(state),
+  devices: getDevices(state),
+  thirtyDaysCAs: getCAsExpiringXDays(state, 30),
+  thirtyDaysDms: getDMSsExpiringXDays(state, 30),
+  thirtyDaysCerts: getCertsExpiringXDays(state, 30),
   expiringCertsTimeline: getCertsExpiringXDays(state, 30)
 })
 

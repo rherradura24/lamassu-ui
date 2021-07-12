@@ -21,7 +21,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
 
     const plotTitle = theme.palette.type === "light" ? "#5878FF" : "white"
     const plotLine = theme.palette.type === "light" ? "#3F66FE" : "#25ee32"
-    const plotLineDeg0 = theme.palette.type === "light" ? "#2441B1" : "#305c33"
+    const plotLineDeg0 = theme.palette.type === "light" ? "#2441B1" : "#25ee32"
     const plotLineDeg1 = theme.palette.type === "light" ? "#dedede" : "#273133"
     const plotToolipBg = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
     const plotToolipText = theme.palette.type === "light" ? "#dedede" : "#dedede"
@@ -31,6 +31,18 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
     for (let i = 0; i < chartLength ; i++) {
         data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days")).length])
     } 
+
+    var issuedCertsByCa = []
+    for (let i = 0; i < cas.length; i++) {
+        const ca_name = cas[i].ca_name;
+        const caIssuedCerts = issuedCerts.filter(cert=> {
+            if (cert.ca_name == ca_name){
+                return moment().subtract(30, "days").isBefore(moment(cert.valid_from))
+            }
+        });
+        //issuedCertsByCa.push({name: ca_name, y: caIssuedCerts.length})
+        issuedCertsByCa.push({name: ca_name, y: Math.floor(Math.random() * (25 - 10)) + 10})
+    }
 
     const options = {
         chart:{
@@ -112,8 +124,105 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                 [0, Highcharts.Color(plotLineDeg0).setOpacity(0.1).get('rgba')],
                 [1, Highcharts.Color(plotLineDeg1).setOpacity(0.6).get('rgba')]
             ]
-        }
+          }
         }]
+    }
+
+    const optionsDmsActivity = {
+        chart: {
+            type: 'column',
+            inverted: true,
+            backgroundColor: "transparent",
+            height: 272,
+            width: 600,
+            margin: 0,
+            events: {
+                load: function() {
+                   this.series[0].update({
+                    dataLabels: {
+                      x: this.plotSizeY
+                    }
+                  
+                  }) 
+                }
+              }
+        },
+        tooltip:{
+            enabled: false
+        },
+        credits:{
+            enabled: false 
+        },
+        title: {
+          text: ''
+        },
+        legend:{
+            enabled: false
+        },
+        yAxis:{
+            title: "",
+            gridLineWidth: 0,
+            lineWidth: 0,
+            minorGridLineWidth: 0,
+            lineColor: 'transparent',
+            labels: {
+                enabled: false
+            },
+            minorTickLength: 0,
+            tickLength: 0  
+        },
+        plotOptions:{
+            series: {
+                borderWidth: 0,
+                borderRadius: 10,
+                maxPointWidth: 35,
+                dataLabels: {
+                    enabled: true,
+                    useHTML: true,
+                    borderColor: "transparent",
+                    backgroundColor:  plotToolipBg,
+                    borderRadius: 7,
+                    shape: 'callout',
+                    padding: 5,
+
+                    formatter: function (){
+                        return`
+                            <div style="padding: 0px 5px 0px 5px; display: flex; flex-direction: column; align-items: center; justify-content:center; color: `+plotToolipText+` ;font-weight: bold; font-size: 16px; font-family: "Roboto", "Helvetica", "Arial", sans-serif; letter-spacing: 0em;">
+                                <div style="font-size: 11px; font-weight: 300;">
+                                    `+this.series.data[this.x].name+`   
+                                </div>
+                                <div style="    "> 
+                                    `+this.y+`    
+                                </div>
+                            </div>
+                        `
+                    }
+        
+                }
+            }
+    
+        },
+        
+        series: [
+            {
+                name: "DMS",
+                borderRadiusTopLeft: '20px',
+                borderRadiusTopRight: '20px',
+                color: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.Color(plotLineDeg0).setOpacity(0.9).get('rgba')],
+                        [1, Highcharts.Color(plotLineDeg1).setOpacity(0.9).get('rgba')]
+                    ]
+                },
+                data: issuedCertsByCa
+            }
+        ]
     }
 
     return (
@@ -131,7 +240,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                         </Box>
                     </Box>
                     <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}} >
-                        <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{issuedCerts}</Typography>
+                        <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{issuedCerts.length}</Typography>
                         <Typography variant="h5" style={{color: "white", fontSize: 15}}>Issued Certificates</Typography>
                     </Box>
                 </Box>
@@ -142,7 +251,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                     onClick={(ev)=>{ev.stopPropagation();history.push("/ca/certs")}}
                     >
                         <Box>
-                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{cas}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{cas.length}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Certificate Authorities</Typography>
                         </Box>
                         <Box>
@@ -155,7 +264,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                         onClick={(ev)=>{ev.stopPropagation();history.push("/dms/list")}}
                     >
                         <Box>
-                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{dmss}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{dmss.length}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Device Manufacturing Systems</Typography>
                         </Box>
                         <Box>
@@ -168,7 +277,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                         onClick={(ev)=>{ev.stopPropagation();history.push("/dms/devices")}}
                     >
                         <Box>
-                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{devices}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontSize: 25}}>{devices.length}</Typography>
                             <Typography variant="h5" style={{color: "#eee", fontSize: 15}}>Devices</Typography>
                         </Box>
                         <Box>
@@ -193,7 +302,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCAs}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCAs.length}</Typography>
                             <Typography variant="h5" style={{color: "white", fontSize: 15}}>CA certificates will expire in 30 day</Typography>
                         </Box>
                     </Box>
@@ -211,7 +320,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysDms}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysDms.length}</Typography>
                             <Typography variant="h5" style={{color: "white", fontSize: 15}}>DMS certificates will expire in 30 days</Typography>
                         </Box>
                     </Box>
@@ -229,21 +338,33 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCerts}</Typography>
+                            <Typography variant="h3" style={{color: mainText, fontWeight: "bold"}}>{thirtyDaysCerts.length}</Typography>
                             <Typography variant="h5" style={{color: "white", fontSize: 15}}>Device certificates will expire in 30 days</Typography>
                         </Box>
                     </Box>
                 </Box>
             </Box>
-
-            <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
-                <Box style={{position: "relative", left: 15, top: 15}}>
-                    <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Expiration Timeline (30 days)</Typography>
+            
+            <Box style={{display: "flex", flexDirection: "column"}}>
+                <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
+                    <Box style={{position: "relative", left: 15, top: 15}}>
+                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Activity Timeline (30 days)</Typography>
+                    </Box>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={options}
+                    />
                 </Box>
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={options}
-                />
+
+                <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600, marginTop: 20}}>
+                    <Box style={{position: "relative", left: 15, top: 15}}>
+                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>DMS Activity Timeline (30 days)</Typography>
+                    </Box>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={optionsDmsActivity}
+                    />
+                </Box>
             </Box>
 
 
