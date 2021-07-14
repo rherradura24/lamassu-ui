@@ -16,6 +16,7 @@ const mapDispatchToProps = (dispatch, {id}) => ({
   onMount: ()=>{ dispatch(certActions.getCAs());dispatch(devicesActions.getDeviceById(id))},
   //provisionDevice: (data)=>{ dispatch(devicesActions.provisionDevice(data))},
   provisionDevice: (deviceId, caName, dmsProvisionUrl)=>{ dispatch(devicesActions.provisionDevice(deviceId, caName, dmsProvisionUrl))},
+  renewDevice: (deviceId, dmsRenewUrl)=>{ dispatch(devicesActions.renewDevice(deviceId, dmsRenewUrl))},
   deleteDevice: ()=>{ dispatch(devicesActions.deleteDevice(id))},
   revokeDeviceCert: ()=>{ dispatch(devicesActions.revokeDeviceCert(id))},
 })

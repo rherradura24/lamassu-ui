@@ -55,3 +55,10 @@ export const deletePrivKeyStorage = () => {
     }
 }
   
+
+export const getDmsLastIssuedCert = () => {
+    return {
+        type: t.GET_DMS_LAST_ISSUED_CERT,
+    }
+}
+  

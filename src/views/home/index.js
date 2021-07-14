@@ -4,7 +4,7 @@ import * as devicesActions from "ducks/devices/Actions";
 import * as certsActions from "ducks/certs/Actions";
 import * as dmsEnrollerActions from "ducks/dms-enroller/Actions";
 import { createLoader } from "components/utils";
-import { getDevices } from 'ducks/devices/Reducer';
+import { getDevices, getIssuedCertsByDmsLastThirtyDays } from 'ducks/devices/Reducer';
 import { getAllDMS, getDMSsExpiringXDays } from 'ducks/dms-enroller/Reducer';
 import { getCAsExpiringXDays, getCAs , getCertsExpiringXDays, getIssuedCertByCAs} from 'ducks/certs/Reducer';
 import { Home } from './Home';
@@ -17,7 +17,8 @@ const mapStateToProps = (state) => ({
   thirtyDaysCAs: getCAsExpiringXDays(state, 30),
   thirtyDaysDms: getDMSsExpiringXDays(state, 30),
   thirtyDaysCerts: getCertsExpiringXDays(state, 30),
-  expiringCertsTimeline: getCertsExpiringXDays(state, 30)
+  expiringCertsTimeline: getCertsExpiringXDays(state, 30),
+  issuedCertsByDmsLastThirtyDays: getIssuedCertsByDmsLastThirtyDays(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -26,6 +27,7 @@ const mapDispatchToProps = (dispatch) => ({
       dispatch(certsActions.getCAs()) 
       dispatch(devicesActions.getAllDevices()) 
       dispatch(dmsEnrollerActions.getAllDMS()) 
+      dispatch(devicesActions.getIssuedCertsByDmsLastThirtyDays()) 
   },
   
   createDevice: (data)=>{ dispatch(devicesActions.createDevice(data)) },

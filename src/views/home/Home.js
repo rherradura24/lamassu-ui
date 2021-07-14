@@ -8,7 +8,7 @@ import HighchartsReact from 'highcharts-react-official'
 import moment from "moment";
 import { useHistory } from "react-router-dom";
 
-const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, thirtyDaysCerts, expiringCertsTimeline}) =>{
+const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, thirtyDaysCerts, expiringCertsTimeline, issuedCertsByDmsLastThirtyDays}) =>{
     const theme = useTheme()
     let history = useHistory();
 
@@ -22,9 +22,10 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
     const plotTitle = theme.palette.type === "light" ? "#5878FF" : "white"
     const plotLine = theme.palette.type === "light" ? "#3F66FE" : "#25ee32"
     const plotLineDeg0 = theme.palette.type === "light" ? "#2441B1" : "#25ee32"
-    const plotLineDeg1 = theme.palette.type === "light" ? "#dedede" : "#273133"
+    const plotLineDeg1 = theme.palette.type === "light" ? "#7E91DA" : "#40884B"
     const plotToolipBg = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
     const plotToolipText = theme.palette.type === "light" ? "#dedede" : "#dedede"
+    const plotBarChartLabelTxt = theme.palette.type === "light" ? "#555" : "#dedede"
 
     var data = []
     const chartLength = 30
@@ -32,16 +33,18 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
         data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days")).length])
     } 
 
-    var issuedCertsByCa = []
-    for (let i = 0; i < cas.length; i++) {
-        const ca_name = cas[i].ca_name;
-        const caIssuedCerts = issuedCerts.filter(cert=> {
-            if (cert.ca_name == ca_name){
-                return moment().subtract(30, "days").isBefore(moment(cert.valid_from))
-            }
-        });
-        //issuedCertsByCa.push({name: ca_name, y: caIssuedCerts.length})
-        issuedCertsByCa.push({name: ca_name, y: Math.floor(Math.random() * (25 - 10)) + 10})
+    var issuedCertsByDMS = []
+    console.log(issuedCertsByDmsLastThirtyDays);
+    for (let i = 0; i < dmss.length; i++) {
+        const filtered = issuedCertsByDmsLastThirtyDays.filter(dms=>dms.dms.dms_id == dmss[i].id)
+        const issued = filtered.length
+        console.log(dmss[i].id, issued);
+        if (issued > 0) {
+            console.log(dmss[i].id, issued);
+            issuedCertsByDMS.push({name: dmss[i].dms_name, y: filtered[0].dms.issued_certs})
+        }else{
+            issuedCertsByDMS.push({name: dmss[i].dms_name, y: 0})
+        }
     }
 
     const options = {
@@ -60,17 +63,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
         legend:{
             enabled: false
         },
-        xAxis:{
-            gridLineWidth: 0,
-            lineWidth: 0,
-            minorGridLineWidth: 0,
-            lineColor: 'transparent',
-            labels: {
-                enabled: false
-            },
-            minorTickLength: 0,
-            tickLength: 0        
-        },
+    
         yAxis:{
             title: "",
             gridLineWidth: 0,
@@ -133,14 +126,13 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
             type: 'column',
             inverted: true,
             backgroundColor: "transparent",
-            height: 272,
+            height: dmss.length*50,
             width: 600,
-            margin: 0,
             events: {
                 load: function() {
                    this.series[0].update({
                     dataLabels: {
-                      x: this.plotSizeY
+                      x: this.plotSizeY + 20
                     }
                   
                   }) 
@@ -169,7 +161,23 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                 enabled: false
             },
             minorTickLength: 0,
+            maxPadding: "0.1", 
             tickLength: 0  
+        },
+        xAxis:{
+            title: "",
+            gridLineWidth: 0,
+            lineWidth: 0,
+            minorGridLineWidth: 0,
+            lineColor: 'transparent',
+            categories: issuedCertsByDMS.map(dms=>{return dms.name}),
+            minorTickLength: 0,
+            tickLength: 0 ,
+            labels: {
+                formatter: function (){
+                    return `<span style="color: `+plotBarChartLabelTxt+` ">${this.value}</span>`
+                } 
+            }
         },
         plotOptions:{
             series: {
@@ -182,16 +190,13 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                     borderColor: "transparent",
                     backgroundColor:  plotToolipBg,
                     borderRadius: 7,
-                    shape: 'callout',
                     padding: 5,
-
+                    align: 'left',
+                    inside: true,
                     formatter: function (){
                         return`
                             <div style="padding: 0px 5px 0px 5px; display: flex; flex-direction: column; align-items: center; justify-content:center; color: `+plotToolipText+` ;font-weight: bold; font-size: 16px; font-family: "Roboto", "Helvetica", "Arial", sans-serif; letter-spacing: 0em;">
-                                <div style="font-size: 11px; font-weight: 300;">
-                                    `+this.series.data[this.x].name+`   
-                                </div>
-                                <div style="    "> 
+                                <div style=""> 
                                     `+this.y+`    
                                 </div>
                             </div>
@@ -220,7 +225,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                         [1, Highcharts.Color(plotLineDeg1).setOpacity(0.9).get('rgba')]
                     ]
                 },
-                data: issuedCertsByCa
+                data: issuedCertsByDMS
             }
         ]
     }
@@ -356,8 +361,8 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                     />
                 </Box>
 
-                <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600, marginTop: 20}}>
-                    <Box style={{position: "relative", left: 15, top: 15}}>
+                <Box component={Paper} style={{marginLeft: 20, height: 25 + dmss.length*50, width: 600, marginTop: 20}}>
+                    <Box style={{position: "relative", left: 15, top: 15, marginBottom:10}}>
                         <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>DMS Activity Timeline (30 days)</Typography>
                     </Box>
                     <HighchartsReact

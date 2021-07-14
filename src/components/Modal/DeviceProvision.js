@@ -8,12 +8,11 @@ import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
-    const [dmsApiUrl, setDmsApiUrl] = useState("")
+    const [dmsApiUrl, setDmsApiUrl] = useState("https://"+window.location.hostname+":5000")
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
     const [csr, setCsr] = useState("")
 
     const disabled = activeTab == "viaDefinedValues" ? selectedCA == "" || dmsApiUrl == "" : selectedCA == "" || csr == ""
-    console.log(disabled);
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
     };

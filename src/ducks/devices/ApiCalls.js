@@ -182,6 +182,28 @@ export const provisionDevice = async (payload) => {
     }
 }
 
+export const renewDevice = async (payload) => {
+    try {
+        const resp = await fetch(payload.dms_renew_url+"/dms-renew/"+payload.device_id, {
+            method: "POST",
+        })
+        if (resp.status == 200) {
+            return {
+                json: {data: {}},
+                status: resp.status
+            }
+        }else{
+            const txt = resp.text()
+            return {
+                json: {error: txt},
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with DMS API. " + er }
+    }
+}
+
 export const revokeDeviceCert = async (payload) => {
     try {
         const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/" + payload.id + "/revoke", {
@@ -204,6 +226,24 @@ export const deleteDevice = async (payload) => {
     try {
         const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/" + payload.id, {
             method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        return { error: "Connection error with Devices API server. " + er }
+    }
+}
+
+export const getIssuedCertsByDmsLastThirtyDays = async () => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/dms-cert-history/thirty-days", {
+            method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
             },

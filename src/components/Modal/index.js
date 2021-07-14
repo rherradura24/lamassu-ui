@@ -12,6 +12,7 @@ import { LamassuModalDmsServiceDiscoveryInfo } from "./DmsServiceDiscoveryInfo";
 import { LamassuModalDeviceProvision } from "./DeviceProvision";
 import { LamassuModalDeviceDelete } from "./DeviceDelete";
 import { LamassuModalDeviceCertRevocation } from "./DeviceCertRevocation";
+import { LamassuModalDeviceRenew } from "./DeviceRenew";
 
 const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
     switch (type) {
@@ -155,6 +156,15 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             handleSubmit={props["handleSubmit"]} 
             device={props["device"]} 
             caList={props["caList"]}
+          />
+        )
+        case "deviceRenew":
+          return (
+            <LamassuModalDeviceRenew
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            device={props["device"]} 
           />
         )
     

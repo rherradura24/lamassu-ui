@@ -151,3 +151,21 @@ export const getDmsCert = async (payload) => {
         return { error: "Connection error with DMS Enroller API server. " + er }
     }
 }
+
+export const getLastIssuedCertPerDms = async () => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_DEVICES_API + "/v1/devices/dms-cert-history/last-issued", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+            },
+        })
+        const json = await resp.json()
+        return {
+            json: json,
+            status: resp.status
+        }
+    } catch (er) {
+        return { error: "Connection error with Devices API server. " + er }
+    }
+}

@@ -1,6 +1,6 @@
 import * as actions from "./ActionTypes"
 
-const dmsReducer = (state = { list: {}}, action) => {
+const dmsReducer = (state = { list: {}, thiry_days_list:{}}, action) => {
   console.log(action);
   switch (action.type) {
     case actions.GET_ALL_DEVICES_SUCCESS:
@@ -64,6 +64,16 @@ const dmsReducer = (state = { list: {}}, action) => {
           }
         }
       }
+
+    case actions.GET_DMS_CERT_HISTORY_LAST_30_DAYS_SUCCESS: 
+
+      var currentList = {}
+      action.payload.forEach(dms => {
+        currentList[dms.dms_id] = {dms}
+      });
+
+      return { ...state, thiry_days_list: currentList };
+
     default:
       return state;
   }
@@ -79,5 +89,12 @@ export const getDevices = (state) => {
   const devicesKeys = Object.keys(devicesReducer.list)
   const devicesList = devicesKeys.map(key => devicesReducer.list[key])
   return devicesList;
+}
+
+export const getIssuedCertsByDmsLastThirtyDays = (state) => {
+  const devicesReducer = getSelector(state)
+  const dmsKeys = Object.keys(devicesReducer.thiry_days_list)
+  const dmsList = dmsKeys.map(key => devicesReducer.thiry_days_list[key])
+  return dmsList;
 }
 

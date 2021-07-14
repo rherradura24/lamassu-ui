@@ -11,6 +11,11 @@ const getDmsEpic = action$ => action$.pipe(
     mergeMap(() => makeRequestWithActions(dmsApiCalls.getAllDms(), actions.GET_ALL_DMS_ENROLLER)),
 );
 
+const getDmsLastIssuedEpic = action$ => action$.pipe(
+    ofType(actions.GET_ALL_DMS_ENROLLER_SUCCESS),
+    mergeMap(() => makeRequestWithActions(dmsApiCalls.getLastIssuedCertPerDms(), actions.GET_DMS_LAST_ISSUED_CERT)),
+);
+
 const createDmsViaCsrEpic = action$ => action$.pipe(
     ofType(actions.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST),
     mergeMap(({payload}) => makeRequestWithActions(dmsApiCalls.createDmsViaCsr(payload), actions.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST)),
@@ -70,6 +75,7 @@ export {
     createDmsViaCsrEpic,
     createDmsViaFormEpic,
     updateDmsStatus,
+    getDmsLastIssuedEpic,
     refreshDMSs,
     notifyCreateDmsSuccess,
     notifyError,

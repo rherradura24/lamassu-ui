@@ -16,6 +16,9 @@ export const getDeviceByLogs = (id) => ({
         id: id
     }
 })
+export const getIssuedCertsByDmsLastThirtyDays = () => ({
+    type: t.GET_DMS_CERT_HISTORY_LAST_30_DAYS,
+})
 /*
 export const provisionDevice = (deviceData) => ({
     type: t.PROVISION_DEVICE,
@@ -43,6 +46,14 @@ export const provisionDevice = (deviceId, caName, dmsProvisionUrl) => ({
         dms_provision_url: dmsProvisionUrl
     }
 })
+export const renewDevice = (deviceId, dmsRenewUrl) => ({
+    type: t.RENEW_DEVICE,
+    payload: {
+        device_id: deviceId,
+        dms_renew_url: dmsRenewUrl
+    }
+})
+
 export const deleteDevice = (id) => ({
     type: t.DELETE_DEVICE,
     payload: {

@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     } 
 }))
 
-const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, revokeDeviceCert}) => {
+const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, deleteDevice, revokeDeviceCert}) => {
     
     let history = useHistory();
     const theme = useTheme();
@@ -91,6 +91,14 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
             device: deviceData,
             dmsCrt: "",
             handleSubmit: (deviceId, caName, dmsProvisionUrl)=>{provisionDevice(deviceId, caName, dmsProvisionUrl); resetModal()},
+        })
+    }
+    const onRenewDeviceClick = () =>{
+        setModalInfo({
+            open: true,
+            type: "deviceRenew",
+            device: deviceData,
+            handleSubmit: (deviceId, dmsProvisionUrl)=>{renewDevice(deviceId, dmsProvisionUrl); resetModal()},
         })
     }
     const onDeleteDeviceClick = () =>{
@@ -198,6 +206,16 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
           <LamassuChip label={status} status={color} rounded={false}/>
       )}
     
+    var mainButton = null
+    if(deviceData.status == "PENDING_PROVISION"){
+        mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
+    }else if(deviceData.status == "DEVICE_PROVISIONED"){
+        mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onRenewDeviceClick()}}>Renew Device Cert</Button>
+    }else if(deviceData.status == "DEVICE_DECOMMISIONED"){
+        mainButton = <Button variant="contained" color="primary" disabled={true}>Renew Device Cert</Button>
+        
+    }
+
 
     return(
         <>
@@ -276,7 +294,9 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, deleteDevice, r
                                      
                                     </Box>
                                     <Box style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
-                                        <Button variant="contained" color="primary" disabled={deviceData.status == "DEVICE_PROVISIONED"} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
+                                        {
+                                            mainButton
+                                        }
                                         <Button variant="contained" color="primary" onClick={()=>{onRevokeDeviceCertClick()}} style={{marginTop: 10}}>Revoke current certificate</Button>
                                         <Button variant="contained" color="primary" onClick={()=>{onDeleteDeviceClick()}} style={{marginTop: 10}}>Delete Device</Button>
                                     </Box>

@@ -133,7 +133,8 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, create
                                 <DMSCard
                                     isAdmin={keycloak.tokenParsed.realm_access.roles.includes("admin")}
                                     title={dmsData.dms_name} 
-                                    status={dmsData.status} 
+                                    status={dmsData.status}
+                                    lastIssued={dmsData.lastIssued} 
                                     dmsData={{
                                         country: dmsData.country,
                                         state: dmsData.state,

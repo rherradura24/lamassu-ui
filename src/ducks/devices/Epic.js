@@ -42,6 +42,11 @@ const provisionDevice = action$ => action$.pipe(
     mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.PROVISION_DEVICE, {id: payload.device_id})),
 );
 
+const renewDevice = action$ => action$.pipe(
+    ofType(actions.RENEW_DEVICE),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.renewDevice(payload), actions.RENEW_DEVICE, {id: payload.device_id})),
+);
+
 const createDevice = action$ => action$.pipe(
     ofType(actions.CREATE_DEVICE),
     mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.createDevice(payload), actions.CREATE_DEVICE)),
@@ -53,7 +58,7 @@ const refreshDevices = action$ => action$.pipe(
 );
 
 const refreshDevice = action$ => action$.pipe(
-    ofType(actions.PROVISION_DEVICE_SUCCESS, actions.DELETE_DEVICE_SUCCESS, actions.REVOKE_DEVICE_CERT_SUCCESS),
+    ofType(actions.PROVISION_DEVICE_SUCCESS, actions.RENEW_DEVICE_SUCCESS, actions.DELETE_DEVICE_SUCCESS, actions.REVOKE_DEVICE_CERT_SUCCESS),
     mergeMap(({meta}) => makeRequestWithActions(devicesApiCalls.getDeviceById(meta), actions.GET_DEVICE)),
 );
 
@@ -67,6 +72,11 @@ const deleteDevice = action$ => action$.pipe(
     mergeMap(({payload})=> makeRequestWithActions(devicesApiCalls.deleteDevice(payload), actions.DELETE_DEVICE, {id: payload.id})),
 );
 
+const getDmsCertHistoryLast30Days = action$ => action$.pipe(
+    ofType(actions.GET_DMS_CERT_HISTORY_LAST_30_DAYS),
+    mergeMap(()=> makeRequestWithActions(devicesApiCalls.getIssuedCertsByDmsLastThirtyDays(), actions.GET_DMS_CERT_HISTORY_LAST_30_DAYS)),
+);
+
 const notifyDeviceRemovalSuccess = (action$, state$) => action$.pipe(
     ofType(actions.DELETE_DEVICE_SUCCESS),
     mapTo({ type: notificationActions.NOTIFY, payload: {msg: "Device successfully removed", type: "success"} })
@@ -74,7 +84,7 @@ const notifyDeviceRemovalSuccess = (action$, state$) => action$.pipe(
 );
 /// General ERROR Notify
 const notifyError = (action$, state$) => action$.pipe(
-    ofType(actions.CREATE_DEVICE_ERROR, actions.DELETE_DEVICE_ERROR, actions.GET_ALL_DEVICES_ERROR, actions.GET_DEVICE_ERROR, actions.PROVISION_DEVICE_ERROR, actions.GET_DEVICE_LOGS_ERROR ),
+    ofType(actions.CREATE_DEVICE_ERROR, actions.DELETE_DEVICE_ERROR, actions.GET_ALL_DEVICES_ERROR, actions.GET_DEVICE_ERROR, actions.PROVISION_DEVICE_ERROR, actions.RENEW_DEVICE_ERROR, actions.GET_DEVICE_LOGS_ERROR ),
     mergeMap(({ payload, meta })=> {
       return of({ type: notificationActions.NOTIFY, payload: {msg: payload, type: "error"} })
     })
@@ -89,10 +99,12 @@ export {
     getDeviceLastIssuedCert,
     createDevice,
     provisionDevice,
+    renewDevice,
     revokeDeviceCert,
     refreshDevices,
     refreshDevice,
     deleteDevice,
+    getDmsCertHistoryLast30Days,
     notifyError,
     notifyDeviceRemovalSuccess,
 }
