@@ -174,7 +174,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
       </div>
       <TabContext value={activeTab}>
         <TabList style={{background: theme.palette.certInspector.tabs}} variant="fullWidth" value={activeTab} onChange={handleTabChange} aria-label="simple tabs example">
-          <Tab value="0" label="Decoded Certifcate" />
+          <Tab value="0" label="Decoded Certificate" />
           <Tab value="1" label="Certificate content"/>
           <Tab value="2" label="Public key"/>
         </TabList>

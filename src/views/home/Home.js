@@ -12,20 +12,20 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
     const theme = useTheme()
     let history = useHistory();
 
-    const main = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
-    const mainText = theme.palette.type === "light" ? "white" : "#25ee32"
-    const mainSecondary = theme.palette.type === "light" ? "#5878FF" : "#414248"
-    const oneDay = theme.palette.type === "light" ? "#2441B1" : "#18191D"
-    const sevenDays = theme.palette.type === "light" ? "#4198D6" : "#323538"
-    const thirtyDays = theme.palette.type === "light" ? "#4C98AF" : "#273133"
+    const main = theme.palette.homeCharts.main
+    const mainText = theme.palette.homeCharts.mainText
+    const mainSecondary = theme.palette.homeCharts.mainSecondary
+    const casExpiring = theme.palette.homeCharts.casExpiring
+    const dmssExpiring = theme.palette.homeCharts.dmssExpiring
+    const devicesExpiring = theme.palette.homeCharts.devicesExpiring
 
-    const plotTitle = theme.palette.type === "light" ? "#5878FF" : "white"
-    const plotLine = theme.palette.type === "light" ? "#3F66FE" : "#25ee32"
-    const plotLineDeg0 = theme.palette.type === "light" ? "#2441B1" : "#25ee32"
-    const plotLineDeg1 = theme.palette.type === "light" ? "#7E91DA" : "#40884B"
-    const plotToolipBg = theme.palette.type === "light" ? "#3F66FE" : "#23252B"
-    const plotToolipText = theme.palette.type === "light" ? "#dedede" : "#dedede"
-    const plotBarChartLabelTxt = theme.palette.type === "light" ? "#555" : "#dedede"
+    const plotTitle = theme.palette.homeCharts.plotTitle
+    const plotLine = theme.palette.homeCharts.plotLine
+    const plotLineDeg0 = theme.palette.homeCharts.plotLineDeg0
+    const plotLineDeg1 = theme.palette.homeCharts.plotLineDeg1
+    const plotToolipBg = theme.palette.homeCharts.plotToolipBg
+    const plotToolipText = theme.palette.homeCharts.plotToolipText
+    const plotBarChartLabelTxt = theme.palette.homeCharts.plotBarChartLabelTxt
 
     var data = []
     const chartLength = 30
@@ -296,14 +296,14 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
 
             <Box style={{marginLeft: 20}}>
                 <Box component={Paper} style={{borderRadius:10, padding: 20, width: 300, height:130, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
-                        background: oneDay, cursor: "pointer"
+                        background: casExpiring, cursor: "pointer"
                     }}
                     onClick={(ev)=>{ev.stopPropagation();history.push("/ca/certs")}}
                 >
                     <Box>
                         <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Box style={{background: "white", borderRadius: 50, width:50, height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                <ListAltOutlinedIcon style={{fontSize: 30, color: oneDay}}/>
+                                <ListAltOutlinedIcon style={{fontSize: 30, color: casExpiring}}/>
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
@@ -314,14 +314,14 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                 </Box>
 
                 <Box component={Paper} style={{marginTop:20, borderRadius:10, padding: 20, width: 300, height:130, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
-                        background: sevenDays, cursor: "pointer"
+                        background: dmssExpiring, cursor: "pointer"
                     }}
                     onClick={(ev)=>{ev.stopPropagation();history.push("/ca/issued-certs?expires=30")}}
                 >
                     <Box>
                         <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Box style={{background: "white", borderRadius: 50, width:50, height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                <ListAltOutlinedIcon style={{fontSize: 30, color: sevenDays}}/>
+                                <ListAltOutlinedIcon style={{fontSize: 30, color: dmssExpiring}}/>
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
@@ -332,14 +332,14 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
                 </Box>
 
                 <Box component={Paper} style={{marginTop:20, borderRadius:10, padding: 20, width: 300, height:130, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
-                        background: thirtyDays, cursor: "pointer"
+                        background: devicesExpiring, cursor: "pointer"
                     }}
                     onClick={(ev)=>{ev.stopPropagation();history.push("/ca/issued-certs?expires=30")}}
                 >
                     <Box>
                         <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                             <Box style={{background: "white", borderRadius: 50, width:50, height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                <ListAltOutlinedIcon style={{fontSize: 30, color: thirtyDays}}/>
+                                <ListAltOutlinedIcon style={{fontSize: 30, color: devicesExpiring}}/>
                             </Box>
                         </Box>
                         <Box style={{marginTop:20, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>

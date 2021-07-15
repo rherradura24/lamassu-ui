@@ -7,8 +7,6 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { useState } from "react";
 
-import {lightThemeConfig, darkThemeConfig} from "theme"
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -40,9 +38,9 @@ const Dashboard = ({ }) => {
     }
   }
   
-  const lightThemeMUI = createMuiTheme({...lightThemeConfig, ...overrides})
+  const lightThemeMUI = createMuiTheme({...window._theme_.light, ...overrides})
   
-  const darkThemeMUI = createMuiTheme({...darkThemeConfig, ...overrides})
+  const darkThemeMUI = createMuiTheme({...window._theme_.dark, ...overrides})
 
   const theme = darkTheme ? darkThemeMUI : lightThemeMUI
 
