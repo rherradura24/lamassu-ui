@@ -8,7 +8,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from "moment";
 
-export const DMSCard = ({ dmsData, title, status, lastIssued, isAdmin, onApproval, onDecline, styles={}, onDownloadClick, onRevokeClick, onServiceDiscoveryInfoClick }) => {
+export const DMSCard = ({ dmsData, title, status, lastIssued, isAdmin, onApproval, onDecline, styles={}, onDownloadClick, onRevokeClick }) => {
     const theme = useTheme()
     
     const keys = Object.keys(dmsData)

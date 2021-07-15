@@ -81,13 +81,7 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, create
             handleSubmit: ()=>{updateDmsStatus(dms.id, dms, "REVOKED"); resetModal()}
         })
     }
-    const handleDmsServiceDiscoveryInfoClick = (dms) => {
-        setModalInfo({
-            open: true,
-            type: "dmsServiceDiscoveryInfo",
-            dmsId: dms.id,
-        })
-    }
+
     const handleDmsDownloadClick = (dms) => {
         downloadFile("DMS-"+dms.dms_name+".crt", dms.crt)
     }
@@ -134,7 +128,7 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, create
                                     isAdmin={keycloak.tokenParsed.realm_access.roles.includes("admin")}
                                     title={dmsData.dms_name} 
                                     status={dmsData.status}
-                                    lastIssued={dmsData.lastIssued} 
+                                    lastIssued={dmsData.lastIssued}
                                     dmsData={{
                                         country: dmsData.country,
                                         state: dmsData.state,
@@ -147,7 +141,6 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, create
                                     onDecline={()=>{handleDmsDeclineClick(dmsData)}}
                                     onDownloadClick={()=>{handleDmsDownloadClick(dmsData)}}
                                     onRevokeClick={()=>handleDmsRevokeClick(dmsData)}
-                                    onServiceDiscoveryInfoClick={()=>{handleDmsServiceDiscoveryInfoClick(dmsData)}}
                                     key={dmsData.name} 
                                     styles={{margin: 10}}
                                 /> 

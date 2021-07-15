@@ -27,7 +27,7 @@ const LamassuModalDeviceRenew = ({device, open, handleSubmit, handleClose}) => {
             }
             formContent={
                 (<>
-                    <TextField required={true} error={dmsApiUrl==""} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
+                    <TextField required={true} error={dmsApiUrl==""} disabled={true} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
                     <Box>
                         <div style={{marginTop: 20}}>
                             <Typography variant="button">Device Alias: </Typography>

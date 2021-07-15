@@ -206,15 +206,17 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, de
           <LamassuChip label={status} status={color} rounded={false}/>
       )}
     
-    var mainButton = null
-    if(deviceData.status == "PENDING_PROVISION"){
-        mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
-    }else if(deviceData.status == "DEVICE_PROVISIONED"){
-        mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onRenewDeviceClick()}}>Renew Device Cert</Button>
-    }else if(deviceData.status == "DEVICE_DECOMMISIONED"){
-        mainButton = <Button variant="contained" color="primary" disabled={true}>Renew Device Cert</Button>
-        
+    var mainButton = (<></>)
+    if(deviceData.dms_id == window._env_.REACT_APP_DEFAULT_DMS_ID){
+        if(deviceData.status == "PENDING_PROVISION"){
+            mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
+        }else if(deviceData.status == "DEVICE_PROVISIONED"){
+            mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onRenewDeviceClick()}}>Renew Device Cert</Button>
+        }else if(deviceData.status == "DEVICE_DECOMMISIONED"){
+            mainButton = <Button variant="contained" color="primary" disabled={true}>Renew Device Cert</Button>
+        }
     }
+    
 
 
     return(

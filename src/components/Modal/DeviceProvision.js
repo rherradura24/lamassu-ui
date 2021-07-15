@@ -92,7 +92,7 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                                     renderInput={(params) => <TextField required={true} error={selectedCA==""} {...params} label="Certificate Authority" fullWidth variant="standard" />}
                                 />
 
-                                <TextField required={true} error={dmsApiUrl==""} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
+                                <TextField required={true} error={dmsApiUrl==""} disabled={true} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
 
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding: 0}}>
