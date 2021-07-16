@@ -2,7 +2,6 @@ import { TextField, Typography, useTheme } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { useState } from "react";
 import { LamassuModal } from "./LamassuModal";
-import { isObject } from "highcharts";
 
 const LamassuModalDeviceDelete = ({caList, deviceId, deviceName, open, handleSubmit, handleClose}) => {
     const theme = useTheme();

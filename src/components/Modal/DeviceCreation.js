@@ -9,7 +9,6 @@ import CachedIcon from '@material-ui/icons/Cached';
 
 import { getAllDMS } from 'ducks/dms-enroller/Reducer';
 import * as dmsActions from 'ducks/dms-enroller/Actions';
-import { isObject } from "highcharts";
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -125,7 +124,7 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                                 setDeviceDMS(newValue)
                             }
                         }}
-                        getOptionLabel={(option) => isObject(option) ? option.dms_name : ""} 
+                        getOptionLabel={(option) => typeof option === "object" ? option.dms_name : ""} 
                         renderInput={(params) => <TextField required={true} error={deviceDMS==""}{...params} label="Device Manufacturing System" fullWidth variant="standard" />}
                     />
 

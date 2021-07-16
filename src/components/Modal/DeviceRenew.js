@@ -2,7 +2,6 @@ import { Box, Button, Paper, Tab, TextField, Typography, useTheme } from "@mater
 import { Autocomplete, TabContext, TabList, TabPanel } from "@material-ui/lab";
 import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
-import { isObject } from "highcharts";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
 const LamassuModalDeviceRenew = ({device, open, handleSubmit, handleClose}) => {
