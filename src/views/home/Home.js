@@ -383,7 +383,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
 
                 <Box component={Paper} style={{marginLeft: 20, height: 70 + dmss.length*45, width: 600, marginTop: 20}}>
                     <Box style={{marginTop: 15, marginLeft: 15}}>
-                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Activity Timeline (30 days)</Typography>
+                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>DMS Activity Timeline (30 days)</Typography>
                     </Box>
                     <Box style={{height: 25 + dmss.length*45, width: 600}}>
                         <Bar data={dataBarCharJs} options={optionsBarCharJs} />
