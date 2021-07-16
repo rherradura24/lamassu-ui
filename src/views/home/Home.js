@@ -3,12 +3,27 @@ import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import EqualizerRoundedIcon from '@material-ui/icons/EqualizerRounded';
 import React from 'react'
 import { render } from 'react-dom'
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
 import moment from "moment";
 import { useHistory } from "react-router-dom";
+import { Bar, Line } from 'react-chartjs-2';
+
+import {Chart} from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+// Register the plugin to all charts:
+Chart.register(ChartDataLabels);
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
 
 const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, thirtyDaysCerts, expiringCertsTimeline, issuedCertsByDmsLastThirtyDays}) =>{
+
     const theme = useTheme()
     let history = useHistory();
 
@@ -29,7 +44,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
 
     var data = []
     const chartLength = 30
-    for (let i = 0; i < chartLength ; i++) {
+    for (let i = chartLength -1 ; i >= 0 ; i--) {
         data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days")).length])
     } 
 
@@ -47,188 +62,171 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
         }
     }
 
-    const options = {
-        chart:{
-            backgroundColor: "transparent",
-            height: 275,
-            width: 600,
-            margin: -5
-        },
-        credits:{
-            enabled: false 
-        },
-        title: {
-          text: ''
-        },
-        legend:{
-            enabled: false
-        },
-    
-        yAxis:{
-            title: "",
-            gridLineWidth: 0,
-            lineWidth: 0,
-            minorGridLineWidth: 0,
-            lineColor: 'transparent',
-            labels: {
-                enabled: false
-            },
-            minorTickLength: 0,
-            tickLength: 0  
-        },
-        tooltip:{
-            useHTML: true,
-            borderColor: "transparent",
-            backgroundColor:  plotToolipBg,
-            borderRadius: 7,
-            formatter: function (){
-                return`
-                    <div style="width: 85px; display: flex; flex-direction: column; align-items: center; justify-content:center; color: `+plotToolipText+` ;font-weight: bold; font-size: 16px; font-family: "Roboto", "Helvetica", "Arial", sans-serif; letter-spacing: 0em;">
-                        <div style="margin-bottom: 5px"> 
-                            `+this.y+`    
-                        </div>
-                        <div style="font-size: 11px; font-weight: 300;">
-                            `+moment(this.x).format("DD/MM/YYYY")+`   
-                        </div>
-                    </div>
-                `
-            }
-
-        },
-        plotOptions:{
-            areaspline: {
-                marker:{
-                    enabled: false
-                },
-            }
-        },
-        series: [{
-          data: data,
-          type: 'areaspline',
-          color: plotLine,
-          fillColor: {
-            linearGradient: {
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: 1
-            },
-            stops: [
-                [0, Highcharts.Color(plotLineDeg0).setOpacity(0.1).get('rgba')],
-                [1, Highcharts.Color(plotLineDeg1).setOpacity(0.6).get('rgba')]
+    const dataBarCharJs = {
+        labels: issuedCertsByDMS.map(dms=>{return dms.name}),
+        datasets: [
+          {
+            data: issuedCertsByDMS.map(dms=>{return dms.y}),
+            borderWidth: 1,
+            borderRadius: 5,
+            backgroundColor: [
+                "rgba("+hexToRgb(plotLineDeg0).r+","+hexToRgb(plotLineDeg0).g+","+hexToRgb(plotLineDeg0).b+", 0.3)"
+            ],
+            borderColor: [
+                plotLineDeg1,            
             ]
-          }
-        }]
-    }
-
-    const optionsDmsActivity = {
-        chart: {
-            type: 'column',
-            inverted: true,
-            backgroundColor: "transparent",
-            height: dmss.length*50,
-            width: 600,
-            events: {
-                load: function() {
-                   this.series[0].update({
-                    dataLabels: {
-                      x: this.plotSizeY + 20
-                    }
-                  
-                  }) 
-                }
-              }
+          },
+        ],
+    };
+      
+    const optionsBarCharJs = {
+        indexAxis: 'y',
+        // Elements options apply to all of the options unless overridden in a dataset
+        // In this case, we are setting the border of each horizontal bar to be 2px wide
+        elements: {
+            bar: {
+                borderWidth: 2,
+            },
         },
-        tooltip:{
-            enabled: false
+        layout: {
+            padding:{
+                left: 10,
+                top:5,
+                right:25,
+            },
         },
-        credits:{
-            enabled: false 
-        },
-        title: {
-          text: ''
-        },
-        legend:{
-            enabled: false
-        },
-        yAxis:{
-            title: "",
-            gridLineWidth: 0,
-            lineWidth: 0,
-            minorGridLineWidth: 0,
-            lineColor: 'transparent',
-            labels: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            title: {
+                display: false,                
+            },
+            tooltip:{
                 enabled: false
             },
-            minorTickLength: 0,
-            maxPadding: "0.1", 
-            tickLength: 0  
-        },
-        xAxis:{
-            title: "",
-            gridLineWidth: 0,
-            lineWidth: 0,
-            minorGridLineWidth: 0,
-            lineColor: 'transparent',
-            categories: issuedCertsByDMS.map(dms=>{return dms.name}),
-            minorTickLength: 0,
-            tickLength: 0 ,
-            labels: {
-                formatter: function (){
-                    return `<span style="color: `+plotBarChartLabelTxt+` ">${this.value}</span>`
-                } 
+            datalabels: {
+                formatter: (value, ctx) => {
+                    return value
+                },
+                align: "end",
+                anchor: "end",
+                font:{
+                    lineHeight: 2,
+                },
+                offset: 10,
+                borderRadius: 5,
+                padding:{
+                    left: 10,
+                    top:5,
+                    right:10,
+                    bottom:5
+                },
+                color: plotToolipText,
+                backgroundColor: plotToolipBg        
             }
         },
-        plotOptions:{
-            series: {
-                borderWidth: 0,
-                borderRadius: 10,
-                maxPointWidth: 35,
-                dataLabels: {
-                    enabled: true,
-                    useHTML: true,
-                    borderColor: "transparent",
-                    backgroundColor:  plotToolipBg,
-                    borderRadius: 7,
-                    padding: 5,
-                    align: 'left',
-                    inside: true,
-                    formatter: function (){
-                        return`
-                            <div style="padding: 0px 5px 0px 5px; display: flex; flex-direction: column; align-items: center; justify-content:center; color: `+plotToolipText+` ;font-weight: bold; font-size: 16px; font-family: "Roboto", "Helvetica", "Arial", sans-serif; letter-spacing: 0em;">
-                                <div style=""> 
-                                    `+this.y+`    
-                                </div>
-                            </div>
-                        `
-                    }
-        
+        scales: {
+            y: {  // not 'yAxes: [{' anymore (not an array anymore)
+                ticks: {
+                    color: theme.palette.homeCharts.plotBarChartLabelTxt, // not 'fontColor:' anymore
+                    stepSize: 1,
+                    beginAtZero: true
+                },
+                grid: {
+                    drawBorder: false,
+                    display: false
+                }
+            },
+            x: {
+                display: false,
+                ticks: {
+                    color: theme.palette.homeCharts.plotBarChartLabelTxt, // not 'fontColor:' anymore
+                    beginAtZero: true
+                },
+                grid: {
+                    drawBorder: false,
+                    display: false
                 }
             }
-    
-        },
-        
-        series: [
-            {
-                name: "DMS",
-                borderRadiusTopLeft: '20px',
-                borderRadiusTopRight: '20px',
-                color: {
-                    linearGradient: {
-                        x1: 0,
-                        y1: 0,
-                        x2: 0,
-                        y2: 1
+        }
+    };
+
+    const dataCharJs = {
+        labels: data.map(dataPoint => dataPoint[0]),
+        datasets: [
+          {
+            data: data.map(dataPoint => dataPoint[1]),
+            fill: false,
+            backgroundColor: plotLineDeg0,
+            borderColor: plotLineDeg1,
+            pointBackgroundColor: "transparent",
+            pointBorderColor: "transparent",      
+            tension: 0.4
+          },
+        ],
+      };
+      
+      const optionsCharJs = {
+        plugins: {
+            datalabels: {
+                display: false
+            },
+            legend: {
+                display: false
+            },
+            tooltip:{
+                displayColors: false,
+                titleAlign: 'center',
+                bodyAlign: 'center',
+                callbacks: {
+                    title: function(tooltipItem, data) {
+                      return ""
                     },
-                    stops: [
-                        [0, Highcharts.Color(plotLineDeg0).setOpacity(0.9).get('rgba')],
-                        [1, Highcharts.Color(plotLineDeg1).setOpacity(0.9).get('rgba')]
-                    ]
-                },
-                data: issuedCertsByDMS
+                    label: function(tooltipItem, data) {
+                        return tooltipItem.parsed.y +""
+                    },
+                    afterLabel: function(tooltipItem, data) {
+                        return moment.unix(parseInt(tooltipItem.label)/1000).format("MMMM D YYYY")
+                    }
+                },            
             }
-        ]
-    }
+        },
+        elements: {
+            point:{
+                radius: 10
+            }
+        },
+        maintainAspectRatio: false,
+        scales: {
+            y: {  // not 'yAxes: [{' anymore (not an array anymore)
+                display: false,
+                ticks: {
+                    color: theme.palette.homeCharts.plotBarChartLabelTxt, // not 'fontColor:' anymore
+                    stepSize: 1,
+                    beginAtZero: true
+                },
+                grid: {
+                    drawBorder: false,
+                    display: false
+                }
+            },
+            x: {
+                display: false,
+                ticks: {
+                    color: theme.palette.homeCharts.plotBarChartLabelTxt, // not 'fontColor:' anymore
+                    beginAtZero: true
+                },
+                grid: {
+                    drawBorder: false,
+                    display: false
+                }
+            }
+        }
+      };
+      
 
     return (
         <Box style={{padding: 20, display: "flex"}}>           
@@ -351,25 +349,47 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
             </Box>
             
             <Box style={{display: "flex", flexDirection: "column"}}>
-                <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
+                {
+                    /*
+                    <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
                     <Box style={{position: "relative", left: 15, top: 15}}>
+                    <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Activity Timeline (30 days)</Typography>
+                    </Box>
+                    <HighchartsReact
+                    highcharts={Highcharts}
+                    options={options}
+                    />
+                    </Box>
+                    
+                    <Box component={Paper} style={{marginLeft: 20, height: 25 + dmss.length*50, width: 600, marginTop: 20}}>
+                    <Box style={{position: "relative", left: 15, top: 15, marginBottom:10}}>
+                    <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>DMS Activity Timeline (30 days)</Typography>
+                    </Box>
+                    <HighchartsReact
+                    highcharts={Highcharts}
+                    options={optionsDmsActivity}
+                    />
+                    </Box>
+                    */
+                }
+                <Box component={Paper} style={{marginLeft: 20, height: 300, width: 600}}>
+                    <Box style={{marginTop: 15, marginLeft: 15}}>
                         <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Activity Timeline (30 days)</Typography>
                     </Box>
-                    <HighchartsReact
-                        highcharts={Highcharts}
-                        options={options}
-                    />
+                    <Box style={{height: 250, width: 600}}>
+                        <Line data={dataCharJs} options={optionsCharJs}/>
+                    </Box>
                 </Box>
 
-                <Box component={Paper} style={{marginLeft: 20, height: 25 + dmss.length*50, width: 600, marginTop: 20}}>
-                    <Box style={{position: "relative", left: 15, top: 15, marginBottom:10}}>
-                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>DMS Activity Timeline (30 days)</Typography>
+                <Box component={Paper} style={{marginLeft: 20, height: 70 + dmss.length*45, width: 600, marginTop: 20}}>
+                    <Box style={{marginTop: 15, marginLeft: 15}}>
+                        <Typography variant="h3" style={{color: plotTitle, fontWeight: "bold", fontSize: 25}}>Activity Timeline (30 days)</Typography>
                     </Box>
-                    <HighchartsReact
-                        highcharts={Highcharts}
-                        options={optionsDmsActivity}
-                    />
+                    <Box style={{height: 25 + dmss.length*45, width: 600}}>
+                        <Bar data={dataBarCharJs} options={optionsBarCharJs} />
+                    </Box>
                 </Box>
+
             </Box>
 
 
