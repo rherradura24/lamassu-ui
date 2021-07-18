@@ -1,6 +1,10 @@
 {
-    "collapse": "Collapse",
-    "home": "Home",
+    "sidebar.collapse": "Collapse",
+    "sidebar.home": "Home",
+    "sidebar.ca-authorities":"certificate authorities",
+    "sidebar.cas": "CAs",
+    "sidebar.issued-certs-by-cas": "Issued certs by CAs",
+    "sidebar.dms-title": "Device Manufacturing System",
     "cert": "Certificate",
     "certs": "Certificates",
     "expired&revoked": "Expired & Revoked",

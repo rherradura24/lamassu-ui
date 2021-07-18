@@ -6,13 +6,13 @@ window._theme_ = {
                 main: "#F85900",
             },
             secondary: {
-                main: "#A53B00",
+                main: "#F85900",
             },
             background: {
                 default: "#525252"
             },
             appbar: {
-                background: "#F85900"
+                background: "#2b2b2b"
             },
             certInspector: {
                 tabs: "#222",

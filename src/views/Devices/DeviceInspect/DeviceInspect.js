@@ -68,7 +68,8 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, deleteDevice, revokeDeviceCert}) => {
-    
+    console.log(deviceData);
+
     let history = useHistory();
     const theme = useTheme();
 
@@ -207,8 +208,8 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, de
       )}
     
     var mainButton = (<></>)
-    if(deviceData.dms_id == window._env_.REACT_APP_DEFAULT_DMS_ID){
-        if(deviceData.status == "PENDING_PROVISION"){
+    if(deviceData && deviceData.dms_id == window._env_.REACT_APP_DEFAULT_DMS_ID){
+        if(deviceData.status == "PENDING_PROVISION" || deviceData.status == "CERT_REVOKED"){
             mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
         }else if(deviceData.status == "DEVICE_PROVISIONED"){
             mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onRenewDeviceClick()}}>Renew Device Cert</Button>
@@ -220,247 +221,254 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, de
 
 
     return(
-        <>
-            <Box className={classes.grid}>
-                <Box className={classes.content} style={{padding: 20}}>
-                    <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-                            <Typography onClick={()=>{history.push("/")}} style={{cursor: "pointer"}}> Home </Typography>  
-                            <Typography onClick={()=>{history.push("/dms/list")}} style={{cursor: "pointer"}}> DMSs </Typography>  
-                            <Typography onClick={()=>{history.push("/dms/devices")}} style={{cursor: "pointer"}}> Devices </Typography>  
-                            <Typography color="textPrimary">Device</Typography>
-                        </Breadcrumbs>
-                    </Box>
+        
+        deviceData !== undefined ? (
 
-                    {
-                        deviceData !== undefined ? (
-                            <>
-                                <Box component={Paper} style={{marginTop: 20, padding: 20, display: "flex", justifyContent: "space-between"}}>
-                                    <Box style={{display: "flex"}}>
-                                        <Box style={{minWidth: 500}}>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Device Alias</Typography>
-                                                <Typography>{deviceData.alias}</Typography>
+            <>
+                <Box className={classes.grid}>
+                    <Box className={classes.content} style={{padding: 20}}>
+                        <Box style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                            <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+                                <Typography onClick={()=>{history.push("/")}} style={{cursor: "pointer"}}> Home </Typography>  
+                                <Typography onClick={()=>{history.push("/dms/list")}} style={{cursor: "pointer"}}> DMSs </Typography>  
+                                <Typography onClick={()=>{history.push("/dms/devices")}} style={{cursor: "pointer"}}> Devices </Typography>  
+                                <Typography color="textPrimary">Device</Typography>
+                            </Breadcrumbs>
+                        </Box>
+
+                        {
+                            deviceData !== undefined ? (
+                                <>
+                                    <Box component={Paper} style={{marginTop: 20, padding: 20, display: "flex", justifyContent: "space-between"}}>
+                                        <Box style={{display: "flex"}}>
+                                            <Box style={{minWidth: 500}}>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Device Alias</Typography>
+                                                    <Typography>{deviceData.alias}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
+                                                    <Typography>{deviceData.id}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>DMS ID</Typography>
+                                                    <Typography>{deviceData.dms_id}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Status</Typography>
+                                                    {statusElement(deviceData.status)}
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Key Type</Typography>
+                                                    <Typography>{deviceData.key_type}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Key Bits</Typography>
+                                                    <Typography>{deviceData.key_bits}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Key Strength</Typography>
+                                                    {strengthElement(deviceData.key_strength)}
+                                                </Box>
                                             </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Device UUID</Typography>
-                                                <Typography>{deviceData.id}</Typography>
+                                            <Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Country</Typography>
+                                                    <Typography>{deviceData.country}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>State</Typography>
+                                                    <Typography>{deviceData.state}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Locality</Typography>
+                                                    <Typography>{deviceData.locality}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Organization</Typography>
+                                                    <Typography>{deviceData.organization}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Organization Unit</Typography>
+                                                    <Typography>{deviceData.organization_unit}</Typography>
+                                                </Box>
+                                                <Box style={{display: "flex", marginBottom: 5}}>
+                                                    <Typography variant="button" style={{minWidth: 150}}>Common Name</Typography>
+                                                    <Typography>{deviceData.common_name}</Typography>
+                                                </Box>
                                             </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>DMS ID</Typography>
-                                                <Typography>{deviceData.dms_id}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Status</Typography>
-                                                {statusElement(deviceData.status)}
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Key Type</Typography>
-                                                <Typography>{deviceData.key_type}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Key Bits</Typography>
-                                                <Typography>{deviceData.key_bits}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Key Strength</Typography>
-                                                {strengthElement(deviceData.key_strength)}
-                                            </Box>
+                                        
                                         </Box>
-                                        <Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Country</Typography>
-                                                <Typography>{deviceData.country}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>State</Typography>
-                                                <Typography>{deviceData.state}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Locality</Typography>
-                                                <Typography>{deviceData.locality}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Organization</Typography>
-                                                <Typography>{deviceData.organization}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Organization Unit</Typography>
-                                                <Typography>{deviceData.organization_unit}</Typography>
-                                            </Box>
-                                            <Box style={{display: "flex", marginBottom: 5}}>
-                                                <Typography variant="button" style={{minWidth: 150}}>Common Name</Typography>
-                                                <Typography>{deviceData.common_name}</Typography>
-                                            </Box>
-                                        </Box>
-                                     
-                                    </Box>
-                                    <Box style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
-                                        {
-                                            mainButton
-                                        }
-                                        <Button variant="contained" color="primary" onClick={()=>{onRevokeDeviceCertClick()}} style={{marginTop: 10}}>Revoke current certificate</Button>
-                                        <Button variant="contained" color="primary" onClick={()=>{onDeleteDeviceClick()}} style={{marginTop: 10}}>Delete Device</Button>
-                                    </Box>
-                                </Box>
-                                <Box component={Paper} style={{marginTop: 20}}>
-                                    <TabContext value={activeTab}>
-                                        <TabList style={{background: theme.palette.certInspector.tabs}} variant="fullWidth" value={activeTab} onChange={handleTabChange} aria-label="simple tabs example">
-                                            <Tab value="0" label="Logs" />
-                                            <Tab value="1" label="Last emitted cert"/>
-                                            <Tab value="2" label="Emitted certs history"/>
-                                        </TabList>
-                                        <TabPanel className={classes.scroll} value="0" style={{padding: 20, overflowY: "auto", height: "50vh"}}>
+                                        <Box style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                                             {
-                                                deviceData.logs ? (
-                                                    <Timeline>
-                                                        {
-                                                            deviceData.logs.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp) }).map((log, index)=>(
-                                                                <TimelineItem>
-                                                                    <TimelineOppositeContent style={{maxWidth: 200}}>
-                                                                        <Typography variant="body2" color="textSecondary">
-                                                                            {moment(log.timestamp).format("MMMM D YYYY, HH:mm:ss Z").toString()}
-                                                                        </Typography>
-                                                                    </TimelineOppositeContent>
-                                                                    <TimelineSeparator>
-                                                                    {
-                                                                        log.log_type == "LOG_DEVICE_CREATED" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: green.bg}}>
-                                                                                    <RouterOutlinedIcon style={{ color: green.txt}}/>
-                                                                                </TimelineDot>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        log.log_type == "LOG_PENDING_PROVISION" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: orange.bg}}>
-                                                                                    <LayersOutlinedIcon style={{ color: orange.txt}}/>
-                                                                                </TimelineDot>
-                                                                                <TimelineConnector style={{background: orange.txt}}/>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        log.log_type == "LOG_CERT_EXPIRED" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: orange.bg}}>
-                                                                                    <TimerOffIcon style={{ color: orange.txt}}/>
-                                                                                </TimelineDot>
-                                                                                <TimelineConnector style={{background: orange.txt}}/>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        log.log_type == "LOG_CERT_REVOKED" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: red.bg}}>
-                                                                                    <DeleteIcon style={{ color: red.txt}}/>
-                                                                                </TimelineDot>
-                                                                                <TimelineConnector style={{background: red.txt}}/>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        log.log_type == "LOG_PROVISIONED" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: green.bg}}>
-                                                                                    <PublishIcon style={{ color: green.txt}}/>
-                                                                                </TimelineDot>
-                                                                                <TimelineConnector style={{background: green.txt}}/>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        log.log_type == "LOG_DEVICE_DECOMMISIONED" && (
-                                                                            <>  
-                                                                                <TimelineDot style={{background: red.bg}}>
-                                                                                    <HighlightOffIcon style={{ color: red.txt}}/>
-                                                                                </TimelineDot>
-                                                                                <TimelineConnector style={{background: red.txt}}/>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    </TimelineSeparator>
-                                                                    <TimelineContent>
-                                                                        <Paper elevation={3} style={{padding: 10}}>
-                                                                            <Typography variant="button" component="h1" color="primary">{log.log_type.replace("LOG", "").replaceAll("_", " ")}</Typography>
-                                                                            <Typography>{log.log_msg}</Typography>
-                                                                        </Paper>
-                                                                    </TimelineContent>
-                                                                </TimelineItem>
-                                                            ))
-                                                        }
-                                                    </Timeline>
-                                                ) : (
-                                                    <Typography>No logs</Typography>
-                                                )
+                                                mainButton
                                             }
-                                        </TabPanel>
-                                        <TabPanel className={classes.scroll} value="1" style={{padding: 0, overflowY: "auto"}}>
-                                            <Box style={{padding: 10}}>
+                                            <Button variant="contained" color="primary" onClick={()=>{onRevokeDeviceCertClick()}} style={{marginTop: 10}}>Revoke current certificate</Button>
+                                            <Button variant="contained" color="primary" onClick={()=>{onDeleteDeviceClick()}} style={{marginTop: 10}}>Delete Device</Button>
+                                        </Box>
+                                    </Box>
+                                    <Box component={Paper} style={{marginTop: 20}}>
+                                        <TabContext value={activeTab}>
+                                            <TabList style={{background: theme.palette.certInspector.tabs}} variant="fullWidth" value={activeTab} onChange={handleTabChange} aria-label="simple tabs example">
+                                                <Tab value="0" label="Logs" />
+                                                <Tab value="1" label="Last emitted cert"/>
+                                                <Tab value="2" label="Emitted certs history"/>
+                                            </TabList>
+                                            <TabPanel className={classes.scroll} value="0" style={{padding: 20, overflowY: "auto", height: "50vh"}}>
                                                 {
-                                                    deviceData.cert ? (
-                                                        <>
-                                                            <Box style={{display: "flex"}}>
-                                                                <Typography variant="button" style={{minWidth: 150}}>CA Name</Typography>
-                                                                <Typography>{deviceData.cert.issuer_name}</Typography>
-                                                            </Box>
-                                                            <Box style={{display: "flex"}}>
-                                                                <Typography variant="button" style={{minWidth: 150}}>Serial Number</Typography>
-                                                                <Typography>{deviceData.cert.serial_number}</Typography>
-                                                            </Box>
-                                                            <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
-                                                                <IconButton style={{position:"absolute", right: 50}} onClick={()=>{
-                                                                    navigator.clipboard.writeText(deviceData.cert.crt).then(function() {
-                                                                        console.log('Async: Copying to clipboard was successful!');
-                                                                    }, function(err) {
-                                                                        console.error('Async: Could not copy text: ', err);
-                                                                    });                  
-                                                                }}>
-                                                                    <AssignmentOutlinedIcon style={{color: "white"}}/>
-                                                                </IconButton>
-                                                                <div style={{color: "white", fontSize: "small", maxWidth: 500, fontFamily: "monospace"}}>
-                                                                    {deviceData.cert.crt}
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                    ):(
-                                                        <>
-                                                            <Typography>This device has no cert</Typography>
-                                                        </>
+                                                    deviceData.logs ? (
+                                                        <Timeline>
+                                                            {
+                                                                deviceData.logs.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp) }).map((log, index)=>(
+                                                                    <TimelineItem>
+                                                                        <TimelineOppositeContent style={{maxWidth: 200}}>
+                                                                            <Typography variant="body2" color="textSecondary">
+                                                                                {moment(log.timestamp).format("MMMM D YYYY, HH:mm:ss Z").toString()}
+                                                                            </Typography>
+                                                                        </TimelineOppositeContent>
+                                                                        <TimelineSeparator>
+                                                                        {
+                                                                            log.log_type == "LOG_DEVICE_CREATED" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: green.bg}}>
+                                                                                        <RouterOutlinedIcon style={{ color: green.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            log.log_type == "LOG_PENDING_PROVISION" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: orange.bg}}>
+                                                                                        <LayersOutlinedIcon style={{ color: orange.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                    <TimelineConnector style={{background: orange.txt}}/>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            log.log_type == "LOG_CERT_EXPIRED" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: orange.bg}}>
+                                                                                        <TimerOffIcon style={{ color: orange.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                    <TimelineConnector style={{background: orange.txt}}/>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            log.log_type == "LOG_CERT_REVOKED" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: red.bg}}>
+                                                                                        <DeleteIcon style={{ color: red.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                    <TimelineConnector style={{background: red.txt}}/>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            log.log_type == "LOG_PROVISIONED" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: green.bg}}>
+                                                                                        <PublishIcon style={{ color: green.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                    <TimelineConnector style={{background: green.txt}}/>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            log.log_type == "LOG_DEVICE_DECOMMISIONED" && (
+                                                                                <>  
+                                                                                    <TimelineDot style={{background: red.bg}}>
+                                                                                        <HighlightOffIcon style={{ color: red.txt}}/>
+                                                                                    </TimelineDot>
+                                                                                    <TimelineConnector style={{background: red.txt}}/>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        </TimelineSeparator>
+                                                                        <TimelineContent>
+                                                                            <Paper elevation={3} style={{padding: 10}}>
+                                                                                <Typography variant="button" component="h1" color="primary">{log.log_type.replace("LOG", "").replaceAll("_", " ")}</Typography>
+                                                                                <Typography>{log.log_msg}</Typography>
+                                                                            </Paper>
+                                                                        </TimelineContent>
+                                                                    </TimelineItem>
+                                                                ))
+                                                            }
+                                                        </Timeline>
+                                                    ) : (
+                                                        <Typography>No logs</Typography>
                                                     )
                                                 }
-                                            </Box>
-                                        </TabPanel>
-                                        <TabPanel className={classes.scroll} value="2" style={{padding: 0, overflowY: "auto"}}>
-                                            <Box style={{height: "50vh"}}>
-                                                <DataGrid
-                                                    classes={{root: classes.cell}}
-                                                    components={{
-                                                        Toolbar: GridToolbar,
-                                                        NoRowsOverlay: EmptyOverlayGrid
-                                                    }}
-                                                    rows={gridData}
-                                                    columns={columns}
-                                                    autoPageSize={true}
-                                                />
-                                            </Box>
-                                        </TabPanel>
-                                    </TabContext>
-                                    
-                                </Box>
-                            </>
-                        ) : (
-                            <></>
-                        )
-                    }                  
-                       
-                </Box>
-                <LamassuModalPolyphormic handleClose={()=>resetModal()} {...modalInfo}/>
-            </Box>    
-        </>
+                                            </TabPanel>
+                                            <TabPanel className={classes.scroll} value="1" style={{padding: 0, overflowY: "auto"}}>
+                                                <Box style={{padding: 10}}>
+                                                    {
+                                                        deviceData.cert ? (
+                                                            <>
+                                                                <Box style={{display: "flex"}}>
+                                                                    <Typography variant="button" style={{minWidth: 150}}>CA Name</Typography>
+                                                                    <Typography>{deviceData.cert.issuer_name}</Typography>
+                                                                </Box>
+                                                                <Box style={{display: "flex"}}>
+                                                                    <Typography variant="button" style={{minWidth: 150}}>Serial Number</Typography>
+                                                                    <Typography>{deviceData.cert.serial_number}</Typography>
+                                                                </Box>
+                                                                <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
+                                                                    <IconButton style={{position:"absolute", right: 50}} onClick={()=>{
+                                                                        navigator.clipboard.writeText(deviceData.cert.crt).then(function() {
+                                                                            console.log('Async: Copying to clipboard was successful!');
+                                                                        }, function(err) {
+                                                                            console.error('Async: Could not copy text: ', err);
+                                                                        });                  
+                                                                    }}>
+                                                                        <AssignmentOutlinedIcon style={{color: "white"}}/>
+                                                                    </IconButton>
+                                                                    <div style={{color: "white", fontSize: "small", maxWidth: 500, fontFamily: "monospace"}}>
+                                                                        {deviceData.cert.crt}
+                                                                    </div>
+                                                                </div>
+                                                            </>
+                                                        ):(
+                                                            <>
+                                                                <Typography>This device has no cert</Typography>
+                                                            </>
+                                                        )
+                                                    }
+                                                </Box>
+                                            </TabPanel>
+                                            <TabPanel className={classes.scroll} value="2" style={{padding: 0, overflowY: "auto"}}>
+                                                <Box style={{height: "50vh"}}>
+                                                    <DataGrid
+                                                        classes={{root: classes.cell}}
+                                                        components={{
+                                                            Toolbar: GridToolbar,
+                                                            NoRowsOverlay: EmptyOverlayGrid
+                                                        }}
+                                                        rows={gridData}
+                                                        columns={columns}
+                                                        autoPageSize={true}
+                                                    />
+                                                </Box>
+                                            </TabPanel>
+                                        </TabContext>
+                                        
+                                    </Box>
+                                </>
+                            ) : (
+                                <></>
+                            )
+                        }                  
+                        
+                    </Box>
+                    <LamassuModalPolyphormic handleClose={()=>resetModal()} {...modalInfo}/>
+                </Box>    
+            </>
+        ) : (
+            <Box>Loading</Box>
+        )
+        
     )
 }
 

@@ -7,7 +7,7 @@ import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
-    const [dmsApiUrl, setDmsApiUrl] = useState("https://"+window.location.hostname+":5000")
+    const [dmsApiUrl, setDmsApiUrl] = useState(window._env_.REACT_APP_DEFAULT_DMS_URL)
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
     const [csr, setCsr] = useState("")
 

@@ -42,13 +42,13 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
     <Paper style={{borderRadius: 0}}>
       <Grid item className="sidebar-wrapper">
         <div>
-          <MenuButton title="Collapse" icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed); onCollapse(collapsed)}} collapsed={collapsed}/> 
+          <MenuButton title={t("sidebar.collapse")} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed); onCollapse(collapsed)}} collapsed={collapsed}/> 
           <MenuSeparator/>
           {
             keycloak.tokenParsed.realm_access.roles.includes("admin") && (
               <>
                 <MenuItem 
-                  title={t("home")} 
+                  title={t("sidebar.home")} 
                   link="/"
                   collapsed={collapsed}
                   active={selectedPath}
@@ -56,9 +56,9 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
                   icon={<DashboardOutlinedIcon/>}
                 />
                 <MenuSeparator/>
-                <MenuSectionTitle title="certificate authorities" collapsed={collapsed}/>
+                <MenuSectionTitle title={t("sidebar.ca-authorities")}  collapsed={collapsed}/>
                 <MenuItem 
-                  title="CAs" 
+                  title={t("sidebar.cas")} 
                   link="/ca/certs" 
                   active={selectedPath}
                   collapsed={collapsed}
@@ -66,7 +66,7 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
                   icon={<AccountBalanceOutlinedIcon/>}
                 />
                 <MenuItem 
-                  title="Certificates issued by CAs"
+                  title={t("sidebar.issued-certs-by-cas")} 
                   link="/ca/issued-certs" 
                   active={selectedPath}
                   collapsed={collapsed}
@@ -89,7 +89,7 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
               </>
             )
           }
-          <MenuSectionTitle title="device manufacturing systems" collapsed={collapsed}/>
+          <MenuSectionTitle title={t("sidebar.dms-title")} collapsed={collapsed}/>
           <MenuItem 
             title="List of DMS" 
             link="/dms/list" 

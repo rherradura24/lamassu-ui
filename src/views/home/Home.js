@@ -45,7 +45,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
     var data = []
     const chartLength = 30
     for (let i = chartLength -1 ; i >= 0 ; i--) {
-        data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days")).length])
+        data.push([ moment().add(chartLength - 1 - i, "days").valueOf(), expiringCertsTimeline.filter(cert => moment(cert.valid_to).isBefore(moment().add(chartLength - 1 - i, "days"), "days") && !moment(cert.valid_to).isBefore(moment().add(chartLength - 2 - i, "days"), "days")).length])
     } 
 
     var issuedCertsByDMS = []
