@@ -100,7 +100,7 @@ const LamassuModalCertImport = ({open, handleClose, handleSubmit}) => {
                                         fullWidth
                                         onClick={()=>{inputFileRef.current.click() }}
                                     >
-                                        Select PEM Bundel
+                                        Select PEM Bundle
                                     </Button>
                                     <input
                                         type="file"
