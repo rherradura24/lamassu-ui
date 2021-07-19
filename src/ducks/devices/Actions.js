@@ -38,12 +38,30 @@ export const provisionDevice = (deviceData) => ({
 }
 })
 */
-export const provisionDevice = (deviceId, caName, dmsProvisionUrl) => ({
+export const provisionDevice = (deviceId, caName, dmsProvisionUrl, deviceCertInfo) => ({
     type: t.PROVISION_DEVICE,
     payload: {
         device_id: deviceId,
         ca_name: caName,
-        dms_provision_url: dmsProvisionUrl
+        dms_provision_url: dmsProvisionUrl,
+        device_cert_info:{
+            c: deviceCertInfo.country,
+            st: deviceCertInfo.state,
+            l: deviceCertInfo.locality,
+            o: deviceCertInfo.organization,
+            ou: deviceCertInfo.organization_unit,
+            key_bits: deviceCertInfo.key_bits,
+            key_type: deviceCertInfo.key_type,
+        }
+    }
+})
+export const provisionDeviceCsr = (deviceId, caName, dmsProvisionUrl, csr) => ({
+    type: t.PROVISION_DEVICE_CSR,
+    payload: {
+        device_id: deviceId,
+        ca_name: caName,
+        dms_provision_url: dmsProvisionUrl,
+        csr: csr
     }
 })
 export const renewDevice = (deviceId, dmsRenewUrl) => ({

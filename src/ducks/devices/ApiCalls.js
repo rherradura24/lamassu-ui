@@ -164,6 +164,31 @@ export const provisionDevice = async (payload) => {
     try {
         const resp = await fetch(payload.dms_provision_url+"/dms-issue/"+payload.device_id+"/"+payload.ca_name, {
             method: "POST",
+            body: JSON.stringify(payload.device_cert_info)
+        })
+        if (resp.status == 200) {
+            return {
+                json: {data: {}},
+                status: resp.status
+            }
+        }else{
+            const txt = resp.text()
+            return {
+                json: {error: txt},
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        return { error: "Connection error with DMS API. " + er }
+    }
+}
+
+export const provisionDeviceCsr = async (payload) => {
+    console.log("CSR CALL");
+    try {
+        const resp = await fetch(payload.dms_provision_url+"/dms-issue/csr/"+payload.device_id+"/"+payload.ca_name, {
+            method: "POST",
+            body: payload.csr.replace("\n", "")
         })
         if (resp.status == 200) {
             return {

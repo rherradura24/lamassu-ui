@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     } 
 }))
 
-const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, deleteDevice, revokeDeviceCert}) => {
+const DeviceInspect = ({id, deviceData, caList, provisionDevice, provisionDeviceCsr, renewDevice, deleteDevice, revokeDeviceCert}) => {
     console.log(deviceData);
 
     let history = useHistory();
@@ -91,7 +91,15 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, renewDevice, de
             caList: caList,
             device: deviceData,
             dmsCrt: "",
-            handleSubmit: (deviceId, caName, dmsProvisionUrl)=>{provisionDevice(deviceId, caName, dmsProvisionUrl); resetModal()},
+            handleSubmit: (deviceId, caName, dmsProvisionUrl, isCsr, deviceInfo)=>{
+                console.log(isCsr);
+                if(isCsr){
+                    provisionDeviceCsr(deviceId, caName, dmsProvisionUrl, deviceInfo)
+                }else{
+                    provisionDevice(deviceId, caName, dmsProvisionUrl, deviceInfo)
+                }
+                resetModal()
+            },
         })
     }
     const onRenewDeviceClick = () =>{

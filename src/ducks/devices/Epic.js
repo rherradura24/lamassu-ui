@@ -42,6 +42,11 @@ const provisionDevice = action$ => action$.pipe(
     mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDevice(payload), actions.PROVISION_DEVICE, {id: payload.device_id})),
 );
 
+const provisionDeviceCsr = action$ => action$.pipe(
+    ofType(actions.PROVISION_DEVICE_CSR),
+    mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.provisionDeviceCsr(payload), actions.PROVISION_DEVICE_CSR, {id: payload.device_id})),
+);
+
 const renewDevice = action$ => action$.pipe(
     ofType(actions.RENEW_DEVICE),
     mergeMap(({payload}) => makeRequestWithActions(devicesApiCalls.renewDevice(payload), actions.RENEW_DEVICE, {id: payload.device_id})),
@@ -99,6 +104,7 @@ export {
     getDeviceLastIssuedCert,
     createDevice,
     provisionDevice,
+    provisionDeviceCsr,
     renewDevice,
     revokeDeviceCert,
     refreshDevices,

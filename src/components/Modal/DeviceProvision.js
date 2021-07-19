@@ -47,21 +47,17 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                         title: "Provision",
                         disabledBtn: disabled,
                         primary: true,
-                        onClick: ()=>{handleSubmit(device.id, selectedCA.ca_name, dmsApiUrl
-                            /*{
-                                device_id: device.id,
-                                ca_name: selectedCA.ca_name,
-                                //dmsId: deviceDMS.id,
+                        onClick: ()=>{handleSubmit(device.id, selectedCA.ca_name, dmsApiUrl, 
+                            activeTab == "viaCsr", 
+                            activeTab == "viaCsr" ? csr : {
                                 country: device.country,
                                 state: device.state,
                                 locality: device.city,
                                 organization: device.organization,
                                 organization_unit: device.organization_unit,
-                                common_name: device.common_name,
                                 key_type: device.key_type,
                                 key_bits: device.key_bits,
-                                email: ""
-                            }*/
+                            } 
                         )}
                     }
                 ]
