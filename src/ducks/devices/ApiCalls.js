@@ -184,11 +184,10 @@ export const provisionDevice = async (payload) => {
 }
 
 export const provisionDeviceCsr = async (payload) => {
-    console.log("CSR CALL");
     try {
         const resp = await fetch(payload.dms_provision_url+"/dms-issue/csr/"+payload.device_id+"/"+payload.ca_name, {
             method: "POST",
-            body: payload.csr.replace("\n", "")
+            body: payload.csr
         })
         if (resp.status == 200) {
             return {

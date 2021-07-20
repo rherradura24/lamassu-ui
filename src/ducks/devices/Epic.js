@@ -63,7 +63,7 @@ const refreshDevices = action$ => action$.pipe(
 );
 
 const refreshDevice = action$ => action$.pipe(
-    ofType(actions.PROVISION_DEVICE_SUCCESS, actions.RENEW_DEVICE_SUCCESS, actions.DELETE_DEVICE_SUCCESS, actions.REVOKE_DEVICE_CERT_SUCCESS),
+    ofType(actions.PROVISION_DEVICE_CSR_SUCCESS, actions.PROVISION_DEVICE_SUCCESS, actions.RENEW_DEVICE_SUCCESS, actions.DELETE_DEVICE_SUCCESS, actions.REVOKE_DEVICE_CERT_SUCCESS),
     mergeMap(({meta}) => makeRequestWithActions(devicesApiCalls.getDeviceById(meta), actions.GET_DEVICE)),
 );
 
