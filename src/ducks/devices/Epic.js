@@ -89,7 +89,7 @@ const notifyDeviceRemovalSuccess = (action$, state$) => action$.pipe(
 );
 /// General ERROR Notify
 const notifyError = (action$, state$) => action$.pipe(
-    ofType(actions.CREATE_DEVICE_ERROR, actions.DELETE_DEVICE_ERROR, actions.GET_ALL_DEVICES_ERROR, actions.GET_DEVICE_ERROR, actions.PROVISION_DEVICE_ERROR, actions.RENEW_DEVICE_ERROR, actions.GET_DEVICE_LOGS_ERROR ),
+    ofType(actions.CREATE_DEVICE_ERROR, actions.DELETE_DEVICE_ERROR, actions.GET_ALL_DEVICES_ERROR, actions.GET_DEVICE_ERROR, actions.PROVISION_DEVICE_ERROR, actions.PROVISION_DEVICE_CSR_ERROR, actions.RENEW_DEVICE_ERROR, actions.GET_DEVICE_LOGS_ERROR ),
     mergeMap(({ payload, meta })=> {
       return of({ type: notificationActions.NOTIFY, payload: {msg: payload, type: "error"} })
     })
