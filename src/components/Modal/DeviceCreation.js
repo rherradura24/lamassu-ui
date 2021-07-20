@@ -27,7 +27,6 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
     const [city, setCity] = useState("")
     const [org, setOrg] = useState("")
     const [orgUnit, setOrgUnit] = useState("")
-    const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(3072)
 
@@ -101,7 +100,7 @@ const LamassuModalDeviceCreation = ({open, handleClose, handleSubmit, dmsList}) 
                                 locality: city,
                                 org: org,
                                 orgUnit: orgUnit,
-                                commonName: cn,
+                                commonName: deviceUUID,
                                 keyType: keyType,
                                 keyBits: keyBits,
                             }
