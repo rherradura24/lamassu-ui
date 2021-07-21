@@ -106,6 +106,7 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
         }else{
             reloadCerts("ops")
         }
+        setRightSidebarOpen(false)
     }
 
     const columns = [
