@@ -40,10 +40,11 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
     
     case actions.GET_DMS_LAST_ISSUED_CERT_SUCCESS:
       var currentList = state.list;
-
-      for (let i = 0; i < action.payload.length; i++) {
-        console.log(currentList, action.payload[i]);
-        currentList[action.payload[i].dms_id].lastIssued = action.payload[i].timestamp
+      if (action.payload !== null) {
+        for (let i = 0; i < action.payload.length; i++) {
+          console.log(currentList, action.payload[i]);
+          currentList[action.payload[i].dms_id].lastIssued = action.payload[i].timestamp
+        }
       }
 
       return{...state, list: currentList}
