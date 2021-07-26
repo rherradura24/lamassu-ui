@@ -43,7 +43,9 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
       if (action.payload !== null) {
         for (let i = 0; i < action.payload.length; i++) {
           console.log(currentList, action.payload[i]);
-          currentList[action.payload[i].dms_id].lastIssued = action.payload[i].timestamp
+          if (currentList[action.payload[i].dms_id]) {
+            currentList[action.payload[i].dms_id].lastIssued = action.payload[i].timestamp
+          }
         }
       }
 

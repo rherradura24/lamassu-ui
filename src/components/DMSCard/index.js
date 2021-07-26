@@ -46,22 +46,22 @@ export const DMSCard = ({ dmsData, title, status, lastIssued, isAdmin, onApprova
             <DenseTable dense={true} data={denseTableData}/>
         </CardContent>
         {
-            <Box style={{display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: 20}}>
-            <Typography variant="button" style={{marginRight: 5}}>Last Issued Certificate: </Typography>
-            {
-                lastIssued != "nan" ? (
-                    <LamassuChip status="unknown" label={moment(lastIssued).format("MMMM D YYYY hh:mm")} rounded={false}/>
-                            
-                ):(
-                    <LamassuChip status="unknown" label={"Non issued"} rounded={false}/>
-                )
-            }
+            <Box style={{display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: 20, marginBottom: status == "PENDING" ? 0 : 10}}>
+                <Typography variant="button" style={{marginRight: 5}}>Last Issued Certificate: </Typography>
+                {
+                    lastIssued != "nan" ? (
+                        <LamassuChip status="unknown" label={moment(lastIssued).format("MMMM D YYYY hh:mm")} rounded={false}/>
+                                
+                    ):(
+                        <LamassuChip status="unknown" label={"Non issued"} rounded={false}/>
+                    )
+                }
             </Box>       
         }
         {
             isAdmin && status == "PENDING" && (
                 <CardActions disableSpacing>
-                    <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginTop: 15}}>
                         <Button variant="contained" color="primary" fullWidth style={{marginRight:10}} onClick={onApproval}>Approve</Button>
                         <Button variant="contained" fullWidth style={{marginLeft:10}} onClick={onDecline}>Decline</Button>
                     </div>
@@ -72,15 +72,6 @@ export const DMSCard = ({ dmsData, title, status, lastIssued, isAdmin, onApprova
                 <CardActions disableSpacing>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
                         <Box style={{display: "flex"}}>
-                            {
-                                /*
-                                    <Tooltip title="List Devices">
-                                        <IconButton onClick={onDownloadClick} style={{maxHeight: 48}}>
-                                            <ListIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                 */
-                            }
                             <Tooltip title="Download DMS cert">
                                 <IconButton onClick={onDownloadClick} style={{maxHeight: 48}}>
                                     <GetAppIcon />
