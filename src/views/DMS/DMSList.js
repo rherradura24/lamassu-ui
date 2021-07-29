@@ -50,7 +50,7 @@ const DMSList = ({ dmsListData, dmsPrivKeyResponse, deletePrivKeyStorage, create
         setModalInfo({
             open: true,
             type: "dmsCreate",
-            handleSubmitViaCsr: (name, csr)=>{createDmsViaCsr(name, csr); resetModal()},
+            handleSubmitViaCsr: (name, csr, url)=>{createDmsViaCsr(name, csr, url); resetModal()},
             handleSubmitViaForm: (name, csrForm)=>{createDmsViaForm(name, csrForm); resetModal()}
         })
     }

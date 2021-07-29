@@ -23,6 +23,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(3072)
+    const [dmsUrl, setDmsUrl] = useState("")
     
     const disabled = activeTab == "viaBackend" ? dmsName == "" || cn == "" : dmsName == ""
 
@@ -101,7 +102,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                         disabledBtn: disabled,
                         onClick: ()=>{
                             if(activeTab == "viaCsr"){
-                                handleSubmitViaCsr(dmsName, csr)
+                                handleSubmitViaCsr(dmsName, csr, dmsUrl)
                             }else{
                                 handleSubmitViaForm(dmsName, {
                                     keyBits: keyBits,
@@ -112,6 +113,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                     organization: org,
                                     organizationUnit: orgUnit,
                                     commonName: cn,
+                                    url: dmsUrl
                                 })
                             }
                         }
@@ -163,9 +165,11 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
                                         </Select>
                                     </FormControl>
                                 </Grid>
+                                <TextField margin="dense" id="dmsUrl" label="URL" fullWidth value={dmsUrl} onChange={ev=>{setDmsUrl(ev.target.value)}}/>
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding:0}}>
                                 <TextField autoFocus required={true} error={dmsName==""} margin="dense" id="dmsName" label="Device manufacturing system name" fullWidth value={dmsName} onChange={(ev)=>{setDmsName(ev.target.value)}} />
+                                <TextField margin="dense" id="dmsUrl" label="URL" fullWidth value={dmsUrl} onChange={ev=>{setDmsUrl(ev.target.value)}}/>
                                 <Box style={{marginTop: 10}}>
                                     <Button 
                                         variant="contained" 

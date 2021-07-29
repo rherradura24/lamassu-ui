@@ -11,9 +11,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onMount: ()=>{ dispatch(dmsActions.getAllDMS()) },
+  onMount: ()=>{ dispatch(dmsActions.getAllDMS())},
 
-  createDmsViaCsr: (name, csr)=> {dispatch(dmsActions.createDmsViaCsr(name, csr))},
+  createDmsViaCsr: (name, csr, url)=> {dispatch(dmsActions.createDmsViaCsr(name, csr, url))},
   createDmsViaForm: (name, csrForm)=> {dispatch(dmsActions.createDmsViaForm(name, csrForm))},
   updateDmsStatus: (id, dms, status)=>{dispatch(dmsActions.updateDmsStatus(id, dms, status))},
   deletePrivKeyStorage: ()=> {dispatch(dmsActions.deletePrivKeyStorage())}

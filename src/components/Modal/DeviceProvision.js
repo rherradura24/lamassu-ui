@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
-const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
+const LamassuModalDeviceProvision = ({caList, dmsUrl, device, open, handleSubmit, handleClose}) => {
+    console.log(dmsUrl);
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
-    const [dmsApiUrl, setDmsApiUrl] = useState(window._env_.REACT_APP_DEFAULT_DMS_URL)
+    const [dmsApiUrl, setDmsApiUrl] = useState(dmsUrl)
     const [activeTab, setActiveTab] = useState("viaDefinedValues")
     const [csr, setCsr] = useState("")
 
@@ -87,7 +88,7 @@ const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handle
                                     renderInput={(params) => <TextField required={true} error={selectedCA==""} {...params} label="Certificate Authority" fullWidth variant="standard" />}
                                 />
 
-                                <TextField required={true} error={dmsApiUrl==""} disabled={true} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
+                                <TextField required={true} error={dmsApiUrl==""}  margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
 
                             </TabPanel>
                             <TabPanel value="viaCsr" style={{padding: 0}}>

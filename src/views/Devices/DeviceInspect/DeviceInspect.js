@@ -67,11 +67,21 @@ const useStyles = makeStyles((theme) => ({
     } 
 }))
 
-const DeviceInspect = ({id, deviceData, caList, provisionDevice, provisionDeviceCsr, renewDevice, deleteDevice, revokeDeviceCert}) => {
+const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provisionDeviceCsr, renewDevice, deleteDevice, revokeDeviceCert}) => {
     console.log(deviceData);
+    console.log(dmsList);
+    console.log(id);
 
     let history = useHistory();
     const theme = useTheme();
+
+    const filteredDeviceDms = dmsList.filter(dms=>dms.id == deviceData.dms_id)
+    console.log(filteredDeviceDms);
+    var deviceDms = {}
+    if (filteredDeviceDms.length > 0) {
+        console.log(deviceDms);
+        deviceDms = filteredDeviceDms[0]
+    }
 
     const classes = useStyles();
     const [modalInfo, setModalInfo] = useState({open: false, type: null})
@@ -89,6 +99,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, provisionDevice
             open: true,
             type: "deviceProvision",
             caList: caList,
+            dmsUrl: deviceDms.url,
             device: deviceData,
             dmsCrt: "",
             handleSubmit: (deviceId, caName, dmsProvisionUrl, isCsr, deviceInfo)=>{
@@ -216,7 +227,7 @@ const DeviceInspect = ({id, deviceData, caList, provisionDevice, provisionDevice
       )}
     
     var mainButton = (<></>)
-    if(deviceData && deviceData.dms_id == window._env_.REACT_APP_DEFAULT_DMS_ID){
+    if(deviceData /*&& deviceData.dms_id == window._env_.REACT_APP_DEFAULT_DMS_ID*/){
         if(deviceData.status == "PENDING_PROVISION" || deviceData.status == "CERT_REVOKED"){
             mainButton = <Button variant="contained" color="primary" disabled={false} onClick={()=>{onProvisionDeviceClick()}}>Provision Device</Button>
         }else if(deviceData.status == "DEVICE_PROVISIONED"){

@@ -55,10 +55,14 @@ export const createDmsViaCsr = async (payload) => {
         const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.dmsName, {
             method: "POST",
             headers: {
-                'Content-Type': 'application/pkcs10',
+                'Content-Type': 'application/json',
                 "Authorization": "Bearer " + keycloak.token,
             },
-            body: payload.csr
+            body: JSON.parse({
+                csr: payload.csr,
+                url: payload.url
+            })
+                
         })
         const json = await resp.json()
         if (resp.status != 200) {

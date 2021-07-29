@@ -4,10 +4,11 @@ export const getAllDMS = () => ({
     type: t.GET_ALL_DMS_ENROLLER,
 })
 
-export const createDmsViaCsr = (name, csr) => ({
+export const createDmsViaCsr = (name, csr, url) => ({
     type: t.CREATE_DMS_ENROLLER_REQUEST_VIA_CSR_REQUEST,
     payload: {
         csr: csr,
+        url: url,
         dmsName: name
     }
 })
@@ -23,7 +24,8 @@ export const createDmsViaForm = (name, csrForm) => ({
             "state": csrForm.state,
             "locality": csrForm.locality,
             "organization": csrForm.organization,
-            "organization_unit": csrForm.organizationUnit
+            "organization_unit": csrForm.organizationUnit,
+            "url": csrForm.url
         },
         dmsName: name
     }
