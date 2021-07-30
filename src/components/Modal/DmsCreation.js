@@ -23,7 +23,7 @@ const LamassuModalDmsCreation = ({open, handleClose, handleSubmitViaForm, handle
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(3072)
-    const [dmsUrl, setDmsUrl] = useState("")
+    const [dmsUrl, setDmsUrl] = useState(window._env_.REACT_APP_DEFAULT_DMS_URL)
     
     const disabled = activeTab == "viaBackend" ? dmsName == "" || cn == "" : dmsName == ""
 
