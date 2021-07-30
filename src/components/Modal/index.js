@@ -166,6 +166,7 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             handleClose={handleClose} 
             handleSubmit={props["handleSubmit"]} 
             device={props["device"]} 
+            dmsUrl={props["dmsUrl"]} 
           />
         )
     

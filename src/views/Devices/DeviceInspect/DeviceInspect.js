@@ -75,11 +75,13 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
     let history = useHistory();
     const theme = useTheme();
 
-    const filteredDeviceDms = dmsList.filter(dms=>dms.id == deviceData.dms_id)
+    var filteredDeviceDms = []
+    if (deviceData) {
+        filteredDeviceDms = dmsList.filter(dms=>dms.id == deviceData.dms_id)
+    }
     console.log(filteredDeviceDms);
     var deviceDms = {}
     if (filteredDeviceDms.length > 0) {
-        console.log(deviceDms);
         deviceDms = filteredDeviceDms[0]
     }
 
@@ -118,6 +120,7 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
             open: true,
             type: "deviceRenew",
             device: deviceData,
+            dmsUrl: deviceDms.url,
             handleSubmit: (deviceId, dmsProvisionUrl)=>{renewDevice(deviceId, dmsProvisionUrl); resetModal()},
         })
     }
@@ -409,7 +412,7 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
                                                                         <TimelineContent>
                                                                             <Paper elevation={3} style={{padding: 10}}>
                                                                                 <Typography variant="button" component="h1" color="primary">{log.log_type.replace("LOG", "").replaceAll("_", " ")}</Typography>
-                                                                                <Typography>{log.log_msg}</Typography>
+                                                                                <Typography variant="caption">{log.log_message}</Typography>
                                                                             </Paper>
                                                                         </TimelineContent>
                                                                     </TimelineItem>

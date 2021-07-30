@@ -4,9 +4,9 @@ import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
-const LamassuModalDeviceRenew = ({device, open, handleSubmit, handleClose}) => {
+const LamassuModalDeviceRenew = ({device, dmsUrl, open, handleSubmit, handleClose}) => {
     const theme = useTheme();
-    const [dmsApiUrl, setDmsApiUrl] = useState(window._env_.REACT_APP_DEFAULT_DMS_URL)
+    const [dmsApiUrl, setDmsApiUrl] = useState(dmsUrl)
 
     return (
         <LamassuModal 
@@ -26,7 +26,7 @@ const LamassuModalDeviceRenew = ({device, open, handleSubmit, handleClose}) => {
             }
             formContent={
                 (<>
-                    <TextField required={true} error={dmsApiUrl==""} disabled={true} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
+                    <TextField required={true} error={dmsApiUrl==""} margin="dense" id="DMSAPIURL" label="DMS API URL" fullWidth value={dmsApiUrl} onChange={ev=>{setDmsApiUrl(ev.target.value)}}/>
                     <Box>
                         <div style={{marginTop: 20}}>
                             <Typography variant="button">Device Alias: </Typography>
