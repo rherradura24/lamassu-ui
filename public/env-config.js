@@ -7,5 +7,4 @@ window._env_ = {
     REACT_APP_DMS_ENROLLER_API: "https://lamassu.zpd.ikerlan.es:8085",        
     REACT_APP_DEVICES_API: "https://lamassu.zpd.ikerlan.es:8089",        
     REACT_APP_DEFAULT_DMS_URL: "https://lamassu.zpd.ikerlan.es:5000",        
-    REACT_APP_DEFAULT_DMS_ID: 2,        
 }
