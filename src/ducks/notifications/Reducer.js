@@ -1,4 +1,5 @@
 import * as actions from "./ActionTypes"
+import _ from "lodash"; // cool kids know _ is low-dash
 
 const initialState = {
     lastUpdate: null,
@@ -11,7 +12,8 @@ const notificationsReducer = (state = initialState, action) => {
     console.log(action.type);
     switch (action.type) {
         case actions.NOTIFY :
-            var newHistory = state.history
+            var newHistory = _.cloneDeep(state.history);
+
             newHistory.push({
                 msg: action.payload.msg,
                 timestamp: Date.now(),

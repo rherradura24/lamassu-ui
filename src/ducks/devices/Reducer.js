@@ -67,12 +67,16 @@ const dmsReducer = (state = { list: {}, thiry_days_list:{}}, action) => {
 
     case actions.GET_DMS_CERT_HISTORY_LAST_30_DAYS_SUCCESS: 
 
-      var currentList = {}
-      action.payload.forEach(dms => {
-        currentList[dms.dms_id] = {dms}
-      });
-
-      return { ...state, thiry_days_list: currentList };
+      if (action.payload != null){
+        var currentList = {}
+        action.payload.forEach(dms => {
+          currentList[dms.dms_id] = {dms}
+        });
+  
+        return { ...state, thiry_days_list: currentList };
+      }else{
+        return state
+      }
 
     default:
       return state;
