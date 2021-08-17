@@ -336,7 +336,7 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
                                                 <Tab value="1" label="Last emitted cert"/>
                                                 <Tab value="2" label="Emitted certs history"/>
                                             </TabList>
-                                            <TabPanel className={classes.scroll} value="0" style={{padding: 20, overflowY: "auto", height: "50vh"}}>
+                                            <TabPanel className={classes.scroll} value="0" style={{padding: 20, overflowY: "auto", height: "48vh"}}>
                                                 {
                                                     deviceData.logs ? (
                                                         <Timeline>

@@ -92,7 +92,7 @@ const Home = ({issuedCerts, cas, dmss, devices, thirtyDaysCAs, thirtyDaysDms, th
             padding:{
                 left: 10,
                 top:5,
-                right:25,
+                right: 50,
             },
         },
         responsive: true,
