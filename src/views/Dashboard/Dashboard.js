@@ -56,7 +56,7 @@ const Dashboard = ({ }) => {
             background={theme.palette.appbar.background}
             logo={
               <div style={{background: "white", borderRadius: 10, height:30, width: 120, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <Typography variant="button">Lamassu IoT</Typography>
+                <Typography variant="button">{window._env_.title}</Typography>
               </div>
             }
           />
