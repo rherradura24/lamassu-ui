@@ -1,4 +1,5 @@
 window._theme_ = {
+    title: "Lamassu IoT",
     dark: {
         palette: {
             type: 'dark',
