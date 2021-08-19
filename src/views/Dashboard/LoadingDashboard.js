@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core"
+import { Box, Paper, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react"
 
 export const LoadingDashboard = ({onAlive, checkAuthServer = true}) => {
@@ -55,9 +55,9 @@ export const LoadingDashboard = ({onAlive, checkAuthServer = true}) => {
         }
     }, [])
     return (
-        <Box style={{height: "100%", width:"100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-            <img src={window.PUBLIC_URL + "/lamassu.png" }/>
-            <Box style={{marginTop: 20, display: "flex", justifyContent: "center", alignItems: "baseline"}}>
+        <Box style={{height: "100%", width:"100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", background: "url(lamassu-bg.svg) no-repeat center center fixed", backgroundSize: "cover"}}>
+            <Box component={Paper} style={{marginTop: 20, padding: 20, width: 380, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+            <img src={window.PUBLIC_URL + "/lamassu.png"} style={{marginBottom: 25}}/>
             {
                 isIniting ? (
                     <>
