@@ -1,0 +1,7 @@
+export const AMAZON_AWS = "AMAZON_AWS"
+export const MICROSOFT_AZURE = "MICROSOFT_AZURE"
+export const GOOGLE_CLOUD = "GOOGLE_CLOUD"
+
+
+export const CONFIGURED = "CONFIGURED"
+export const DISCONNECTED = "DISCONNECTED"
