@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     }    
 }))
 
-const CAList = ({casData, importCA, createCA, revokeCA}) => {
+const CAList = ({casData, importCA, createCA, revokeCA, bindAwsCAPolicy}) => {
     const classes = useStyles();
     let history = useHistory();
 
@@ -98,6 +98,19 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
         downloadFile("CA-"+certId+".crt", certContent)
     }
 
+    const handleAwsBindPolicy = (caName) => {
+        setModalInfo({
+            open: true,
+            type: "awsBindPolicy",
+            handleSubmit: (caName, jsonPolicy)=>{
+                console.log(caName, jsonPolicy)
+                bindAwsCAPolicy(caName, jsonPolicy)
+                resetModal()
+            },
+            caName: caName
+        })
+    }
+
     const selectedCert = casData.filter(cert=> cert.serial_number == rightSidebarCertId)[0]
 
     return (
@@ -131,26 +144,27 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
 
                     <Box className={classes.scroll} style={{display: "flex", flexWrap: "wrap", marginTop: 20,  height: "calc(100vh - 150px)", overflowY: "auto"}}>
                     {
-                        casData.map(caData => {
+                        casData.sort((ca1, ca2)=>{return ca1.name > ca2.name ? 1 : (ca1.name < ca2.name ? -1 : 0) }).map(caData => {
                             return (
-                                <CertCard title={caData.ca_name} 
+                                <CertCard title={caData.name} 
                                     status={caData.status} 
-                                    keyStrength={caData.key_strength}
+                                    keyStrength={caData.key_metadata.strength}
                                     validUntil={caData.valid_to}
                                     certData={{
-                                        country: caData.country,
-                                        state: caData.state,
-                                        locality: caData.locality,
-                                        organization: caData.organization,
-                                        keyType: caData.key_type, 
-                                        keyBits: caData.key_bits
+                                        country: caData.subject.country,
+                                        state: caData.subject.state,
+                                        locality: caData.subject.locality,
+                                        organization: caData.subject.organization,
+                                        keyType: caData.key_metadata.type, 
+                                        keyBits: caData.key_metadata.bits
                                     }}
                                     key={caData.serial_number} 
                                     styles={{margin: 10}}
-                                    onDownloadClick={()=>{handleCertDownload(caData.ca_name, caData.crt)}}
+                                    onDownloadClick={()=>{handleCertDownload(caData.name, atob(caData.certificate.pem_base64))}}
                                     onInspectClick={()=>{setRightSidebarCertId(caData.serial_number); handleCertInspect()}}
-                                    onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number, caData.ca_name)}}
-                                    onListEmmitedClick={()=>{history.push('/ca/issued-certs?issuer=' + caData.ca_name)}}
+                                    onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number, caData.name)}}
+                                    onListEmmitedClick={()=>{history.push('/ca/issued-certs?issuer=' + caData.name)}}
+                                    onAwsBindPolicyClick={()=>{handleAwsBindPolicy(caData.name)}}
                                 /> 
                             )
                         })
@@ -163,11 +177,11 @@ const CAList = ({casData, importCA, createCA, revokeCA}) => {
                             <div>
                                 <CertInspectorSideBar 
                                     className={classes.rightSidebar}
-                                    certName={selectedCert.ca_name}
+                                    certName={selectedCert.name}
                                     certId={rightSidebarCertId}
                                     handleClose={()=>{setRightSidebarOpen(false)}} 
-                                    handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId, selectedCert.ca_name)}} 
-                                    handleDownload={()=>{handleCertDownload(selectedCert.ca_name, selectedCert.crt)}} 
+                                    handleRevoke={()=>{handleCertRevocationClick(rightSidebarCertId, selectedCert.name)}} 
+                                    handleDownload={()=>{handleCertDownload(selectedCert.name, atob(selectedCert.certificate.pem_base64))}} 
                                 />
                             </div>
                         </Fade>

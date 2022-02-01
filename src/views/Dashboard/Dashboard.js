@@ -17,9 +17,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import CAListView from "views/CA";
 import Home from "views/home";
 import IssuedCACerts from "views/CA/IssuedCACerts";
-import { CertChecker } from "views/Utils/CertChecker";
 import DMSList from "views/DMS";
-import ServicesStatus  from "views/SerivcesStatus";
 import DeviceList from "views/Devices";
 import DeviceInspect from "views/Devices/DeviceInspect";
 
@@ -75,7 +73,6 @@ const Dashboard = ({ }) => {
                       <>
                         <Route path="/ca/issued-certs" render={(props) => <IssuedCACerts />} />
                         <Route exact path="/ca/certs" render={(props) => <CAListView />} /> 
-                        <Route exact path="/status" render={(props) => <ServicesStatus />} /> 
                       </>                     
                   )}
                 </Switch>

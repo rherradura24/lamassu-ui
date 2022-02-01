@@ -4,7 +4,7 @@ import { makeRequestWithActions } from "ducks/utils";
 import * as actions from "./ActionTypes"
 import * as notificationActions from "ducks/notifications/ActionTypes"
 import * as certsApiCalls from "./ApiCalls";
-import { of } from 'rxjs';
+import { of, from } from 'rxjs';
 
 // CAs 
 
@@ -47,11 +47,33 @@ const revokeCA = action$ => action$.pipe(
   ofType(actions.REVOKE_CA),
   mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.revokeCA(payload), actions.REVOKE_CA)),
 );
+
+const bindAwsCAPolicy = action$ => action$.pipe(
+  ofType(actions.BIND_AWS_CA_POLICY),
+  mergeMap( ({ payload }) => makeRequestWithActions(certsApiCalls.bindAwsCAPolicy(payload), actions.BIND_AWS_CA_POLICY, {caName: payload.caName})),
+);
+
+const notifyBindAwsCAPolicy = action$ => action$.pipe(
+  ofType(actions.BIND_AWS_CA_POLICY_SUCCESS),
+  mergeMap(({ payload, meta }) => { console.log(payload, meta); return of ({ type: notificationActions.NOTIFY, payload: {msg: "AWS policy succesfully binded for "+ meta.caName + " CA", type: "success"}})})
+);
+
 // Certs
 
 const getCertsEpic = action$ => action$.pipe(
   ofType(actions.GET_CERTS),
-  mergeMap( ({payload}) => makeRequestWithActions(certsApiCalls.getCerts(payload), actions.GET_CERTS)),
+  mergeMap( ({payload}) => from(payload.caTypesToFetch)),
+  mergeMap(caType => {console.log(caType); return makeRequestWithActions(certsApiCalls.getCAs(), actions.GET_CAS, {})}),
+  mergeMap(response => {
+    console.log(response);
+    if(response.type == actions.GET_CAS_SUCCESS){
+      return from(response.payload.map(caItem => caItem.name)).pipe(
+        mergeMap(name => {console.log(name); return makeRequestWithActions(certsApiCalls.getCerts("pki", name), actions.GET_CERTS, {})})
+      )
+    }else{
+      return from([])
+    }
+  }),
 );
   
 const revokeCert = action$ => action$.pipe(
@@ -90,6 +112,8 @@ export {
   createCA,
   revokeCA,
   refreshCAs,
+  bindAwsCAPolicy,
+  notifyBindAwsCAPolicy,
   notifyCreateCASuccess,
   notifyImportCASuccess,
   notifyRevokeCASuccess,

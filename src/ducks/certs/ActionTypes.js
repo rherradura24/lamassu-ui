@@ -29,6 +29,10 @@ export const IMPORT_CA = prefix + 'IMPORT_CA';
 export const IMPORT_CA_SUCCESS = prefix + 'IMPORT_CA_SUCCESS';
 export const IMPORT_CA_ERROR = prefix + 'IMPORT_CA_ERROR';
 
+export const BIND_AWS_CA_POLICY = prefix + 'BIND_AWS_CA_POLICY';
+export const BIND_AWS_CA_POLICY_SUCCESS = prefix + 'BIND_AWS_CA_POLICY_SUCCESS';
+export const BIND_AWS_CA_POLICY_ERROR = prefix + 'BIND_AWS_CA_POLICY_ERROR';
+
 export const CREATE_CERT = prefix + 'CREATE_CERT';
 export const CREATE_CERT_SUCCESS = prefix + 'CREATE_CERT_SUCCESS';
 export const CREATE_CERT_ERROR = prefix + 'CREATE_CERT_ERROR';

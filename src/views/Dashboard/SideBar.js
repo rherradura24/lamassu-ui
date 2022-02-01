@@ -44,51 +44,51 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
         <div>
           <MenuButton title={t("sidebar.collapse")} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon/>} onClick={()=>{setCollapsed(!collapsed); onCollapse(collapsed)}} collapsed={collapsed}/> 
           <MenuSeparator/>
-          {
-            keycloak.tokenParsed.realm_access.roles.includes("admin") && (
-              <>
-                <MenuItem 
-                  title={t("sidebar.home")} 
-                  link="/"
-                  collapsed={collapsed}
-                  active={selectedPath}
-                  onSelect={(link)=>{setSelectedPath(link)}} 
-                  icon={<DashboardOutlinedIcon/>}
-                />
-                <MenuSeparator/>
-                <MenuSectionTitle title={t("sidebar.ca-authorities")}  collapsed={collapsed}/>
-                <MenuItem 
-                  title={t("sidebar.cas")} 
-                  link="/ca/certs" 
-                  active={selectedPath}
-                  collapsed={collapsed}
-                  onSelect={(link)=>{setSelectedPath(link)}} 
-                  icon={<AccountBalanceOutlinedIcon/>}
-                />
-                <MenuItem 
-                  title={t("sidebar.issued-certs-by-cas")} 
-                  link="/ca/issued-certs" 
-                  active={selectedPath}
-                  collapsed={collapsed}
-                  onSelect={(link)=>{setSelectedPath(link)}} 
-                  icon={<ListAltOutlinedIcon/>}
-                />
-                {
-                  /*
+            {
+              keycloak.tokenParsed.realm_access.roles.includes("admin") && (
+                <>
                   <MenuItem 
-                    title="CRL"
-                    link="/ca/crl" 
+                    title={t("sidebar.home")} 
+                    link="/"
+                    collapsed={collapsed}
+                    active={selectedPath}
+                    onSelect={(link)=>{setSelectedPath(link)}} 
+                    icon={<DashboardOutlinedIcon/>}
+                  />
+                  <MenuSeparator/>
+                  <MenuSectionTitle title={t("sidebar.ca-authorities")}  collapsed={collapsed}/>
+                  <MenuItem 
+                    title={t("sidebar.cas")} 
+                    link="/ca/certs" 
                     active={selectedPath}
                     collapsed={collapsed}
                     onSelect={(link)=>{setSelectedPath(link)}} 
-                    icon={<BlockOutlinedIcon/>}
+                    icon={<AccountBalanceOutlinedIcon/>}
                   />
-                  */
-                }
-                <MenuSeparator/>
-              </>
-            )
-          }
+                  <MenuItem 
+                    title={t("sidebar.issued-certs-by-cas")} 
+                    link="/ca/issued-certs" 
+                    active={selectedPath}
+                    collapsed={collapsed}
+                    onSelect={(link)=>{setSelectedPath(link)}} 
+                    icon={<ListAltOutlinedIcon/>}
+                  />
+                  {
+                    /*
+                    <MenuItem 
+                      title="CRL"
+                      link="/ca/crl" 
+                      active={selectedPath}
+                      collapsed={collapsed}
+                      onSelect={(link)=>{setSelectedPath(link)}} 
+                      icon={<BlockOutlinedIcon/>}
+                    />
+                    */
+                  }
+                  <MenuSeparator/>
+                </>
+              )
+            }
           <MenuSectionTitle title={t("sidebar.dms-title")} collapsed={collapsed}/>
           <MenuItem 
             title="List of DMS" 
@@ -107,42 +107,8 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse }) => {
             onSelect={(link)=>{setSelectedPath(link)}} 
             icon={<RouterOutlinedIcon/>}
           />
-          {
-            /*
-            <MenuSeparator/>
-            <MenuSectionTitle title="utils" collapsed={collapsed}/>
-            <MenuItem 
-              title="Certificate" 
-              link="/utils/cert-checker" 
-              active={selectedPath}
-              collapsed={collapsed}
-              onSelect={(link)=>{setSelectedPath(link)}} 
-              icon={<BuildOutlinedIcon/>}
-            />
-            */
-          }
-          <MenuSeparator/>
-          <MenuSectionTitle title="Lamassu infrstructure" collapsed={collapsed}/>
-          <MenuItem 
-            title="Service status" 
-            link="/status" 
-            active={selectedPath}
-            collapsed={collapsed}
-            onSelect={(link)=>{setSelectedPath(link)}} 
-            icon={<TimelineOutlinedIcon/>}
-            />
-            {
-              /*
-              <MenuItem 
-                title="Logs" 
-                link="/logs" 
-                active={selectedPath}
-                collapsed={collapsed}
-                onSelect={(link)=>{setSelectedPath(link)}} 
-                icon={<ChatOutlinedIcon/>}
-              />
-              */
-            }
+         
+           
           <MenuSeparator/>
           <MenuButton title={darkTheme ? t("theme.light") : t("theme.dark")} icon={darkTheme ? <Brightness5OutlinedIcon/> : <Brightness2OutlinedIcon/>} onClick={onTogleDark} collapsed={collapsed}/> 
 

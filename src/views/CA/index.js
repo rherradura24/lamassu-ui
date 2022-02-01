@@ -14,7 +14,8 @@ const mapDispatchToProps = (dispatch) => ({
   
   importCA: (caName, bundle, ttl)=>{ dispatch(certsActions.importCA(caName, bundle, ttl)) },
   createCA: (data)=>{ dispatch(certsActions.createCA(data)) },
-  revokeCA: (certName)=>{ dispatch(certsActions.revokeCA(certName)) }
+  revokeCA: (certName)=>{ dispatch(certsActions.revokeCA(certName)) },
+  bindAwsCAPolicy: (caName, policy)=>{ dispatch(certsActions.bindAwsCAPolicy(caName, policy)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CAListView));

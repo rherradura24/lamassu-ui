@@ -5,11 +5,26 @@ import keycloak from "keycloak";
 
 const parseError = (err) => {
     return typeof err === 'object' ?  JSON.stringify(err) : err
- }
+}
+
+const escapedJSONObject = (myJSON) => {
+    var myJSONString = JSON.stringify(myJSON);
+    var myEscapedJSONString = myJSONString.replace(/\\n/g, "\\n")
+                                          .replace(/\\'/g, "\\'")
+                                          .replace(/\\"/g, '\\"')
+                                          .replace(/\\&/g, "\\&")
+                                          .replace(/\\r/g, "\\r")
+                                          .replace(/\\t/g, "\\t")
+                                          .replace(/\\b/g, "\\b")
+                                          .replace(/\\f/g, "\\f");
+    return myEscapedJSONString
+}
+
+
 
 export const getCAs = async () => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/ops", {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/pki", {
             headers: {
                 "Authorization": "Bearer " + keycloak.token
             }
@@ -36,7 +51,7 @@ export const getCA = (caId) => {
 
 export const revokeCA = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName, {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/pki/" + payload.caName, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -54,13 +69,13 @@ export const revokeCA = async (payload) => {
 
 export const createCA = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName, {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/pki/" + payload.caName, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 "Authorization": "Bearer " + keycloak.token,
             },
-            body: JSON.stringify(payload.crt)
+            body: JSON.stringify(payload.body)
         })
         const json = await resp.json()
         if (resp.status != 200) {
@@ -80,7 +95,7 @@ export const createCA = async (payload) => {
 
 export const importCA = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/import/" + payload.caName, {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/pki/import/" + payload.caName, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -105,10 +120,58 @@ export const importCA = async (payload) => {
     }
 }
 
-export const getCerts = async (payload) => {
-    console.log(payload);
+export const bindAwsCAPolicy = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/issued/" + payload.caType , {
+        const resp = await fetch(window._env_.REACT_APP_RABBITMQ_ENDPOINT + "/api/exchanges/%2F/amq.default/publish", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + keycloak.token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "vhost":"/",
+                "name":"amq.default",
+                "properties":{
+                   "delivery_mode":2,
+                   "headers":{
+                      
+                   },
+                   "content_type":"application/json"
+                },
+                "routing_key":"bind_ca_aws_policy_queue",
+                "delivery_mode":"2",
+                "payload":"hello",
+                "headers":{
+                   
+                },
+                "props":{
+                   "content_type":"application/json"
+                },
+                "payload_encoding":"string"
+             })
+        })
+        const json = await resp.json()
+        if (resp.status != 200) {
+            if (json) {
+                return { error: json.error }
+            }
+        }else if (json.routed && json.routed == false){
+            return { error: "Message was not routed" }
+        }else{
+            return {
+                json: json,
+                status: resp.status
+            }
+        }
+    } catch (er) {
+        console.log(er);
+        return { error: "Connection error with CA API server. " + er }
+    }
+}
+
+export const getCerts = async (caType, caName) => {
+    try {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/"+caType+"/"+caName+"/issued" , {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -131,7 +194,7 @@ export const getCerts = async (payload) => {
 
 export const revokeCert = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/cas/" + payload.caName + "/cert/" + payload.serialNumber, {
+        const resp = await fetch(window._env_.REACT_APP_CA_API + "/v1/pki/" + payload.caName + "/cert/" + payload.serialNumber, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,

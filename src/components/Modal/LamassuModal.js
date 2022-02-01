@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
 
-const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, maxWidth="sm", hasCloseButton=true, actions = [{title: "OK", primary: true, disabledBtn: false, onClick: ()=>{}}] }) => {
+const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, maxWidth="sm", hasCloseButton=true, actions = [{title: "OK", primary: true, disabledBtn: false, onClick: ()=>{}}], style = {} }) => {
 
     return (
         <Dialog
@@ -25,7 +25,7 @@ const LamassuModal = ({title, warnIcon, msg, open, formContent, handleClose, max
                 {title}
             </Box>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent style={style}>
           <DialogContentText id="alert-dialog-description">
             {msg}
           </DialogContentText>

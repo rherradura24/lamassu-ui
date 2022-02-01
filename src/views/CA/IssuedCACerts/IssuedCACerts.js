@@ -172,12 +172,12 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
     const data = certsData.map(certData => {
         return {
             id: certData.serial_number,
-            issuer: certData.ca_name,
-            common_name: certData.common_name,
+            issuer: certData.name,
+            common_name: certData.subject.common_name,
             status: certData.status,
-            key_type: certData.key_type,
-            key_bits: certData.key_bits,
-            key_strength: certData.key_strength,
+            key_type: certData.key_metadata.type,
+            key_bits: certData.key_metadata.bits,
+            key_strength: certData.key_metadata.strength,
             valid_from: new Date(moment(certData.valid_from).unix()*1000),
             valid_to: new Date(moment(certData.valid_to).unix()*1000),
         }
@@ -252,10 +252,11 @@ const IssuedCACerts = ({loadingData, certsData, revokeCert, reloadCerts}) => {
                         <div>
                             <CertInspectorSideBar 
                                 className={classes.rightSidebar} 
+                                certName={rightSidebarCert.certId}
                                 certId={rightSidebarCert.certId}
                                 handleClose={()=>{setRightSidebarOpen(false)}} 
-                                handleRevoke={()=>{handleCertRevocationClick(rightSidebarCert.certId,rightSidebarCert.cert.common_name, rightSidebarCert.cert.ca_name)}} 
-                                handleDownload={()=>{handleCertDownload(rightSidebarCert.certId, rightSidebarCert.cert.crt)}} 
+                                handleRevoke={()=>{handleCertRevocationClick(rightSidebarCert.certId, rightSidebarCert.cert.subject.common_name, rightSidebarCert.cert.name)}} 
+                                handleDownload={()=>{handleCertDownload(rightSidebarCert.certId, atob(rightSidebarCert.cert.certificate.pem_base64))}} 
                             />
                         </div>
                     </Fade>

@@ -57,6 +57,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
     setActiveTab(newValue);
   };
 
+  console.log(certData);
   
   var statusColor;
   if (certData.status == "issued") {
@@ -68,11 +69,11 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   }
   
   var stengthColor;
-  if (certData.key_strength == "high") {
+  if (certData.key_metadata.strength == "high") {
     stengthColor = green[400]
-  }else if(certData.key_strength == "medium"){
+  }else if(certData.key_metadata.strength == "medium"){
     stengthColor = orange[400]
-  }else if(certData.key_strength == "low"){
+  }else if(certData.key_metadata.strength == "low"){
     stengthColor = red[400]
   }else{
     stengthColor = grey[400]
@@ -80,7 +81,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
   
   
   var metadataTable = []
-  const certParsed = Certificate.fromPEM(certData.crt)
+  const certParsed = Certificate.fromPEM(atob(certData.certificate.pem_base64))
   
   metadataTable.push({
     label: "Serial Number",
@@ -99,17 +100,17 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
 
   metadataTable.push({
     label: "Key Type",
-    content: certData.key_type
+    content: certData.key_metadata.type
   });
 
   metadataTable.push({
     label: "Key Bits",
-    content: certData.key_bits
+    content: certData.key_metadata.bits
   });
 
   metadataTable.push({
     label: "Key Strength",
-    content: <Chip label={certData.key_strength} variant="outlined" size="small" style={{color: stengthColor, border: "1px solid " + stengthColor}} />
+    content: <Chip label={certData.key_metadata.strength} variant="outlined" size="small" style={{color: stengthColor, border: "1px solid " + stengthColor}} />
   });
 
   metadataTable.push({
@@ -160,11 +161,15 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
               <GetAppIcon/>
             </IconButton>
           </Tooltip>
-          <Tooltip title="Revoke cert">
-            <IconButton onClick={handleRevoke}>
-              <DeleteIcon/>
-            </IconButton>
-          </Tooltip>
+          {
+            certData.status == "issued" && (
+              <Tooltip title="Revoke cert">
+                <IconButton onClick={handleRevoke}>
+                  <DeleteIcon/>
+                </IconButton>
+              </Tooltip>
+            )
+          }
           <Tooltip title="Close">
             <IconButton onClick={handleClose}>
               <CloseIcon/>
@@ -197,7 +202,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
           <TabPanel value="1" style={{padding: 0}}>
             <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
                 <IconButton style={{position:"absolute", right: 20}} onClick={()=>{
-                    navigator.clipboard.writeText(certData.crt).then(function() {
+                    navigator.clipboard.writeText(atob(certData.certificate.pem_base64)).then(function() {
                       console.log('Async: Copying to clipboard was successful!');
                     }, function(err) {
                       console.error('Async: Could not copy text: ', err);
@@ -206,14 +211,14 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
                   <AssignmentOutlinedIcon style={{color: "white"}}/>
                 </IconButton>
                 <code style={{color: "white", fontSize: "small"}}>
-                  {certData.crt}
+                  {atob(certData.certificate.pem_base64)}
                 </code>
             </div>
           </TabPanel>
           <TabPanel value="2" style={{padding: 0}}>
             <div style={{background: "#333", padding: "10px 20px 10px 20px"}}>
               <IconButton style={{position:"absolute", right: 20}} onClick={()=>{
-                  navigator.clipboard.writeText(certData.pub_key).then(function() {
+                  navigator.clipboard.writeText(atob(certData.certificate.public_key_base64)).then(function() {
                     console.log('Async: Copying to clipboard was successful!');
                   }, function(err) {
                     console.error('Async: Could not copy text: ', err);
@@ -222,7 +227,7 @@ const CertInspectorSideBar = ({ handleClose, handleRevoke, handleDownload, certI
                 <AssignmentOutlinedIcon style={{color: "white"}}/>
               </IconButton>
               <code  style={{color: "white", fontSize: "small"}}>
-                {certData.pub_key}
+                {atob(certData.certificate.public_key_base64)}
               </code>
             </div>
           </TabPanel>

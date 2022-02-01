@@ -15,13 +15,6 @@ const certsReducer = (state = initialState, action) => {
     switch (action.type) {
       case actions.GET_CAS_SUCCESS:
         var currentList = {}
-        //We need to keep ONLY END_CERT certs
-        var certsKeys = Object.keys(state.list)
-        var certList = certsKeys.map(key => state.list[key])
-        certList = certList.filter(cert=> cert.type == "END_CERT");
-        certList.forEach(cert => {
-          currentList[cert.serial_number]=cert
-        });
 
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "CA" }
@@ -35,14 +28,7 @@ const certsReducer = (state = initialState, action) => {
         return {...state,  loading: false };
 
       case actions.GET_CERTS_SUCCESS:
-        var currentList = {}
-        //We need to keep ONLY CA certs
-        certsKeys = Object.keys(state.list)
-        var certList = certsKeys.map(key => state.list[key])
-        certList = certList.filter(cert=> cert.type == "CA");
-        certList.forEach(cert => {
-          currentList[cert.serial_number]=cert
-        });
+        var currentList = state.list
 
         action.payload.forEach(ca => {
           currentList[ca.serial_number] = { ...ca, type: "END_CERT" }

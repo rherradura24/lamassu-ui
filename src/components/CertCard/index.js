@@ -15,7 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {LamassuChip} from "components/LamassuChip"
 import moment from 'moment';
 
-const CertCard = ({ title, status, certData, keyStrength, validUntil, onDownloadClick, onRevokeClick, onInspectClick, onListEmmitedClick, styles={}}) => {
+const CertCard = ({ title, status, certData, keyStrength, validUntil, onDownloadClick, onRevokeClick, onInspectClick, onAwsBindPolicyClick, onListEmmitedClick, styles={}}) => {
   const theme = useTheme()
    
   const keys = Object.keys(certData)
@@ -109,6 +109,11 @@ const CertCard = ({ title, status, certData, keyStrength, validUntil, onDownload
               <IconButton onClick={onInspectClick}>
                   <VisibilityIcon />
                 </IconButton>
+            </Tooltip>
+            <Tooltip title="AWS CA Policy">
+              <IconButton onClick={onAwsBindPolicyClick}>
+                  <img src={process.env.PUBLIC_URL + '/assets/images/aws.svg'} height={27}/>
+              </IconButton>
             </Tooltip>
           </div>
           <div>

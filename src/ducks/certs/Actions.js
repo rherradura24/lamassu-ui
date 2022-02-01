@@ -19,15 +19,20 @@ export const createCA = (certData) => ({
     type: t.CREATE_CA,
     payload: { 
         caName: certData.caName,
-        crt: {
-            country: certData.country,
-            state: certData.state,
-            locality: certData.city,
-            organization: certData.organization,
-            organization_unit: certData.organizationUnit,
-            common_name: certData.commonName,
-            key_type: certData.keyType,
-            key_bits: certData.keyBits,
+        body: {
+            subject:{
+                country: certData.country,
+                state: certData.state,
+                locality: certData.city,
+                organization: certData.organization,
+                organization_unit: certData.organizationUnit,
+                common_name: certData.commonName,
+            },
+            key_metadata:{
+                type: certData.keyType,
+                bits: certData.keyBits,
+
+            },
             ca_ttl: certData.caTtl,
             enroller_ttl: certData.enrollerTtl,
         }
@@ -45,11 +50,18 @@ export const importCA = (caName, bundle, ttl) => ({
     },
 })  
 
-export const getCerts = (caName, caType) => ({
-    type: t.GET_CERTS,
+export const bindAwsCAPolicy = (caName, policy) => ({
+    type: t.BIND_AWS_CA_POLICY,
     payload: { 
         caName: caName,
-        caType: caType
+        policy:policy
+    },
+})  
+
+export const getCerts = (caType) => ({
+    type: t.GET_CERTS,
+    payload: { 
+        caTypesToFetch: [caType]
     },
 })  
 

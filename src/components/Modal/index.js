@@ -13,6 +13,7 @@ import { LamassuModalDeviceProvision } from "./DeviceProvision";
 import { LamassuModalDeviceDelete } from "./DeviceDelete";
 import { LamassuModalDeviceCertRevocation } from "./DeviceCertRevocation";
 import { LamassuModalDeviceRenew } from "./DeviceRenew";
+import { LamassuModalAwsBindPolicy } from "./AwsBindPolicy";
 
 const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
     switch (type) {
@@ -167,6 +168,15 @@ const LamassuModalPolyphormic = ({ type, open, handleClose, ...props }) =>{
             handleSubmit={props["handleSubmit"]} 
             device={props["device"]} 
             dmsUrl={props["dmsUrl"]} 
+          />
+        )
+        case "awsBindPolicy":
+          return (
+            <LamassuModalAwsBindPolicy
+            open={open} 
+            handleClose={handleClose} 
+            handleSubmit={props["handleSubmit"]} 
+            caName={props["caName"]} 
           />
         )
     
