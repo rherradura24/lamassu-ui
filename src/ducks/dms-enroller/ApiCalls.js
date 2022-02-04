@@ -6,7 +6,7 @@ const parseError = (err) => {
 
 export const getAllDms = async () => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -26,22 +26,11 @@ export const getAllDms = async () => {
         if (resp.status != 200) {
             return { error: data }
         }else{
-            console.log(data);
-            if("_embedded" in data){
-                var jsonData = data._embedded.csr
-                if (!Array.isArray(jsonData)){
-                    jsonData = [data._embedded.csr]
-                }
-                return {
-                    json: jsonData,
-                    status: resp.status
-                }
-            }else{
-                return {
-                    json: [],
-                    status: resp.status
-                }
+            return {
+                json: data,
+                status: resp.status
             }
+           
         }
     } catch (er) {
         console.log(er);
@@ -52,7 +41,7 @@ export const getAllDms = async () => {
 
 export const createDmsViaCsr = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.dmsName, {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/" + payload.dmsName, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -82,7 +71,7 @@ export const createDmsViaCsr = async (payload) => {
 
 export const createDmsViaForm = async (payload) => {
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.dmsName + "/form", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/" + payload.dmsName + "/form", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -109,7 +98,7 @@ export const createDmsViaForm = async (payload) => {
 export const updateDmsStatus = async (payload) => {
     console.log(payload);
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.id, {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/" + payload.id, {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,
@@ -136,7 +125,7 @@ export const updateDmsStatus = async (payload) => {
 export const getDmsCert = async (payload) => {
     console.log(payload);
     try {
-        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/csrs/" + payload.id + "/crt", {
+        const resp = await fetch(window._env_.REACT_APP_DMS_ENROLLER_API + "/v1/" + payload.id + "/crt", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + keycloak.token,

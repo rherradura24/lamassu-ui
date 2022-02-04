@@ -20,8 +20,8 @@ const dmsReducer = (state = { list: {}, lastPrivKey: null }, action) => {
 
     case actions.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST_SUCCESS:
       return { ...state, lastPrivKey: {
-        dms_id: action.payload.csr.id,
-        dms_name: action.payload.csr.dms_name, 
+        dms_id: action.payload.dms.id,
+        dms_name: action.payload.dms.dms_name, 
         key: action.payload.priv_key
       } 
     };

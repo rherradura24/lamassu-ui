@@ -25,7 +25,7 @@ export const DMSCard = ({ dmsData, title, status, lastIssued, isAdmin, onApprova
       statusColor = "green"
     }else if(status == "REVOKED" || status == "DENIED"){
       statusColor = "red"
-    }else if(status == "NEW"){
+    }else if(status == "PENDIG_APPROVAL"){
       statusColor = "orange"
       status = "PENDING"
     }
