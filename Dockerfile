@@ -26,7 +26,7 @@ COPY ./env-docker-config.js /tmpl/env-config.js.tmpl
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 
 # Make our shell script executable
-RUN chmod +x docker-entrypoint.sh 
+RUN chmod +x /docker-entrypoint.sh 
 
 EXPOSE 443
 
