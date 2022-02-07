@@ -76,8 +76,8 @@ export const getLastPrivKeyResponse = (state) => {
 export const getDMSsExpiringXDays = (state, daysToExpire) => {
   const dmss = getAllDMS(state)
   const result = dmss.filter(dms=> {
-    if (dms.crt) {
-      const cert = Certificate.fromPEM(dms.crt)
+    if (dms.Data) {
+      const cert = Certificate.fromPEM(atob(dms.Data))
       return moment(cert.validTo).subtract(daysToExpire, "days").isBefore(moment())
     }
   });
