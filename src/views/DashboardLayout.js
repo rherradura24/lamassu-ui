@@ -7,7 +7,7 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import { Paper, Typography } from "@mui/material";
+import { GlobalStyles, Paper, Typography } from "@mui/material";
 
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
@@ -31,7 +31,7 @@ export default () => {
             menuTitle: "",
             menuItems: [
                 {
-                    title: t("sidebar.home"),
+                    title: "Home",
                     route: "/",
                     icon: <DashboardOutlinedIcon />,
                     content: <CaList />
@@ -39,10 +39,10 @@ export default () => {
             ]
         },
         {
-            menuTitle: t("sidebar.ca-authorities"),
+            menuTitle: "Certification Authorities",
             menuItems: [
                 {
-                    title: t("sidebar.cas"),
+                    title: "CAs",
                     route: "/ca/certs",
                     icon: <AccountBalanceOutlinedIcon/>,
                     content: <CaList />
@@ -50,10 +50,10 @@ export default () => {
             ]
         },
         {
-            menuTitle: t("sidebar.dms-title"),
+            menuTitle: "Registration Authorities",
             menuItems: [
                 {
-                    title: "List of DMS",
+                    title: "Device Manufacturing Systems",
                     route: "/dms/list",
                     icon: <VerifiedUserOutlinedIcon/>,
                     content: <CaList />
@@ -70,6 +70,22 @@ export default () => {
 
     return (
         <ThemeProvider theme={theme}>
+            <GlobalStyles
+                styles={{
+                    '*::-webkit-scrollbar': {
+                        width: '8px',
+                    },
+                    '*::-webkit-scrollbar-track': {
+                        background: theme.palette.scrollbar.track
+                    },
+                    '*::-webkit-scrollbar-thumb': {
+                        backgroundColor: theme.palette.scrollbar.thumb,
+                        borderRadius: 50,
+                        border: 0,
+                        outline: 'none',
+                    },
+                }}
+            />
             <Router>
                 <Box className={collapsed ? "dashboard-layout-collapsed" : "dashboard-layout"} component={Paper} elevation={0}>
                     <Box className="header">

@@ -1,14 +1,16 @@
+import { darkScrollbar } from "@mui/material"
+
 export const light = {
     palette: {
         mode: "light",
         primary: {
-            light: "#70A8EB",
-            main: "#5c94f1",
+            light: "#559AE0",
+            main: "#0068D1",
             dark: "#1F528F"
         },
         secondary: {
             light: "#70A8EB",
-            main: "#5c94f1",
+            main: "#0068D1",
             dark: "#1F528F"
         },
         success:{
@@ -26,6 +28,10 @@ export const light = {
             main: "#da565f",
             dark: "#8C3239"
         },
+        scrollbar: {
+            thumb: "#555555",
+            track: "#EEEEEE"
+        },
         divider: "#EFF0F2",
         text:{
             primary: "#333",
@@ -38,16 +44,16 @@ export const light = {
             lightContrast: "#eff0f2", // f1f1f1
             darkContrast:  "#D4D4D4"
         }
-    }
+    },    
 }
 
 export const dark = {
     palette: {
         mode: "dark",
         primary: {
-            light: "#70A8EB",
+            light: "#4a6952",
             main: "#25ee32",
-            dark: "#1F528F"
+            dark: "#2F6140"
         },
         secondary: {
             light: "#222",
@@ -68,6 +74,10 @@ export const dark = {
             light: "#6d504e",
             main: "#da565f",
             dark: "#8C3239"
+        },
+        scrollbar: {
+            thumb: "#EEEEEE",
+            track: "#555555"
         },
         divider: "#444",
         text:{

@@ -11,6 +11,9 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import { LamassuMultiModal, ModalType } from "components/Modal";
+import { LamassuTable } from "components/LamassuComponents/Table";
+import { LamassuChip, LamassuStatusChip } from "components/LamassuComponents/Chip";
 
 export default () => {
     const theme = useTheme()
@@ -62,6 +65,72 @@ export default () => {
         },
         {
             id: 2,
+            name: "Test CA",
+            keySize: "ECC 198",
+            status: "Active",
+            keyStrength: "Low",
+            expirationDate: "4 Nov 2022",
+            certificate:{
+                subject: {
+                    country: "ES",
+                    state: "Gipuzkoa",
+                    locality: "Arrasate",
+                    organization: "Ikerlan",
+                    organizationUnit: "ZPD",
+                    commonName: "zpd.ikerlan.es",
+                },
+                issuedDate: "28 Nov 2021",
+                expirationDate: "23 June 2022",
+                serialNumber: "2E:7E:41:27:0F:E0:D9:A8:E4:5E:68:DC:89:64:5F:A5:D0:FB:47:BF",
+                issuanceValidity: "100 days"
+            }
+        },
+        {
+            id: 3,
+            name: "LKS Next CA",
+            keySize: "RSA 4096",
+            status: "Active",
+            keyStrength: "High",
+            expirationDate: "23 June 2022",
+            certificate:{
+                subject: {
+                    country: "ES",
+                    state: "Gipuzkoa",
+                    locality: "Donostia",
+                    organization: "LKS Next",
+                    organizationUnit: "lks",
+                    commonName: "lks-next.es",
+                },
+                issuedDate: "28 Nov 2021",
+                expirationDate: "23 June 2022",
+                serialNumber: "2E:7E:41:27:0F:E0:D9:A8:E4:5E:68:DC:89:64:5F:A5:D0:FB:47:BF",
+                issuanceValidity: "365 days"
+            }
+        },
+        {
+            id: 4,
+            name: "Ikerlan CA Test",
+            keySize: "ECC 256",
+            status: "Active",
+            keyStrength: "Medium",
+            expirationDate: "4 Nov 2022",
+            certificate:{
+                subject: {
+                    country: "ES",
+                    state: "Gipuzkoa",
+                    locality: "Arrasate",
+                    organization: "Ikerlan",
+                    organizationUnit: "ZPD",
+                    commonName: "zpd.ikerlan.es",
+                },
+                issuedDate: "28 Nov 2021",
+                expirationDate: "23 June 2022",
+                serialNumber: "2E:7E:41:27:0F:E0:D9:A8:E4:5E:68:DC:89:64:5F:A5:D0:FB:47:BF",
+                issuanceValidity: "100 days"
+            }
+        },
+        {
+            id: 5,
             name: "Test CA",
             keySize: "ECC 198",
             status: "Active",
@@ -188,6 +257,16 @@ nA==
         {key: "actions", title: "", align: "end", size: 1},
     ]
 
+    const devicesTableColumns = [
+        {key: "deviceId", title: "ID", align: "center", size: 1},
+        {key: "deviceAlias", title: "Name", align: "center", size: 2},
+        {key: "keyStrength", title: "Key Strength", align: "center", size: 1},
+        {key: "certificateStatus", title: "Certificate Status", align: "center", size: 1},
+        {key: "certificateExpiration", title: "Certificate Expiration", align: "center", size: 1},
+        {key: "deviceRegistration", title: "Regisitered", align: "center", size: 1},
+        {key: "deviceProvision", title: "Last Provisioned", align: "center", size: 1},
+    ]
+
     const cloudProviders = [
         {
             connectorId: "3647562", 
@@ -221,6 +300,252 @@ nA==
         },
     ]
 
+    const devicesData=[
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Expired",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Expired",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "Medium",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "Medium",
+            certificateStatus: "Expired",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "Expired",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "Low",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "Low",
+            certificateStatus: "Expired",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "74182041940",
+            deviceAlias: "Raspberry Pi Node 1",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "5122087452",
+            deviceAlias: "Raspberry Pi Node 2",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+        {
+            deviceId: "2341787074",
+            deviceAlias: "Raspberry Pi Node 3",
+            keyStrength: "High",
+            certificateStatus: "Active",
+            certificateExpiration: "05/01/2022",
+            deviceRegistration: "21/11/2021",
+            deviceProvision: "22/11/2021",
+        },
+    ]
+
     const cloudProvidersRender = cloudProviders.map(cloudProviderItem => {
         return {
             settings: (
@@ -233,15 +558,9 @@ nA==
             connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudProviderItem.connectorId}</Typography>,
             connectorStatus: (
                 cloudProviderItem.connectorStatus === CONFIGURED ? (
-                    <Box style={{background: theme.palette.success.light, borderRadius: 5, marginLeft: 10, padding: "5px 7px 5px 7px", width: "fit-content", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Box style={{marginRight: 10, width: 7, height: 7, background: theme.palette.success.main, borderRadius: "50%"}}/>
-                        <Typography style={{color: theme.palette.success.main, fontWeight: "400", fontSize: 12}}>Configured</Typography>
-                    </Box>
+                    <LamassuStatusChip label="Configured" color="green"/>
                 ) : (
-                    <Box style={{background: theme.palette.error.light, borderRadius: 5, marginLeft: 10, padding: "5px 7px 5px 7px", width: "fit-content", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <Box style={{marginRight: 10, width: 7, height: 7, background: theme.palette.error.main, borderRadius: "50%"}}/>
-                        <Typography style={{color: theme.palette.error.main, fontWeight: "400", fontSize: 12}}>Disconnected</Typography>
-                    </Box>
+                    <LamassuStatusChip label="Disconnected" color="red"/>
                 )
             ),
             connectorAlias: (
@@ -281,6 +600,48 @@ nA==
         }
     })
 
+    const keyStrengthToColor = (keyStrength) => {
+        switch (keyStrength) {
+            case "High":
+                return "green"
+            case "Medium":
+                return "orange"
+            case "Low":
+                return "red"
+            default:
+                return ""
+        }
+    }
+
+    const certStatusToColor = (certificateStatus) => {
+        switch (certificateStatus) {
+            case "Active":
+                return "green"
+            case "Expired":
+                return "red"
+            default:
+                return ""
+        }
+    }
+
+    const devicesRender = devicesData.map(dev => {
+        return {
+            deviceId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{dev.deviceId}</Typography>,
+            deviceAlias: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{dev.deviceAlias}</Typography>,
+
+            keyStrength: (
+                <LamassuChip label={dev.keyStrength} color={keyStrengthToColor(dev.keyStrength)}/>
+            ), 
+            certificateStatus:(
+                <LamassuChip label={dev.certificateStatus} color={certStatusToColor(dev.certificateStatus)}/>
+            ), 
+            certificateExpiration: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{dev.certificateExpiration}</Typography>,
+            deviceRegistration: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{dev.deviceRegistration}</Typography>,
+            deviceProvision: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{dev.deviceProvision}</Typography>,
+        }
+    })
+
+
     const [caList, setCaList] = useState(cas)
     const [filteredCaList, setFilteredCaList] = useState(cas)
 
@@ -290,6 +651,8 @@ nA==
 
     const [openSearchFilter, serOpenSearchFilter] = useState(false);
     const [anchorElSearchFilter, serAnchorElSearchFilter] = useState(null);
+
+    const [isMoadlOpen, setIsMoadlOpen] = useState(false);
    
     const handleSearchFilterClick = (event) => {
         serAnchorElSearchFilter(event.currentTarget);
@@ -305,65 +668,76 @@ nA==
     }, [selectedCaItemId])
 
     const filterCAs = (partialCaName) => {
-        console.log(partialCaName);
         const interlanlFilteredCaList = caList.filter(caItem => {
             const lowecaseCaName = caItem.name.toLocaleLowerCase()
             const lowercasePartialCaName = partialCaName.toLocaleLowerCase()
-            console.log(lowecaseCaName, lowercasePartialCaName);
             return lowecaseCaName.includes(lowercasePartialCaName)
         })
-        console.log(interlanlFilteredCaList);
         setFilteredCaList(interlanlFilteredCaList)
     }
     
     return(
         <Grid container style={{height: "100%"}}>
-            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast, padding: 20}}>
-                <Grid item container alignItems="center" style={{marginLeft: 8, marginTop: 10, background: theme.palette.background.darkContrast, borderRadius: 10, padding: 5}}>
-                    <Grid item xs={10} style={{paddingLeft: 10}}>
-                        <InputBase 
-                            fullWidth
-                            onChange={(ev)=>filterCAs(ev.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={2} container justifyContent="flex-end">
-                        <Box component={Paper} elevation={1} style={{width: "fit-content", borderRadius: 8}}>
-                            <IconButton onClick={handleSearchFilterClick}>
-                                <FilterListIcon />
-                            </IconButton>
-                        </Box>
-                        <Popper id={id} open={openSearchFilter} anchorEl={anchorElSearchFilter} transition>
-                            {({ TransitionProps }) => (
-                                <ClickAwayListener onClickAway={handleSearchFilterClick}>
-                                    <Fade {...TransitionProps} timeout={350}>
-                                        <Box component={Paper} elevation={2} style={{borderRadius: 10, padding: 20}}>
-                                            The content of the Popper.
-                                        </Box>
-                                    </Fade>
-                                </ClickAwayListener>
-                            )}
-                        </Popper>
+            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast}}>
+                <Box style={{display: "flex", flexDirection: "column", height: "100%"}}>
+                    <Box container style={{padding: 20}}>
+                        <Grid item xs={12} container alignItems="center" style={{background: theme.palette.background.darkContrast, borderRadius: 10, padding: 5}}>
+                            <Grid item xs={10} style={{paddingLeft: 10}}>
+                                <InputBase 
+                                    fullWidth
+                                    onChange={(ev)=>filterCAs(ev.target.value)}
+                                />
+                            </Grid>
+                            <Grid item xs={2} container justifyContent="flex-end">
+                                <Box component={Paper} elevation={1} style={{width: "fit-content", borderRadius: 8}}>
+                                    <IconButton onClick={handleSearchFilterClick}>
+                                        <FilterListIcon />
+                                    </IconButton>
+                                </Box>
+                                <Popper id={id} open={openSearchFilter} anchorEl={anchorElSearchFilter} transition>
+                                    {({ TransitionProps }) => (
+                                        <ClickAwayListener onClickAway={handleSearchFilterClick}>
+                                            <Fade {...TransitionProps} timeout={350}>
+                                                <Box component={Paper} elevation={2} style={{borderRadius: 10, padding: 20}}>
+                                                    The content of the Popper.
+                                                </Box>
+                                            </Fade>
+                                        </ClickAwayListener>
+                                    )}
+                                </Popper>
 
-                    </Grid>
-                </Grid>
-
-                <Grid item style={{padding: 10}}>
-                    <Typography style={{fontWeight: 500, fontSize: 12, color: theme.palette.text.primaryLight}}>{caList.length} RESULTS</Typography>
-                </Grid>
-               
-                {
-                    filteredCaList.map(caItem=>(
-                        <Grid item style={{padding: 10}} key={caList.id}>
-                            <CertificateCard onClick={()=>{setSelectedCaItemId(caItem.id)}} name={caItem.name} keySize={caItem.keySize} keyStrength={caItem.keyStrength} status={caItem.status} expirationDate={caItem.expirationDate} selected={caItem.id === selectedCaItemId}/>
+                            </Grid>
                         </Grid>
-                    ))
-                }
+
+                        <Grid item xs={12} style={{padding: 10}}>
+                            <Typography style={{fontWeight: 500, fontSize: 12, color: theme.palette.text.primaryLight}}>{caList.length} RESULTS</Typography>
+                        </Grid>
+                    </Box>
+                    <Box style={{padding: 20, overflowY: "auto", height: 300, flexGrow: 1}}>
+                            {
+                                filteredCaList.map(caItem=>(
+                                    <Box style={{marginBottom: 20}} key={caList.id}>
+                                        <CertificateCard onClick={()=>{setSelectedCaItemId(caItem.id)}} name={caItem.name} keySize={caItem.keySize} keyStrength={caItem.keyStrength} status={caItem.status} expirationDate={caItem.expirationDate} selected={caItem.id === selectedCaItemId}/>
+                                    </Box>
+                                ))
+                            }
+                    
+                    </Box>
+                    <Grid container spacing={1} style={{padding: 20, width: "auto"}}>
+                        <Grid item xs={8}>
+                            <Button variant="contained" fullWidth onClick={()=>{setIsMoadlOpen(true)}}>Create CA</Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button variant="contained" fullWidth>Import CA</Button>
+                        </Grid>
+                    </Grid>
+                </Box>
             </Grid>
-            <Grid item xs={7} xl={9}>
+            <Grid item xs={7} xl={9} style={{height: "100%"}}>
                 {
                     selectedCaItem && (
-                        <>
-                            <Grid container style={{padding: "40px 40px 0 40px"}}>
+                        <Box style={{display: "flex", flexDirection: "column", height: "100%"}}>
+                            <Box style={{padding: "40px 40px 0 40px"}}>
                                 <Grid item container spacing={2} justifyContent="flex-start">
                                     <Grid item xs={9}>
                                         <Box style={{display: "flex", alignItems: "center"}}>
@@ -413,17 +787,17 @@ nA==
                                         </Box>
                                     </Grid>
                                 </Grid>
-                                <Grid item style={{marginTop: 15, position: "relative", left: "-15px"}}>
+                                <Box style={{marginTop: 15, position: "relative", left: "-15px"}}>
                                     <Tabs value={selectedTab} onChange={(ev, newValue)=>setSelectedTab(newValue)}>
                                         <Tab label="Overview" />
                                         <Tab label="Issued Certificates" />
                                         <Tab label="Cloud Providers" />
                                     </Tabs>
-                                </Grid>
-                            </Grid>
+                                </Box>
+                            </Box>
                             <Divider></Divider>
-                            <Grid container style={{padding: 40}}>
-                                <Grid item container>
+                            <Box style={{padding: 40, flexGrow: 1, height: 500, overflowY: "auto"}}>
+                                <Grid container>
                                     {
                                         selectedTab === 0 && (
                                             <Grid item container>
@@ -477,56 +851,35 @@ nA==
                                     }
                                     {
                                         selectedTab === 1 && (
-                                            <>
-                                                <Grid container spacing={1}>
-                                                    {
-                                                        <Grid item columns={cloudProviderTableColumns.reduce((prev, item)=>prev + item.size, 0)} container alignItems="center" style={{padding: "0 15px 0 15px"}}> 
-                                                            {
-                                                                cloudProviderTableColumns.map(item=>(
-                                                                    <Grid item xs={item.size} container justifyContent="center" style={{marginBottom: 15}}>
-                                                                        <Typography style={{color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12}}>{item.title}</Typography>
-                                                                    </Grid>
-                                                                ))
-                                                            }
-                                                        </Grid>
-                                                    }
-                                                    {
-                                                        cloudProvidersRender.map(cloudProviderItem=>(
-                                                            <Grid item columns={cloudProviderTableColumns.reduce((prev, item)=>prev + item.size, 0)} container style={{borderRadius: 10, border: `1.5px solid ${theme.palette.divider}`, padding: 15, marginBottom: 10}} alignItems="center"> 
-                                                                {
-                                                                    cloudProviderTableColumns.map(item=>(
-                                                                        <Grid item xs={item.size} container justifyContent={item.align}>
-                                                                            {cloudProviderItem[item.key]}
-                                                                        </Grid>
-                                                                    ))
-                                                                }
-                                                            </Grid>
-                                                        ))
-                                                    }
-                                                </Grid>
-                                            </>
+                                            <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
                                         )
                                     }
                                     {
                                         selectedTab === 2 && (
-                                            <>
+                                            <LamassuTable columnConf={devicesTableColumns} data={devicesRender} />
+                                            /* <>
                                                 <Box style={{borderRadius: 10, background: "#263238", padding: 10}}>
                                                     <SyntaxHighlighter language="json" style={materialOceanic} customStyle={{fontSize: 11}}>
                                                         {JSON.stringify(awsPolicy, null, 4)}
                                                     </SyntaxHighlighter>
                                                 </Box>
 
-                                            </>
-                                
+                                            </> */
                                         )
                                     }
                                 </Grid>
-                            </Grid>
+                            </Box>
 
-                        </>
+                        </Box>
                     )
                 }
             </Grid>
+            <LamassuMultiModal 
+                type={ModalType.CA_CREATION}
+                open={isMoadlOpen}
+                handleClose={()=>{setIsMoadlOpen(false)}} 
+                handleSubmit={(ev)=>{setIsMoadlOpen(false)}} 
+            />
         </Grid>
     )
 }
