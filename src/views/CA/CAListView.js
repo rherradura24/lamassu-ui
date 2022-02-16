@@ -98,13 +98,13 @@ const CAList = ({casData, importCA, createCA, revokeCA, bindAwsCAPolicy}) => {
         downloadFile("CA-"+certId+".crt", certContent)
     }
 
-    const handleAwsBindPolicy = (caName) => {
+    const handleAwsBindPolicy = (caName, serialNumber) => {
         setModalInfo({
             open: true,
             type: "awsBindPolicy",
             handleSubmit: (caName, jsonPolicy)=>{
                 console.log(caName, jsonPolicy)
-                bindAwsCAPolicy(caName, jsonPolicy)
+                bindAwsCAPolicy(caName, serialNumber, jsonPolicy)
                 resetModal()
             },
             caName: caName
@@ -164,7 +164,7 @@ const CAList = ({casData, importCA, createCA, revokeCA, bindAwsCAPolicy}) => {
                                     onInspectClick={()=>{setRightSidebarCertId(caData.serial_number); handleCertInspect()}}
                                     onRevokeClick={()=>{handleCertRevocationClick(caData.serial_number, caData.name)}}
                                     onListEmmitedClick={()=>{history.push('/ca/issued-certs?issuer=' + caData.name)}}
-                                    onAwsBindPolicyClick={()=>{handleAwsBindPolicy(caData.name)}}
+                                    onAwsBindPolicyClick={()=>{handleAwsBindPolicy(caData.name, caData.serial_number)}}
                                 /> 
                             )
                         })

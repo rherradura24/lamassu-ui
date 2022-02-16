@@ -140,7 +140,7 @@ export const bindAwsCAPolicy = async (payload) => {
                 },
                 "routing_key":"bind_ca_aws_policy_queue",
                 "delivery_mode":"2",
-                "payload":escapedJSONObject({policy: payload.policy, ca_name: payload.caName}),
+                "payload":escapedJSONObject({policy: payload.policy, ca_name: payload.caName, serial_number: payload.serialNumber}),
                 "headers":{
                    
                 },

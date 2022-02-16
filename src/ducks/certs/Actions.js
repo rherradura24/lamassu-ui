@@ -50,11 +50,12 @@ export const importCA = (caName, bundle, ttl) => ({
     },
 })  
 
-export const bindAwsCAPolicy = (caName, policy) => ({
+export const bindAwsCAPolicy = (caName, serialNumber, policy) => ({
     type: t.BIND_AWS_CA_POLICY,
     payload: { 
         caName: caName,
-        policy:policy
+        policy:policy,
+        serialNumber: serialNumber
     },
 })  
 
