@@ -1,12 +1,12 @@
+import App from 'App';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import DashboardLayout from 'views/DashboardLayout';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DashboardLayout />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

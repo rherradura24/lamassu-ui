@@ -7,11 +7,11 @@ export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
         <>
             <Grid container spacing={1}>
             {
-                <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container alignItems="center" style={{padding: "0 15px 0 15px"}}> 
+                <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container alignItems="center" style={{padding: "0 10px 0 10px"}}> 
                     {
                         columnConf.map(item=>(
                             <Grid item xs={item.size} container justifyContent="center" style={{marginBottom: 15}}>
-                                <Typography style={{color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12}}>{item.title}</Typography>
+                                <Typography style={{color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12, textAlign: "center"}}>{item.title}</Typography>
                             </Grid>
                         ))
                     }

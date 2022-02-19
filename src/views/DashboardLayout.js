@@ -1,28 +1,27 @@
 import { Box } from "@mui/system";
 import { AppBar } from "components/DashboardComponents/AppBar";
 import { SideBar } from "components/DashboardComponents/SideBar";
-import { useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import { GlobalStyles, Paper, Typography } from "@mui/material";
+import { CircularProgress, GlobalStyles, Grid, Paper, Typography } from "@mui/material";
 
-import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import RouterOutlinedIcon from '@mui/icons-material/RouterOutlined';
-import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
-import { useTranslation } from "react-i18next";
 import { dark, light } from "theme";
+import { DeviceList } from "./DeviceList";
+import {MdOutlinePrecisionManufacturing} from "react-icons/md"
 
-export default () => {
+export default ({loading, loadingComponent=<></>}) => {
     const [darkTheme, setDarkTheme] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
 
-    const { t, i18n } = useTranslation()
+    console.log(loadingComponent);
+    const Elem = loadingComponent
 
     const theme = createTheme(darkTheme ? dark : light)
 
@@ -33,7 +32,7 @@ export default () => {
                 {
                     title: "Home",
                     route: "/",
-                    icon: <DashboardOutlinedIcon />,
+                    icon: <DashboardOutlinedIcon  key="/"/>,
                     content: <CaList />
                 }
             ]
@@ -44,7 +43,7 @@ export default () => {
                 {
                     title: "CAs",
                     route: "/ca/certs",
-                    icon: <AccountBalanceOutlinedIcon/>,
+                    icon: <AccountBalanceOutlinedIcon  key="/1"/>,
                     content: <CaList />
                 },
             ]
@@ -55,18 +54,19 @@ export default () => {
                 {
                     title: "Device Manufacturing Systems",
                     route: "/dms/list",
-                    icon: <VerifiedUserOutlinedIcon/>,
+                    icon: <MdOutlinePrecisionManufacturing  key="/2"/>,
                     content: <CaList />
                 },
                 {
                     title: "Device Manager",
                     route: "/dms/devices",
-                    icon: <RouterOutlinedIcon/>,
-                    content: <CaList />
+                    icon: <RouterOutlinedIcon  key="/3"/>,
+                    content: <DeviceList />
                 },
             ]
         },
     ]
+
 
     return (
         <ThemeProvider theme={theme}>
@@ -100,15 +100,38 @@ export default () => {
                     </Box>
                     <Box className="sidebar">
                         <SideBar 
-                            darkTheme={darkTheme} 
+                            darkTheme={darkTheme}
                             onTogleDark={()=>{setDarkTheme(!darkTheme)}} 
                             collapsed={collapsed} 
                             onCollapse={()=>{setCollapsed(!collapsed)}}
                             menuConfig={routes}
+                            isLoading={loading}
                         />
                     </Box>
                     <Box className="content">
-                        <CaList />
+                        {
+                            loading ? (
+                                <Grid container justifyContent="center" alignItems="center" style={{height: "100%", background: "#eee"}}>
+                                    {
+                                        React.cloneElement(loadingComponent)
+                                    }
+                                </Grid>
+                            ) : (
+                                <Routes>
+                                    {
+                                        routes.map(routeGr => {
+                                            return (
+                                                routeGr.menuItems.map(route => {
+                                                    return (
+                                                        <Route exact path={route.route} element={route.content} />
+                                                    )
+                                                })
+                                            )
+                                        })
+                                    }
+                                </Routes>
+                            )
+                        }
                     </Box>
                 </Box>
             </Router>

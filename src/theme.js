@@ -4,7 +4,7 @@ export const light = {
     palette: {
         mode: "light",
         primary: {
-            light: "#559AE0",
+            light: "#94bfeb",
             main: "#0068D1",
             dark: "#1F528F"
         },
@@ -19,7 +19,7 @@ export const light = {
             dark: "#2F6140"
         },
         warning:{
-            light: "#FDF9ED",
+            light: "#FFF0C0",
             main: "#F3A83B",
             dark: "#907057"
         },

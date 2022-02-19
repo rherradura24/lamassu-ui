@@ -1,0 +1,34 @@
+import { createEpicMiddleware } from 'redux-observable';
+import { createStore, applyMiddleware } from 'redux';
+
+import { combineEpics } from 'redux-observable';
+import { combineReducers, compose } from 'redux';
+import { caReducer, caEpic } from './certificate-authorities';
+
+const epics = [
+    ...Object.values(caEpic),
+]
+
+const rootEpic = combineEpics(...epics);
+
+const rootReducer = combineReducers({
+    cas: caReducer,
+});
+
+const epicMiddleware = createEpicMiddleware();
+
+export default function configureStore() {
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; //DEBUG TOOL - REACT_REDUX CHROME EXTENSION
+
+    const store = createStore(
+      rootReducer,
+      composeEnhancers(
+        applyMiddleware(epicMiddleware)
+      )
+    );
+  
+    epicMiddleware.run(rootEpic);
+  
+    return store;
+}
+  
