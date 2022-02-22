@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Popper, Fade, Slide } from "@mui/material"
+import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Popper, Fade, Slide, LinearProgress } from "@mui/material"
 import { Box, useTheme } from "@mui/system"
 import { CertificateCard } from "views/CaList/components/CertificateCard"
 import React, { useEffect, useState } from "react";
@@ -9,14 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 
 import { Overview } from "./views/CertificateOverview";
-import { IssuedCertificates } from "./views/IssuedCertificates";
+import  IssuedCertificates from "./views/IssuedCertificates";
 import { CloudProviders } from "./views/CloudProviders";
 import { CreateCA } from "./views/CreateCA";
 import { ImportCA } from "./views/ImportCA";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import moment from "moment";
 
-export const CaList = ({caList}) => {
+export const CaList = ({refreshing, caList}) => {
     const theme = useTheme()
 
     const containerRef = React.useRef(null);
@@ -75,10 +75,15 @@ export const CaList = ({caList}) => {
                                 </Box>
                             </Grid>
                         </Grid>
-
-                        <Grid item xs={12} style={{padding: 10}}>
-                            <Typography style={{fontWeight: 500, fontSize: 12, color: theme.palette.text.primaryLight}}>{caList.length} RESULTS</Typography>
-                        </Grid>
+                        {
+                            refreshing ? (
+                                <LinearProgress sx={{marginTop: "20px"}}/>
+                            ) : (
+                                <Grid item xs={12} style={{padding: 10}}>
+                                    <Typography style={{fontWeight: 500, fontSize: 12, color: theme.palette.text.primaryLight}}>{caList.length} RESULTS</Typography>
+                                </Grid>
+                            )
+                        }
                     </Box>
                     <Box style={{padding: "0px 20px 20px 20px" , overflowY: "auto", height: 300, flexGrow: 1}}>
                         {
@@ -158,8 +163,7 @@ export const CaList = ({caList}) => {
                                         }
                                         {
                                             selectedTab === 1 && (
-                                                // <IssuedCertificates certificates={certificates}/>
-                                                <></>
+                                                <IssuedCertificates caName={selectedCa.name}/>
                                             )
                                         }
                                         {

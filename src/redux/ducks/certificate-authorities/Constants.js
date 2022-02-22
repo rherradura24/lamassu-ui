@@ -1,5 +1,6 @@
 export const caStatus = {
     ISSUED: "Issued",
+    EXPIRED: "Expired",
     REVOKED: "Revoked",
 }
 

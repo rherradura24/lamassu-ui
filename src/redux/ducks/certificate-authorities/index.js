@@ -1,7 +1,9 @@
-import caReducer from "./Reducer";
+import * as caReducer from "./Reducer";
 import * as caEpic from "./Epic";
+import * as caActions from "./Actions";
 
-export {
-    caReducer,
-    caEpic
+export default {
+    reducer: caReducer,
+    epic: caEpic,
+    actions: caActions
 }

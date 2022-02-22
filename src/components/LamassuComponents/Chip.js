@@ -17,7 +17,11 @@ const getColor = (theme, color) => {
             return [theme.palette.text.main, theme.palette.background.lightContrast]
     
         default:
-            return color
+            if (color !== undefined){
+                return color
+            }else{
+                return [theme.palette.text.main, theme.palette.background.lightContrast]
+            }
     } 
 }
 

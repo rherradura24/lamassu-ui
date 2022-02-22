@@ -1,0 +1,67 @@
+[
+  {
+    "id": "124774",
+    "icon": "Cg/CgSmartphoneChip",
+    "icon_color": "#66BB6A",
+    "alias": "Smart Door",
+    "description": "(218) 692-6706, 37634 Egret Rd Crosslake, Minnesota(MN)",
+    "tags" : [
+        "Deployed",
+        "Type2",
+        "SMETS1"
+    ],
+    "remainig_days_before_expiration": 3
+  },
+  {
+    "id": "71881",
+    "icon": "Cg/CgSmartHomeWashMachine",
+    "icon_color": "#2F657B",
+    "alias": "Smart Wash Machine",
+    "description": "(530) 546-3605, 1110 Whitehall Ave Kings Beach, California(CA)",
+    "tags" : [
+        "Deployed",
+        "Type2",
+        "SMETS1"
+    ],
+    "remainig_days_before_expiration": 31
+  },
+  {
+    "id": "85085",
+    "icon": "Cg/CgSmartphoneRam",
+    "icon_color": "#02B6DC",
+    "alias": "Smart Door",
+    "description": "(215) 572-6421, 618 Maple Ave Glenside, Pennsylvania(PA)",
+    "tags" : [
+        "Deployed",
+        "Type2",
+        "SMETS1"
+    ],
+    "remainig_days_before_expiration": 13
+  },
+  {
+    "id": "85085",
+    "icon": "Cg/CgSmartphoneRam",
+    "icon_color": "#02B6DC",
+    "alias": "Smart Door",
+    "description": "(215) 572-6421, 618 Maple Ave Glenside, Pennsylvania(PA)",
+    "tags" : [
+        "Deployed",
+        "Type2",
+        "SMETS1"
+    ],
+    "remainig_days_before_expiration": 10
+  },
+  {
+    "id": "85087",
+    "icon": "Cg/CgSmartphoneRam",
+    "icon_color": "#02B6DC",
+    "alias": "Smart Door",
+    "description": "(215) 572-6421, 618 Maple Ave Glenside, Pennsylvania(PA)",
+    "tags" : [
+        "Deployed",
+        "Type2",
+        "SMETS1"
+    ],
+    "remainig_days_before_expiration": 7
+  }
+]

@@ -33,9 +33,9 @@ export const ImportCA = () => {
             <Grid item xs={6}>
                 <TextField autoFocus variant="standard" id="caName" label="CA Name" fullWidth value={caName} onChange={(ev)=>{setCaName(ev.target.value)}} />
             </Grid>
-            <Grid item xs={6} container>
+            <Grid item xs={6} container spacing={2}>
                 <Grid item xs={6} container>
-                    <TextField variant="standard" id="ttl" label="Emmited certificates expiration time" type="number" style={{width: 235, marginRight: 20}} value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
+                    <TextField variant="standard" id="ttl" label="Emmited certificates expiration time" type="number" fullWidth value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
                 </Grid>
                 <Grid item xs={6} container>
                     <FormControl fullWidth variant="standard">

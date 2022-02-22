@@ -11,7 +11,7 @@ const AppBar = ({ className, background, logo }) => {
     const theme = useTheme()
 
     return (
-        <Box className={className} style={{ background: theme.palette.secondary.main, display: "flex", alignItems: "center", padding: "5px 10px", justifyContent: "space-between"}}>
+        <Box className={className} style={{ background: theme.palette.secondary.main, display: "flex", alignItems: "center", padding: "0px 10px", justifyContent: "space-between"}}>
             {logo}
             <div style={{ background: theme.palette.secondary.main, height: 50, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
 

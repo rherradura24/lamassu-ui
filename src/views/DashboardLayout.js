@@ -1,27 +1,25 @@
-import { Box } from "@mui/system";
+import { Box, height } from "@mui/system";
 import { AppBar } from "components/DashboardComponents/AppBar";
 import { SideBar } from "components/DashboardComponents/SideBar";
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import { CircularProgress, GlobalStyles, Grid, Paper, Typography } from "@mui/material";
+import {  GlobalStyles, Grid, Paper, Typography } from "@mui/material";
 
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import RouterOutlinedIcon from '@mui/icons-material/RouterOutlined';
 import { dark, light } from "theme";
-import { DeviceList } from "./DeviceList";
+import  DeviceList from "./DeviceList";
 import {MdOutlinePrecisionManufacturing} from "react-icons/md"
+import  DmsList  from "./DmsList";
 
 export default ({loading, loadingComponent=<></>}) => {
     const [darkTheme, setDarkTheme] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
-
-    console.log(loadingComponent);
-    const Elem = loadingComponent
 
     const theme = createTheme(darkTheme ? dark : light)
 
@@ -42,7 +40,7 @@ export default ({loading, loadingComponent=<></>}) => {
             menuItems: [
                 {
                     title: "CAs",
-                    route: "/ca/certs",
+                    route: "/cas/",
                     icon: <AccountBalanceOutlinedIcon  key="/1"/>,
                     content: <CaList />
                 },
@@ -53,13 +51,13 @@ export default ({loading, loadingComponent=<></>}) => {
             menuItems: [
                 {
                     title: "Device Manufacturing Systems",
-                    route: "/dms/list",
+                    route: "/dms/",
                     icon: <MdOutlinePrecisionManufacturing  key="/2"/>,
-                    content: <CaList />
+                    content: <DmsList />
                 },
                 {
                     title: "Device Manager",
-                    route: "/dms/devices",
+                    route: "/devmanager/",
                     icon: <RouterOutlinedIcon  key="/3"/>,
                     content: <DeviceList />
                 },
@@ -92,9 +90,10 @@ export default ({loading, loadingComponent=<></>}) => {
                         <AppBar 
                             background={"#468AEB"}
                             logo={
-                                <div style={{background: "white", borderRadius: 10, height:30, width: 120, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                    <Typography variant="button">{"AA"}</Typography>
-                                </div>
+                                <Grid container alignItems={"center"}>
+                                    <img src={process.env.PUBLIC_URL + "/assets/LAMASSU_W.png"} height={24} style={{marginLeft: "5px"}}/>
+                                    <Typography sx={{marginLeft: "15px", fontWeight: "bold", color: "white"}}>Lamassu IoT</Typography>
+                                </Grid>
                             }
                         />
                     </Box>

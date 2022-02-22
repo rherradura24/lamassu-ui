@@ -6,6 +6,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import { AMAZON_AWS, MICROSOFT_AZURE, GOOGLE_CLOUD, DISCONNECTED, CONFIGURED } from "./constans";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { AwsIcon, AzureIcon, GoogleCloudIcon } from "components/CloudProviderIcons";
 
 export const CloudProviders = ({}) => {
     const theme = useTheme()
@@ -84,17 +85,13 @@ export const CloudProviders = ({}) => {
         var image
         switch (cloudProvider) {
             case AMAZON_AWS:
-                if (theme.palette.mode === "light") {
-                    image =  <img src={process.env.PUBLIC_URL + "/assets/AWS.png"} height={25} />
-                }else{
-                    image =  <img src={process.env.PUBLIC_URL + "/assets/AWS_WHITE.png"} height={25} />
-                }
+                image =  <AwsIcon />
                 break;
             case GOOGLE_CLOUD:
-                image =  <img src={process.env.PUBLIC_URL + "/assets/GCLOUD.png"} height={25} />
+                image =  <GoogleCloudIcon />
                 break;
             case MICROSOFT_AZURE:
-                image =  <img src={process.env.PUBLIC_URL + "/assets/AZURE.png"} height={25} />
+                image =  <AzureIcon />
                 break;
         
             default:

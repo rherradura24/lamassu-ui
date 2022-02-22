@@ -2,6 +2,7 @@ const prefix = "cas/"
 
 export const GET_CAS = prefix + 'GET_CAS';
 export const GET_CA = prefix + 'GET_CA';
+export const GET_ISSUED_CERTS = prefix + 'GET_ISSUED_CERTS';
 export const GET_CERTS = prefix + 'GET_CERTS';
 export const GET_CERT = prefix + 'GET_CERT';
 export const REVOKE_CA = prefix + 'REVOKE_CA';

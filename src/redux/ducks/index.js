@@ -3,16 +3,22 @@ import { createStore, applyMiddleware } from 'redux';
 
 import { combineEpics } from 'redux-observable';
 import { combineReducers, compose } from 'redux';
-import { caReducer, caEpic } from './certificate-authorities';
+import ca from './certificate-authorities';
+import devManager from './device-manager';
+import dmsEnroller from './dms-enroller';
 
 const epics = [
-    ...Object.values(caEpic),
+    ...Object.values(ca.epic),
+    ...Object.values(devManager.epic),
+    ...Object.values(dmsEnroller.epic),
 ]
 
 const rootEpic = combineEpics(...epics);
 
 const rootReducer = combineReducers({
-    cas: caReducer,
+    cas: ca.reducer.reducer,
+    devices: devManager.reducer.reducer,
+    dmsenroller: dmsEnroller.reducer.reducer,
 });
 
 const epicMiddleware = createEpicMiddleware();

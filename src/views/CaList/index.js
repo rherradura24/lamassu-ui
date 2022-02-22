@@ -1,15 +1,15 @@
 import { connect } from "react-redux";
-import * as casActions from "redux/ducks/certificate-authorities/Actions";
+import casDuck from "redux/ducks/certificate-authorities";
 import { createLoader } from "components/utils";
-import { getCAs } from 'redux/ducks/certificate-authorities/Reducer';
 import { CaList } from './CaList';
 
 const mapStateToProps = (state) => ({
-  caList : getCAs(state)
+  caList : casDuck.reducer.getCAs(state),
+  refreshing: casDuck.reducer.isRequestInProgress(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onMount: ()=>{ dispatch(casActions.getCAs()) },
+  onMount: ()=>{ dispatch(casDuck.actions.getCAs()) },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CaList));

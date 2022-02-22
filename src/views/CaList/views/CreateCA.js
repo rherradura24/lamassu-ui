@@ -1,7 +1,9 @@
-import { Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import { Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Paper, Select, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import {LamassuSwitch} from "components/LamassuComponents/Switch"
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { RiShieldKeyholeLine } from "react-icons/ri";
+import { AwsIcon, AzureIcon } from "components/CloudProviderIcons";
 
 export const CreateCA = () => {
     const theme = useTheme();
@@ -172,8 +174,29 @@ export const CreateCA = () => {
                 </Grid>
 
                 <Grid item container>
-                    <Button variant="contained">Create CA</Button>
+                    <Grid item container>
+                        <Grid item container alignItems={"center"}>
+                            <LamassuSwitch />
+                            <Box sx={{width: 60, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                                <AwsIcon style={{height: 20}}/>
+                            </Box>
+                            <Typography>AWS IoT Core integration</Typography>
+                        </Grid>
+
+                        <Grid item container alignItems={"center"}>
+                            <LamassuSwitch />
+                            <Box sx={{width: 60, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                                <AzureIcon style={{height: 20}}/>
+                            </Box>
+                            <Typography>Azure IoT Central integration</Typography>
+                        </Grid>
+                    </Grid>
+
+
                 </Grid>
+                    <Grid item container>
+                        <Button variant="contained">Create CA</Button>
+                    </Grid>
             </Grid>
         </Grid>
                         

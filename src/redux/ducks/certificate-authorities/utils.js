@@ -19,6 +19,8 @@ export const statusToColor = (keyStrength) => {
             return "green"
         case caStatus.REVOKED:
             return "red"
+        case caStatus.EXPIRED:
+            return "red"
         default:
             return "gray"
     }

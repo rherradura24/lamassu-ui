@@ -1,0 +1,48 @@
+[
+  {
+    "id": "124774",
+    "name": "Smart Machines DMS",
+    "request_date": "20/02/2022",
+    "expiration_date": "31/12/2022",
+    "emmited_certificates": 35,
+    "status": "approved",
+    "certificate": {
+      "serial_number": "43-df-be-13-b8-be-e4-6f-af-87-45-51-1f-7e-4d-27-88-21-9f-88",
+      "subject": "CN=testcert.redkestrel.co.uk,O=Red Kestrel Consulting Ltd,L=Stoke on Trent,ST=Staffordshire,C=GB"
+    }
+  },
+  {
+    "id": "54844",
+    "name": "Smart Machines DMS",
+    "request_date": "20/02/2022",
+    "expiration_date": "31/12/2022",
+    "status": "pending",
+    "certificate": {
+      "subject": "CN=testcert.redkestrel.co.uk,O=Red Kestrel Consulting Ltd,L=Stoke on Trent,ST=Staffordshire,C=GB"
+    }
+  },
+  {
+    "id": "131304",
+    "name": "Smart Machines DMS",
+    "request_date": "20/02/2022",
+    "expiration_date": "31/12/2022",
+    "emmited_certificates": 35,
+    "status": "revoked",
+    "certificate": {
+      "serial_number": "43-df-be-13-b8-be-e4-6f-af-87-45-51-1f-7e-4d-27-88-21-9f-88",
+      "subject": "CN=testcert.redkestrel.co.uk,O=Red Kestrel Consulting Ltd,L=Stoke on Trent,ST=Staffordshire,C=GB"
+    }
+  },
+  {
+    "id": "25512",
+    "name": "Smart Machines DMS",
+    "request_date": "20/02/2022",
+    "expiration_date": "31/12/2022",
+    "emmited_certificates": 35,
+    "status": "rejected",
+    "certificate": {
+      "serial_number": "43-df-be-13-b8-be-e4-6f-af-87-45-51-1f-7e-4d-27-88-21-9f-88",
+      "subject": "CN=testcert.redkestrel.co.uk,O=Red Kestrel Consulting Ltd,L=Stoke on Trent,ST=Staffordshire,C=GB"
+    }
+  }
+]
