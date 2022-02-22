@@ -57,7 +57,7 @@ export const CaList = ({refreshing, caList}) => {
     
     return(
         <Grid container style={{height: "100%"}}>
-            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast}}>
+            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast, minWidth: 400}}>
                 <Box style={{display: "flex", flexDirection: "column", height: "100%"}}>
                     <Box container style={{padding: 20}}>
                         <Grid item xs={12} container alignItems="center">
@@ -111,7 +111,7 @@ export const CaList = ({refreshing, caList}) => {
                 </Box>
             </Grid>
 
-            <Grid item xs={7} xl={9} style={{height: "100%", overflow: "hidden"}} ref={containerRef}>
+            <Grid item style={{height: "100%", overflow: "hidden"}} ref={containerRef} xs>
                 <Slide direction="left" in={isMoadlOpen} container={containerRef.current} style={{height: "100%"}}>
                     <Box>
                     {

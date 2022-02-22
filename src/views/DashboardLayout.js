@@ -22,6 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 export default ({loading, loadingComponent=<></>, notificationsList}) => {
     const [darkTheme, setDarkTheme] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
+    const [displayNotifications, setDisplayNotifications] = useState(false)
 
     const theme = createTheme(darkTheme ? dark : light)
 
@@ -99,6 +100,7 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                 </Grid>
                             }
                             notificationsCount={notificationsList.length}
+                            onNotificationsClick={()=>setDisplayNotifications(true)}
                         />
                     </Box>
                     <Box className="sidebar">
@@ -121,7 +123,7 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                 </Grid>
                             ) : (
                                 <Grid container sx={{height: "100%"}}>
-                                    <Grid item xs={9} sx={{height: "100%"}} >
+                                    <Grid item xs={displayNotifications ? 9 : 12} sx={{height: "100%"}} >
                                         <Routes>
                                             {
                                                 routes.map(routeGr => {
@@ -136,21 +138,25 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                             }
                                         </Routes>
                                     </Grid>
-                                    <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1}}>
-                                        <Grid item container style={{marginBottom: "10px", padding: "20px 20px 0px 20px"}} justifyContent="space-between" alignItems={"center"}>
-                                            <Grid item>
-                                                <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
+                                    {
+                                        displayNotifications && (
+                                            <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1}}>
+                                                <Grid item container style={{marginBottom: "10px", padding: "20px 20px 0px 20px"}} justifyContent="space-between" alignItems={"center"}>
+                                                    <Grid item>
+                                                        <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <IconButton onClick={()=>setDisplayNotifications(false)}>
+                                                            <CloseIcon />                           
+                                                        </IconButton>
+                                                    </Grid>
+                                                </Grid>
+                                                <Box style={{overflowY: "auto", height: "10px", paddingLeft: 10}} flexGrow={1}>
+                                                    <LamassuNotifications notificationsList={notificationsList}/>
+                                                </Box>
                                             </Grid>
-                                            <Grid item>
-                                                <IconButton>
-                                                    <CloseIcon />                           
-                                                </IconButton>
-                                            </Grid>
-                                        </Grid>
-                                        <Box style={{overflowY: "auto", height: "10px", paddingLeft: 10}} flexGrow={1}>
-                                            <LamassuNotifications notificationsList={notificationsList}/>
-                                        </Box>
-                                    </Grid>
+                                        )
+                                    }
                                 </Grid>
                             )
                         }
