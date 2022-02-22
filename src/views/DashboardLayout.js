@@ -7,7 +7,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import {  GlobalStyles, Grid, Paper, Typography } from "@mui/material";
+import {  Button, Divider, GlobalStyles, Grid, Paper, Typography,IconButton  } from "@mui/material";
 
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
@@ -16,8 +16,10 @@ import { dark, light } from "theme";
 import  DeviceList from "./DeviceList";
 import {MdOutlinePrecisionManufacturing} from "react-icons/md"
 import  DmsList  from "./DmsList";
+import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
+import CloseIcon from '@mui/icons-material/Close';
 
-export default ({loading, loadingComponent=<></>}) => {
+export default ({loading, loadingComponent=<></>, notificationsList}) => {
     const [darkTheme, setDarkTheme] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
 
@@ -72,6 +74,7 @@ export default ({loading, loadingComponent=<></>}) => {
                 styles={{
                     '*::-webkit-scrollbar': {
                         width: '8px',
+                        height: '8px',
                     },
                     '*::-webkit-scrollbar-track': {
                         background: theme.palette.scrollbar.track
@@ -95,6 +98,7 @@ export default ({loading, loadingComponent=<></>}) => {
                                     <Typography sx={{marginLeft: "15px", fontWeight: "bold", color: "white"}}>Lamassu IoT</Typography>
                                 </Grid>
                             }
+                            notificationsCount={notificationsList.length}
                         />
                     </Box>
                     <Box className="sidebar">
@@ -116,19 +120,38 @@ export default ({loading, loadingComponent=<></>}) => {
                                     }
                                 </Grid>
                             ) : (
-                                <Routes>
-                                    {
-                                        routes.map(routeGr => {
-                                            return (
-                                                routeGr.menuItems.map(route => {
+                                <Grid container sx={{height: "100%"}}>
+                                    <Grid item xs={9} sx={{height: "100%"}} >
+                                        <Routes>
+                                            {
+                                                routes.map(routeGr => {
                                                     return (
-                                                        <Route exact path={route.route} element={route.content} />
+                                                        routeGr.menuItems.map(route => {
+                                                            return (
+                                                                <Route exact path={route.route} element={route.content} />
+                                                            )
+                                                        })
                                                     )
                                                 })
-                                            )
-                                        })
-                                    }
-                                </Routes>
+                                            }
+                                        </Routes>
+                                    </Grid>
+                                    <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1}}>
+                                        <Grid item container style={{marginBottom: "10px", padding: "20px 20px 0px 20px"}} justifyContent="space-between" alignItems={"center"}>
+                                            <Grid item>
+                                                <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
+                                            </Grid>
+                                            <Grid item>
+                                                <IconButton>
+                                                    <CloseIcon />                           
+                                                </IconButton>
+                                            </Grid>
+                                        </Grid>
+                                        <Box style={{overflowY: "auto", height: "10px", paddingLeft: 10}} flexGrow={1}>
+                                            <LamassuNotifications notificationsList={notificationsList}/>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
                             )
                         }
                     </Box>

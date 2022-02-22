@@ -3,7 +3,7 @@ import { LoadingDashboard } from 'components/DashboardComponents/LoadingDashboar
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux/ducks';
-import DashboardLayout from 'views/DashboardLayout';
+import DashboardLayout from 'views';
 import keycloak from './keycloak'
 
 export default () => {

@@ -125,6 +125,6 @@ export const getIssuedCerts = (state, caName) => {
     const ca = getSelector(state).list[caName]
     const certsKeys = Object.keys(ca.issued_certs.list)
     const certList = certsKeys.map(key => ca.issued_certs.list[key])
-    certList.sort((a,b) => (a.serial_number > b.serial_number) ? 1 : ((b.serial_number > a.serial_number) ? -1 : 0))
-    return certList
+    const sortedCertList = certList.sort((a,b) => (a.serial_number > b.serial_number) ? 1 : ((b.serial_number > a.serial_number) ? -1 : 0))
+    return sortedCertList
 }

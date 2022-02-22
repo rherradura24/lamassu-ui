@@ -2,20 +2,23 @@ import { Box, Typography, useTheme } from "@mui/system";
 
 import { useTranslation } from 'react-i18next'
 import { useState } from "react";
-import { LamassuNotifications } from "./LamassuNotifications";
 import { UserAvatar } from "./UserAvatar";
-import { MenuItem, Select } from "@mui/material";
+import { Badge, MenuItem, Select } from "@mui/material";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
-const AppBar = ({ className, background, logo }) => {
+const AppBar = ({ className, background, logo, notificationsCount }) => {
     const [lang, setLang] = useState("en")
     const theme = useTheme()
 
+    console.log(notificationsCount);
     return (
         <Box className={className} style={{ background: theme.palette.secondary.main, display: "flex", alignItems: "center", padding: "0px 10px", justifyContent: "space-between"}}>
             {logo}
             <div style={{ background: theme.palette.secondary.main, height: 50, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
 
-                <LamassuNotifications notificationHistory={[]} />
+                <Badge badgeContent={notificationsCount} color="primary" style={{marginRight: 30}}>
+                    <NotificationsIcon style={{color: "#F1F2F8"}}/>
+                </Badge>
 
                 <UserAvatar
                     username="hsaiz"

@@ -6,6 +6,7 @@ import { combineReducers, compose } from 'redux';
 import ca from './certificate-authorities';
 import devManager from './device-manager';
 import dmsEnroller from './dms-enroller';
+import notifications from './notifications';
 
 const epics = [
     ...Object.values(ca.epic),
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     cas: ca.reducer.reducer,
     devices: devManager.reducer.reducer,
     dmsenroller: dmsEnroller.reducer.reducer,
+    notifications: notifications.reducer.reducer,
 });
 
 const epicMiddleware = createEpicMiddleware();

@@ -1,48 +1,36 @@
 import React from "react";
 import { Box, useTheme } from "@mui/system"
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import AccessAlarmsOutlinedIcon from '@mui/icons-material/AccessAlarmsOutlined';
 import { MenuSeparator } from "./SideBar";
 import moment from "moment";
-import { Badge, Menu, Typography } from "@mui/material";
+import { Badge, Divider, Grid, Menu, Typography } from "@mui/material";
 
-const LamassuNotifications = ({ notificationHistory }) =>{ 
+const LamassuNotifications = ({ notificationsList }) =>{ 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const theme = useTheme()
 
-    const handleClick = (event) => {
-        if (anchorEl !== event.currentTarget) {
-          setAnchorEl(event.currentTarget);
-        }
-    }
-
-    const handleClose = (event) => {
-        setAnchorEl(null);
-    }
-    
     const info = {
         color:"#687EEB",
-        bg: theme.palette.type == "light" ? "#D4E9FF" : "#47576b"
+        bg: theme.palette.mode == "light" ? "#D4E9FF" : "#47576b"
     }
     const success= {
-        bg: theme.palette.type == "light" ? "#D0F9DB" : "#4a6952",
-        color: theme.palette.type == "light" ? "green" : "#25ee32"
+        bg: theme.palette.mode == "light" ? "#D0F9DB" : "#4a6952",
+        color: theme.palette.mode == "light" ? "green" : "#25ee32"
     }
     const warn= {
-        bg: theme.palette.type == "light" ? "#FFE9C4" : "#635d55",
+        bg: theme.palette.mode == "light" ? "#FFE9C4" : "#635d55",
         color: "orange"
     }
     const error= {
-        bg: theme.palette.type == "light" ? "#FFB1AA" : "#6d504e",
+        bg: theme.palette.mode == "light" ? "#FFB1AA" : "#6d504e",
         color: "red"
     }
     
     var notifications = []
     
-    for (let index = notificationHistory.length -1 ; index >= 0; index--) {
-        const e = notificationHistory[index];
+    for (let index = notificationsList.length -1 ; index >= 0; index--) {
+        const e = notificationsList[index];
         var color = info
         switch (e.type) {
             case "info":
@@ -62,20 +50,26 @@ const LamassuNotifications = ({ notificationHistory }) =>{
                 break;
         }
         notifications.push(
-            <Box style={{display: "flex", padding: "20px 20px 20px 20px"}}>
-                <Box style={{width: 50}}>
-                    <Box style={{display: "flex", justifyContent: "center", alignItems: "center", background: color.bg, borderRadius: 50, height: 30, width: 30}}>
-                        <AssignmentOutlinedIcon style={{fontSize:20, color: color.color}}/>
-                    </Box>
-                </Box>
-                <Box style={{display: "flex", alignItems: "flex-start", flexDirection: "column", width: 280}}>
-                    <Typography component="div" variant="body2">{e.msg}</Typography>
-                    <Box style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <AccessAlarmsOutlinedIcon style={{fontSize:15, color: "#999"}}/>
-                        <Typography style={{color: "#999", fontSize: 13}}>{moment(e.timestamp).fromNow()}</Typography>
-                    </Box>
-                </Box>
-            </Box>
+            <>
+                <Grid item xs={12} container sx={{borderBottom: `1px solid ${theme.palette.divider}`}}>
+                    <Grid item xs={2} container>
+                        <Box style={{display: "flex", justifyContent: "center", alignItems: "center", background: color.bg, borderRadius: 50, height: 30, width: 30}}>
+                            <AssignmentOutlinedIcon style={{fontSize:20, color: color.color}}/>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={10} container direction="column" spacing={1}>
+                        <Grid item>
+                            <Typography component="div" variant="body2">{e.message}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Box style={{display: "flex", justifyContent: "center", alignItems: "center", justifyContent: "start", marginBottom: 10}}>
+                                <AccessAlarmsOutlinedIcon style={{fontSize:15, color: "#999", marginRight: "3px"}}/>
+                                <Typography style={{color: "#999", fontSize: 13}}>{moment(e.timestamp).fromNow()}</Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </>
         )
         if(index >= 1){
             notifications.push(<MenuSeparator/>)
@@ -83,36 +77,19 @@ const LamassuNotifications = ({ notificationHistory }) =>{
     }
 
     return (
-        <>
-            <Box 
-                onClick={handleClick}
-                style={{cursor: "pointer"}}
-            >
-                <Badge badgeContent={notificationHistory.length} color="primary" style={{marginRight: 30}}>
-                    <NotificationsIcon style={{color: "#F1F2F8"}}/>
-                </Badge>
-            </Box>
-            <Menu
-                style={{marginTop: 25, width: 400}}
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                MenuListProps={{ onMouseLeave: handleClose }}
-            >
-                <Box style={{width: 400}}>
-                    {
-                        notifications.length == 0 ? (
-                            <Box style={{padding: "10px 20px 10px 20px"}}>
-                                <Typography variant="caption" style={{fontStyle: "italic"}}>No notifications</Typography>
-                            </Box>
-                        ) : (
-                            notifications
-                        )
-                    }
-                </Box>
-            </Menu>
-        </>
+        <Grid>
+            {
+                notifications.length == 0 ? (
+                    <Box style={{padding: "10px 20px 10px 20px"}}>
+                        <Typography variant="caption" style={{fontStyle: "italic"}}>No notifications</Typography>
+                    </Box>
+                ) : (
+                    <Grid container sx={{padding: "10px"}} spacing={2} flexGrow={1}>
+                        {notifications}
+                    </Grid>
+                )
+            }
+        </Grid>
     )
 }
 
