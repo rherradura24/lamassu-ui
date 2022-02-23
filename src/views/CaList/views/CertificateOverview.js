@@ -111,10 +111,10 @@ export const Overview = ({ca}) => {
                     {
                         Object.keys(certificateProperties).map(key=> (
                             <Grid item xs={12} container style={{heigh: 25, marginBottom: 8}}>
-                                <Grid item xs={6}>
+                                <Grid item xs={5}>
                                     <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateProperties[key].title}</Typography>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={7}>
                                     <Typography style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13, wordBreak: "break-word"}}>{certificateProperties[key].value}</Typography>
                                 </Grid>
                             </Grid>
@@ -123,8 +123,8 @@ export const Overview = ({ca}) => {
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item xs={5} style={{marginTop: 20}}>
-                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : tomorrow} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
+            <Grid item xs={5} container justifyContent={"flex-end"} style={{marginTop: 20}}>
+                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : tomorrow} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
                     {decodedCert}
                 </SyntaxHighlighter>
             </Grid>

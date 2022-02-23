@@ -9,7 +9,7 @@ import { Box } from "@mui/system";
 export const DmsCard = ({name, status, statusColor, serialNumber, subject, requestDate, expirationDate, emmitedCerts}) => {
     const theme = useTheme()
     return(
-        <Box container component={Paper} style={{borderRadius: 5, borderTop: `3px solid ${theme.palette.primary.main}`, display: "flex", flexDirection: "column"}}>
+        <Box container component={Paper} style={{borderRadius: 5, borderTop: `3px solid ${theme.palette.primary.main}`, display: "flex", flexDirection: "column", width: "100%"}}>
             <Box sx={{padding: "5px 20px", width: "calc(100% - 40px)"}}>
                 <Grid container>
                     <Grid item xs={6} container alignItems="center">
@@ -17,7 +17,6 @@ export const DmsCard = ({name, status, statusColor, serialNumber, subject, reque
                     </Grid>
                     <Grid item xs={6} container alignItems="end" justifyContent={"flex-end"} direction="column">
                         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                            <Typography style={{color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12}}>Status</Typography>
                             <LamassuChip label={status} color={statusColor} rounded={true}  compactFontSize/>
                         </Box>
                     </Grid>
@@ -28,7 +27,7 @@ export const DmsCard = ({name, status, statusColor, serialNumber, subject, reque
             </Box>
             <Box sx={{height: "100%", display: "flex", flexDirection: "column"}}>
                 <Box item container style={{padding: "5px 20px"}}>
-                    <Grid container>
+                    {/* <Grid container>
                         <Grid item xs={12}>
                             <Typography variant="button" style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>Certificate Subject</Typography>
                         </Grid>
@@ -36,19 +35,19 @@ export const DmsCard = ({name, status, statusColor, serialNumber, subject, reque
                             <Typography style={{marginLeft: 5, color: theme.palette.text.primary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>{subject}</Typography>
 
                         </Grid>
-                    </Grid>
-                    {
+                    </Grid> */}
+                    {/* {
                         status !== dmsStatus.PENDING  && status !== dmsStatus.REJECTED && (
                             <Grid item xs={12} container>
                                 <Grid item xs={12}>
-                                    <Typography variant="button" style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>Serial Number</Typography>
+                                    <Typography variant="button" style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>ID</Typography>
                                 </Grid>
                                 <Grid item xs={12} container alignItems={"center"}>
-                                    <Typography style={{marginLeft: 5, color: theme.palette.text.primary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>{serialNumber}</Typography>
+                                    <Typography style={{marginLeft: 5, color: theme.palette.text.primary, fontWeight: "500", fontSize: 12, lineHeight: "24px"}}>{1}</Typography>
                                 </Grid>
                             </Grid>
                         )
-                    }
+                    } */}
                     {
                         status === dmsStatus.APPROVED && (
                             <Grid item xs={12} container spacing={2}>
@@ -81,10 +80,10 @@ export const DmsCard = ({name, status, statusColor, serialNumber, subject, reque
                             status === dmsStatus.PENDING ? (
                                 <>
                                     <Grid item xs={6}>
-                                        <Button variant="contained" fullWidth>Approve</Button>
+                                        <Button variant="outlined" fullWidth>Reject</Button>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Button variant="outlined" fullWidth>Reject</Button>
+                                        <Button variant="contained" fullWidth>Approve</Button>
                                     </Grid>
                                 </>
                             ) :( 

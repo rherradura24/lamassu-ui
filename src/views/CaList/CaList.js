@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Popper, Fade, Slide, LinearProgress } from "@mui/material"
+import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Popper, Fade, Slide, LinearProgress, DialogContent, DialogContentText, Dialog, DialogActions, DialogTitle } from "@mui/material"
 import { Box, useTheme } from "@mui/system"
 import { CertificateCard } from "views/CaList/components/CertificateCard"
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Overview } from "./views/CertificateOverview";
 import  IssuedCertificates from "./views/IssuedCertificates";
-import { CloudProviders } from "./views/CloudProviders";
+import CloudProviders from "./views/CloudProviders";
 import { CreateCA } from "./views/CreateCA";
 import { ImportCA } from "./views/ImportCA";
 import { LamassuChip } from "components/LamassuComponents/Chip";
@@ -30,7 +30,9 @@ export const CaList = ({refreshing, caList}) => {
     const [mainContent, setMainContent] = useState()
     const [selectedCa, setSelectedCa] = useState()
     const [selectedTab, setSelectedTab] = useState(0)
-    const [isMoadlOpen, setIsMoadlOpen] = useState(false);
+
+    const [isMainMoadlOpen, setIsMainMoadlOpen] = useState(false);
+    const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
        
     useEffect(()=>{
         setSelectedTab(0)
@@ -57,7 +59,7 @@ export const CaList = ({refreshing, caList}) => {
     
     return(
         <Grid container style={{height: "100%"}}>
-            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast, minWidth: 400}}>
+            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast, minWidth: 400, maxWidth: 450}}>
                 <Box style={{display: "flex", flexDirection: "column", height: "100%"}}>
                     <Box container style={{padding: 20}}>
                         <Grid item xs={12} container alignItems="center">
@@ -69,7 +71,7 @@ export const CaList = ({refreshing, caList}) => {
                             </Grid>
                             <Grid item xs={2} container justifyContent={"flex-end"}>
                                 <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40, marginLeft: 10}}>
-                                    <IconButton style={{background: theme.palette.primary.light}} onClick={()=>{setIsMoadlOpen(true); setMainContent(contentType.CA_ACTION); setIsMoadlOpen(true)}}>
+                                    <IconButton style={{background: theme.palette.primary.light}} onClick={()=>{setIsMainMoadlOpen(true); setMainContent(contentType.CA_ACTION); setIsMainMoadlOpen(true)}}>
                                         <AddIcon style={{color: theme.palette.primary.main}}/>
                                     </IconButton>
                                 </Box>
@@ -93,7 +95,7 @@ export const CaList = ({refreshing, caList}) => {
                                         onClick={()=>{
                                             setSelectedCa(caItem)
                                             setMainContent(contentType.CA_DETAIL)
-                                            setIsMoadlOpen(true)
+                                            setIsMainMoadlOpen(true)
                                         }} 
                                         name={caItem.name} 
                                         keyType={caItem.key_metadata.type}
@@ -112,7 +114,7 @@ export const CaList = ({refreshing, caList}) => {
             </Grid>
 
             <Grid item style={{height: "100%", overflow: "hidden"}} ref={containerRef} xs>
-                <Slide direction="left" in={isMoadlOpen} container={containerRef.current} style={{height: "100%"}}>
+                <Slide direction="left" in={isMainMoadlOpen} container={containerRef.current} style={{height: "100%"}}>
                     <Box>
                     {
                         mainContent === contentType.CA_DETAIL && selectedCa && (
@@ -128,7 +130,7 @@ export const CaList = ({refreshing, caList}) => {
                                         </Grid>
                                         <Grid item xs={3} container justifyContent="flex-end">
                                             <Grid item>
-                                                <IconButton style={{background: theme.palette.error.light}}>
+                                                <IconButton onClick={()=>setIsRevokeDialogOpen(true)} style={{background: theme.palette.error.light}}>
                                                     <DeleteIcon style={{color: theme.palette.error.main}}/>
                                                 </IconButton>
                                             </Grid>
@@ -230,12 +232,33 @@ export const CaList = ({refreshing, caList}) => {
                     </Box>
                 </Slide>                    
             </Grid>
-            {/* <LamassuMultiModal 
-                type={ModalType.CA_CREATION}
-                open={isMoadlOpen}
-                handleClose={()=>{setIsMoadlOpen(false)}} 
-                handleSubmit={(ev)=>{setIsMoadlOpen(false)}} 
-            /> */}
+            {
+                selectedCa && (
+                    <Dialog open={isRevokeDialogOpen} onClose={()=>setIsRevokeDialogOpen(false)}>
+                        <DialogTitle>Revoke CA: {selectedCa.name}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                You are about to revoke a CA. By revoing the certificate, you will also revoke al issued certificates.
+                            </DialogContentText>
+                            <Grid container style={{marginTop: "10px"}}>
+                                <Grid item xs={12}>
+                                    <Typography variant="button">CA Name: </Typography>
+                                    <Typography variant="button" style={{background: theme.palette.mode == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{selectedCa.name}</Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="button">CA Serial Number: </Typography>
+                                    <Typography variant="button" style={{background: theme.palette.mode == "light" ? "#efefef" : "#666", padding: 5, fontSize: 12}}>{selectedCa.serial_number}</Typography>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={()=>setIsRevokeDialogOpen(false)} variant="outlined">Cancel</Button>
+                            <Button onClick={()=>setIsRevokeDialogOpen(false)} variant="contained">Revoke</Button>
+                        </DialogActions>
+                    </Dialog>
+                )
+            }
+
         </Grid>
     )
 }

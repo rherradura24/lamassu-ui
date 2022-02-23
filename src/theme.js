@@ -52,7 +52,7 @@ export const dark = {
         mode: "dark",
         primary: {
             light: "#4a6952",
-            main: "#25ee32",
+            main: "#25ee32", //2099C6
             dark: "#2F6140"
         },
         secondary: {

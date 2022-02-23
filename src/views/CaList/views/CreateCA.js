@@ -188,7 +188,7 @@ export const CreateCA = () => {
                             <Box sx={{width: 60, display: "flex", justifyContent: "center", alignItems: "center"}}>
                                 <AzureIcon style={{height: 20}}/>
                             </Box>
-                            <Typography>Azure IoT Central integration</Typography>
+                            <Typography>Azure IoT Hub integration</Typography>
                         </Grid>
                     </Grid>
 

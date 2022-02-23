@@ -1,13 +1,13 @@
 import { Box, height } from "@mui/system";
 import { AppBar } from "components/DashboardComponents/AppBar";
 import { SideBar } from "components/DashboardComponents/SideBar";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import {  Button, Divider, GlobalStyles, Grid, Paper, Typography,IconButton  } from "@mui/material";
+import {  Button, Divider, GlobalStyles, Grid, Paper, Typography,IconButton, Slide  } from "@mui/material";
 
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
@@ -20,6 +20,8 @@ import { LamassuNotifications } from "components/DashboardComponents/LamassuNoti
 import CloseIcon from '@mui/icons-material/Close';
 
 export default ({loading, loadingComponent=<></>, notificationsList}) => {
+    const containerRef = useRef(null);
+
     const [darkTheme, setDarkTheme] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
     const [displayNotifications, setDisplayNotifications] = useState(false)
@@ -122,7 +124,7 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                     }
                                 </Grid>
                             ) : (
-                                <Grid container sx={{height: "100%"}}>
+                                <Grid container sx={{height: "100%", overflow: "hidden"}} ref={containerRef}>
                                     <Grid item xs={displayNotifications ? 9 : 12} sx={{height: "100%"}} >
                                         <Routes>
                                             {
@@ -139,9 +141,9 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                         </Routes>
                                     </Grid>
                                     {
-                                        displayNotifications && (
+                                        <Slide direction="left" in={displayNotifications} container={containerRef.current}>
                                             <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1}}>
-                                                <Grid item container style={{marginBottom: "10px", padding: "20px 20px 0px 20px"}} justifyContent="space-between" alignItems={"center"}>
+                                                <Grid item container style={{padding: "10px 20px 10px 20px", borderBottom: `1px solid ${theme.palette.divider}`}} justifyContent="space-between" alignItems={"center"}>
                                                     <Grid item>
                                                         <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
                                                     </Grid>
@@ -155,7 +157,8 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                                                     <LamassuNotifications notificationsList={notificationsList}/>
                                                 </Box>
                                             </Grid>
-                                        )
+                                        </Slide>
+                                        
                                     }
                                 </Grid>
                             )

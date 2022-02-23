@@ -15,7 +15,7 @@ export const IssuedCertificates = ({refreshing, certificates}) => {
         {key: "keyStrength", title: "Key Strength", align: "center", size: 1},
         {key: "certificateStatus", title: "Certificate Status", align: "center", size: 1},
         {key: "certificateExpiration", title: "Certificate Expiration", align: "center", size: 1},
-        {key: "actions", title: "", align: "end", size: 2},
+        {key: "actions", title: "", align: "end", size: 3},
 
     ]
 
@@ -35,23 +35,23 @@ export const IssuedCertificates = ({refreshing, certificates}) => {
                 <Box>
                     <Grid container spacing={1}>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40}}>
+                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
-                                    <VisibilityIcon />
+                                    <VisibilityIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40}}>
+                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
-                                    <FileDownloadRoundedIcon />
+                                    <FileDownloadRoundedIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40}}>
+                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
-                                    <DeleteIcon />
+                                    <DeleteIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>

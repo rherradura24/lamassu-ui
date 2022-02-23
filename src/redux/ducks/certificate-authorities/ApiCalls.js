@@ -28,7 +28,7 @@ export const getCAs = async () => {
                 json: getCasMock,
                 status: 200
             })
-        }, 5000)
+        }, 2000)
     });
 
 }
@@ -60,7 +60,7 @@ export const getIssuedCerts = async () => {
                 json: getIssuedCertsMock,
                 status: 200
             })
-        }, 5000)
+        }, 2000)
     });
 
 }

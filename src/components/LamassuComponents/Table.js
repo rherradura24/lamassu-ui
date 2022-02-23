@@ -1,4 +1,5 @@
 import { Grid, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/system";
 
 
 export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
@@ -19,7 +20,7 @@ export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
             }
             {
                 data.map(dataItem=>(
-                    <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container style={{borderRadius: 10, border: `1.5px solid ${theme.palette.divider}`, padding: 15, marginBottom: 10}} alignItems="center"> 
+                    <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container style={{borderRadius: 10, border: `1.5px solid ${theme.palette.divider}`, padding: 10, marginBottom: 10}} alignItems="center"> 
                         {
                             columnConf.map(item=>(
                                 <Grid item xs={item.size} container justifyContent={item.align}>
