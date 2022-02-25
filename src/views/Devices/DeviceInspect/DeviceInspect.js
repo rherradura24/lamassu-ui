@@ -448,7 +448,7 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
                                                                         <AssignmentOutlinedIcon style={{color: "white"}}/>
                                                                     </IconButton>
                                                                     <div style={{color: "white", fontSize: "small", maxWidth: 500, fontFamily: "monospace"}}>
-                                                                        {deviceData.cert.crt}
+                                                                        {atob(deviceData.cert.crt)}
                                                                     </div>
                                                                 </div>
                                                             </>

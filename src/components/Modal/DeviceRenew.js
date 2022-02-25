@@ -4,7 +4,9 @@ import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
-const LamassuModalDeviceRenew = ({device, dmsUrl, open, handleSubmit, handleClose}) => {
+const LamassuModalDeviceRenew = ({device, open, handleSubmit, handleClose}) => {
+    const dmsUrl = window.location.protocol + "//" + window.location.hostname + ":5000"
+
     const theme = useTheme();
     const [dmsApiUrl, setDmsApiUrl] = useState(dmsUrl)
 
