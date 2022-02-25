@@ -91,16 +91,20 @@ export const createDevice = (deviceJson) => {
         type: t.CREATE_DEVICE,
         payload: {
             id: deviceJson.uuid,
+            subject: {
+                country: deviceJson.country,
+                state: deviceJson.state,
+                locality: deviceJson.locality,
+                organization: deviceJson.org,
+                organization_unit: deviceJson.orgUnit,
+                common_name: deviceJson.commonName,
+            },
+            key_metadata:{
+                type: deviceJson.keyType,
+                bits: deviceJson.keyBits,
+            },
             alias: deviceJson.alias,
-            country: deviceJson.country,
-            state: deviceJson.state,
-            locality: deviceJson.locality,
-            organization: deviceJson.org,
-            organization_unit: deviceJson.orgUnit,
-            common_name: deviceJson.commonName,
             dms_id: deviceJson.dmsId,
-            key_type: deviceJson.keyType,
-            key_bits: deviceJson.keyBits,
         }
     }
 }

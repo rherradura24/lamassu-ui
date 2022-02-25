@@ -33,3 +33,9 @@ jobs:
         with:
           push: true
           tags: lamassuiot/lamassu-ui:${{ steps.tag_version.outputs.new_tag }}
+
+      - name: Build the Docker image latest tag
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: lamassuiot/lamassu-ui:latest

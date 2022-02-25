@@ -17,14 +17,18 @@ export const createDmsViaForm = (name, csrForm) => ({
     type: t.CREATE_DMS_ENROLLER_REQUEST_VIA_FORM_REQUEST,
     payload: {
         csrForm: {
-            "key_bits": csrForm.keyBits,
-            "key_type": csrForm.keyType,
-            "common_name": csrForm.commonName,
-            "country": csrForm.country,
-            "state": csrForm.state,
-            "locality": csrForm.locality,
-            "organization": csrForm.organization,
-            "organization_unit": csrForm.organizationUnit,
+            "key_metadata": {
+                "bits": csrForm.keyBits,
+                "type": csrForm.keyType,
+            },
+            "subject": {
+                "common_name": csrForm.commonName,
+                "country": csrForm.country,
+                "state": csrForm.state,
+                "locality": csrForm.locality,
+                "organization": csrForm.organization,
+                "organization_unit": csrForm.organizationUnit,
+            },
             "url": csrForm.url
         },
         dmsName: name

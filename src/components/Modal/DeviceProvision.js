@@ -4,8 +4,9 @@ import { useRef, useState } from "react";
 import { LamassuModal } from "./LamassuModal";
 import { MenuSeparator } from "views/Dashboard/SidebarMenuItem";
 
-const LamassuModalDeviceProvision = ({caList, dmsUrl, device, open, handleSubmit, handleClose}) => {
-    console.log(dmsUrl);
+const LamassuModalDeviceProvision = ({caList, device, open, handleSubmit, handleClose}) => {
+    const dmsUrl = window.location.protocol + "//" + window.location.hostname + ":5000"
+
     const theme = useTheme();
     const [selectedCA, setSelectedCA] = useState("")
     const [dmsApiUrl, setDmsApiUrl] = useState(dmsUrl)
@@ -48,7 +49,7 @@ const LamassuModalDeviceProvision = ({caList, dmsUrl, device, open, handleSubmit
                         title: "Provision",
                         disabledBtn: disabled,
                         primary: true,
-                        onClick: ()=>{handleSubmit(device.id, selectedCA.ca_name, dmsApiUrl, 
+                        onClick: ()=>{handleSubmit(device.id, selectedCA.name, dmsApiUrl, 
                             activeTab == "viaCsr", 
                             activeTab == "viaCsr" ? csr : {
                                 country: device.country,
@@ -56,8 +57,8 @@ const LamassuModalDeviceProvision = ({caList, dmsUrl, device, open, handleSubmit
                                 locality: device.city,
                                 organization: device.organization,
                                 organization_unit: device.organization_unit,
-                                key_type: device.key_type,
-                                key_bits: device.key_bits,
+                                key_type: device.key_metadata.type,
+                                key_bits: device.key_metadata.bits,
                             } 
                         )}
                     }
@@ -84,7 +85,7 @@ const LamassuModalDeviceProvision = ({caList, dmsUrl, device, open, handleSubmit
                                             setSelectedCA(newValue)
                                         }
                                     }}
-                                    getOptionLabel={(option) => { return typeof option !== "object" ? "" : option.ca_name} }
+                                    getOptionLabel={(option) => { return typeof option !== "object" ? "" : option.name} }
                                     renderInput={(params) => <TextField required={true} error={selectedCA==""} {...params} label="Certificate Authority" fullWidth variant="standard" />}
                                 />
 

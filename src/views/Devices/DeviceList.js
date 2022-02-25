@@ -129,7 +129,18 @@ const DeviceList = ({ devicesData, createDevice }) => {
                                 Toolbar: GridToolbar,
                                 NoRowsOverlay: EmptyOverlayGrid
                             }}
-                            rows={devicesData}
+                            rows={devicesData.map(dev=>{
+                                return {
+                                    id: dev.id,
+                                    alias: dev.alias,
+                                    dms: dev.dms,
+                                    status: dev.status,
+                                    common_name: dev.subject.common_name,
+                                    key_strength: dev.key_metadata.strength,
+                                    key_type: dev.key_metadata.type,
+                                    key_bits: dev.key_metadata.bits,
+                                }
+                            })}
                             columns={columns}
                             pageSize={12}
                             onRowClick={(param, ev)=>{

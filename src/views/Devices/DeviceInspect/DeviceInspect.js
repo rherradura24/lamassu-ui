@@ -282,41 +282,41 @@ const DeviceInspect = ({id, deviceData, dmsList, caList, provisionDevice, provis
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Key Type</Typography>
-                                                    <Typography>{deviceData.key_type}</Typography>
+                                                    <Typography>{deviceData.key_metadata.type}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Key Bits</Typography>
-                                                    <Typography>{deviceData.key_bits}</Typography>
+                                                    <Typography>{deviceData.key_metadata.bits}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Key Strength</Typography>
-                                                    {strengthElement(deviceData.key_strength)}
+                                                    {strengthElement(deviceData.key_metadata.strength)}
                                                 </Box>
                                             </Box>
                                             <Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Country</Typography>
-                                                    <Typography>{deviceData.country}</Typography>
+                                                    <Typography>{deviceData.subject.country}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>State</Typography>
-                                                    <Typography>{deviceData.state}</Typography>
+                                                    <Typography>{deviceData.subject.state}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Locality</Typography>
-                                                    <Typography>{deviceData.locality}</Typography>
+                                                    <Typography>{deviceData.subject.locality}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Organization</Typography>
-                                                    <Typography>{deviceData.organization}</Typography>
+                                                    <Typography>{deviceData.subject.organization}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Organization Unit</Typography>
-                                                    <Typography>{deviceData.organization_unit}</Typography>
+                                                    <Typography>{deviceData.subject.organization_unit}</Typography>
                                                 </Box>
                                                 <Box style={{display: "flex", marginBottom: 5}}>
                                                     <Typography variant="button" style={{minWidth: 150}}>Common Name</Typography>
-                                                    <Typography>{deviceData.common_name}</Typography>
+                                                    <Typography>{deviceData.subject.common_name}</Typography>
                                                 </Box>
                                             </Box>
                                         
