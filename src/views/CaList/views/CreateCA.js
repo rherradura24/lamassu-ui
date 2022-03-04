@@ -123,12 +123,15 @@ export const CreateCA = () => {
                 <TextField variant="standard" fullWidth label="State/Province" />
             </Grid>
             <Grid item xs={4}>
+                <TextField variant="standard" fullWidth label="Locality" />
+            </Grid>
+            <Grid item xs={4}>
                 <TextField variant="standard" fullWidth label="Organization" />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
                 <TextField variant="standard" fullWidth label="Organization Unit" />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
                 <TextField variant="standard" fullWidth label="Common Name" />
             </Grid>
 

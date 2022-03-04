@@ -30,3 +30,8 @@ export const getDevices = (state) => {
     const devicesList = devicesKeys.map(key => devices.list[key])
     return devicesList;
 }
+
+export const getDeviceById = (state, deviceId) => {
+    const devicesState = getSelector(state)
+    return devicesState.list[deviceId];
+}

@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Popper, Fade, Slide, LinearProgress, DialogContent, DialogContentText, Dialog, DialogActions, DialogTitle } from "@mui/material"
+import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Slide, LinearProgress, DialogContent, DialogContentText, Dialog, DialogActions, DialogTitle } from "@mui/material"
 import { Box, useTheme } from "@mui/system"
 import { CertificateCard } from "views/CaList/components/CertificateCard"
 import React, { useEffect, useState } from "react";
@@ -6,8 +6,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import {AiOutlineSearch} from "react-icons/ai"
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-
 import { Overview } from "./views/CertificateOverview";
 import  IssuedCertificates from "./views/IssuedCertificates";
 import CloudProviders from "./views/CloudProviders";
@@ -59,14 +57,14 @@ export const CaList = ({refreshing, caList}) => {
     
     return(
         <Grid container style={{height: "100%"}}>
-            <Grid item xs={5} xl={3} container direction="column" style={{background: theme.palette.background.lightContrast, minWidth: 400, maxWidth: 450}}>
+            <Grid item xs={12} md={3} container direction="column" style={{background: theme.palette.background.lightContrast, width: "100%"}}>
                 <Box style={{display: "flex", flexDirection: "column", height: "100%"}}>
                     <Box container style={{padding: 20}}>
                         <Grid item xs={12} container alignItems="center">
                             <Grid item xs={10}>
                                 <Box component={Paper} sx={{padding: "5px", height: 30, display: "flex", alignItems: "center", width: "100%"}}>
-                                    <AiOutlineSearch size={20} color="#626365" style={{marginLeft: 10, marginRight: 10}}/>
-                                    <InputBase  onChange={(ev)=>filterCAs(ev.target.value)} fullWidth style={{color: "#555", fontSize: 14}}/>
+                                    <AiOutlineSearch size={20} color={theme.palette.text.primary} style={{marginLeft: 10, marginRight: 10}}/>
+                                    <InputBase  onChange={(ev)=>filterCAs(ev.target.value)} fullWidth style={{color: theme.palette.text.primary, fontSize: 14}}/>
                                 </Box>
                             </Grid>
                             <Grid item xs={2} container justifyContent={"flex-end"}>
@@ -113,7 +111,7 @@ export const CaList = ({refreshing, caList}) => {
                 </Box>
             </Grid>
 
-            <Grid item style={{height: "100%", overflow: "hidden"}} ref={containerRef} xs>
+            <Grid item xs={12} md={9}  style={{height: "100%", overflow: "hidden"}} ref={containerRef}>
                 <Slide direction="left" in={isMainMoadlOpen} container={containerRef.current} style={{height: "100%"}}>
                     <Box>
                     {
@@ -155,7 +153,7 @@ export const CaList = ({refreshing, caList}) => {
                                         </Tabs>
                                     </Box>
                                 </Box>
-                                <Divider></Divider>
+                                <Divider/>
                                 <Box style={{padding: 40, flexGrow: 1, height: 500, overflowY: "auto"}}>
                                     <Grid container>
                                         {

@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 
 
-const SideBar = ({ isLoading, darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) => {
+const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) => {
     const { t, i18n } = useTranslation()
 
     const theme = useTheme()
@@ -36,50 +36,38 @@ const SideBar = ({ isLoading, darkTheme, onTogleDark, onCollapse, collapsed, men
         <Paper style={{ borderRadius: 0 }} elevation={0}>
             <Grid item className="sidebar-wrapper">
                 <div>
-                    {
-                        ! isLoading &&  <MenuButton title={"Collapse"} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon />} onClick={() => {onCollapse(collapsed) }} collapsed={collapsed} />
-                    }
+                    <MenuButton title={"Collapse"} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon />} onClick={() => {onCollapse(collapsed) }} collapsed={collapsed} />
                     {
                         menuConfig.map(configItem=>(
                             <Box key={Math.random()}>
                                 {
-                                    isLoading ? (
-                                        <SideBarPlaceholder />
-                                    ) : (
-                                        <>
-                                            <MenuSeparator />
-                                            {
-                                                configItem.menuTitle !== "" && (
-                                                    <MenuSectionTitle title={configItem.menuTitle} collapsed={collapsed}/>
-                                                )
-                                            }
-                                            {
-                                                configItem.menuItems.map(menuConfigItem => (
-                                                    <MenuItem
-                                                        key={menuConfigItem.route}
-                                                        title={menuConfigItem.title}
-                                                        link={menuConfigItem.route}
-                                                        collapsed={collapsed}
-                                                        active={selectedPath}
-                                                        onSelect={(link) => {console.log(link); handleSelectedPath(link) }}
-                                                        icon={menuConfigItem.icon}
-                                                    />
-                                                ))
-                                            }
-                                        </>
-                                    )
+                                    <>
+                                        <MenuSeparator />
+                                        {
+                                            configItem.menuTitle !== "" && (
+                                                <MenuSectionTitle title={configItem.menuTitle} collapsed={collapsed}/>
+                                            )
+                                        }
+                                        {
+                                            configItem.menuItems.map(menuConfigItem => (
+                                                <MenuItem
+                                                    key={menuConfigItem.route}
+                                                    title={menuConfigItem.title}
+                                                    link={menuConfigItem.route}
+                                                    collapsed={collapsed}
+                                                    active={selectedPath}
+                                                    onSelect={(link) => {console.log(link); handleSelectedPath(link) }}
+                                                    icon={menuConfigItem.icon}
+                                                />
+                                            ))
+                                        }
+                                    </>
                                 }
                             </Box>
                         ))
                     }
-                    {
-                        ! isLoading &&  (
-                            <>
-                                <MenuSeparator />
-                                <MenuButton title={darkTheme ? "Light" : "Dark"} icon={darkTheme ? <Brightness5OutlinedIcon /> : <Brightness2OutlinedIcon />} onClick={onTogleDark} collapsed={collapsed} />
-                            </>
-                        )
-                    }
+                    <MenuSeparator />
+                    <MenuButton title={darkTheme ? "Light" : "Dark"} icon={darkTheme ? <Brightness5OutlinedIcon /> : <Brightness2OutlinedIcon />} onClick={onTogleDark} collapsed={collapsed} />
                 </div>
             </Grid>
         </Paper>

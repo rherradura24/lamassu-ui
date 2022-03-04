@@ -1,4 +1,4 @@
-import { Box, height } from "@mui/system";
+import { Box } from "@mui/system";
 import { AppBar } from "components/DashboardComponents/AppBar";
 import { SideBar } from "components/DashboardComponents/SideBar";
 import React, { useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import CaList from "views/CaList";
 import "./DashboardLayout.css"
-import {  Button, Divider, GlobalStyles, Grid, Paper, Typography,IconButton, Slide  } from "@mui/material";
+import { GlobalStyles, Grid, Paper, Typography,IconButton, Slide } from "@mui/material";
 
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
@@ -19,7 +19,7 @@ import  DmsList  from "./DmsList";
 import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
 import CloseIcon from '@mui/icons-material/Close';
 
-export default ({loading, loadingComponent=<></>, notificationsList}) => {
+export default ({notificationsList}) => {
     const containerRef = useRef(null);
 
     const [darkTheme, setDarkTheme] = useState(false)
@@ -91,7 +91,7 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                 }}
             />
             <Router>
-                <Box className={collapsed ? "dashboard-layout-collapsed" : "dashboard-layout"} component={Paper} elevation={0}>
+                <Box className={collapsed ? "dashboard-layout-collapsed" : "dashboard-layout"} component={Paper} elevation={0} sx={{borderRadius: 0}}>
                     <Box className="header">
                         <AppBar 
                             background={"#468AEB"}
@@ -105,64 +105,50 @@ export default ({loading, loadingComponent=<></>, notificationsList}) => {
                             onNotificationsClick={()=>setDisplayNotifications(true)}
                         />
                     </Box>
-                    <Box className="sidebar">
+                    <Box className="sidebar" sx={{borderRight: `1px solid ${theme.palette.background.lightContrast}`}}>
                         <SideBar 
                             darkTheme={darkTheme}
                             onTogleDark={()=>{setDarkTheme(!darkTheme)}} 
                             collapsed={collapsed} 
                             onCollapse={()=>{setCollapsed(!collapsed)}}
                             menuConfig={routes}
-                            isLoading={loading}
                         />
                     </Box>
                     <Box className="content">
-                        {
-                            loading ? (
-                                <Grid container justifyContent="center" alignItems="center" style={{height: "100%", background: "#eee"}}>
+                        <Grid container sx={{height: "100%", overflow: "hidden"}} ref={containerRef}>
+                            <Grid item xs={displayNotifications ? 9 : 12} sx={{height: "100%"}} >
+                                <Routes>
                                     {
-                                        React.cloneElement(loadingComponent)
-                                    }
-                                </Grid>
-                            ) : (
-                                <Grid container sx={{height: "100%", overflow: "hidden"}} ref={containerRef}>
-                                    <Grid item xs={displayNotifications ? 9 : 12} sx={{height: "100%"}} >
-                                        <Routes>
-                                            {
-                                                routes.map(routeGr => {
+                                        routes.map(routeGr => {
+                                            return (
+                                                routeGr.menuItems.map(route => {
                                                     return (
-                                                        routeGr.menuItems.map(route => {
-                                                            return (
-                                                                <Route exact path={route.route} element={route.content} />
-                                                            )
-                                                        })
+                                                        <Route exact path={route.route} element={route.content} />
                                                     )
                                                 })
-                                            }
-                                        </Routes>
-                                    </Grid>
-                                    {
-                                        <Slide direction="left" in={displayNotifications} container={containerRef.current}>
-                                            <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1}}>
-                                                <Grid item container style={{padding: "10px 20px 10px 20px", borderBottom: `1px solid ${theme.palette.divider}`}} justifyContent="space-between" alignItems={"center"}>
-                                                    <Grid item>
-                                                        <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
-                                                    </Grid>
-                                                    <Grid item>
-                                                        <IconButton onClick={()=>setDisplayNotifications(false)}>
-                                                            <CloseIcon />                           
-                                                        </IconButton>
-                                                    </Grid>
-                                                </Grid>
-                                                <Box style={{overflowY: "auto", height: "10px", paddingLeft: 10}} flexGrow={1}>
-                                                    <LamassuNotifications notificationsList={notificationsList}/>
-                                                </Box>
-                                            </Grid>
-                                        </Slide>
-                                        
+                                            )
+                                        })
                                     }
+                                </Routes>
+                            </Grid>
+                            <Slide direction="left" in={displayNotifications} container={containerRef.current}>
+                                <Grid item xs={3} container component={Paper} elevation={6} direction="column" sx={{zIndex: 1, borderRadius: 0}}>
+                                    <Grid item container style={{padding: "10px 20px 10px 20px", borderBottom: `1px solid ${theme.palette.divider}`}} justifyContent="space-between" alignItems={"center"}>
+                                        <Grid item>
+                                            <Typography style={{fontWeight: "500", color: theme.palette.text.primary }}>Notifications</Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <IconButton onClick={()=>setDisplayNotifications(false)}>
+                                                <CloseIcon />                           
+                                            </IconButton>
+                                        </Grid>
+                                    </Grid>
+                                    <Box style={{overflowY: "auto", height: "10px", paddingLeft: 10}} flexGrow={1}>
+                                        <LamassuNotifications notificationsList={notificationsList}/>
+                                    </Box>
                                 </Grid>
-                            )
-                        }
+                            </Slide>
+                        </Grid>
                     </Box>
                 </Box>
             </Router>

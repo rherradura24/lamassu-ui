@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
-import DashboardLayout from "views/DashboardLayout"
+import DashboardLayout from "views"
 
 export const LoadingDashboard = ({onAlive, checkAuthServer = true}) => {
     const [isIniting, setIsIniting] = useState(true)
@@ -56,31 +56,16 @@ export const LoadingDashboard = ({onAlive, checkAuthServer = true}) => {
         }
     }, [])
     
-    const initingComponent = (
-        <>
-            <Typography variant="button">Loading: </Typography>
-            <Typography variant="body1" style={{ fontSize: 14, fontStyle: "italic", marginLeft: 5}}>Checking authority service status</Typography>
-        </>
-    )
-
-    const errorComponent = (
-        <Box style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-            <Box style={{display: "flex"}}>
-                <Typography variant="button">Error: </Typography>
-                <Typography variant="body1" style={{ fontSize: 14, fontStyle: "italic", marginLeft: 5}}>Could not connect with the authority service</Typography>
-            </Box>
-            <Box>
-                <Typography variant="button">Retrying in: {refreshCountDown} </Typography>
-            </Box>
-        </Box>
-    )
     return (
         <>
             {
                 isIniting ? (
-                    <DashboardLayout loading={true} loadingComponent={initingComponent}/>
-                ) : ( 
-                    <DashboardLayout loading={true} loadingComponent={errorComponent}/>
+                    <div>Loading: Checking authority service status</div>
+                    ) : ( 
+                    <>
+                        <div>Could not connect with the authority service</div>
+                        <div>Retrying in: {refreshCountDown}</div>
+                    </>
                 )
             }
         </>

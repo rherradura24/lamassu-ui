@@ -34,21 +34,21 @@ export default () => {
       }
 
     return (
-        // isAuthAlive ? (
-        //     <ReactKeycloakProvider 
-        //         authClient={keycloak} 
-        //         initOptions={{onLoad: "login-required"}}
-        //         LoadingComponent={<LoadingDashboard checkAuthServer={false}/>}
-        //         onEvent={onKeycloakEvent}
-        //         autoRefreshToken={true}
-        //     >
+        isAuthAlive ? (
+            <ReactKeycloakProvider 
+                authClient={keycloak} 
+                initOptions={{onLoad: "login-required"}}
+                LoadingComponent={<LoadingDashboard checkAuthServer={false}/>}
+                onEvent={onKeycloakEvent}
+                autoRefreshToken={true}
+            >
                 <Provider store={store}>
                   <DashboardLayout loading={false}/>
                 </Provider>
                 
-        //     </ReactKeycloakProvider>
-        // ) : (
-        //     <LoadingDashboard checkAuthServer={true} onAlive={()=>setIsAuthAlive(true)}/>
-        // )   
+             </ReactKeycloakProvider>
+         ) : (
+             <LoadingDashboard checkAuthServer={true} onAlive={()=>setIsAuthAlive(true)}/>
+         )   
     )
 }

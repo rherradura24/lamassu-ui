@@ -27,9 +27,11 @@ export const reducer = (state = initState, action) => {
 const getSelector = (state) => state.notifications
 
 export const getNotificationList = (state) => {
+    console.log("sortedNotifications");
     const notificationsState = getSelector(state)
     const notificationsKeys = Object.keys(notificationsState.list)
     const notificationsList = notificationsKeys.map(key => notificationsState.list[key])
     const sortedNotifications = notificationsList.sort((a,b) => (a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0))
+    console.log(sortedNotifications);
     return sortedNotifications;
 }

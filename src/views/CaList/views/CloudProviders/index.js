@@ -8,49 +8,16 @@ import { AMAZON_AWS, MICROSOFT_AZURE, GOOGLE_CLOUD, DISCONNECTED, CONFIGURED } f
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AwsIcon, AzureIcon, GoogleCloudIcon } from "components/CloudProviderIcons";
 import { useState } from "react";
+import AwsCloudIntegration from "./AwsCloudIntegration";
 
-export default ({}) => {
+export default () => {
     const theme = useTheme()
-    const [cloudProviderDisplayInfo, setCloudProviderDisplayInfo] = useState()
-
-    const awsPolicy = {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Action": [
-              "iot:Connect"
-            ],
-            "Resource": [
-              "arn:aws:iot:eu-west-1:345876576284:client/${iot:Connection.Thing.ThingName}"
-            ]
-          },
-          {
-            "Effect": "Allow",
-            "Action": [
-              "iot:Publish",
-              "iot:Receive"
-            ],
-            "Resource": [
-              "arn:aws:iot:eu-west-1:345876576284:topic/${iot:Connection.Thing.ThingName}/*"
-            ]
-          },
-          {
-            "Effect": "Allow",
-            "Action": [
-              "iot:Subscribe"
-            ],
-            "Resource": [
-              "arn:aws:iot:eu-west-1:345876576284:topicfilter/${iot:Connection.Thing.ThingName}/*"
-            ]
-          }
-        ]
-    }
+    const [cloudProviderDisplayInfo, setCloudProviderDisplayInfo] = useState(undefined)
 
     const cloudProviders = [
         {
             connectorId: "3647562", 
-            connectorStatus: DISCONNECTED,
+            connectorStatus: CONFIGURED,
             connectorAlias: {
                 provider: AMAZON_AWS,
                 alias: "Ikerlan AWS"
@@ -60,17 +27,17 @@ export default ({}) => {
         },
         {
             connectorId: "7418343", 
-            connectorStatus: CONFIGURED,
+            connectorStatus: DISCONNECTED,
             connectorAlias: {
                 provider: GOOGLE_CLOUD,
                 alias: "LKS GCloud"
             },
             connectorDeployed: "4 Oct 2021",
-            connectorAttached: "19 OCt 2021",
+            connectorAttached: "-",
         },
         {
             connectorId: "1564241", 
-            connectorStatus: DISCONNECTED,
+            connectorStatus: CONFIGURED,
             connectorAlias: {
                 provider: MICROSOFT_AZURE,
                 alias: "Ikerlan Az"
@@ -145,7 +112,7 @@ export default ({}) => {
                     <Grid container spacing={1}>
                         <Grid item>
                             <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                <IconButton onClick={()=>setCloudProviderDisplayInfo({type: AMAZON_AWS, display: true, cloudProviderId: cloudProviderItem.connectorId})}>
+                                <IconButton onClick={()=>setCloudProviderDisplayInfo({type: AMAZON_AWS, cloudProviderId: cloudProviderItem.connectorId})}>
                                     <FormatAlignJustifyIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
@@ -163,7 +130,25 @@ export default ({}) => {
         }
     })
 
+    const renderCloudProviderView = (type, cloudProviderId) => {
+        console.log(type, cloudProviderId);
+        switch (type) { 
+            case AMAZON_AWS:
+                return <AwsCloudIntegration />
+            case GOOGLE_CLOUD:
+                return <AwsCloudIntegration />
+            case MICROSOFT_AZURE:
+                return <AwsCloudIntegration />
+            default:
+                return <div>Unsuported Cloud Provider</div>
+        }
+    }
+    console.log(cloudProviderDisplayInfo);
     return(
-        <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
+        cloudProviderDisplayInfo === undefined ? (
+            <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
+        ) : (
+            renderCloudProviderView(cloudProviderDisplayInfo.type, cloudProviderDisplayInfo.cloudProviderId)
+        )
     )
 }

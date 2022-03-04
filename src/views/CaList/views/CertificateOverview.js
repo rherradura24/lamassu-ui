@@ -3,7 +3,7 @@ import { Certificate } from "@fidm/x509";
 import { Grid, Typography } from "@mui/material"
 import moment from "moment";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { materialLight, tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { materialLight, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function uncamelize(str, separator) {
     // Assume default separator is a single space.
@@ -124,7 +124,7 @@ export const Overview = ({ca}) => {
                 </Grid>
             </Grid>
             <Grid item xs={5} container justifyContent={"flex-end"} style={{marginTop: 20}}>
-                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : tomorrow} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
+                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialDark} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
                     {decodedCert}
                 </SyntaxHighlighter>
             </Grid>

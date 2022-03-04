@@ -4,7 +4,7 @@ export const light = {
     palette: {
         mode: "light",
         primary: {
-            light: "#94bfeb",
+            light: "#d7ebff",
             main: "#0068D1",
             dark: "#1F528F"
         },
@@ -28,6 +28,11 @@ export const light = {
             main: "#da565f",
             dark: "#8C3239"
         },
+        gray:{
+            light: "#EFF0F2",
+            main: "#9FA0A1",
+            dark: "#6A6A6B"
+        }, 
         scrollbar: {
             thumb: "#555555",
             track: "#EEEEEE"
@@ -75,6 +80,11 @@ export const dark = {
             main: "#da565f",
             dark: "#8C3239"
         },
+        gray:{
+            light: "#666",
+            main: "#555555",
+            dark: "#9FA0A1"
+        }, 
         scrollbar: {
             thumb: "#EEEEEE",
             track: "#555555"
@@ -82,7 +92,7 @@ export const dark = {
         divider: "#444",
         text:{
             primary: "#bbb",
-            primaryLight: "#888",
+            primaryLight: "#fff",
             secondary: "#aaa",
         },
         background: {

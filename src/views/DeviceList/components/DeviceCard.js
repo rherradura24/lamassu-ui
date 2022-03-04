@@ -9,10 +9,12 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
 
     var alertColorBg = theme.palette.warning.light
     var alertColorIcon = theme.palette.warning.main
+    
     if (remainigDaysBeforeExpiration < 10) {
         alertColorBg = theme.palette.error.light
         alertColorIcon = theme.palette.error.main
     }
+    
     return (
         <Grid container component={Paper} sx={{padding: "10px", width: "100%"}} spacing={1} {...props}>
             <Grid item xs={12} container alignItems="center">

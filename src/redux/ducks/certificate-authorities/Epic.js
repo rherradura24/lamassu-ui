@@ -1,5 +1,5 @@
 import { ofType } from 'redux-observable';
-import { makeRequestWithActions, success } from 'redux/utils';
+import { failed, makeRequestWithActions, success } from 'redux/utils';
 import { mergeMap } from 'rxjs/operators';
 import * as t from "./ActionTypes"
 import * as lamassuCaApi from "./ApiCalls";
@@ -16,7 +16,7 @@ export const getIssuedCertsEpic = action$ => action$.pipe(
     mergeMap( ({payload}) => makeRequestWithActions(lamassuCaApi.getIssuedCerts(payload.caName), t.GET_ISSUED_CERTS, {caName: payload.caName})),
 );
 
-export const getCasEpicSucess = action$ => action$.pipe(
-    ofType(success(t.GET_CAS)),
-    mergeMap(({payload}) => of(notificationsDuck.actions.addNotification(notificationsDuck.constants.SUCCESS, `Retrived ${payload.length} Certificate Authorities from Lamassu CA API`))),
+export const getCasEpicError= action$ => action$.pipe(
+    ofType(failed(t.GET_CAS)),
+    mergeMap(({payload}) => of(notificationsDuck.actions.addNotification(notificationsDuck.constants.ERROR, `Error while getting Certificate Authorities from Lamassu CA API: ${payload}`))),
 );

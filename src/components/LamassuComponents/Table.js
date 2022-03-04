@@ -23,7 +23,7 @@ export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
                     <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container style={{borderRadius: 10, border: `1.5px solid ${theme.palette.divider}`, padding: 10, marginBottom: 10}} alignItems="center"> 
                         {
                             columnConf.map(item=>(
-                                <Grid item xs={item.size} container justifyContent={item.align}>
+                                <Grid item xs={item.size} container justifyContent={item.align} style={{padding: "0px 4px"}}>
                                     {dataItem[item.key]}
                                 </Grid>
                             ))
