@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { purple } from "@mui/material/colors";
 import { GrayButton } from "components/LamassuComponents/GrayButton";
+import { Link } from "react-router-dom";
 
 export const DeviceInspector = ({deviceId, deviceData}) => {
     console.log(deviceId,deviceData);
@@ -155,7 +156,7 @@ export const DeviceInspector = ({deviceId, deviceData}) => {
                                 </IconButton>
                             </Grid>
                             <Grid item>
-                                <GrayButton variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Actions</GrayButton>
+                                <GrayButton variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick} sx={{background: theme.palette.gray.main}}>Actions</GrayButton>
                                 <Menu
                                     style={{marginTop: 1, width: 200, borderRadius: 0}}
                                     id="simple-menu"
@@ -164,7 +165,7 @@ export const DeviceInspector = ({deviceId, deviceData}) => {
                                     onClose={handleClose}
                                     // MenuListProps={{ onMouseLeave: handleClose }}
                                 >
-                                    <MenuItem style={{width: "100%"}} onClick={(ev)=>{}}>Edit</MenuItem>
+                                    <MenuItem component={Link} to="edit" style={{width: "100%"}} onClick={(ev)=>{}}>Edit</MenuItem>
                                     <MenuItem style={{width: "100%"}} onClick={(ev)=>{}}>Revoke Certificate</MenuItem>
                                     <MenuItem style={{width: "100%"}} onClick={(ev)=>{}} disabled>Delete Device</MenuItem>
                                 </Menu>

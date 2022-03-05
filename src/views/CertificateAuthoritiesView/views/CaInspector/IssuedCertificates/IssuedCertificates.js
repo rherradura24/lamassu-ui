@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
 
 export const IssuedCertificates = ({refreshing, certificates}) => {
+    console.log(refreshing, certificates);
     const theme = useTheme()
 
     const certTableColumns = [

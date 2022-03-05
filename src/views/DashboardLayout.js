@@ -5,7 +5,8 @@ import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import CaList from "views/CaList";
+import CertificateAuthoritiesView from "views/CertificateAuthoritiesView";
+
 import "./DashboardLayout.css"
 import { GlobalStyles, Grid, Paper, Typography,IconButton, Slide } from "@mui/material";
 
@@ -13,7 +14,7 @@ import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlin
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import RouterOutlinedIcon from '@mui/icons-material/RouterOutlined';
 import { dark, light } from "theme";
-import  DeviceList from "./DeviceList";
+import  DeviceManagerView from "./DeviceManagerView";
 import {MdOutlinePrecisionManufacturing} from "react-icons/md"
 import  DmsList  from "./DmsList";
 import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
@@ -34,9 +35,10 @@ export default ({notificationsList}) => {
             menuItems: [
                 {
                     title: "Home",
-                    route: "/",
+                    path: "/",
+                    link: "/",
                     icon: <DashboardOutlinedIcon  key="/"/>,
-                    content: <CaList />
+                    content: <div>home</div>
                 }
             ]
         },
@@ -45,9 +47,10 @@ export default ({notificationsList}) => {
             menuItems: [
                 {
                     title: "CAs",
-                    route: "/cas/",
+                    path: "/cas/*",
+                    link: "/cas",
                     icon: <AccountBalanceOutlinedIcon  key="/1"/>,
-                    content: <CaList />
+                    content: <CertificateAuthoritiesView />
                 },
             ]
         },
@@ -56,15 +59,17 @@ export default ({notificationsList}) => {
             menuItems: [
                 {
                     title: "Device Manufacturing Systems",
-                    route: "/dms/",
+                    path: "/dms/*",
+                    link: "/dms",
                     icon: <MdOutlinePrecisionManufacturing  key="/2"/>,
                     content: <DmsList />
                 },
                 {
                     title: "Device Manager",
-                    route: "/devmanager/",
+                    path: "/devmanager/*",
+                    link: "/devmanager",
                     icon: <RouterOutlinedIcon  key="/3"/>,
-                    content: <DeviceList />
+                    content: <DeviceManagerView />
                 },
             ]
         },
@@ -114,7 +119,7 @@ export default ({notificationsList}) => {
                             menuConfig={routes}
                         />
                     </Box>
-                    <Box className="content">
+                    <Box className="content" sx={{background: theme.palette.background.lightContrast}}>
                         <Grid container sx={{height: "100%", overflow: "hidden"}} ref={containerRef}>
                             <Grid item xs={displayNotifications ? 9 : 12} sx={{height: "100%"}} >
                                 <Routes>
@@ -123,7 +128,7 @@ export default ({notificationsList}) => {
                                             return (
                                                 routeGr.menuItems.map(route => {
                                                     return (
-                                                        <Route exact path={route.route} element={route.content} />
+                                                        <Route path={route.path} element={route.content} />
                                                     )
                                                 })
                                             )

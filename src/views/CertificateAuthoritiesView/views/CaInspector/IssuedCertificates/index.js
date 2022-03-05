@@ -9,7 +9,9 @@ const mapStateToProps = (state, {caName}) => ({
 })
 
 const mapDispatchToProps = (dispatch, {caName}) => ({
-    onMount: ()=>{ dispatch(casDuck.actions.getIssuedCerts(caName)) },
+    onMount: ()=>{ 
+        // dispatch(casDuck.actions.getIssuedCerts(caName)) 
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(IssuedCertificates));

@@ -29,8 +29,8 @@ export const light = {
             dark: "#8C3239"
         },
         gray:{
-            light: "#EFF0F2",
-            main: "#9FA0A1",
+            light: "#fff",
+            main: "#EFF0F2",
             dark: "#6A6A6B"
         }, 
         scrollbar: {

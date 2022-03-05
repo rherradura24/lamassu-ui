@@ -26,12 +26,11 @@ function uncamelize(str, separator) {
        separateWord[i].substring(1);
     }
     return separateWord.join(' ');
-  }
+}
 
-  
 
-export const Overview = ({ca}) => {
-    const decodedCert = window.atob(ca.certificate.pem_base64)
+export const Overview = ({caData}) => {
+    const decodedCert = window.atob(caData.certificate.pem_base64)
     const parsaedCert = Certificate.fromPEM(decodedCert)
     const theme = useTheme()
     const themeMode = theme.palette.mode
@@ -96,7 +95,7 @@ export const Overview = ({ca}) => {
                                         <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateSubject[key]}</Typography>
                                     </Grid>
                                     <Grid item xs={7}>
-                                        <Typography style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13}}>{ca.subject[key]}</Typography>
+                                        <Typography style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13}}>{caData.subject[key]}</Typography>
                                     </Grid>
                                 </Grid>
                             ))

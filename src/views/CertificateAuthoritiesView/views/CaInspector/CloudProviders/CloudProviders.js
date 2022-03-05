@@ -9,10 +9,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { AwsIcon, AzureIcon, GoogleCloudIcon } from "components/CloudProviderIcons";
 import { useState } from "react";
 import AwsCloudIntegration from "./AwsCloudIntegration";
+import { useNavigate } from "react-router-dom";
 
 export default () => {
     const theme = useTheme()
-    const [cloudProviderDisplayInfo, setCloudProviderDisplayInfo] = useState(undefined)
+    const navigate = useNavigate()
 
     const cloudProviders = [
         {
@@ -112,7 +113,7 @@ export default () => {
                     <Grid container spacing={1}>
                         <Grid item>
                             <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                <IconButton onClick={()=>setCloudProviderDisplayInfo({type: AMAZON_AWS, cloudProviderId: cloudProviderItem.connectorId})}>
+                                <IconButton onClick={()=>navigate(`aws/${cloudProviderItem.connectorId}`)}>
                                     <FormatAlignJustifyIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
@@ -130,25 +131,7 @@ export default () => {
         }
     })
 
-    const renderCloudProviderView = (type, cloudProviderId) => {
-        console.log(type, cloudProviderId);
-        switch (type) { 
-            case AMAZON_AWS:
-                return <AwsCloudIntegration />
-            case GOOGLE_CLOUD:
-                return <AwsCloudIntegration />
-            case MICROSOFT_AZURE:
-                return <AwsCloudIntegration />
-            default:
-                return <div>Unsuported Cloud Provider</div>
-        }
-    }
-    console.log(cloudProviderDisplayInfo);
     return(
-        cloudProviderDisplayInfo === undefined ? (
-            <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
-        ) : (
-            renderCloudProviderView(cloudProviderDisplayInfo.type, cloudProviderDisplayInfo.cloudProviderId)
-        )
+        <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
     )
 }

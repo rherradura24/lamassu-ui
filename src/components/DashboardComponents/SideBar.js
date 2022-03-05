@@ -7,20 +7,19 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import Brightness5OutlinedIcon from '@mui/icons-material/Brightness5Outlined';
 
-import { useTranslation } from 'react-i18next'
 
 import "./SideBar.css"
 import { Collapse, Grid, Link, List, ListItem, Paper, Typography, useTheme } from "@mui/material";
 import { SideBarPlaceholder } from './Placeholders';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box } from '@mui/system';
 
 
 const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) => {
-    const { t, i18n } = useTranslation()
 
     const theme = useTheme()
     const routerNavigation = useNavigate();
+    const location = useLocation();
     const [selectedPath, setSelectedPath] = useState("");
 
     const handleSelectedPath = (newPath) => {
@@ -28,9 +27,9 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) 
         routerNavigation(newPath)
     }
 
-    // useEffect(() => {
-    //     routerNavigation(selectedPath)
-    // }, [selectedPath]);
+    useEffect(() => {
+        setSelectedPath(location.pathname)
+    }, []);
 
     return (
         <Paper style={{ borderRadius: 0 }} elevation={0}>
@@ -51,11 +50,12 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) 
                                         {
                                             configItem.menuItems.map(menuConfigItem => (
                                                 <MenuItem
-                                                    key={menuConfigItem.route}
+                                                    key={menuConfigItem.path}
                                                     title={menuConfigItem.title}
-                                                    link={menuConfigItem.route}
+                                                    link={menuConfigItem.link}
                                                     collapsed={collapsed}
                                                     active={selectedPath}
+                                                    exactLink={!menuConfigItem.path.includes("*")}
                                                     onSelect={(link) => {console.log(link); handleSelectedPath(link) }}
                                                     icon={menuConfigItem.icon}
                                                 />
@@ -74,10 +74,10 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) 
     );
 }
 
-const MenuItem = ({ active, exactLink = true, link, title, icon, children, style, onSelect, collapsed }) => {
+const MenuItem = ({ active, exactLink = false, link, title, icon, children, style, onSelect, collapsed }) => {
     const theme = useTheme();
     const [expand, setExpand] = useState(false);
-
+    
     const selectedBorderWidth = 5;
     var paddingLeftPxls = 0;
     const selected = exactLink ? active === link && link !== undefined : active.startsWith(link) && link !== undefined;
