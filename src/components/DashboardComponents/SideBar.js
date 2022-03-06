@@ -10,7 +10,6 @@ import Brightness5OutlinedIcon from '@mui/icons-material/Brightness5Outlined';
 
 import "./SideBar.css"
 import { Collapse, Grid, Link, List, ListItem, Paper, Typography, useTheme } from "@mui/material";
-import { SideBarPlaceholder } from './Placeholders';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box } from '@mui/system';
 

@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { createLoader } from "components/utils";
 import devManagerDuck from "redux/ducks/device-manager";
-import { DeviceInspector } from "./DeviceInspector";
+import { EditDevice } from "./EditDevice";
 
 const mapStateToProps = (state, {deviceId}) => ({
     deviceData: devManagerDuck.reducer.getDeviceById(state, deviceId),
@@ -14,4 +14,4 @@ const mapDispatchToProps = (dispatch) => ({
   },
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(createLoader(DeviceInspector));
+export default connect(mapStateToProps, mapDispatchToProps)(createLoader(EditDevice));

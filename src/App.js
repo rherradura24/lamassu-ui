@@ -1,3 +1,4 @@
+import React from "react"
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { LoadingDashboard } from 'components/DashboardComponents/LoadingDashboard';
 import { useState } from 'react';

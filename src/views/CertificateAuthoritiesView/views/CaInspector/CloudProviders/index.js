@@ -1,3 +1,4 @@
+import React from "react"
 import { Routes, Route, useParams, useLocation, Outlet } from "react-router-dom";
 import AwsCloudIntegration from "./AwsCloudIntegration";
 import CloudProviders from "./CloudProviders";

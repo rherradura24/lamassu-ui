@@ -1,3 +1,4 @@
+import React from "react"
 import { useTheme } from "@emotion/react"
 
 export const AwsIcon = ({style={}, props}) => {

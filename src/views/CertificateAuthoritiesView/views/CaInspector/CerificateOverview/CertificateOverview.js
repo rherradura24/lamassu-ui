@@ -1,9 +1,10 @@
+import React from "react"
 import { useTheme } from "@emotion/react";
 import { Certificate } from "@fidm/x509";
 import { Grid, Typography } from "@mui/material"
 import moment from "moment";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { materialLight, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function uncamelize(str, separator) {
     // Assume default separator is a single space.
@@ -90,7 +91,7 @@ export const Overview = ({caData}) => {
                     <Grid item container spacing={1}>
                         {
                             Object.keys(certificateSubject).map(key=>(
-                                <Grid item xs={12} container>
+                                <Grid item xs={12} container key={key}>
                                     <Grid item xs={5}>
                                         <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateSubject[key]}</Typography>
                                     </Grid>
@@ -109,7 +110,7 @@ export const Overview = ({caData}) => {
                     <Grid item xs={12} container>
                     {
                         Object.keys(certificateProperties).map(key=> (
-                            <Grid item xs={12} container style={{heigh: 25, marginBottom: 8}}>
+                            <Grid item xs={12} container style={{heigh: 25, marginBottom: 8}} key={key}>
                                 <Grid item xs={5}>
                                     <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateProperties[key].title}</Typography>
                                 </Grid>
@@ -123,7 +124,7 @@ export const Overview = ({caData}) => {
                 </Grid>
             </Grid>
             <Grid item xs={5} container justifyContent={"flex-end"} style={{marginTop: 20}}>
-                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialDark} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
+                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
                     {decodedCert}
                 </SyntaxHighlighter>
             </Grid>

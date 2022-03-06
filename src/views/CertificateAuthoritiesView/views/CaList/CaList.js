@@ -48,7 +48,7 @@ export const CaList = ({refreshing, caList, urlCaName}) => {
                                 </Box>
                             </Grid>
                             <Grid item xs={2} container justifyContent={"flex-end"}>
-                                <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40, marginLeft: 10}}>
+                                <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40, marginLeft: 10}}>
                                     <IconButton style={{background: theme.palette.primary.light}} onClick={()=>{setIsMainMoadlOpen(true); navigate("actions/create")}}>
                                         <AddIcon style={{color: theme.palette.primary.main}}/>
                                     </IconButton>

@@ -56,13 +56,13 @@ export const dark = {
     palette: {
         mode: "dark",
         primary: {
-            light: "#4a6952",
-            main: "#25ee32", //2099C6
-            dark: "#2F6140"
+            light: "#184d60",   //184d60    4a6952
+            main: "#2099C6",    //2099C6    25ee32
+            dark: "#104c63"     // 104c63   2F6140
         },
         secondary: {
             light: "#222",
-            main: "#222",
+            main: "#0f171c",
             dark: "#333"
         },
         success:{
@@ -89,17 +89,17 @@ export const dark = {
             thumb: "#EEEEEE",
             track: "#555555"
         },
-        divider: "#444",
+        divider: "#29414e",
         text:{
-            primary: "#bbb",
+            primary: "#adbbc4",
             primaryLight: "#fff",
-            secondary: "#aaa",
+            secondary: "#e9ecef",
         },
         background: {
-            paper: "#333",
-            default: "#333",
-            lightContrast: "#444", // f1f1f1
-            darkContrast:  "#4f4f4f"
+            paper: "#17242b",
+            default: "#1b2a32",
+            lightContrast: "#22343c", // f1f1f1
+            darkContrast:  "#17242b"
         }
     }
 }

@@ -1,6 +1,6 @@
 import { success } from "redux/utils";
 import * as t from "./ActionTypes"
-import { statusToColor } from "./utils";
+import { keyStrengthToColor, statusToColor } from "./utils";
 
 function capitalizeFirstLetter(string) {
     string = string.toLowerCase();
@@ -21,6 +21,9 @@ export const reducer = (state = initState, action) => {
             action.payload.forEach(dms => {
                 dms.status = capitalizeFirstLetter(dms.status)
                 dms.status_color = statusToColor(dms.status)
+
+                dms.key_metadata.strength = capitalizeFirstLetter(dms.key_metadata.strength)
+                dms.key_metadata.strength_color = keyStrengthToColor(dms.key_metadata.strength)
                 currentList[dms.id] = dms
             });
 

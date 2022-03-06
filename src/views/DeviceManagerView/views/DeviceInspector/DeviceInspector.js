@@ -1,24 +1,20 @@
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { Button, Divider, Grid, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Divider, Grid, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon"
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import moment from "moment";
 import { LamassuChip } from "components/LamassuComponents/Chip";
-import SyntaxHighlighter from "react-syntax-highlighter/dist/esm/default-highlight";
-import { materialLight, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { LamassuTable } from "components/LamassuComponents/Table";
-import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { purple } from "@mui/material/colors";
-import { GrayButton } from "components/LamassuComponents/GrayButton";
+import { ColoredButton } from "components/LamassuComponents/ColoredButton";
 import { Link } from "react-router-dom";
 
-export const DeviceInspector = ({deviceId, deviceData}) => {
-    console.log(deviceId,deviceData);
+export const DeviceInspector = ({refreshing, deviceId, deviceData}) => {
+    // console.log(deviceId,deviceData);
     const theme = useTheme()
     const decodedCert = deviceData !== undefined ? window.atob(deviceData.pem_base64) : ""
     const themeMode = theme.palette.mode
@@ -136,8 +132,8 @@ export const DeviceInspector = ({deviceId, deviceData}) => {
                                     deviceData.tags.length > 0 ? (
                                         <Grid item xs={12} container spacing={1} style={{marginTop: "1px"}}>
                                             {
-                                                deviceData.tags.map(tag => (
-                                                    <Grid item>
+                                                deviceData.tags.map((tag, idx) => (
+                                                    <Grid item key={idx}>
                                                         <LamassuChip color={["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
                                                     </Grid>
                                                 ))
@@ -156,7 +152,7 @@ export const DeviceInspector = ({deviceId, deviceData}) => {
                                 </IconButton>
                             </Grid>
                             <Grid item>
-                                <GrayButton variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick} sx={{background: theme.palette.gray.main}}>Actions</GrayButton>
+                                <ColoredButton customTextColor={theme.palette.text.primary} customColor={theme.palette.gray.main} variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Actions</ColoredButton>
                                 <Menu
                                     style={{marginTop: 1, width: 200, borderRadius: 0}}
                                     id="simple-menu"

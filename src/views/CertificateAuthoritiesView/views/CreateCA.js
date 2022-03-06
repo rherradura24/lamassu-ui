@@ -1,7 +1,7 @@
-import { Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Paper, Select, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
 import {LamassuSwitch} from "components/LamassuComponents/Switch"
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { AwsIcon, AzureIcon } from "components/CloudProviderIcons";
 

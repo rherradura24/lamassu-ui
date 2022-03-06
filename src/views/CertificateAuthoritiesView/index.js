@@ -1,10 +1,10 @@
+import React, { useState } from "react";
 import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import CaList from "./views/CaList";
 import CaInspector from "./views/CaInspector";
 import { Box } from "@mui/system";
 import { Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import { useState } from "react";
 import { CreateCA } from "./views/CreateCA";
 import { ImportCA } from "./views/ImportCA";
 
@@ -66,7 +66,7 @@ const CaCreationActionsWrapper = () => {
                     </Box>
                 </Box>
                 <Divider />
-                <Box style={{ padding: "20px 40px 20px 40px", flexGrow: 1, height: 500, overflowY: "auto", height: "100%" }}>
+                <Box style={{ padding: "20px 40px 20px 40px", flexGrow: 1, overflowY: "auto", height: "100%" }}>
                     <Grid container>
                         <Outlet />
                     </Grid>

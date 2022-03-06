@@ -1,3 +1,4 @@
+import React from "react"
 import { useTheme } from "@emotion/react"
 import { Box, Grid, IconButton, Paper, Typography } from "@mui/material"
 import { LamassuStatusChip } from "components/LamassuComponents/Chip"
@@ -7,8 +8,6 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import { AMAZON_AWS, MICROSOFT_AZURE, GOOGLE_CLOUD, DISCONNECTED, CONFIGURED } from "./constans";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AwsIcon, AzureIcon, GoogleCloudIcon } from "components/CloudProviderIcons";
-import { useState } from "react";
-import AwsCloudIntegration from "./AwsCloudIntegration";
 import { useNavigate } from "react-router-dom";
 
 export default () => {
@@ -80,7 +79,7 @@ export default () => {
     const cloudProvidersRender = cloudProviders.map(cloudProviderItem => {
         return {
             settings: (
-                <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                     <IconButton>
                         <MoreHorizIcon fontSize={"small"}/>
                     </IconButton>
@@ -112,14 +111,14 @@ export default () => {
                 <Box>
                     <Grid container spacing={1}>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton onClick={()=>navigate(`aws/${cloudProviderItem.connectorId}`)}>
                                     <FormatAlignJustifyIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
                                     <DeleteIcon fontSize={"small"}/>
                                 </IconButton>

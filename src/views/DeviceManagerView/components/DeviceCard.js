@@ -1,3 +1,5 @@
+import React from "react"
+
 import { useTheme } from "@emotion/react"
 import { Box, Grid, Paper, Typography } from "@mui/material"
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon"
@@ -30,8 +32,8 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
                 tags.length > 0 ? (
                     <Grid item xs={12} container spacing={1} style={{marginBottom: 10}}>
                         {
-                            tags.map(tag => (
-                                <Grid item>
+                            tags.map((tag, idx) => (
+                                <Grid item key={idx}>
                                     <LamassuChip color={["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
                                 </Grid>
                             ))

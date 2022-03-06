@@ -1,3 +1,4 @@
+import React from "react"
 import { useTheme } from "@emotion/react"
 import { Box, Grid, IconButton, LinearProgress, Paper, Typography } from "@mui/material"
 import { LamassuChip } from "components/LamassuComponents/Chip"
@@ -36,21 +37,21 @@ export const IssuedCertificates = ({refreshing, certificates}) => {
                 <Box>
                     <Grid container spacing={1}>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
                                     <VisibilityIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
                                     <FileDownloadRoundedIcon fontSize={"small"}/>
                                 </IconButton>
                             </Box>
                         </Grid>
                         <Grid item>
-                            <Box component={Paper} elevation={0} style={{width: "fit-content", borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
                                 <IconButton>
                                     <DeleteIcon fontSize={"small"}/>
                                 </IconButton>

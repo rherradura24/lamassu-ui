@@ -1,7 +1,7 @@
-import { Box, Typography, useTheme } from "@mui/system";
+import React from "react"
+import { Box, useTheme } from "@mui/system";
 
-import { useState } from "react";
-import { Badge, MenuItem, Select } from "@mui/material";
+import { Badge } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 

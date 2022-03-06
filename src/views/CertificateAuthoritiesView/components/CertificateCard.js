@@ -1,3 +1,4 @@
+import React from "react"
 import { Grid, Paper, Typography } from "@mui/material"
 import { Box, useTheme } from "@mui/system"
 import { LamassuChip } from "components/LamassuComponents/Chip"

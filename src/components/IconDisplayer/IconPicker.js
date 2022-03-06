@@ -1,4 +1,4 @@
-
+import React from "react"
 import * as Ai from "react-icons/ai";
 import * as Bs from "react-icons/bs";
 import * as Bi from "react-icons/bi";
@@ -19,7 +19,7 @@ import * as Ti from "react-icons/ti";
 import * as Vsc from "react-icons/vsc";
 import * as Cg from "react-icons/cg";
 import { DynamicIcon } from "./DynamicIcon";
-import { Button, Grid, Paper, Popover, TextField } from "@mui/material";
+import { Button, Grid, Menu, Paper, Popover, TextField } from "@mui/material";
 import { useState } from "react";
 import { Box } from "@mui/system";
 
@@ -54,27 +54,26 @@ iconsFamily.forEach(iconFamily => {
 
 var iconStrings = iconStrings.filter(function (str) { return str.toLowerCase().includes("smart".toLowerCase()) });
 
-export function IconPicker(props) {
-    const [anchorEl, setAnchorEl] = useState(null);
+export function IconPicker({value, onChange, enableSearchBar = false, ...props}) {
     const [query, setQuery] = useState(null);
     const [filteredIcons, setFilteredIcons] = useState(iconStrings);
-    const [open, setOpen] = useState(false);
     const [typingTimer, setTypingTimer] = useState(null);
     const [doneTypingInterval, setDoneTypingInterval] = useState(2000);
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    
     const handleClick = (event) => {
-        setAnchorEl(event.currentTarget)
-        setOpen(true)
-    };
+        if (anchorEl !== event.currentTarget) {
+          setAnchorEl(event.currentTarget);
+        }
+    }
 
-    const handleClose = () => {
-        setAnchorEl(null)
-        setOpen(false)
-    };
+    const handleClose = (event) => {
+        setAnchorEl(null);
+    }
 
-    const onChange = (iconName) => {
-        if (props.onChange) {
-            props.onChange(iconName)
+    const handleIconClick = (iconName) => {
+        if (onChange) {
+            onChange(iconName)
         }
     };
 
@@ -90,50 +89,53 @@ export function IconPicker(props) {
     };
 
     return (
-        <div>
-            <Button variant="contained" onClick={ev => handleClick(ev)}>
+        <Box sx={{display: "flex", alignItems: "center"}}>
+            <Button variant="outlined" onClick={ev => handleClick(ev)} sx={{marginRight: "15px"}}>
                 Icon Selector
             </Button>
-            <Popover
-                anchorPosition={{ top: 10, left: 10 }}
-                onClose={() => handleClose()}
-                open={open}
-                anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'center',
-                }}
+            {
+                value && (
+                    <DynamicIcon size={30} icon={value}/>
+                )
+            }
+            <Menu
+                style={{marginTop: 1, width: "770px", borderRadius: 0}}
+                id="simple-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
             >
                 <div style={{ padding: 20 }}>
-                    <div style={{ marginBottom: 20 }}>
-                        <TextField
-                            id="query"
-                            label=""
-                            value={query}
-                            style={{ width: "100%" }}
-                            // inputProps={{ style: { color: theme.palette.dashboard.card.contrast } }}
-                            onKeyDown={clearTimeout(typingTimer)}
-                            onKeyUp={() => {
-                                clearTimeout(typingTimer);
-                                setTypingTimer(setTimeout(filterIcons(), doneTypingInterval))
-                            }}
-                            onChange={(ev) => { setQuery(ev.target.value) }}
-                        />
-                    </div>
-                    <Grid container spacing={2} columns={15}>
+                    {
+                        enableSearchBar && (
+                            <div style={{ marginBottom: 20 }}>
+                                <TextField
+                                    id="query"
+                                    label=""
+                                    value={query}
+                                    style={{ width: "100%" }}
+                                    // inputProps={{ style: { color: theme.palette.dashboard.card.contrast } }}
+                                    onKeyDown={clearTimeout(typingTimer)}
+                                    onKeyUp={() => {
+                                        clearTimeout(typingTimer);
+                                        setTypingTimer(setTimeout(filterIcons(), doneTypingInterval))
+                                    }}
+                                    onChange={(ev) => { setQuery(ev.target.value) }}
+                                />
+                            </div>
+                        )
+                    }
+                    <Grid container gap={2}>
                         {filteredIcons.map((iconName) => {
                             return (
-                                <Grid key={iconName} item xs={1} container alighItems="center" justifyContent="center" onClick={() => { onChange(iconName); handleClose() }} component={Paper}>
+                                <Grid key={iconName} item xs="auto" sx={{padding: "10px", cursor: "pointer"}} container alighItems="center" justifyContent="center" onClick={() => { handleIconClick(iconName); handleClose() }} component={Paper}>
                                     <DynamicIcon icon={iconName} size={30}/> 
                                 </Grid>
                             )
                         })}
                     </Grid>
                 </div>
-            </Popover>
-        </div>
+            </Menu>
+        </Box>
     )
 }

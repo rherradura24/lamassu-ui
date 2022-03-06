@@ -1,9 +1,9 @@
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { Button, Divider, Grid, Paper, Tab, Tabs, Typography } from "@mui/material";
+import { Button, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { Box } from "@mui/system"
-import { useState } from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { materialLight, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import EditIcon from '@mui/icons-material/Edit';
 import { AwsIcon } from "components/CloudProviderIcons";
 
@@ -104,7 +104,7 @@ export default ({ }) => {
                                 </Button>
                             </Grid>
                             <Grid item xs={12}>
-                                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialDark} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
                                     {JSON.stringify(awsPolicy, null, 4)}
                                 </SyntaxHighlighter>
                             </Grid>
