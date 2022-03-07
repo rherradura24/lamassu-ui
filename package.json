@@ -8,6 +8,7 @@
     "@fidm/x509": "^1.2.1",
     "@loadable/component": "^5.15.2",
     "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.71",
     "@mui/material": "^5.2.1",
     "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "^5.15.1",
@@ -33,7 +34,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -59,6 +60,7 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
-    "eslint-plugin-react": "^7.29.3"
+    "eslint-plugin-react": "^7.29.3",
+    "remote-redux-devtools": "^0.5.16"
   }
 }

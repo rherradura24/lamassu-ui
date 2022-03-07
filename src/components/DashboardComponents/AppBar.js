@@ -9,10 +9,10 @@ const AppBar = ({ className, background, logo, notificationsCount, onNotificatio
     const theme = useTheme()
 
     return (
-        <Box className={className} style={{ background: theme.palette.secondary.main, display: "flex", alignItems: "center", padding: "0px 10px", justifyContent: "space-between"}}>
+        <Box className={className} style={{ background: theme.palette.appbar, display: "flex", alignItems: "center", padding: "0px 10px", justifyContent: "space-between"}}>
             {logo}
-            <div style={{ background: theme.palette.secondary.main, height: 50, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                <Badge badgeContent={notificationsCount} color="primary" onClick={onNotificationsClick} style={{marginRight: 30, cursor: "pointer"}}>
+            <div style={{ height: 50, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                <Badge badgeContent={notificationsCount} color="secondary" onClick={onNotificationsClick} style={{marginRight: 30, cursor: "pointer", verticalAlign: "middle"}}>
                     <NotificationsIcon style={{color: "#F1F2F8"}}/>
                 </Badge>
                 <LogoutIcon style={{color: "#F1F2F8", cursor: "pointer"}}/>

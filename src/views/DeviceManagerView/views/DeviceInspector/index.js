@@ -8,6 +8,7 @@ const mapStateToProps = (state, {deviceId}) => ({
     refreshing: devManagerDuck.reducer.isRequestInProgress(state),
 })
 
+
 const mapDispatchToProps = (dispatch) => ({
   onMount: ()=>{ 
     dispatch(devManagerDuck.actions.getDevices()) 

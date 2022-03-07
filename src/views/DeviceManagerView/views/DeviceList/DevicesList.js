@@ -106,7 +106,7 @@ export const DeviceList = ({devices}) => {
                                     <Typography variant="button">Sort By</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <ColoredButton customTextColor={theme.palette.text.primary} customColor={theme.palette.gray.light} size="small" variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Alias</ColoredButton>
+                                    <ColoredButton customtextcolor={theme.palette.text.primary} customcolor={theme.palette.gray.light} size="small" variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Alias</ColoredButton>
                                     <Menu
                                         style={{marginTop: 1, width: 200, borderRadius: 0}}
                                         id="simple-menu"

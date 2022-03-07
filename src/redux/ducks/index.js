@@ -7,6 +7,7 @@ import ca from './certificate-authorities';
 import devManager from './device-manager';
 import dmsEnroller from './dms-enroller';
 import notifications from './notifications';
+import { composeWithDevTools } from 'remote-redux-devtools';
 
 const epics = [
     ...Object.values(ca.epic),
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
 const epicMiddleware = createEpicMiddleware();
 
 export default function configureStore() {
+    // const composeEnhancers = composeWithDevTools({ realtime: true, port: 8000 });
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; //DEBUG TOOL - REACT_REDUX CHROME EXTENSION
 
     const store = createStore(

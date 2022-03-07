@@ -10,3 +10,27 @@ export const getIssuedCerts = (caName) => ({
         caName: caName
     }
 })
+
+export const createCA = (caName, country, state, locality, organization, organizationUnit, commonName, caTtl, enrollerTtl, keyType, keyBits) => ({
+    type: t.CREATE_CA,
+    payload: { 
+        caName: caName,
+        body: {
+            subject:{
+                country: country,
+                state: state,
+                locality: locality,
+                organization: organization,
+                organization_unit: organizationUnit,
+                common_name: commonName,
+            },
+            key_metadata:{
+                type: keyType,
+                bits: keyBits,
+
+            },
+            ca_ttl: caTtl,
+            enroller_ttl: enrollerTtl,
+        }
+    },
+})

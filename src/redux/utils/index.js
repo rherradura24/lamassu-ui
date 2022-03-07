@@ -70,4 +70,4 @@ export const makeRequestWithActions = (fetchPromise, actionType, meta = {}) =>
                 };
             }
         }),
-    )
+)

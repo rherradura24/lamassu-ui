@@ -65,12 +65,12 @@ export const DmsList = ({dmsList}) => {
                             dms.status === dmsStatus.PENDING ? (
                                 <>
                                     <Grid item>
-                                        <ColoredButton customTextColor={theme.palette.success.main} customColor={theme.palette.success.light}  startIcon={<DoneIcon />} variant="contained" size="small">
+                                        <ColoredButton customtextcolor={theme.palette.success.main} customcolor={theme.palette.success.light}  startIcon={<DoneIcon />} variant="contained" size="small">
                                             Approve
                                         </ColoredButton>
                                     </Grid>
                                     <Grid item>
-                                        <ColoredButton customTextColor={theme.palette.error.main} customColor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
+                                        <ColoredButton customtextcolor={theme.palette.error.main} customcolor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
                                             Reject
                                         </ColoredButton>
                                     </Grid>
@@ -78,7 +78,7 @@ export const DmsList = ({dmsList}) => {
                             ) : (
                                 dms.status === dmsStatus.APPROVED ? (
                                     <Grid item>
-                                        <ColoredButton customTextColor={theme.palette.error.main} customColor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
+                                        <ColoredButton customtextcolor={theme.palette.error.main} customcolor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
                                             Revoke
                                         </ColoredButton>
                                     </Grid>

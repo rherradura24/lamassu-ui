@@ -5,8 +5,8 @@ import CaInspector from "./views/CaInspector";
 import { Box } from "@mui/system";
 import { Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import { CreateCA } from "./views/CreateCA";
-import { ImportCA } from "./views/ImportCA";
+import CreateCA  from "./views/CaActions/CreateCA";
+import { ImportCA } from "./views/CaActions/ImportCA/ImportCA";
 
 export default () => {
     return (

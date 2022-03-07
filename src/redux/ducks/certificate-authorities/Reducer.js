@@ -1,4 +1,5 @@
 import { success, failed } from "redux/utils";
+import { actionType, status } from "redux/utils/constants";
 import * as t from "./ActionTypes"
 import { keyStrengthToColor, statusToColor } from "./utils";
 
@@ -8,8 +9,8 @@ function capitalizeFirstLetter(string) {
 }  
 
 const initState = {
-    requestInProgress: false,
-    refresh: false,
+    status: status.IDLE,
+    actionType: actionType.NONE,
     list: {}
 }
 
@@ -17,7 +18,7 @@ export const reducer = (state = initState, action) => {
     console.log(action);
     switch (action.type) {
         case t.GET_CAS:
-            return {...state, requestInProgress: true, refresh: true };
+            return {...state, status: status.PENDING, actionType: actionType.READ };
 
         case success(t.GET_CAS):
             var currentList = {}
@@ -31,17 +32,16 @@ export const reducer = (state = initState, action) => {
                 ca.key_metadata.strength_color = keyStrengthToColor(ca.key_metadata.strength)
 
                 ca.issued_certs = {
-                    requestInProgress: false,
-                    refresh: false,
+                    status: status.IDLE,
                     list: {}
                 }
                 currentList[ca.name] = ca
             });
 
-            return {...state, list: currentList, requestInProgress: false, refresh: false };
+            return {...state, list: currentList, status: status.SUCCEEDED };
 
         case failed(t.GET_CAS):
-            return {...state, requestInProgress: false, refresh: false };
+            return {...state, status: status.FAILED };
 
         case t.GET_ISSUED_CERTS:
             return {
@@ -52,8 +52,8 @@ export const reducer = (state = initState, action) => {
                         ...state.list[action.payload.caName],
                         issued_certs: {
                             ...state.list[action.payload.caName].issued_certs,
-                            requestInProgress: true,
-                            refresh: true,
+                            status: status.PENDING,
+                            actionType: actionType.READ
                         }
                     },
                 }
@@ -74,8 +74,7 @@ export const reducer = (state = initState, action) => {
 
             currentList[action.meta.caName].issued_certs = {
                 ...currentList[action.meta.caName].issued_certs,
-                requestInProgress: false,
-                refresh: false,
+                status: status.SUCCEEDED
             }
 
             return {...state, list: currentList };
@@ -90,12 +89,21 @@ export const reducer = (state = initState, action) => {
                         ...state.list[action.meta.caName],
                         issued_certs: {
                             ...state.list[action.meta.caName].issued_certs,
-                            requestInProgress: false,
-                            refresh: false,
+                            status: status.FAILED
                         }
                     },
                 }
         };
+
+        case t.CREATE_CA:
+            return {...state, status: status.PENDING, actionType: actionType.CREATE };
+
+        case failed(t.CREATE_CA):
+            return {...state, status: status.FAILED };
+
+        case success(t.CREATE_CA):
+            return {...state, status: status.SUCCEEDED };
+
         default:
             return state;
     }
@@ -105,7 +113,10 @@ const getSelector = (state) => state.cas
 
 export const isRequestInProgress = (state) => {
     const caReducer = getSelector(state)
-    return caReducer.requestInProgress;
+    return {
+        status: caReducer.status,
+        actionType: caReducer.actionType
+    }
 }
 
 export const getCAs = (state) => {
@@ -122,7 +133,10 @@ export const getCA = (state, caName) => {
 
 export const isIssuedCertsRequestInProgress = (state, caName) => {
     const caReducer = getSelector(state).list[caName]
-    return caReducer.issued_certs.requestInProgress;
+    return {
+        status: caReducer.issued_certs.status,
+        actionType: caReducer.issued_certs.actionType
+    }
 }
 
 export const getIssuedCerts = (state, caName) => {

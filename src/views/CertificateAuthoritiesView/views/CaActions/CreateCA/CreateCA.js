@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
+import { FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
 import {LamassuSwitch} from "components/LamassuComponents/Switch"
 import { Box } from "@mui/system";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { AwsIcon, AzureIcon } from "components/CloudProviderIcons";
+import LoadingButton from '@mui/lab/LoadingButton';
+import AddIcon from '@mui/icons-material/Add';
 
-export const CreateCA = () => {
+export const CreateCA = ({ requestInProgress, onSubmit = ()=>{} }) => {
     const theme = useTheme();
 
     const rsaOptions = [
@@ -44,8 +46,6 @@ export const CreateCA = () => {
         },
     ]
 
-    const [selectedTab, setSelectedTab] = useState(0)
-
     const [caName, setCaName] = useState("")
     const [country, setCountry] = useState("")
     const [state, setState] = useState("")
@@ -62,6 +62,9 @@ export const CreateCA = () => {
     
     const disabled = caName == ""
 
+    const handleCreateCa = ()=>  {
+        onSubmit(caName, country, state, city, org, orgUnit, cn, parseInt(ttlValue)*ttlUnit, parseInt(enrollerTtlValue)*enrollerTtlUnit, keyType, parseInt(keyBits.value))
+    }
 
     useEffect(()=>{
         if (keyType == "rsa") {
@@ -85,7 +88,8 @@ export const CreateCA = () => {
                         labelId="pk-type-simple-select-label"
                         id="pk-type-simple-select"
                         label="Private Key Type"
-                        value={keyType} onChange={(ev)=>setKeyType(ev.target.value)}
+                        value={keyType} 
+                        onChange={(ev)=>setKeyType(ev.target.value)}
                     >
                         <MenuItem value="rsa">RSA</MenuItem>
                         <MenuItem value="ec">ECDSA</MenuItem>
@@ -117,28 +121,28 @@ export const CreateCA = () => {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Country" />
+                <TextField variant="standard" fullWidth label="Country" value={country} onChange={(ev)=>setCountry(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="State/Province" />
+                <TextField variant="standard" fullWidth label="State/Province" value={state} onChange={(ev)=>setState(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Locality" />
+                <TextField variant="standard" fullWidth label="Locality"  value={city} onChange={(ev)=>setCity(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Organization" />
+                <TextField variant="standard" fullWidth label="Organization"  value={org} onChange={(ev)=>setOrg(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Organization Unit" />
+                <TextField variant="standard" fullWidth label="Organization Unit"  value={orgUnit} onChange={(ev)=>setOrgUnit(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Common Name" />
+                <TextField variant="standard" fullWidth label="Common Name"  value={cn} onChange={(ev)=>setCN(ev.target.value)}/>
             </Grid>
 
             <Grid item xs={12} spacing={4} container>
                 <Grid item container justify="space-between" alignItems="center" spacing={4}>
                     <Grid item xs={6}>
-                        <TextField variant="standard" fullWidth label="CA expiration time" />
+                        <TextField variant="standard" type="number" fullWidth label="CA expiration time" value={ttlValue} onChange={(ev)=>setTtlValue(ev.target.value)}/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl variant="standard" fullWidth>
@@ -147,6 +151,8 @@ export const CreateCA = () => {
                                 labelId="ca-exp-simple-select-label"
                                 id="ca-exp-simple-select"
                                 label="CA expiration time units"
+                                value={ttlUnit} 
+                                onChange={(ev)=>setTtlUnit(ev.target.value)}
                             >
                                 <MenuItem value={1}>Hours</MenuItem>
                                 <MenuItem value={24}>Days</MenuItem>
@@ -158,7 +164,7 @@ export const CreateCA = () => {
 
                 <Grid item container justify="space-between" alignItems="center" spacing={4}>
                     <Grid item xs={6}>
-                        <TextField variant="standard" fullWidth label="Emmited certificates expiration time" />
+                        <TextField variant="standard" type="number" fullWidth label="Emmited certificates expiration time" value={enrollerTtlValue} onChange={(ev)=>setEnrollerTtlValue(ev.target.value)}/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl variant="standard" fullWidth>
@@ -167,6 +173,8 @@ export const CreateCA = () => {
                                 labelId="ca-exp-units-simple-select-label"
                                 id="ca-exp-units-simple-select"
                                 label="CA expiration time units"
+                                value={enrollerTtlUnit} 
+                                onChange={(ev)=>setEnrollerTtlUnit(ev.target.value)}
                             >
                                 <MenuItem value={1}>Hours</MenuItem>
                                 <MenuItem value={24}>Days</MenuItem>
@@ -198,7 +206,15 @@ export const CreateCA = () => {
 
                 </Grid>
                     <Grid item container>
-                        <Button variant="contained">Create CA</Button>
+                        <LoadingButton 
+                            variant="contained" 
+                            endIcon={<AddIcon />}
+                            onClick={()=>{handleCreateCa()}}
+                            loading={requestInProgress}
+                            loadingPosition="end"
+                        >
+                            Create CA
+                        </LoadingButton>
                     </Grid>
             </Grid>
         </Grid>

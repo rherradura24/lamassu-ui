@@ -7,6 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
 export const CaList = ({refreshing, caList, urlCaName}) => {
+    console.log(refreshing, caList, urlCaName);
     const theme = useTheme()
 
     const containerRef = React.useRef(null);

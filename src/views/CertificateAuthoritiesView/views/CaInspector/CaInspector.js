@@ -120,10 +120,13 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
     )
 }
 
-const mapStateToProps = (state, {caName}) => ({
-    caData : casDuck.reducer.getCA(state, caName),
-    refreshing: casDuck.reducer.isRequestInProgress(state)
-})
+const mapStateToProps = (state, {caName}) => {
+    const reqInProgress = casDuck.reducer.isRequestInProgress(state, caName); 
+    return{
+        refreshing : reqInProgress.status == status.PENDING && reqInProgress.actionType == actionType.READ,
+        caData : casDuck.reducer.getCA(state, caName),
+    }
+  }
 
 const mapDispatchToProps = (dispatch) => ({
     onMount: ()=>{ 

@@ -101,10 +101,7 @@ export default ({notificationsList}) => {
                         <AppBar 
                             background={"#468AEB"}
                             logo={
-                                <Grid container alignItems={"center"}>
-                                    <img src={process.env.PUBLIC_URL + "/assets/LAMASSU_W.png"} height={24} style={{marginLeft: "5px"}}/>
-                                    <Typography sx={{marginLeft: "15px", fontWeight: "bold", color: "white"}}>Lamassu IoT</Typography>
-                                </Grid>
+                                <img src={process.env.PUBLIC_URL + "/assets/LAMASSU_W.png"} height={24} style={{marginLeft: "5px"}}/>
                             }
                             notificationsCount={notificationsList.length}
                             onNotificationsClick={()=>setDisplayNotifications(true)}

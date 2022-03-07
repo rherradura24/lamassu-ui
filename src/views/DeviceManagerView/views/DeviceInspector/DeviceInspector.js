@@ -152,7 +152,7 @@ export const DeviceInspector = ({refreshing, deviceId, deviceData}) => {
                                 </IconButton>
                             </Grid>
                             <Grid item>
-                                <ColoredButton customTextColor={theme.palette.text.primary} customColor={theme.palette.gray.main} variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Actions</ColoredButton>
+                                <ColoredButton customtextcolor={theme.palette.text.primary} customcolor={theme.palette.gray.main} variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Actions</ColoredButton>
                                 <Menu
                                     style={{marginTop: 1, width: 200, borderRadius: 0}}
                                     id="simple-menu"

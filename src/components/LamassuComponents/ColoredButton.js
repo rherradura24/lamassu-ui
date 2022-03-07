@@ -27,13 +27,13 @@ function padZero(str, len) {
   return (zeros + str).slice(-len);
 }
 
-export const ColoredButton = styled(Button)(({ theme, customColor, customTextColor }) => {
+export const ColoredButton = styled(Button)(({ theme, customcolor, customtextcolor }) => {
   // console.log(color);
   return ({
-    color: customTextColor,
-    backgroundColor: customColor,
+    color: customtextcolor,
+    backgroundColor: customcolor,
     '&:hover': {
-      backgroundColor: customColor,
+      backgroundColor: customcolor,
     },
 })});
 

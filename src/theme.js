@@ -10,7 +10,7 @@ export const light = {
         },
         secondary: {
             light: "#70A8EB",
-            main: "#0068D1",
+            main: "#FF9900",
             dark: "#1F528F"
         },
         success:{
@@ -48,7 +48,8 @@ export const light = {
             default: "#fff",
             lightContrast: "#eff0f2", // f1f1f1
             darkContrast:  "#D4D4D4"
-        }
+        },
+        appbar: "#0068D1"
     },    
 }
 
@@ -62,7 +63,7 @@ export const dark = {
         },
         secondary: {
             light: "#222",
-            main: "#0f171c",
+            main: "#2099C6",
             dark: "#333"
         },
         success:{
@@ -100,6 +101,7 @@ export const dark = {
             default: "#1b2a32",
             lightContrast: "#22343c", // f1f1f1
             darkContrast:  "#17242b"
-        }
+        },
+        appbar: "#0f171c"
     }
 }
