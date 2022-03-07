@@ -6,9 +6,12 @@ import { RiShieldKeyholeLine } from "react-icons/ri";
 import { AwsIcon, AzureIcon } from "components/CloudProviderIcons";
 import LoadingButton from '@mui/lab/LoadingButton';
 import AddIcon from '@mui/icons-material/Add';
+import { actionType, status } from "redux/utils/constants";
+import { useNavigate } from "react-router-dom";
 
-export const CreateCA = ({ requestInProgress, onSubmit = ()=>{} }) => {
+export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestStatus }) => {
     const theme = useTheme();
+    const navigate = useNavigate()
 
     const rsaOptions = [
         {
@@ -60,7 +63,7 @@ export const CreateCA = ({ requestInProgress, onSubmit = ()=>{} }) => {
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(rsaOptions[1])
     
-    const disabled = caName == ""
+    const disabledCreateCaButton = caName == ""
 
     const handleCreateCa = ()=>  {
         onSubmit(caName, country, state, city, org, orgUnit, cn, parseInt(ttlValue)*ttlUnit, parseInt(enrollerTtlValue)*enrollerTtlUnit, keyType, parseInt(keyBits.value))
@@ -73,6 +76,14 @@ export const CreateCA = ({ requestInProgress, onSubmit = ()=>{} }) => {
             setKeyBits(ecdsaOptions[1])
         }
     }, [keyType])
+
+    useEffect(()=>{
+        if (requestStatus.status == status.SUCCEEDED && requestStatus.actionType == actionType.CREATE) {
+            resetCurretRequestStatus()
+            navigate("/cas")
+        }
+    }, [requestStatus])
+    
 
     const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
 
@@ -210,8 +221,9 @@ export const CreateCA = ({ requestInProgress, onSubmit = ()=>{} }) => {
                             variant="contained" 
                             endIcon={<AddIcon />}
                             onClick={()=>{handleCreateCa()}}
-                            loading={requestInProgress}
+                            loading={requestStatus.status == status.PENDING && requestStatus.actionType == actionType.CREATE}
                             loadingPosition="end"
+                            disabled={disabledCreateCaButton}
                         >
                             Create CA
                         </LoadingButton>

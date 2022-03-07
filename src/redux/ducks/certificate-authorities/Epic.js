@@ -23,6 +23,7 @@ export const getCasEpicError= action$ => action$.pipe(
 
 export const getIssuedCertsEpic = action$ => action$.pipe(
     ofType(t.GET_ISSUED_CERTS),
+    tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
     mergeMap( ({payload}) => makeRequestWithActions(lamassuCaApi.getIssuedCerts(payload.caName), t.GET_ISSUED_CERTS, {caName: payload.caName})),
 );
 
@@ -35,9 +36,8 @@ export const getIssuedCertsEpicError= action$ => action$.pipe(
 
 export const createCaEpic = action$ => action$.pipe(
     ofType(t.CREATE_CA),
-    tap(item => console.log(item)),
-    mergeMap(({payload}) => {console.log("a"); return makeRequestWithActions(lamassuCaApi.createCA(payload.caName, payload.body), t.CREATE_CA)}),
-    tap(item => console.log(item)),
+    // tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+    mergeMap(({payload}) => {return makeRequestWithActions(lamassuCaApi.createCA(payload.caName, payload.body), t.CREATE_CA)})
 );
 
 export const createCaEpicError= action$ => action$.pipe(
@@ -45,8 +45,16 @@ export const createCaEpicError= action$ => action$.pipe(
     mergeMap(({payload}) => of(notificationsDuck.actions.addNotification(notificationsDuck.constants.ERROR, `Error while creating Certificate Authority: ${payload}`))),
 );
 
-export const createCaEpicSuccess= action$ => action$.pipe(
+export const createCaEpicSuccessNotification= action$ => action$.pipe(
     ofType(success(t.CREATE_CA)),
-    mergeMap(({payload}) => of(notificationsDuck.actions.addNotification(notificationsDuck.constants.SUCCESS, `Certificate Authority successfully created!`))),
-    mergeMap(() => makeRequestWithActions(lamassuCaApi.getCAs(), t.GET_CAS)),
+    tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+    mergeMap(({payload}) => of(
+        notificationsDuck.actions.addNotification(notificationsDuck.constants.SUCCESS, `${payload.name} CA successfully created!`)),
+    )
+);
+
+export const createCaEpicSuccessTriggerRefresh= action$ => action$.pipe(
+    ofType(success(t.CREATE_CA)),
+    tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+    mergeMap(()=> makeRequestWithActions(lamassuCaApi.getCAs(), t.GET_CAS) )
 );

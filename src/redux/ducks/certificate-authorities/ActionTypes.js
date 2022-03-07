@@ -1,5 +1,7 @@
 const prefix = "cas/"
 
+export const RESET_CURRENT_REQUEST_STATUS = prefix + 'RESET_CURRENT_REQUEST_STATUS';
+
 export const GET_CAS = prefix + 'GET_CAS';
 export const GET_CA = prefix + 'GET_CA';
 export const GET_ISSUED_CERTS = prefix + 'GET_ISSUED_CERTS';

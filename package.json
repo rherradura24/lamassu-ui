@@ -31,6 +31,7 @@
     "react-syntax-highlighter": "^15.4.5",
     "redux": "^4.1.2",
     "redux-observable": "^2.0.0",
+    "universal-cookie": "^4.0.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -38,6 +39,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "remotedev": "remotedev --hostname=localhost --port=8000 --wsEngine=ws",
     "lint": "eslint src"
   },
   "eslintConfig": {
@@ -61,6 +63,7 @@
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.29.3",
-    "remote-redux-devtools": "^0.5.16"
+    "remote-redux-devtools": "^0.5.16",
+    "remotedev-server": "^0.3.1"
   }
 }

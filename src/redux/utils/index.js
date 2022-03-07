@@ -10,7 +10,7 @@ export const success = (actionType) => actionType + PREFIX_SUCCESS;
 export const failed = (actionType) => actionType + PREFIX_FAIL;
 
 export const apiRequest = async ({ method = 'GET', url, data, query, headers = {} }) => {
-    await new Promise(r => setTimeout(r, 3000));
+    // await new Promise(r => setTimeout(r, 5000));
 
     method = method.toUpperCase()
     if (query) {
@@ -19,7 +19,15 @@ export const apiRequest = async ({ method = 'GET', url, data, query, headers = {
 
     const parseError = (err) => {
         if (typeof err === 'object') {
-            return err === {} ? JSON.stringify(err) : "" 
+            if (err !== {}){
+                if (err.error){
+                    return err.error
+                }else{
+                    JSON.stringify(err)
+                }
+            }else {
+                return ""
+            }
         }else{
             return err
         }

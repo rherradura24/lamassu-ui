@@ -10,8 +10,10 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { connect } from "react-redux";
 import { createLoader } from "components/utils";
 import { useTheme } from "@emotion/react";
+import { actionType, status } from "redux/utils/constants";
 
 const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
+    console.log(refreshing, caData, urlCaInspectTab);
     const theme = useTheme()
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState(urlCaInspectTab)
@@ -121,7 +123,7 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
 }
 
 const mapStateToProps = (state, {caName}) => {
-    const reqInProgress = casDuck.reducer.isRequestInProgress(state, caName); 
+    const reqInProgress = casDuck.reducer.isRequestInProgress(state); 
     return{
         refreshing : reqInProgress.status == status.PENDING && reqInProgress.actionType == actionType.READ,
         caData : casDuck.reducer.getCA(state, caName),

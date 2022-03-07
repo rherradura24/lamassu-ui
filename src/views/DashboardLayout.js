@@ -1,7 +1,8 @@
+import React, { useEffect, useRef, useState } from "react";
+import Cookies from 'universal-cookie';
 import { Box } from "@mui/system";
 import { AppBar } from "components/DashboardComponents/AppBar";
 import { SideBar } from "components/DashboardComponents/SideBar";
-import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -20,14 +21,24 @@ import  DmsList  from "./DmsList";
 import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
 import CloseIcon from '@mui/icons-material/Close';
 
+
 export default ({notificationsList}) => {
+    const cookies = new Cookies();
+    if(cookies.get('paletteMode') == undefined){
+        cookies.set('paletteMode', 'light', { path: '/' });
+    }
+
     const containerRef = useRef(null);
 
-    const [darkTheme, setDarkTheme] = useState(false)
+    const [darkTheme, setDarkTheme] = useState(cookies.get('paletteMode') === "dark")
     const [collapsed, setCollapsed] = useState(false)
     const [displayNotifications, setDisplayNotifications] = useState(false)
 
     const theme = createTheme(darkTheme ? dark : light)
+
+    useEffect(()=>{
+        cookies.set('paletteMode', darkTheme === true ? "dark" : "light", { path: '/' });
+    }, [darkTheme])
 
     const routes = [
         {

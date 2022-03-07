@@ -1,5 +1,9 @@
 import * as t from "./ActionTypes";
 
+export const resetCurretRequestStatus = () => ({
+    type: t.RESET_CURRENT_REQUEST_STATUS,
+})
+
 export const getCAs = () => ({
     type: t.GET_CAS,
 })
