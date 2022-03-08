@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import CertificateAuthoritiesView from "views/CertificateAuthoritiesView";
+import DeviceManagerView from "./DeviceManagerView";
+import DmsView from "./DeviceManufacturingSystemView";
 
 import "./DashboardLayout.css"
 import { GlobalStyles, Grid, Paper, Typography,IconButton, Slide } from "@mui/material";
@@ -15,9 +17,7 @@ import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlin
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import RouterOutlinedIcon from '@mui/icons-material/RouterOutlined';
 import { dark, light } from "theme";
-import  DeviceManagerView from "./DeviceManagerView";
 import {MdOutlinePrecisionManufacturing} from "react-icons/md"
-import  DmsList  from "./DmsList";
 import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -73,7 +73,7 @@ export default ({notificationsList}) => {
                     path: "/dms/*",
                     link: "/dms",
                     icon: <MdOutlinePrecisionManufacturing  key="/2"/>,
-                    content: <DmsList />
+                    content: <DmsView />
                 },
                 {
                     title: "Device Manager",
@@ -112,7 +112,7 @@ export default ({notificationsList}) => {
                         <AppBar 
                             background={"#468AEB"}
                             logo={
-                                <img src={process.env.PUBLIC_URL + "/assets/LAMASSU_W.png"} height={24} style={{marginLeft: "5px"}}/>
+                                <img src={process.env.PUBLIC_URL + "/assets/LAMASSU.svg"} height={24} style={{marginLeft: "5px"}}/>
                             }
                             notificationsCount={notificationsList.length}
                             onNotificationsClick={()=>setDisplayNotifications(true)}

@@ -12,9 +12,12 @@ import {AiOutlineSearch} from "react-icons/ai"
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useNavigate } from "react-router-dom";
 
 export const DmsList = ({dmsList}) => {
     const theme = useTheme()
+
+    const navigate = useNavigate()
 
     const [anchorElSort, setAnchorElSort] = useState(null);
     const handleClick = (event) => {
@@ -26,6 +29,7 @@ export const DmsList = ({dmsList}) => {
     const handleCloseSort = (event) => {
         setAnchorElSort(null);
     }
+    
 
 
     const dmsTableColumns = [
@@ -104,7 +108,7 @@ export const DmsList = ({dmsList}) => {
                                 <InputBase fullWidth={true} style={{color: "#555", fontSize: 14}}/>
                             </Box>
                             <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40, marginLeft: 10}}>
-                                <IconButton style={{background: theme.palette.primary.light}}>
+                                <IconButton style={{background: theme.palette.primary.light}} onClick={()=>{navigate("create")}}>
                                     <AddIcon style={{color: theme.palette.primary.main}}/>
                                 </IconButton>
                             </Box>

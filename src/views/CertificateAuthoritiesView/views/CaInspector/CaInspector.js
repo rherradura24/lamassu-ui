@@ -13,7 +13,6 @@ import { useTheme } from "@emotion/react";
 import { actionType, status } from "redux/utils/constants";
 
 const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
-    console.log(refreshing, caData, urlCaInspectTab);
     const theme = useTheme()
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState(urlCaInspectTab)

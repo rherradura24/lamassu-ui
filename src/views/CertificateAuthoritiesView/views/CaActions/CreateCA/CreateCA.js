@@ -90,7 +90,7 @@ export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestS
     return (
         <Grid container spacing={3} justifyContent="center" alignItems="center" >
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="CA Name" value={caName} onChange={(ev)=>setCaName(ev.target.value)}/>
+                <TextField variant="standard" fullWidth label="CA Name" required value={caName} onChange={(ev)=>setCaName(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
                 <FormControl variant="standard" fullWidth>

@@ -20,7 +20,6 @@ export default ({caName}) => {
 const RoutedCaInspector = ({caName}) => {
     let params = useParams();
     let location = useLocation();
-    console.log(params, location);
     var selectedTab = 0
     if(location.pathname.includes("certs")){
         selectedTab = 1
