@@ -100,7 +100,7 @@ export const DmsList = ({dmsList}) => {
     return (
         <Grid container style={{height: "100%"}}>
             <Grid item xs={12} container>
-                <Box sx={{padding: "25px", height: "calc(100% - 50px)"}}>
+                <Box sx={{padding: "25px", width: "calc(100% - 50px)", height: "calc(100% - 50px)"}}>
                     <Grid container alignItems={"center"} justifyContent="space-between" sx={{marginBottom: "35px"}}>
                         <Grid item xs="auto" container alignItems={"center"}>
                             <Box component={Paper} sx={{padding: "5px", height: 30, display: "flex", alignItems: "center", width: 300}}>

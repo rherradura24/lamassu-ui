@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { FormControl, Grid, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography, useTheme } from "@mui/material";
-import {LamassuSwitch} from "components/LamassuComponents/Switch"
+import { LamassuSwitch } from "components/LamassuComponents/Switch"
 import { Box } from "@mui/system";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { AwsIcon, AzureIcon } from "components/CloudProviderIcons";
@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { actionType, status } from "redux/utils/constants";
 import { useNavigate } from "react-router-dom";
 
-export const CreateDms = ({}) => {
+export const CreateDms = ({ createDMS }) => {
     const theme = useTheme()
 
     const rsaOptions = [
@@ -49,6 +49,10 @@ export const CreateDms = ({}) => {
         },
     ]
 
+    const handleCreateDms = () => {
+        createDMS(dmsName, country, state, city, org, orgUnit, cn, keyType, parseInt(keyBits.value))
+    }
+
     const [dmsName, setDmsName] = useState("")
     const [country, setCountry] = useState("")
     const [state, setState] = useState("")
@@ -59,98 +63,98 @@ export const CreateDms = ({}) => {
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(rsaOptions[1])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (keyType == "rsa") {
             setKeyBits(rsaOptions[1])
-        }else{
+        } else {
             setKeyBits(ecdsaOptions[1])
         }
     }, [keyType])
 
     const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
 
-    const disabledCreateDmsButton = dmsName == "" || cn == "" 
+    const disabledCreateDmsButton = dmsName == "" || cn == ""
 
     return (
-            <Grid container spacing={3} justifyContent="center" alignItems="center">
-                <Grid item xs={12}>
-                    <TextField variant="standard" fullWidth label="Device Manufacturing System Name" required value={dmsName} onChange={(ev)=>setDmsName(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={6}>
-                    <FormControl variant="standard" fullWidth>
-                        <InputLabel id="pk-type-simple-select-label">Private Key Type</InputLabel>
-                        <Select
-                            labelId="pk-type-simple-select-label"
-                            id="pk-type-simple-select"
-                            label="Private Key Type"
-                            value={keyType} 
-                            onChange={(ev)=>setKeyType(ev.target.value)}
-                        >
-                            <MenuItem value="rsa">RSA</MenuItem>
-                            <MenuItem value="ec">ECDSA</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={6}>
-                    <FormControl variant="standard" fullWidth>
-                        <InputLabel id="pk-length-simple-select-label">Private Key Length</InputLabel>
-                        <Select
-                            labelId="pk-length-simple-select-label"
-                            id="pk-length-simple-select"
-                            label="Private Key Length"
-                            value={keyBits.value}
-                            onChange={(ev)=>{
-                                setKeyBits(keyBitsOptions.filter(option => option.value == ev.target.value)[0])
-                            }}
-                            endAdornment={
-                                <InputAdornment position="end" style={{marginRight: "25px"}}>
-                                    <RiShieldKeyholeLine color={keyBits ? keyBits.color : ""}/>
-                                </InputAdornment>
-                            }
-                            sx={{color: keyBits ? keyBits.color : ""}}
-                        >
-                            {
-                                keyBitsOptions.map(option =><MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
-                            }
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField variant="standard" fullWidth label="Country" value={country} onChange={(ev)=>setCountry(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField variant="standard" fullWidth label="State/Province" value={state} onChange={(ev)=>setState(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField variant="standard" fullWidth label="Locality"  value={city} onChange={(ev)=>setCity(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField variant="standard" fullWidth label="Organization"  value={org} onChange={(ev)=>setOrg(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField variant="standard" fullWidth label="Organization Unit"  value={orgUnit} onChange={(ev)=>setOrgUnit(ev.target.value)}/>
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField variant="standard" fullWidth label="Common Name" required value={cn} onChange={(ev)=>setCN(ev.target.value)}/>
-                </Grid>
+        <Grid container spacing={3} justifyContent="center" alignItems="center">
+            <Grid item xs={12}>
+                <TextField variant="standard" fullWidth label="Device Manufacturing System Name" required value={dmsName} onChange={(ev) => setDmsName(ev.target.value)} />
+            </Grid>
+            <Grid item xs={6}>
+                <FormControl variant="standard" fullWidth>
+                    <InputLabel id="pk-type-simple-select-label">Private Key Type</InputLabel>
+                    <Select
+                        labelId="pk-type-simple-select-label"
+                        id="pk-type-simple-select"
+                        label="Private Key Type"
+                        value={keyType}
+                        onChange={(ev) => setKeyType(ev.target.value)}
+                    >
+                        <MenuItem value="rsa">RSA</MenuItem>
+                        <MenuItem value="ec">ECDSA</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+                <FormControl variant="standard" fullWidth>
+                    <InputLabel id="pk-length-simple-select-label">Private Key Length</InputLabel>
+                    <Select
+                        labelId="pk-length-simple-select-label"
+                        id="pk-length-simple-select"
+                        label="Private Key Length"
+                        value={keyBits.value}
+                        onChange={(ev) => {
+                            setKeyBits(keyBitsOptions.filter(option => option.value == ev.target.value)[0])
+                        }}
+                        endAdornment={
+                            <InputAdornment position="end" style={{ marginRight: "25px" }}>
+                                <RiShieldKeyholeLine color={keyBits ? keyBits.color : ""} />
+                            </InputAdornment>
+                        }
+                        sx={{ color: keyBits ? keyBits.color : "" }}
+                    >
+                        {
+                            keyBitsOptions.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                        }
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+                <TextField variant="standard" fullWidth label="Country" value={country} onChange={(ev) => setCountry(ev.target.value)} />
+            </Grid>
+            <Grid item xs={4}>
+                <TextField variant="standard" fullWidth label="State/Province" value={state} onChange={(ev) => setState(ev.target.value)} />
+            </Grid>
+            <Grid item xs={4}>
+                <TextField variant="standard" fullWidth label="Locality" value={city} onChange={(ev) => setCity(ev.target.value)} />
+            </Grid>
+            <Grid item xs={6}>
+                <TextField variant="standard" fullWidth label="Organization" value={org} onChange={(ev) => setOrg(ev.target.value)} />
+            </Grid>
+            <Grid item xs={6}>
+                <TextField variant="standard" fullWidth label="Organization Unit" value={orgUnit} onChange={(ev) => setOrgUnit(ev.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField variant="standard" fullWidth label="Common Name" required value={cn} onChange={(ev) => setCN(ev.target.value)} />
+            </Grid>
 
-                <Grid item xs={12} spacing={4} container>
-                    <Grid item container justify="space-between" alignItems="center" spacing={4}>
-                        <Grid item container>
-                            <LoadingButton 
-                                variant="contained" 
-                                endIcon={<AddIcon />}
-                                onClick={()=>{handleCreateCa()}}
-                                // loading={requestStatus.status == status.PENDING && requestStatus.actionType == actionType.CREATE}
-                                loading={false}
-                                loadingPosition="end"
-                                disabled={disabledCreateDmsButton}
-                            >
-                                Create DMS
-                            </LoadingButton>
-                        </Grid>
+            <Grid item xs={12} spacing={4} container>
+                <Grid item container justify="space-between" alignItems="center" spacing={4}>
+                    <Grid item container>
+                        <LoadingButton
+                            variant="contained"
+                            endIcon={<AddIcon />}
+                            onClick={() => { handleCreateDms() }}
+                            // loading={requestStatus.status == status.PENDING && requestStatus.actionType == actionType.CREATE}
+                            loading={false}
+                            loadingPosition="end"
+                            disabled={disabledCreateDmsButton}
+                        >
+                            Create DMS
+                        </LoadingButton>
                     </Grid>
                 </Grid>
             </Grid>
+        </Grid>
     )
 }

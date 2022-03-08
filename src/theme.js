@@ -10,7 +10,7 @@ export const light = {
         },
         secondary: {
             light: "#70A8EB",
-            main: "#FF9900",
+            main: "#00E0FC",
             dark: "#1F528F"
         },
         success:{

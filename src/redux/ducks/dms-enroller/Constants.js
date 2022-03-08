@@ -1,5 +1,5 @@
 export const dmsStatus = {
-    PENDING: "Pending",
+    PENDING: "Pendig_approval",
     APPROVED: "Approved",
     REVOKED: "Revoked",
     REJECTED: "Rejected",

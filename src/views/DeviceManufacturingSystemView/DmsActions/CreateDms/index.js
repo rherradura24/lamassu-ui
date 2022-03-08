@@ -7,9 +7,12 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onMount: ()=>{ 
-    //   dispatch(dmsEnrollerDuck.actions.getDmsList()) 
+    onMount: () => {
+        //   dispatch(dmsEnrollerDuck.actions.getDmsList()) 
     },
+    createDMS: (dmsName, country, state, locality, organization, organizationUnit, commonName, keyType, keyBits) => {
+        dispatch(dmsEnrollerDuck.actions.createDMS(dmsName, country, state, locality, organization, organizationUnit, commonName, keyType, keyBits))
+    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CreateDms));
