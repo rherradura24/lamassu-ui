@@ -1,82 +1,40 @@
 import React from "react"
+
+import { connect } from "react-redux";
+import cloudProxyDuck from "redux/ducks/cloud-proxy";
+import { createLoader } from "components/utils";
+import { actionType, status } from "redux/utils/constants";
+
 import { useTheme } from "@emotion/react"
-import { Box, Grid, IconButton, Paper, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Grid, IconButton, Paper, Skeleton, Typography } from "@mui/material"
 import { LamassuStatusChip } from "components/LamassuComponents/Chip"
 import { LamassuTable } from "components/LamassuComponents/Table"
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
-import { AMAZON_AWS, MICROSOFT_AZURE, GOOGLE_CLOUD, DISCONNECTED, CONFIGURED } from "./constans";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { AwsIcon, AzureIcon, GoogleCloudIcon } from "components/CloudProviderIcons";
+import { CloudProviderIcon } from "components/CloudProviderIcons";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { GoLinkExternal } from "react-icons/go";
+import AddIcon from '@mui/icons-material/Add';
 
-export default () => {
+const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
     const theme = useTheme()
     const navigate = useNavigate()
 
-    const cloudProviders = [
-        {
-            connectorId: "3647562", 
-            connectorStatus: CONFIGURED,
-            connectorAlias: {
-                provider: AMAZON_AWS,
-                alias: "Ikerlan AWS"
-            },
-            connectorDeployed: "25 June 2021",
-            connectorAttached: "28 June 2021",
-        },
-        {
-            connectorId: "7418343", 
-            connectorStatus: DISCONNECTED,
-            connectorAlias: {
-                provider: GOOGLE_CLOUD,
-                alias: "LKS GCloud"
-            },
-            connectorDeployed: "4 Oct 2021",
-            connectorAttached: "-",
-        },
-        {
-            connectorId: "1564241", 
-            connectorStatus: CONFIGURED,
-            connectorAlias: {
-                provider: MICROSOFT_AZURE,
-                alias: "Ikerlan Az"
-            },
-            connectorDeployed: "11 June 2021",
-            connectorAttached: "30 June 2021",
-        },
-    ]
-
-
-    const renderCloudProviderLogo = (cloudProvider) => {
-        var image
-        switch (cloudProvider) {
-            case AMAZON_AWS:
-                image =  <AwsIcon />
-                break;
-            case GOOGLE_CLOUD:
-                image =  <GoogleCloudIcon />
-                break;
-            case MICROSOFT_AZURE:
-                image =  <AzureIcon />
-                break;
-        
-            default:
-                break;
-        }
-        return image;
-    }
-
-    const cloudProviderTableColumns = [
+    const cloudConnectorTableColumns = [
         {key: "settings", title: "", align: "start", size: 1},
-        {key: "connectorId", title: "Connector ID", align: "center", size: 1},
-        {key: "connectorStatus", title: "Status", align: "center", size: 2},
+        {key: "connectorId", title: "Connector ID", align: "center", size: 3},
+        {key: "syncStatus", title: "Shynchronization Status", align: "center", size: 2},
+        {key: "connectorStatus", title: "Connector Status", align: "center", size: 2},
         {key: "connectorAlias", title: "Alias", align: "center", size: 2},
-        {key: "connectorAttached", title: "Attached", align: "center", size: 1},
+        {key: "connectorEnabled", title: "Enabled date", align: "center", size: 1},
         {key: "actions", title: "", align: "end", size: 1},
     ]
 
-    const cloudProvidersRender = cloudProviders.map(cloudProviderItem => {
+    const cloudConnectorsRender = cloudConnectors.map(cloudConnector => {
+        const pending = cloudConnector.synchronized_cas.status == status.PENDING
+        const enabledConnectorSync = cloudConnector.synchronized_cas.status == status.SUCCEEDED && Object.keys(cloudConnector.synchronized_cas.list).includes(caName)
         return {
             settings: (
                 <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
@@ -85,45 +43,67 @@ export default () => {
                     </IconButton>
                 </Box>
             ),
-            connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudProviderItem.connectorId}</Typography>,
+            connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudConnector.id}</Typography>,
+            syncStatus: (
+                    pending ? (
+                        <CircularProgress sx={{height: "10px"}}/>
+                    ) : (
+                        <LamassuStatusChip label={enabledConnectorSync ? "Enabled" : "Disabled"} color={enabledConnectorSync ? "green" : "red"}/>
+                    )
+    
+            ),
             connectorStatus: (
-                cloudProviderItem.connectorStatus === CONFIGURED ? (
-                    <LamassuStatusChip label="Configured" color="green"/>
-                ) : (
-                    <LamassuStatusChip label="Disconnected" color="red"/>
-                )
+                <LamassuStatusChip label={cloudConnector.status} color={cloudConnector.status_color}/>
             ),
             connectorAlias: (
                 <Box>
                     <Grid container spacing={1} alignItems="center">
                         <Grid item>
-                            {renderCloudProviderLogo(cloudProviderItem.connectorAlias.provider)}
+                            <CloudProviderIcon cloudProvider={cloudConnector.cloud_provider}/>
                         </Grid>
                         <Grid item>
-                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudProviderItem.connectorAlias.alias}</Typography>
+                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudConnector.name}</Typography>
                         </Grid>
                     </Grid>
                 </Box>
             ),
-            connectorDeployed: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{cloudProviderItem.connectorDeployed}</Typography>,
-            connectorAttached: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{cloudProviderItem.connectorAttached}</Typography>,
+            connectorDeployed: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{"-"}</Typography>,
+            connectorEnabled: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{
+                enabledConnectorSync ? moment(cloudConnector.synchronized_cas.list[caName].enabled_ts).format("DD/MM/YYYY") : "-"
+            }</Typography>,
             actions: (
                 <Box>
                     <Grid container spacing={1}>
-                        <Grid item>
-                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                <IconButton onClick={()=>navigate(`aws/${cloudProviderItem.connectorId}`)}>
-                                    <FormatAlignJustifyIcon fontSize={"small"}/>
-                                </IconButton>
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                <IconButton>
-                                    <DeleteIcon fontSize={"small"}/>
-                                </IconButton>
-                            </Box>
-                        </Grid>
+                        {
+                            enabledConnectorSync ? (
+                                <>
+                                    <Grid item>
+                                        <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} disabled={pending}>
+                                                <FormatAlignJustifyIcon fontSize={"small"}/>
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item>
+                                        <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                                            <IconButton disabled={pending}>
+                                                <DeleteIcon fontSize={"small"}/>
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                </>
+                            ) : (
+                                <>
+                                    <Grid item>
+                                        <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} disabled={pending}>
+                                                <AddIcon fontSize={"small"}/>
+                                            </IconButton>
+                                        </Box>
+                                    </Grid>
+                                </>
+                            )
+                        }
                     </Grid>
                 </Box>
             ),
@@ -131,6 +111,52 @@ export default () => {
     })
 
     return(
-        <LamassuTable columnConf={cloudProviderTableColumns} data={cloudProvidersRender}/>
+        refreshing.status == status.PENDING ? (
+            <Box sx={{width: "100%", marginBottom: "20px"}}>
+                <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
+                <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
+                <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
+            </Box>
+        ) : (
+            cloudConnectors.length > 0 ? (
+                <LamassuTable columnConf={cloudConnectorTableColumns} data={cloudConnectorsRender}/>
+            ) : (
+                <Grid container justifyContent={"center"} alignItems={"center"} sx={{height: "100%"}}>
+                    <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">
+                        <img src={process.env.PUBLIC_URL + "/assets/icon-cloud.png"} height={150} style={{marginBottom: "25px"}}/>
+                        <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px"}}>
+                        Synchronize your PKI with Cloud Providers
+                        </Typography>
+                        <Typography>Install different cloud connectors to synchronize your certificates with AWS, Azure or Google Cloud</Typography>
+                        <Button 
+                            endIcon={<GoLinkExternal/>}
+                            variant="contained" 
+                            sx={{marginTop: "10px", color: theme.palette.primary.main, background: theme.palette.primary.light}}
+                            onClick={()=>{
+                                window.open("https://github.com/lamassuiot/lamassu-compose", "_blank")
+                            }}
+                        >
+                            Go to install instructions
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        )
     )
 }
+
+
+const mapStateToProps = (state, {caName}) => {
+    return{
+        cloudConnectors: cloudProxyDuck.reducer.getCloudConnectors(state),
+        refreshing: cloudProxyDuck.reducer.isRequestInProgress(state)
+    }
+}
+
+const mapDispatchToProps = (dispatch, {caName}) => ({
+    onMount: ()=>{ 
+        dispatch(cloudProxyDuck.actions.getCloudConnectors()) 
+    },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CloudProvider));

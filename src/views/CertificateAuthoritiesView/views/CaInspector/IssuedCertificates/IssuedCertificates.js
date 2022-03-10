@@ -1,6 +1,6 @@
 import React from "react"
 import { useTheme } from "@emotion/react"
-import { Box, Grid, IconButton, LinearProgress, Paper, Typography } from "@mui/material"
+import { Box, Grid, IconButton, LinearProgress, Paper, Skeleton, Typography } from "@mui/material"
 import { LamassuChip } from "components/LamassuComponents/Chip"
 import { LamassuTable } from "components/LamassuComponents/Table"
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
 
 export const IssuedCertificates = ({refreshing, certificates}) => {
-    console.log(refreshing, certificates);
+    // console.log(refreshing, certificates);
     const theme = useTheme()
 
     const certTableColumns = [
@@ -66,14 +66,29 @@ export const IssuedCertificates = ({refreshing, certificates}) => {
     return(
         <>
             {
-                refreshing == true && (
-                    <Box sx={{width: "100%", height: "10px", marginBottom: "20px"}}>
-                        <LinearProgress />
+                refreshing == true ? (
+                    <Box sx={{width: "100%", marginBottom: "20px"}}>
+                        <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
+                        <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
+                        <Skeleton variant="rect" width={"100%"} height={25} sx={{borderRadius: "5px", marginBottom: "20px"}} />
                     </Box>
-                )
+                ) : (
+                    certificates.length > 0 ? (
+                        <LamassuTable columnConf={certTableColumns} data={certificatesRenderer} />
+                    ) : (
+                        <Grid container justifyContent={"center"} alignItems={"center"} sx={{height: "100%"}}>
+                            <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">
+                                <img src={process.env.PUBLIC_URL + "/assets/icon-faulttolerance.png"} height={150} style={{marginBottom: "25px"}}/>
+                                <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px"}}>
+                                Start Issuing certificates
+                                </Typography>
 
+                                <Typography>To Issue certificates, enroll your devices through your DMS</Typography>
+                            </Grid>
+                        </Grid>
+                    )
+                )
             }
-            <LamassuTable columnConf={certTableColumns} data={certificatesRenderer} />
         </>
         
     )

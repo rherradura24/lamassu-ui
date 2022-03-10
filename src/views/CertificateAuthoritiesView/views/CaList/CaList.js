@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Slide, LinearProgress, DialogContent, DialogContentText, Dialog, DialogActions, DialogTitle } from "@mui/material"
+import { Divider, Grid, IconButton, InputBase, Paper, Tab, Tabs, Button, Typography, Slide, LinearProgress, DialogContent, DialogContentText, Dialog, DialogActions, DialogTitle, Skeleton } from "@mui/material"
 import { Box, useTheme } from "@mui/system"
 import { CertificateCard } from "views/CertificateAuthoritiesView/components/CertificateCard"
 import React, { useEffect, useState } from "react";
@@ -57,9 +57,7 @@ export const CaList = ({refreshing, caList, urlCaName}) => {
                             </Grid>
                         </Grid>
                         {
-                            refreshing ? (
-                                <LinearProgress sx={{marginTop: "20px"}}/>
-                            ) : (
+                            !refreshing  && (
                                 <Grid item xs={12} style={{padding: 10}}>
                                     <Typography style={{fontWeight: 500, fontSize: 12, color: theme.palette.text.primaryLight}}>{caList.length} RESULTS</Typography>
                                 </Grid>
@@ -67,25 +65,34 @@ export const CaList = ({refreshing, caList, urlCaName}) => {
                         }
                     </Box>
                     <Box style={{padding: "0px 20px 20px 20px" , overflowY: "auto", height: 300, flexGrow: 1}}>
+
                         {
-                            filteredCaList.map(caItem=>(
-                                <Box style={{marginBottom: 20}} key={caItem.name}>
-                                    <CertificateCard 
-                                        onClick={()=>{
-                                            setIsMainMoadlOpen(true)
-                                            navigate(caItem.name)
-                                        }} 
-                                        name={caItem.name} 
-                                        keyType={caItem.key_metadata.type}
-                                        keySize={caItem.key_metadata.bits}
-                                        keyStrength={caItem.key_metadata.strength} 
-                                        keyStrengthColor={caItem.key_metadata.strength_color} 
-                                        status={caItem.status} 
-                                        expirationDate={caItem.valid_to} 
-                                        selected={selectedCa && caItem.name === selectedCa}
-                                    />
-                                </Box>
-                            ))
+                            refreshing ? (
+                                <>
+                                    <Skeleton variant="rect" width={"100%"} height={100} sx={{borderRadius: "10px", marginBottom: "20px"}} />
+                                    <Skeleton variant="rect" width={"100%"} height={100} sx={{borderRadius: "10px", marginBottom: "20px"}} />
+                                    <Skeleton variant="rect" width={"100%"} height={100} sx={{borderRadius: "10px", marginBottom: "20px"}} />
+                                </>
+                            ) : (
+                                filteredCaList.map(caItem=>(
+                                    <Box style={{marginBottom: 20}} key={caItem.name}>
+                                        <CertificateCard 
+                                            onClick={()=>{
+                                                setIsMainMoadlOpen(true)
+                                                navigate(caItem.name)
+                                            }} 
+                                            name={caItem.name} 
+                                            keyType={caItem.key_metadata.type}
+                                            keySize={caItem.key_metadata.bits}
+                                            keyStrength={caItem.key_metadata.strength} 
+                                            keyStrengthColor={caItem.key_metadata.strength_color} 
+                                            status={caItem.status} 
+                                            expirationDate={caItem.valid_to} 
+                                            selected={selectedCa && caItem.name === selectedCa}
+                                        />
+                                    </Box>
+                                ))
+                            )
                         }
                     </Box>
                 </Box>

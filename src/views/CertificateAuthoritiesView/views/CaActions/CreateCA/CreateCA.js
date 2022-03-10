@@ -12,7 +12,7 @@ import {LamassuTable}  from "components/LamassuComponents/Table";
 import {LamassuStatusChip}  from "components/LamassuComponents/Chip";
 import {CloudProviderIcon}  from "components/CloudProviderIcons";
 
-export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestStatus }) => {
+export const CreateCA = ({ requestStatus, cloudConnectors, onSubmit = ()=>{}, resetCurretRequestStatus }) => {    
     const theme = useTheme();
     const navigate = useNavigate()
 
@@ -52,6 +52,8 @@ export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestS
         },
     ]
 
+    const [selectedCloudConnectors, setSelectedCloudConnectors] = useState([])
+
     const [caName, setCaName] = useState("")
     const [country, setCountry] = useState("")
     const [state, setState] = useState("")
@@ -69,7 +71,7 @@ export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestS
     const disabledCreateCaButton = caName == ""
 
     const handleCreateCa = ()=>  {
-        onSubmit(caName, country, state, city, org, orgUnit, cn, parseInt(ttlValue)*ttlUnit, parseInt(enrollerTtlValue)*enrollerTtlUnit, keyType, parseInt(keyBits.value))
+        onSubmit(selectedCloudConnectors, caName, country, state, city, org, orgUnit, cn, parseInt(ttlValue)*ttlUnit, parseInt(enrollerTtlValue)*enrollerTtlUnit, keyType, parseInt(keyBits.value))
     }
 
     useEffect(()=>{
@@ -87,79 +89,45 @@ export const CreateCA = ({ requestStatus, onSubmit = ()=>{}, resetCurretRequestS
         }
     }, [requestStatus])
 
-     const AMAZON_AWS = "AMAZON_AWS"
-     const MICROSOFT_AZURE = "MICROSOFT_AZURE"
-     const GOOGLE_CLOUD = "GOOGLE_CLOUD"
-     const CONFIGURED = "CONFIGURED"
-     const DISCONNECTED = "DISCONNECTED"
-
-    const cloudProviders = [
-        {
-            connectorId: "3647562", 
-            connectorStatus: CONFIGURED,
-            connectorAlias: {
-                provider: AMAZON_AWS,
-                alias: "Ikerlan AWS"
-            },
-            connectorDeployed: "25 June 2021",
-            connectorAttached: "28 June 2021",
-        },
-        {
-            connectorId: "7418343", 
-            connectorStatus: DISCONNECTED,
-            connectorAlias: {
-                provider: GOOGLE_CLOUD,
-                alias: "LKS GCloud"
-            },
-            connectorDeployed: "4 Oct 2021",
-            connectorAttached: "-",
-        },
-        {
-            connectorId: "1564241", 
-            connectorStatus: CONFIGURED,
-            connectorAlias: {
-                provider: MICROSOFT_AZURE,
-                alias: "Ikerlan Az"
-            },
-            connectorDeployed: "11 June 2021",
-            connectorAttached: "30 June 2021",
-        },
-    ]
-
     const cloudProviderTableColumns = [
         {key: "settings", title: "", align: "start", size: 1},
-        {key: "connectorId", title: "Connector ID", align: "center", size: 1},
+        {key: "connectorId", title: "Connector ID", align: "center", size: 2},
         {key: "connectorStatus", title: "Status", align: "center", size: 2},
-        {key: "connectorAlias", title: "Alias", align: "center", size: 2},
+        {key: "connectorAlias", title: "Connector Name", align: "center", size: 2},
         {key: "connectorAttached", title: "Attached", align: "center", size: 1},
     ]
 
-    const cloudProvidersRender = cloudProviders.map(cloudProviderItem => {
+    const cloudProvidersRender = cloudConnectors.map(cloudConnector => {
         return {
             settings: (
-                <LamassuSwitch />
+                <LamassuSwitch value={selectedCloudConnectors.includes(cloudConnector.id)} onChange={()=>{
+                    setSelectedCloudConnectors(prev=>{
+                        if (prev.includes(cloudConnector.id)){
+                            prev.splice(prev.indexOf(cloudConnector.id), 1)
+                        } else {
+                            prev.push(cloudConnector.id)
+                        }
+                        return prev
+                    })
+                }}/>
             ),
-            connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudProviderItem.connectorId}</Typography>,
+            connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudConnector.id}</Typography>,
             connectorStatus: (
-                cloudProviderItem.connectorStatus === CONFIGURED ? (
-                    <LamassuStatusChip label="Configured" color="green"/>
-                ) : (
-                    <LamassuStatusChip label="Disconnected" color="red"/>
-                )
+                <LamassuStatusChip label={cloudConnector.status} color={cloudConnector.status_color}/>
             ),
             connectorAlias: (
                 <Box>
                     <Grid container spacing={1} alignItems="center">
                         <Grid item>
-                            <CloudProviderIcon cloudProvider={cloudProviderItem.connectorAlias.provider} />
+                            <CloudProviderIcon cloudProvider={cloudConnector.cloud_provider} />
                         </Grid>
                         <Grid item>
-                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudProviderItem.connectorAlias.alias}</Typography>
+                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudConnector.name}</Typography>
                         </Grid>
                     </Grid>
                 </Box>
             ),
-            connectorAttached: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{cloudProviderItem.connectorAttached}</Typography>,
+            connectorAttached: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{"-"}</Typography>,
         }
     })
     

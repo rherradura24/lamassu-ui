@@ -29,7 +29,7 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
                         <Box style={{display: "flex", alignItems: "center"}}>
                             {
                                 refreshing ? (
-                                    <Skeleton variant="rect" width={350} height={22} />
+                                    <Skeleton variant="rect" width={350} height={22} sx={{borderRadius: "5px"}}/>
                                 ) : (
                                     <>
                                         <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 26, lineHeight: "24px", marginRight: "10px"}}>{caData.name}</Typography>
@@ -56,7 +56,7 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
                     {
                         refreshing ? (
                             <Grid item sx={{marginTop: "0px"}}>
-                                <Skeleton variant="rect" width={175} height={20}/>
+                                <Skeleton variant="rect" width={175} height={20} sx={{borderRadius: "5px"}}/>
                             </Grid>
                         ) : (
                             <>
@@ -74,22 +74,24 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
                     }
                 </Grid>
                 <Box style={{marginTop: 15, position: "relative", left: "-15px"}}>
-                    <Tabs value={selectedTab}>
-                        <Tab component={Link} to={""} label="Overview" />
-                        <Tab component={Link} to={"certs"} label="Issued Certificates" />
-                        <Tab component={Link} to={"cloud-providers"} label="Cloud Providers" />
-                    </Tabs>
+                    {
+                        !refreshing && (
+                            <Tabs value={selectedTab}>
+                                <Tab component={Link} to={""} label="Overview" />
+                                <Tab component={Link} to={"certs"} label="Issued Certificates" />
+                                <Tab component={Link} to={"cloud-providers"} label="Cloud Providers" />
+                            </Tabs>
+                        ) 
+                    }
                 </Box>
             </Box>
             <Divider/>
-            <Box style={{padding: 40, flexGrow: 1, height: 500, overflowY: "auto"}}>
-                <Grid container>
+            <Box style={{padding: 40, flexGrow: 1, overflowY: "auto"}}>
                     {
                         !refreshing && (
                             <Outlet />
                         )
                     }
-                </Grid>
             </Box>
             {
                 !refreshing && (

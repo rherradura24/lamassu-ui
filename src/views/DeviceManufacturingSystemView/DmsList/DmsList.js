@@ -33,7 +33,7 @@ export const DmsList = ({dmsList}) => {
 
 
     const dmsTableColumns = [
-        {key: "id", title: "DMS ID", align: "start", size: 1},
+        {key: "id", title: "DMS ID", align: "start", size: 3},
         {key: "name", title: "Name", align: "center", size: 2},
         {key: "creation", title: "Creation Date", align: "center", size: 1},
         {key: "status", title: "Status", align: "center", size: 1},

@@ -11,7 +11,7 @@ export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
                 <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container alignItems="center" style={{padding: "0 10px 0 10px"}}> 
                     {
                         columnConf.map((item, idx)=>(
-                            <Grid item xs={item.size} container justifyContent="center" style={{marginBottom: 15}} key={idx}>
+                            <Grid item xs={item.size} container justifyContent="center" style={{marginBottom: 15}} key={idx+"-col"}>
                                 <Typography style={{color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12, textAlign: "center"}}>{item.title}</Typography>
                             </Grid>
                         ))
@@ -22,8 +22,8 @@ export const LamassuTable = ({ columnConf = [], data = [], style = {} }) => {
                 data.map((dataItem, idx)=>(
                     <Grid item columns={columnConf.reduce((prev, item)=>prev + item.size, 0)} container style={{borderRadius: 10, border: `1.5px solid ${theme.palette.divider}`, padding: 10, marginBottom: 10}} alignItems="center" key={idx}> 
                         {
-                            columnConf.map(item=>(
-                                <Grid item xs={item.size} container justifyContent={item.align} style={{padding: "0px 4px"}}>
+                            columnConf.map((item, idx2)=>(
+                                <Grid item xs={item.size} container justifyContent={item.align} style={{padding: "0px 4px"}} key={idx+"-data-"+idx2}>
                                     {dataItem[item.key]}
                                 </Grid>
                             ))

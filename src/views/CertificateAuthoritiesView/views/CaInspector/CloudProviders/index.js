@@ -21,6 +21,6 @@ const RoutedAwsCloudIntegration = ({caName}) => {
     let location = useLocation();
     console.log(params, location);
     return (
-        <AwsCloudIntegration caName={caName} caName={params.connectorId}/>
+        <AwsCloudIntegration caName={caName} connectorId={params.connectorId}/>
     )
 }

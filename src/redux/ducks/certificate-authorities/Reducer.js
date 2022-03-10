@@ -15,7 +15,7 @@ const initState = {
 }
 
 export const reducer = (state = initState, action) => {
-    console.log(action, state);
+    // console.log(action, state);
     switch (action.type) {
         case t.RESET_CURRENT_REQUEST_STATUS:
             return { ...state, status: status.IDLE, actionType: actionType.NONE };

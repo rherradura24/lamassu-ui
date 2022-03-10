@@ -1,0 +1,6 @@
+const prefix = "cloudproxy/"
+
+export const GET_CLOUD_CONNECTORS = prefix + 'GET_CLOUD_CONNECTORS';
+
+export const GET_SYNCHRONIZED_CAS_BY_CONNECTOR = prefix + 'GET_SYNCHRONIZED_CAS_BY_CONNECTOR';
+export const SYNCHRONIZE_CONNECTOR = prefix + 'SYNCHRONIZE_CONNECTOR';

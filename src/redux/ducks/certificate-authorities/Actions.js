@@ -15,10 +15,11 @@ export const getIssuedCerts = (caName) => ({
     }
 })
 
-export const createCA = (caName, country, state, locality, organization, organizationUnit, commonName, caTtl, enrollerTtl, keyType, keyBits) => ({
+export const createCA = (selectedConnectors, caName, country, state, locality, organization, organizationUnit, commonName, caTtl, enrollerTtl, keyType, keyBits) => ({
     type: t.CREATE_CA,
     payload: { 
         caName: caName,
+        selectedConnectors: selectedConnectors,
         body: {
             subject:{
                 country: country,
