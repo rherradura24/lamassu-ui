@@ -125,7 +125,7 @@ export const DmsList = ({dmsList}) => {
                                         </Grid>
                                         <Grid item>
                                             <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                                <IconButton onClick={() => navigate(device.id)}>
+                                                <IconButton>
                                                     <FormatAlignJustifyIcon fontSize={"small"} />
                                                 </IconButton>
                                             </Box>
