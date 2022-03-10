@@ -33,8 +33,8 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
     ]
 
     const cloudConnectorsRender = cloudConnectors.map(cloudConnector => {
-        const pending = cloudConnector.synchronized_cas.status == status.PENDING
-        const enabledConnectorSync = cloudConnector.synchronized_cas.status == status.SUCCEEDED && Object.keys(cloudConnector.synchronized_cas.list).includes(caName)
+        const filteredSynchronizedCAs = cloudConnector.synchronized_cas.filter(syncCa => syncCa.ca_name == caName)
+        const enabledConnectorSync = filteredSynchronizedCAs.length == 1
         return {
             settings: (
                 <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
@@ -43,14 +43,9 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
                     </IconButton>
                 </Box>
             ),
-            connectorId: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{cloudConnector.id}</Typography>,
+            connectorId: <Typography style={{fontWeight: "500", fontSize: 14, color: theme.palette.text.primary}}>#{cloudConnector.id}</Typography>,
             syncStatus: (
-                    pending ? (
-                        <CircularProgress sx={{height: "10px"}}/>
-                    ) : (
-                        <LamassuStatusChip label={enabledConnectorSync ? "Enabled" : "Disabled"} color={enabledConnectorSync ? "green" : "red"}/>
-                    )
-    
+                <LamassuStatusChip label={enabledConnectorSync ? "Enabled" : "Disabled"} color={enabledConnectorSync ? "green" : "red"}/>
             ),
             connectorStatus: (
                 <LamassuStatusChip label={cloudConnector.status} color={cloudConnector.status_color}/>
@@ -69,7 +64,7 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
             ),
             connectorDeployed: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{"-"}</Typography>,
             connectorEnabled: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{
-                enabledConnectorSync ? moment(cloudConnector.synchronized_cas.list[caName].enabled_ts).format("DD/MM/YYYY") : "-"
+                enabledConnectorSync ? moment(filteredSynchronizedCAs[0].enabled_ts).format("DD/MM/YYYY") : "-"
             }</Typography>,
             actions: (
                 <Box>
@@ -79,14 +74,14 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
                                 <>
                                     <Grid item>
                                         <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} disabled={pending}>
+                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} >
                                                 <FormatAlignJustifyIcon fontSize={"small"}/>
                                             </IconButton>
                                         </Box>
                                     </Grid>
                                     <Grid item>
                                         <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                            <IconButton disabled={pending}>
+                                            <IconButton >
                                                 <DeleteIcon fontSize={"small"}/>
                                             </IconButton>
                                         </Box>
@@ -96,7 +91,7 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
                                 <>
                                     <Grid item>
                                         <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} disabled={pending}>
+                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} >
                                                 <AddIcon fontSize={"small"}/>
                                             </IconButton>
                                         </Box>

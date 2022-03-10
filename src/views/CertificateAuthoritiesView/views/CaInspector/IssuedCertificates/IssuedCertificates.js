@@ -23,7 +23,7 @@ export const IssuedCertificates = ({refreshing, certificates}) => {
 
     const certificatesRenderer = certificates.map(cert => {
         return {
-            serialNumber: <Typography style={{fontWeight: "700", fontSize: 13, color: theme.palette.text.primary}}>#{cert.serial_number}</Typography>,
+            serialNumber: <Typography style={{fontWeight: "500", fontSize: 13, color: theme.palette.text.primary}}>#{cert.serial_number}</Typography>,
             commonName: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, overflowWrap: "break-word", width: "100%"}}>{cert.subject.common_name}</Typography>,
 
             keyStrength: (

@@ -134,7 +134,7 @@ export const DeviceInspector = ({refreshing, deviceId, deviceData}) => {
                                             {
                                                 deviceData.tags.map((tag, idx) => (
                                                     <Grid item key={idx}>
-                                                        <LamassuChip color={["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
+                                                        <LamassuChip color={theme.palette.mode == "dark" ?["#EEE", "#555"] : ["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
                                                     </Grid>
                                                 ))
                                             }

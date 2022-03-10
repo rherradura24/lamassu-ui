@@ -222,11 +222,11 @@ export const CreateCA = ({ requestStatus, cloudConnectors, onSubmit = ()=>{}, re
 
                 <Grid item container justify="space-between" alignItems="center" spacing={4}>
                     <Grid item xs={6}>
-                        <TextField variant="standard" type="number" fullWidth label="Emmited certificates expiration time" value={enrollerTtlValue} onChange={(ev)=>setEnrollerTtlValue(ev.target.value)}/>
+                        <TextField variant="standard" type="number" fullWidth label="Issuance expiration time" value={enrollerTtlValue} onChange={(ev)=>setEnrollerTtlValue(ev.target.value)}/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl variant="standard" fullWidth>
-                            <InputLabel id="ca-exp-units-simple-select-label">Emmited certificates expiration time units</InputLabel>
+                            <InputLabel id="ca-exp-units-simple-select-label">Issuance expiration time units</InputLabel>
                             <Select
                                 labelId="ca-exp-units-simple-select-label"
                                 id="ca-exp-units-simple-select"

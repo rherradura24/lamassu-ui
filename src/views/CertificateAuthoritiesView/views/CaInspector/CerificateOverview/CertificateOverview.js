@@ -86,7 +86,7 @@ export const Overview = ({caData}) => {
             <Grid item xs={7} container spacing={4}>
                 <Grid item container direction="column" >
                     <Grid item style={{marginBottom: 10}}>
-                        <Typography variant="button" style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 17}}>Subject</Typography>
+                        <Typography variant="button" style={{color: theme.palette.text.primary, fontWeight: "600", fontSize: 17}}>Subject</Typography>
                     </Grid>
                     <Grid item container spacing={1}>
                         {
@@ -96,7 +96,7 @@ export const Overview = ({caData}) => {
                                         <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateSubject[key]}</Typography>
                                     </Grid>
                                     <Grid item xs={7}>
-                                        <Typography style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13}}>{caData.subject[key]}</Typography>
+                                        <Typography style={{color: theme.palette.text.primaryLight, fontWeight: "500", fontSize: 13}}>{caData.subject[key]}</Typography>
                                     </Grid>
                                 </Grid>
                             ))
@@ -105,7 +105,7 @@ export const Overview = ({caData}) => {
                 </Grid>
                 <Grid item xs={12} container style={{height: "fit-content"}}>
                     <Grid item xs={12} style={{marginBottom: 10}}>
-                        <Typography variant="button" style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 17}}>Properties</Typography>
+                        <Typography variant="button" style={{color: theme.palette.text.primary, fontWeight: "600", fontSize: 17}}>Properties</Typography>
                     </Grid>
                     <Grid item xs={12} container>
                     {
@@ -115,7 +115,7 @@ export const Overview = ({caData}) => {
                                     <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 13}}>{certificateProperties[key].title}</Typography>
                                 </Grid>
                                 <Grid item xs={7}>
-                                    <Typography style={{color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13, wordBreak: "break-word"}}>{certificateProperties[key].value}</Typography>
+                                    <Typography style={{color: theme.palette.text.primaryLight, fontWeight: "500", fontSize: 13, wordBreak: "break-word"}}>{certificateProperties[key].value}</Typography>
                                 </Grid>
                             </Grid>
                         ))

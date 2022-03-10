@@ -97,11 +97,20 @@ export const dark = {
             secondary: "#e9ecef",
         },
         background: {
-            paper: "#17242b",
+            paper: "#1b2a32",
             default: "#1b2a32",
             lightContrast: "#22343c", // f1f1f1
             darkContrast:  "#17242b"
         },
         appbar: "#0f171c"
+    },
+    components:{
+        MuiPaper:{
+            styleOverrides: {
+                root: {
+                    backgroundImage: "none"
+                }
+            }
+        }
     }
 }

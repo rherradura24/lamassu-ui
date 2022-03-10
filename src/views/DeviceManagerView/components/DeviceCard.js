@@ -34,7 +34,7 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
                         {
                             tags.map((tag, idx) => (
                                 <Grid item key={idx}>
-                                    <LamassuChip color={["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
+                                    <LamassuChip color={theme.palette.mode == "dark" ?["#EEE", "#555"] : ["#555", "#EEEEEE"]} label={tag} compact={true} compactFontSize/>
                                 </Grid>
                             ))
                         }
@@ -53,7 +53,7 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
                             <Typography style={{fontSize: 12, fontWeight: "bold", marginLeft: 5}}>Certificate Expiration</Typography>
                         </Grid>
                         <Grid item xs={3} container justifyContent={"flex-end"}>
-                            <Typography style={{fontSize: 12, color: "#555"}}>{`In ${remainigDaysBeforeExpiration} days`}</Typography>
+                            <Typography style={{fontSize: 12}}>{`In ${remainigDaysBeforeExpiration} days`}</Typography>
                         </Grid>
                     </Grid>
                 )

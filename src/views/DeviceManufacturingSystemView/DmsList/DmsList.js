@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 import { useTheme } from "@emotion/react"
-import { Box, Grid, IconButton, InputBase, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, InputBase, Menu, MenuItem, Paper, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import { dmsStatus } from "redux/ducks/dms-enroller/Constants";
@@ -13,11 +13,19 @@ import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useNavigate } from "react-router-dom";
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import ApproveDms from "../DmsActions/ApproveDms";
+import DeclineDms from "../DmsActions/DeclineDms";
+import RevokeDms from "../DmsActions/RevokeDms";
 
 export const DmsList = ({dmsList}) => {
     const theme = useTheme()
 
     const navigate = useNavigate()
+
+    const [selectedDmsId, setSelectedDmsId] = useState();
+
+    const [isDialogOpen, setIsDialogOpen] = useState({open: false});
 
     const [anchorElSort, setAnchorElSort] = useState(null);
     const handleClick = (event) => {
@@ -29,8 +37,6 @@ export const DmsList = ({dmsList}) => {
     const handleCloseSort = (event) => {
         setAnchorElSort(null);
     }
-    
-
 
     const dmsTableColumns = [
         {key: "id", title: "DMS ID", align: "start", size: 3},
@@ -46,7 +52,7 @@ export const DmsList = ({dmsList}) => {
 
     const dmsRender = dmsList.map(dms => {
         return {
-            id: <Typography style={{fontWeight: "700", fontSize: 14, color: theme.palette.text.primary}}>#{dms.id}</Typography>,
+            id: <Typography style={{fontWeight: "500", fontSize: 14, color: theme.palette.text.primary}}>#{dms.id}</Typography>,
             name: <Typography style={{fontWeight: "500", fontSize: 14, color: theme.palette.text.primary}}>{dms.name}</Typography>,
             status: <LamassuChip label={dms.status} color={dms.status_color} />,
             creation:  <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{dms.request_date}</Typography>,
@@ -64,28 +70,67 @@ export const DmsList = ({dmsList}) => {
             ),
             actions: (
                 <Box>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} alignItems="center">
                         {
                             dms.status === dmsStatus.PENDING ? (
                                 <>
                                     <Grid item>
-                                        <ColoredButton customtextcolor={theme.palette.success.main} customcolor={theme.palette.success.light}  startIcon={<DoneIcon />} variant="contained" size="small">
+                                        <ColoredButton 
+                                            customtextcolor={theme.palette.success.main} 
+                                            customcolor={theme.palette.success.light} 
+                                            startIcon={<DoneIcon />} 
+                                            variant="contained" 
+                                            size="small" 
+                                            onClick={()=>{
+                                                setSelectedDmsId(dms.id)
+                                                setIsDialogOpen({open: true, type: "APPROVE"})
+                                            }}
+                                        >
                                             Approve
                                         </ColoredButton>
                                     </Grid>
                                     <Grid item>
-                                        <ColoredButton customtextcolor={theme.palette.error.main} customcolor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
+                                        <ColoredButton 
+                                            customtextcolor={theme.palette.error.main} 
+                                            customcolor={theme.palette.error.light} 
+                                            startIcon={<CloseIcon />}
+                                            variant="contained" 
+                                            size="small"
+                                            onClick={()=>{
+                                                setSelectedDmsId(dms.id)
+                                                setIsDialogOpen({open: true, type: "DECLINE"})
+                                            }}
+                                        >
                                             Reject
                                         </ColoredButton>
                                     </Grid>
                                 </>
                             ) : (
                                 dms.status === dmsStatus.APPROVED ? (
-                                    <Grid item>
-                                        <ColoredButton customtextcolor={theme.palette.error.main} customcolor={theme.palette.error.light} startIcon={<CloseIcon />} variant="contained" size="small">
-                                            Revoke
-                                        </ColoredButton>
-                                    </Grid>
+                                    <>
+                                        <Grid item>
+                                            <ColoredButton 
+                                                customtextcolor={theme.palette.error.main} 
+                                                customcolor={theme.palette.error.light} 
+                                                startIcon={<CloseIcon />} 
+                                                variant="contained" 
+                                                size="small"
+                                                onClick={()=>{
+                                                    setSelectedDmsId(dms.id)
+                                                    setIsDialogOpen({open: true, type: "REVOKE"})
+                                                }}
+                                            >
+                                                Revoke
+                                            </ColoredButton>
+                                        </Grid>
+                                        <Grid item>
+                                            <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
+                                                <IconButton onClick={() => navigate(device.id)}>
+                                                    <FormatAlignJustifyIcon fontSize={"small"} />
+                                                </IconButton>
+                                            </Box>
+                                        </Grid>
+                                    </>
                                 ) : (
                                     <></>
                                 )
@@ -119,7 +164,7 @@ export const DmsList = ({dmsList}) => {
                                     <Typography variant="button">Sort By</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <ColoredButton customTextColor={theme.palette.text.primary} customColor={theme.palette.gray.light} size="small" variant="contained" disableFocusRipple disableRipple endIcon={anchorElSort ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Name</ColoredButton>
+                                    <ColoredButton customtextcolor={theme.palette.text.primary} customcolor={theme.palette.gray.light} size="small" variant="contained" disableFocusRipple disableRipple endIcon={anchorElSort ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Name</ColoredButton>
                                     <Menu
                                         style={{marginTop: 1, width: 200, borderRadius: 0}}
                                         id="simple-menu"
@@ -143,6 +188,30 @@ export const DmsList = ({dmsList}) => {
                     </Box>
                 </Box>
             </Grid>
+            
+            {
+                isDialogOpen.open && (
+                    <>
+                        {
+                            isDialogOpen.type == "APPROVE" && (
+                                <ApproveDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={()=>{setIsDialogOpen({open:false})}}/>
+                            )
+                        }
+
+                        {
+                            isDialogOpen.type == "DECLINE" && (
+                                <DeclineDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={()=>{setIsDialogOpen({open:false})}}/>
+                            )
+                        }
+
+                        {
+                            isDialogOpen.type == "REVOKE" && (
+                                <RevokeDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={()=>{setIsDialogOpen({open:false})}}/>
+                            )
+                        }
+                    </>
+                )
+            }
         </Grid>
     )
 }

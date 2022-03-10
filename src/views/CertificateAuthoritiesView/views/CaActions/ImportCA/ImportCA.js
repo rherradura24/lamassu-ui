@@ -35,11 +35,11 @@ export const ImportCA = () => {
             </Grid>
             <Grid item xs={6} container spacing={2}>
                 <Grid item xs={6} container>
-                    <TextField variant="standard" id="ttl" label="Emmited certificates expiration time" type="number" fullWidth value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
+                    <TextField variant="standard" id="ttl" label="Issuance expiration time" type="number" fullWidth value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
                 </Grid>
                 <Grid item xs={6} container>
                     <FormControl fullWidth variant="standard">
-                    <InputLabel id="key-type-label" >Emmited certificates expiration time units</InputLabel>
+                    <InputLabel id="key-type-label" >Issuance expiration time units</InputLabel>
                         <Select
                             labelId="ttl-unit-label"
                             value={ttlUnit}

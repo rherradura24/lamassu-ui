@@ -71,3 +71,8 @@ export const getDmsList = (state) => {
     const dmsList = dmsKeys.map(key => dmsEnrollerState.list[key])
     return dmsList;
 }
+
+export const getDmsById = (state, dmsId) => {
+    const dmsEnrollerState = getSelector(state)
+    return dmsEnrollerState.list[dmsId];
+}
