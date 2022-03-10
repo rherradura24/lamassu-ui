@@ -29,4 +29,4 @@ EXPOSE 443
 RUN apk add --no-cache bash
 
 # Start Nginx server
-ENTRYPOINT ["nginx -g \"daemon off;\"]
+ENTRYPOINT ["nginx -g \"daemon off;\""]
