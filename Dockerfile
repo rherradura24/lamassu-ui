@@ -22,6 +22,9 @@ COPY --from=build /app/build /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/server.conf
 
 WORKDIR /usr/share/nginx/html
+COPY ./env-docker-config.js /tmpl/env-config.js.tmpl
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+
 
 EXPOSE 443
 
@@ -29,4 +32,4 @@ EXPOSE 443
 RUN apk add --no-cache bash
 
 # Start Nginx server
-ENTRYPOINT ["/bin/bash", "-c","nginx -g \"daemon off;\""]
+ENTRYPOINT ["/docker-entrypoint.sh"]

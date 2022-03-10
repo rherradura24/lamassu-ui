@@ -4,14 +4,14 @@ export const getCloudConnectors = async () => {
 
     return apiRequest({
         method: "GET",
-        url: process.env.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors"
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors"
     })
 }
 
 export const synchronizeCloudConnectors = async (body) => {
     return apiRequest({
         method: "POST",
-        url: process.env.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/synchronize",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/synchronize",
         data: body
     })
 }
