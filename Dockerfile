@@ -24,7 +24,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/server.conf
 WORKDIR /usr/share/nginx/html
 COPY ./env-docker-config.js /tmpl/env-config.js.tmpl
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 443
 
