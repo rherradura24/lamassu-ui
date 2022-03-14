@@ -1,6 +1,4 @@
 import { apiRequest } from "redux/utils";
-import getCasMock from "./mocks/get-cas.json";
-import getIssuedCertsMock from "./mocks/issued-certs.json";
 
 export const getCAs = async () => {
     return apiRequest({

@@ -44,6 +44,15 @@ export const reducer = (state = initState, action) => {
         case success(t.SYNCHRONIZE_CONNECTOR):
             return { ...state, status: status.SUCCEEDED };
 
+        case t.FIRE_EVENT:
+            return { ...state, status: status.PENDING, actionType: actionType.CREATE };
+
+        case failed(t.FIRE_EVENT):
+            return { ...state, status: status.FAILED};
+
+        case success(t.FIRE_EVENT):
+            return { ...state, status: status.SUCCEEDED };
+
         default:
             return state;
     }
@@ -65,4 +74,9 @@ export const getCloudConnectors = (state) => {
     const cloudConnectorsList = cloudConnectorsKeys.map(key => cloudProxyReducer.cloudConnectorsList[key])
     cloudConnectorsList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
     return cloudConnectorsList;
+}
+
+export const getCloudConnectorById = (state, connectorId) => {
+    const cloudProxyReducer = getSelector(state)
+    return cloudProxyReducer.cloudConnectorsList[connectorId];
 }

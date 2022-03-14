@@ -3,8 +3,8 @@ import { IconContext } from "react-icons";
 import loadable from "@loadable/component";
 
 
-export const DynamicIcon = ({ ...props }) => {
-  const [library, iconComponent] = props.icon.split("/");
+export const DynamicIcon = ({ icon, ...props }) => {
+  const [library, iconComponent] = icon.split("/");
 
   if (!library || !iconComponent) return <div>Could Not Find Icon</div>;
 

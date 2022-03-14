@@ -50,29 +50,27 @@ const LamassuNotifications = ({ notificationsList }) =>{
                 break;
         }
         notifications.push(
-            <>
-                <Grid item xs={12} container sx={{borderBottom: `1px solid ${theme.palette.divider}`}}>
-                    <Grid item xs={2} container>
-                        <Box style={{display: "flex", justifyContent: "center", alignItems: "center", background: color.bg, borderRadius: 50, height: 30, width: 30}}>
-                            <AssignmentOutlinedIcon style={{fontSize:20, color: color.color}}/>
+            <Grid item xs={12} container sx={{borderBottom: `1px solid ${theme.palette.divider}`}} key={e.timestamp}>
+                <Grid item xs={2} container>
+                    <Box style={{display: "flex", justifyContent: "center", alignItems: "center", background: color.bg, borderRadius: 50, height: 30, width: 30}}>
+                        <AssignmentOutlinedIcon style={{fontSize:20, color: color.color}}/>
+                    </Box>
+                </Grid>
+                <Grid item xs={10} container direction="column" spacing={1}>
+                    <Grid item>
+                        <Typography component="div" variant="body2">{e.message}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Box style={{display: "flex", justifyContent: "center", alignItems: "center", justifyContent: "start", marginBottom: 10}}>
+                            <AccessAlarmsOutlinedIcon style={{fontSize:15, color: "#999", marginRight: "3px"}}/>
+                            <Typography style={{color: "#999", fontSize: 13}}>{moment(e.timestamp).fromNow()}</Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={10} container direction="column" spacing={1}>
-                        <Grid item>
-                            <Typography component="div" variant="body2">{e.message}</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Box style={{display: "flex", justifyContent: "center", alignItems: "center", justifyContent: "start", marginBottom: 10}}>
-                                <AccessAlarmsOutlinedIcon style={{fontSize:15, color: "#999", marginRight: "3px"}}/>
-                                <Typography style={{color: "#999", fontSize: 13}}>{moment(e.timestamp).fromNow()}</Typography>
-                            </Box>
-                        </Grid>
-                    </Grid>
                 </Grid>
-            </>
+            </Grid>
         )
         if(index >= 1){
-            notifications.push(<MenuSeparator/>)
+            notifications.push(<MenuSeparator key={e.timestamp+"-separator"}/>)
         }
     }
 

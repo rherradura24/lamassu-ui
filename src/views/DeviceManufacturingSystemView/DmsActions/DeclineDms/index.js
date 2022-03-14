@@ -30,7 +30,8 @@ const DeclineDms = ({dms, isOpen, onClose=()=>{}, onDecline={}}) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={()=>onClose()} variant="contained">Decline</Button>
+                <Button onClick={()=>{onDecline(dms.id); onClose()}} variant="contained">Decline</Button>
+
             </DialogActions>
         </Dialog>
     )
@@ -42,10 +43,9 @@ const mapStateToProps = (state, {dmsId}) => ({
 
 const mapDispatchToProps = (dispatch, {dmsId}) => ({
    onMount: ()=>{ 
-
    },
    
-   onDecline: ()=>{}
+   onDecline: (dmsId)=>{dispatch(dmsEnrollerDuck.actions.declineDmsRequest(dmsId))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(DeclineDms));

@@ -67,6 +67,10 @@ export const CreateCA = ({ requestStatus, cloudConnectors, onSubmit = ()=>{}, re
     const [enrollerTtlUnit, setEnrollerTtlUnit] = useState(24)//24 = days | 24*365 = years 
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(rsaOptions[1])
+
+    useEffect(()=>{
+        setCN(caName)
+    }, [caName])
     
     const disabledCreateCaButton = caName == ""
 
@@ -85,7 +89,7 @@ export const CreateCA = ({ requestStatus, cloudConnectors, onSubmit = ()=>{}, re
     useEffect(()=>{
         if (requestStatus.status == status.SUCCEEDED && requestStatus.actionType == actionType.CREATE) {
             resetCurretRequestStatus()
-            navigate("/cas")
+            navigate("/cas/" + caName)
         }
     }, [requestStatus])
 
@@ -194,7 +198,7 @@ export const CreateCA = ({ requestStatus, cloudConnectors, onSubmit = ()=>{}, re
                 <TextField variant="standard" fullWidth label="Organization Unit"  value={orgUnit} onChange={(ev)=>setOrgUnit(ev.target.value)}/>
             </Grid>
             <Grid item xs={4}>
-                <TextField variant="standard" fullWidth label="Common Name"  value={cn} onChange={(ev)=>setCN(ev.target.value)}/>
+                <TextField variant="standard" fullWidth label="Common Name"  value={cn} onChange={(ev)=>setCN(ev.target.value)} disabled />
             </Grid>
 
             <Grid item xs={12} spacing={4} container>

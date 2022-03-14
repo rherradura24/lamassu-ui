@@ -14,3 +14,11 @@ export const createDMS = async (dmsName, dmsBodyData) => {
         data: dmsBodyData
     })
 }
+
+export const updateDMS = async (dmsId, dmsBodyData) => {
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/" + dmsId,
+        data: dmsBodyData
+    })
+}

@@ -4,9 +4,11 @@ export const resetCurretRequestStatus = () => ({
     type: t.RESET_CURRENT_REQUEST_STATUS,
 })
 
-export const getCAs = () => ({
+export const getCAs = () => {
+    console.log("Action GetCAS");
+    return {
     type: t.GET_CAS,
-})
+}}
 
 export const getIssuedCerts = (caName) => ({
     type: t.GET_ISSUED_CERTS,

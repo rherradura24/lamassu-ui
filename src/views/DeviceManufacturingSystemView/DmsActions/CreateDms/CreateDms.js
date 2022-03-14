@@ -10,8 +10,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { actionType, status } from "redux/utils/constants";
 import { useNavigate } from "react-router-dom";
 
-export const CreateDms = ({ createDMS }) => {
+export const CreateDms = ({ requestStatus, resetCurretRequestStatus, createDMS }) => {
     const theme = useTheme()
+    const navigate = useNavigate()
 
     const rsaOptions = [
         {
@@ -49,6 +50,13 @@ export const CreateDms = ({ createDMS }) => {
         },
     ]
 
+    useEffect(()=>{
+        if (requestStatus.status == status.SUCCEEDED && requestStatus.actionType == actionType.CREATE) {
+            resetCurretRequestStatus()
+            navigate("/dms")
+        }
+    }, [requestStatus])
+
     const handleCreateDms = () => {
         createDMS(dmsName, country, state, city, org, orgUnit, cn, keyType, parseInt(keyBits.value))
     }
@@ -62,6 +70,10 @@ export const CreateDms = ({ createDMS }) => {
     const [cn, setCN] = useState("")
     const [keyType, setKeyType] = useState("rsa")
     const [keyBits, setKeyBits] = useState(rsaOptions[1])
+    
+    useEffect(()=>{
+        setCN(dmsName)
+    }, [dmsName])
 
     useEffect(() => {
         if (keyType == "rsa") {
@@ -135,7 +147,7 @@ export const CreateDms = ({ createDMS }) => {
                 <TextField variant="standard" fullWidth label="Organization Unit" value={orgUnit} onChange={(ev) => setOrgUnit(ev.target.value)} />
             </Grid>
             <Grid item xs={12}>
-                <TextField variant="standard" fullWidth label="Common Name" required value={cn} onChange={(ev) => setCN(ev.target.value)} />
+                <TextField variant="standard" fullWidth label="Common Name" required value={cn} onChange={(ev) => setCN(ev.target.value)} disabled/>
             </Grid>
 
             <Grid item xs={12} spacing={4} container>

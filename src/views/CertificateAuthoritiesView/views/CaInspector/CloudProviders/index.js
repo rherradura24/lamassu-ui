@@ -1,14 +1,14 @@
 import React from "react"
 import { Routes, Route, useParams, useLocation, Outlet } from "react-router-dom";
-import AwsCloudIntegration from "./AwsCloudIntegration";
+import AwsIotCoreConnector from "./Types/AwsIotCore";
 import CloudProviders from "./CloudProviders";
 
 export default ({caName}) => {
     return (
         <Routes>
             <Route path="/" element={<Outlet/>}>
-                <Route path="aws" element={<Outlet/>}>
-                    <Route path=":connectorId" element={<RoutedAwsCloudIntegration caName={caName}/>} />
+                <Route path="awsiotcore" element={<Outlet/>}>
+                    <Route path=":connectorId" element={<RoutedAwsIotCoreConnector caName={caName}/>} />
                 </Route>
                 <Route index element={<CloudProviders caName={caName}/>} />
             </Route>
@@ -16,11 +16,11 @@ export default ({caName}) => {
     )
 }
 
-const RoutedAwsCloudIntegration = ({caName}) => {
+const RoutedAwsIotCoreConnector = ({caName}) => {
     let params = useParams();
     let location = useLocation();
     console.log(params, location);
     return (
-        <AwsCloudIntegration caName={caName} connectorId={params.connectorId}/>
+        <AwsIotCoreConnector caName={caName} connectorId={params.connectorId}/>
     )
 }

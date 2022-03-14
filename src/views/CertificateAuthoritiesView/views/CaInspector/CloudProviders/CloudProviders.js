@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 import { connect } from "react-redux";
 import cloudProxyDuck from "redux/ducks/cloud-proxy";
@@ -17,16 +17,20 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { GoLinkExternal } from "react-icons/go";
 import AddIcon from '@mui/icons-material/Add';
+import EnableConnectorSynchronizationModal from "./Actions/EnableSynchronization";
 
 const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
     const theme = useTheme()
     const navigate = useNavigate()
 
+    const [isEnableConnectorOpen, setIsEnableConnectorOpen] = useState({isOpen: false})
+
     const cloudConnectorTableColumns = [
         {key: "settings", title: "", align: "start", size: 1},
         {key: "connectorId", title: "Connector ID", align: "center", size: 3},
-        {key: "syncStatus", title: "Shynchronization Status", align: "center", size: 2},
+        {key: "syncStatus", title: "Synchronization Status", align: "center", size: 2},
         {key: "connectorStatus", title: "Connector Status", align: "center", size: 2},
+        {key: "connectorType", title: "Connector Type", align: "center", size: 2},
         {key: "connectorAlias", title: "Alias", align: "center", size: 2},
         {key: "connectorEnabled", title: "Enabled date", align: "center", size: 1},
         {key: "actions", title: "", align: "end", size: 1},
@@ -50,17 +54,20 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
             connectorStatus: (
                 <LamassuStatusChip label={cloudConnector.status} color={cloudConnector.status_color}/>
             ),
-            connectorAlias: (
+            connectorType: (
                 <Box>
                     <Grid container spacing={1} alignItems="center">
                         <Grid item>
                             <CloudProviderIcon cloudProvider={cloudConnector.cloud_provider}/>
                         </Grid>
-                        <Grid item>
-                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudConnector.name}</Typography>
-                        </Grid>
+                        {/* <Grid item>
+                            <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudConnector.cloud_provider}</Typography>
+                        </Grid> */}
                     </Grid>
                 </Box>
+            ),
+            connectorAlias: (
+                <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary}}>{cloudConnector.name}</Typography>
             ),
             connectorDeployed: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{"-"}</Typography>,
             connectorEnabled: <Typography style={{fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center"}}>{
@@ -74,7 +81,7 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
                                 <>
                                     <Grid item>
                                         <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} >
+                                            <IconButton onClick={()=>navigate(`awsiotcore/${cloudConnector.id}`)} >
                                                 <FormatAlignJustifyIcon fontSize={"small"}/>
                                             </IconButton>
                                         </Box>
@@ -91,7 +98,7 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
                                 <>
                                     <Grid item>
                                         <Box component={Paper} elevation={0} style={{borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35}}>
-                                            <IconButton onClick={()=>navigate(`aws/${cloudConnector.id}`)} >
+                                            <IconButton onClick={()=> setIsEnableConnectorOpen({isOpen: true, connectorId: cloudConnector.id})} >
                                                 <AddIcon fontSize={"small"}/>
                                             </IconButton>
                                         </Box>
@@ -114,7 +121,10 @@ const CloudProvider = ({refreshing, cloudConnectors, caName}) => {
             </Box>
         ) : (
             cloudConnectors.length > 0 ? (
-                <LamassuTable columnConf={cloudConnectorTableColumns} data={cloudConnectorsRender}/>
+                <>
+                    <LamassuTable columnConf={cloudConnectorTableColumns} data={cloudConnectorsRender}/>
+                    <EnableConnectorSynchronizationModal isOpen={isEnableConnectorOpen.isOpen} connectorId={isEnableConnectorOpen.connectorId} caName={caName} onClose={()=> setIsEnableConnectorOpen({isOpen: false})}/>
+                </>
             ) : (
                 <Grid container justifyContent={"center"} alignItems={"center"} sx={{height: "100%"}}>
                     <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">

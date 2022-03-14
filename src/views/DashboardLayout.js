@@ -20,6 +20,7 @@ import { dark, light } from "theme";
 import {MdOutlinePrecisionManufacturing} from "react-icons/md"
 import { LamassuNotifications } from "components/DashboardComponents/LamassuNotifications";
 import CloseIcon from '@mui/icons-material/Close';
+import { Home } from "./Home";
 
 
 export default ({notificationsList}) => {
@@ -49,7 +50,7 @@ export default ({notificationsList}) => {
                     path: "/",
                     link: "/",
                     icon: <DashboardOutlinedIcon  key="/"/>,
-                    content: <div>home</div>
+                    content: <Home/>
                 }
             ]
         },

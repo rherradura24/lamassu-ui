@@ -30,7 +30,7 @@ const RevokeDms = ({dms, isOpen, onClose=()=>{}, onRevoke={}}) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={()=>onClose()} variant="contained">Revoke</Button>
+                <Button onClick={()=>{onRevoke(dms.id); onClose()}} variant="contained">Revoke</Button>
             </DialogActions>
         </Dialog>
     )
@@ -45,7 +45,7 @@ const mapDispatchToProps = (dispatch, {dmsId}) => ({
 
    },
    
-   onRevoke: ()=>{}
+   onRevoke: (dmsId)=>{dispatch(dmsEnrollerDuck.actions.revokeDmsRequest(dmsId))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(RevokeDms));

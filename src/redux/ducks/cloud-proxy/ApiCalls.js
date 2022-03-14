@@ -15,3 +15,11 @@ export const synchronizeCloudConnectors = async (body) => {
         data: body
     })
 }
+
+export const fireEvent = async (body) => {
+    return apiRequest({
+        method: "POST",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/event",
+        data: body
+    })
+}

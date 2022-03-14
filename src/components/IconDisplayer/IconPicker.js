@@ -22,6 +22,7 @@ import { DynamicIcon } from "./DynamicIcon";
 import { Button, Grid, Menu, Paper, Popover, TextField } from "@mui/material";
 import { useState } from "react";
 import { Box } from "@mui/system";
+import { useTheme } from "@emotion/react"
 
 const iconsFamily = [
     // { prefix: "Ai", import: Ai },
@@ -55,6 +56,8 @@ iconsFamily.forEach(iconFamily => {
 var iconStrings = iconStrings.filter(function (str) { return str.toLowerCase().includes("smart".toLowerCase()) });
 
 export function IconPicker({value, onChange, enableSearchBar = false, ...props}) {
+    const theme = useTheme()
+
     const [query, setQuery] = useState(null);
     const [filteredIcons, setFilteredIcons] = useState(iconStrings);
     const [typingTimer, setTypingTimer] = useState(null);
@@ -128,7 +131,7 @@ export function IconPicker({value, onChange, enableSearchBar = false, ...props})
                     <Grid container gap={2}>
                         {filteredIcons.map((iconName) => {
                             return (
-                                <Grid key={iconName} item xs="auto" sx={{padding: "10px", cursor: "pointer"}} container alighItems="center" justifyContent="center" onClick={() => { handleIconClick(iconName); handleClose() }} component={Paper}>
+                                <Grid key={iconName} item xs="auto" sx={{padding: "10px", cursor: "pointer", background: theme.palette.background.lightContrast}} container alighItems="center" justifyContent="center" onClick={() => { handleIconClick(iconName); handleClose() }} component={Paper}>
                                     <DynamicIcon icon={iconName} size={30}/> 
                                 </Grid>
                             )

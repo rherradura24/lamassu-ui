@@ -15,7 +15,7 @@ const mapStateToProps = (state, {caName}) => {
 
 
 const mapDispatchToProps = (dispatch) => ({
-  onMount: ()=>{ dispatch(casDuck.actions.getCAs()) },
+  onMount: ()=>{ console.log("! Firing GET CAS");dispatch(casDuck.actions.getCAs()) },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(CaList));

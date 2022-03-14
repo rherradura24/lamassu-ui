@@ -76,7 +76,6 @@ export const reducer = (state = initState, action) => {
                 issuedCertList[issuedCert.serial_number] = issuedCert
             });
 
-            console.log(state, action.meta.caName, state.list[action.meta.caName]);
             return {
                 ...state,
                 list: {
@@ -115,7 +114,22 @@ export const reducer = (state = initState, action) => {
             return { ...state, status: status.FAILED };
 
         case success(t.CREATE_CA):
-            return { ...state, status: status.SUCCEEDED };
+            var currentList = state.list
+            var ca = action.payload
+
+            ca.status = capitalizeFirstLetter(ca.status)
+            ca.key_metadata.strength = capitalizeFirstLetter(ca.key_metadata.strength)
+
+            ca.status_color = statusToColor(ca.status)
+            ca.key_metadata.strength_color = keyStrengthToColor(ca.key_metadata.strength)
+
+            ca.issued_certs = {
+                status: status.IDLE,
+                list: {}
+            }
+            currentList[ca.name] = ca
+
+            return { ...state, status: status.SUCCEEDED, list: currentList };
 
         default:
             return state;

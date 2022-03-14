@@ -1,8 +1,8 @@
 export const dmsStatus = {
-    PENDING: "Pendig_approval",
+    PENDING: "Pending_approval",
     APPROVED: "Approved",
     REVOKED: "Revoked",
-    REJECTED: "Rejected",
+    REJECTED: "Denied",
 }
 
 export const keyStrength = {

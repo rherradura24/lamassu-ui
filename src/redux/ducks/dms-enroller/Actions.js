@@ -1,5 +1,9 @@
 import * as t from "./ActionTypes";
 
+export const resetCurretRequestStatus = () => ({
+    type: t.RESET_CURRENT_REQUEST_STATUS,
+})
+
 export const getDmsList = () => ({
     type: t.GET_DMS_LIST,
 })
@@ -20,8 +24,38 @@ export const createDMS = (dmsName, country, state, locality, organization, organ
             key_metadata:{
                 type: keyType,
                 bits: keyBits,
-
+                
             },
         }
     },
+})
+
+export const approveDmsRequest = (dmsId, caNameList) => ({
+    type: t.APPROVE_DMS_REQUEST,
+    payload: {
+        dmsId: dmsId,
+        body: {
+            status: "APPROVED",
+            cas: caNameList
+        }
+    }
+})
+
+export const declineDmsRequest = (dmsId) => ({
+    type: t.DECLINE_DMS_REQUEST,
+    payload: {
+        dmsId: dmsId,
+        body: {
+            status: "DENIED",
+        }
+    }
+})
+export const revokeDmsRequest = (dmsId) => ({
+    type: t.APPROVE_DMS_REQUEST,
+    payload: {
+        dmsId: dmsId,
+        body: {
+            status: "REVOKED",
+        }
+    }
 })

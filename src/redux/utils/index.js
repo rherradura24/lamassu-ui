@@ -10,7 +10,8 @@ export const success = (actionType) => actionType + PREFIX_SUCCESS;
 export const failed = (actionType) => actionType + PREFIX_FAIL;
 
 export const apiRequest = async ({ method = 'GET', url, data, query, headers = {} }) => {
-    // await new Promise(r => setTimeout(r, 5000));
+    // await new Promise(r => setTimeout(r, 2000));
+    console.log(Date.now(), method, url)
 
     method = method.toUpperCase()
     if (query) {

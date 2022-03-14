@@ -15,7 +15,7 @@ import { LamassuChip } from "components/LamassuComponents/Chip";
 const ApproveDms = ({dms, refreshingCaList, caList, isOpen, onClose=()=>{}, onApprove={}}) => {
     const theme = useTheme()
     const [selectedCas, setSelectedCas] = useState([])
-
+    
     const casTableColumns = [
         {key: "actions", title: "", align: "start", size: 1},
         {key: "name", title: "Name", align: "center", size: 2},
@@ -79,7 +79,7 @@ const ApproveDms = ({dms, refreshingCaList, caList, isOpen, onClose=()=>{}, onAp
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={()=>onClose()} variant="contained">Approve</Button>
+                <Button onClick={()=>{onApprove(dms.id, selectedCas); onClose()}} variant="contained">Approve</Button>
             </DialogActions>
         </Dialog>
     )
@@ -96,7 +96,7 @@ const mapDispatchToProps = (dispatch, {dmsId}) => ({
         dispatch(casDuck.actions.getCAs())
    },
    
-   onApprove: ()=>{}
+   onApprove: (dmsId, caNameList)=>{dispatch(dmsEnrollerDuck.actions.approveDmsRequest(dmsId, caNameList))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(ApproveDms));

@@ -86,7 +86,7 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
                 </Box>
             </Box>
             <Divider/>
-            <Box style={{padding: 40, flexGrow: 1, overflowY: "auto"}}>
+            <Box style={{padding: 40, flexGrow: 1, overflowY: "auto", height: "500px"}}>
                     {
                         !refreshing && (
                             <Outlet />
@@ -133,7 +133,7 @@ const mapStateToProps = (state, {caName}) => {
 
 const mapDispatchToProps = (dispatch) => ({
     onMount: ()=>{ 
-    //   dispatch(casDuck.actions.getCAs()) 
+       //dispatch(casDuck.actions.getCAs()) 
     },
 })
 

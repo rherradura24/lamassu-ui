@@ -49,7 +49,34 @@ export const light = {
             lightContrast: "#eff0f2", // f1f1f1
             darkContrast:  "#D4D4D4"
         },
-        appbar: "#0068D1"
+        appbar: "#0068D1",
+        homeCharts:{
+            mainCard: {
+                primary:"#3F66FE",
+                secondary: "#5878FF",
+                text: "#fff"
+            },
+            deviceStatusCard:{
+                text:"#eee",
+                textSecondary: "#fff",
+                primary: "#2441B1",
+                status:{
+                    pendingProvision: "#08C2D4",
+                    provisioned: "#5CA36B",
+                    aboutToExpire: "#F3A83B",
+                    expired: "#da565f",
+                    decommissioned: "#8F56FE"
+                }
+            },
+            issuedCertsPerCA:{
+                primary: "#12508f", 
+                text: "#fff"
+            },
+            enrolledDevicesPerDMS:{
+                primary: "#12508f", 
+                text: "#fff"
+            },
+        }
     },    
 }
 
@@ -67,7 +94,7 @@ export const dark = {
             dark: "#333"
         },
         success:{
-            light: "#4a6952",
+            light: "#576657",
             main: "#25ee32",
             dark: "#2F6140"
         },
@@ -102,7 +129,34 @@ export const dark = {
             lightContrast: "#22343c", // f1f1f1
             darkContrast:  "#17242b"
         },
-        appbar: "#0f171c"
+        appbar: "#0f171c",
+        homeCharts:{
+            mainCard: {
+                primary:"#1B2A32",
+                secondary: "#2E4856",
+                text: "#fff"
+            },
+            deviceStatusCard:{
+                text:"#fff",
+                textSecondary: "#ddd",
+                primary: "#142024",
+                status:{
+                    pendingProvision: "#08C2D4",
+                    provisioned: "#5CA36B",
+                    aboutToExpire: "#F3A83B",
+                    expired: "#da565f",
+                    decommissioned: "#8F56FE"
+                }
+            },
+            issuedCertsPerCA:{
+                primary: "#142024", 
+                text: "#eee"
+            },
+            enrolledDevicesPerDMS:{
+                primary: "#142024", 
+                text: "#eee"
+            },
+        }
     },
     components:{
         MuiPaper:{
