@@ -78,7 +78,8 @@ const CaInspector = ({refreshing, caData, urlCaInspectTab})=>{
                         !refreshing && (
                             <Tabs value={selectedTab}>
                                 <Tab component={Link} to={""} label="Overview" />
-                                <Tab component={Link} to={"certs"} label="Issued Certificates" />
+                                <Tab component={Link} to={"cert"} label="Root Certificate" />
+                                <Tab component={Link} to={"issued"} label="Issued Certificates" />
                                 <Tab component={Link} to={"cloud-providers"} label="Cloud Providers" />
                             </Tabs>
                         ) 

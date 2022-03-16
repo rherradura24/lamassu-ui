@@ -54,7 +54,7 @@ export const EditDevice = ({refreshing, deviceId, deviceData}) => {
                                 refreshing ? (
                                     <Skeleton variant="rect" width={"100%"} height={22} />
                                 ) : (
-                                    <IconPicker value={editableDeviceData.icon} onChange={newIcon=>{setEditableDeviceData(prevData => ({...prevData, icon: newIcon}))}}/>
+                                    <IconPicker value={editableDeviceData.icon_name} onChange={newIcon=>{setEditableDeviceData(prevData => ({...prevData, icon_name: newIcon}))}}/>
                                 )
                             }
                             

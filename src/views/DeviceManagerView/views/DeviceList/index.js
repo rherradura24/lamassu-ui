@@ -9,6 +9,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onMount: ()=>{ dispatch(devManagerDuck.actions.getDevices()) },
+  refreshData: ()=>{ dispatch(devManagerDuck.actions.getDevices()) },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(createLoader(DeviceList));

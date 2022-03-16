@@ -86,7 +86,7 @@ export const DeviceInspector = ({refreshing, deviceId, deviceData}) => {
                     <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
                         <Box sx={{display: "flex", alignItems: "center"}}>
                             <Box component={Paper} sx={{padding: "5px", background: deviceData.icon_color, borderRadius: 2, width: 40, height: 40, display: "flex",justifyContent:"center", alignItems:"center" }}>
-                                <DynamicIcon icon={deviceData.icon} size={30} color="#fff"/>
+                                <DynamicIcon icon={deviceData.icon_name} size={30} color="#fff"/>
                             </Box>
                             <Box sx={{marginLeft: "15px"}}>
                                 <Typography style={{color: theme.palette.text.primary, fontWeight: "500", fontSize: 26, lineHeight: "24px", marginRight: "10px"}}>{deviceData.alias}</Typography>

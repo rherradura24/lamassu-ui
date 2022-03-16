@@ -50,6 +50,15 @@ export const light = {
             darkContrast:  "#D4D4D4"
         },
         appbar: "#0068D1",
+        chartsColors: {
+                blue: "#08C2D4",
+                green: "#5CA36B",
+                yellow: "#F3A83B",
+                red: "#da565f",
+                purple: "#8F56FE",
+                background: "#eee",
+                text: "#111",
+        },
         homeCharts:{
             mainCard: {
                 primary:"#3F66FE",
@@ -60,13 +69,6 @@ export const light = {
                 text:"#eee",
                 textSecondary: "#fff",
                 primary: "#2441B1",
-                status:{
-                    pendingProvision: "#08C2D4",
-                    provisioned: "#5CA36B",
-                    aboutToExpire: "#F3A83B",
-                    expired: "#da565f",
-                    decommissioned: "#8F56FE"
-                }
             },
             issuedCertsPerCA:{
                 primary: "#12508f", 
@@ -85,7 +87,7 @@ export const dark = {
         mode: "dark",
         primary: {
             light: "#184d60",   //184d60    4a6952
-            main: "#2099C6",    //2099C6    25ee32
+            main: "#63B2F6",    //2099C6    25ee32
             dark: "#104c63"     // 104c63   2F6140
         },
         secondary: {
@@ -130,6 +132,15 @@ export const dark = {
             darkContrast:  "#17242b"
         },
         appbar: "#0f171c",
+        chartsColors: {
+            blue: "#08C2D4",
+            green: "#5CA36B",
+            yellow: "#F3A83B",
+            red: "#da565f",
+            purple: "#8F56FE",
+            background: "#22343C",
+            text: "#fff",
+        },
         homeCharts:{
             mainCard: {
                 primary:"#1B2A32",
@@ -140,13 +151,6 @@ export const dark = {
                 text:"#fff",
                 textSecondary: "#ddd",
                 primary: "#142024",
-                status:{
-                    pendingProvision: "#08C2D4",
-                    provisioned: "#5CA36B",
-                    aboutToExpire: "#F3A83B",
-                    expired: "#da565f",
-                    decommissioned: "#8F56FE"
-                }
             },
             issuedCertsPerCA:{
                 primary: "#142024", 

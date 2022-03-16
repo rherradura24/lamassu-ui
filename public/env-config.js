@@ -5,5 +5,6 @@ window._env_ =  {
 
     REACT_APP_LAMASSU_CLOUD_PROXY_API: "https://dev-lamassu.zpd.ikerlan.es:8081",
     REACT_APP_LAMASSU_CA_API: "https://dev-lamassu.zpd.ikerlan.es/api/ca",
-    REACT_APP_LAMASSU_DMS_ENROLLER_API: "https://dev-lamassu.zpd.ikerlan.es/api/dmsenroller"
+    REACT_APP_LAMASSU_DMS_ENROLLER_API: "https://dev-lamassu.zpd.ikerlan.es/api/dmsenroller",
+    REACT_APP_LAMASSU_DEVMANAGER:"https://dev-lamassu.zpd.ikerlan.es/api/devmanager"
 }

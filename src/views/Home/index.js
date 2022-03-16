@@ -241,7 +241,7 @@ export const Home = () => {
                 </Box>
             </Box>
 
-            <DeviceStatusChart />
+            <DeviceStatusChart style={{marginLeft: "20px"}}/>
 
             
             {/* <Box sx={{display: "flex", flexWrap: "wrap"}}>

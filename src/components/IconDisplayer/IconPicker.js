@@ -55,6 +55,8 @@ iconsFamily.forEach(iconFamily => {
 
 var iconStrings = iconStrings.filter(function (str) { return str.toLowerCase().includes("smart".toLowerCase()) });
 
+console.log(iconStrings);
+
 export function IconPicker({value, onChange, enableSearchBar = false, ...props}) {
     const theme = useTheme()
 

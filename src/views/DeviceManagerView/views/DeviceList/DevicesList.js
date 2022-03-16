@@ -5,6 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai"
 import AddIcon from '@mui/icons-material/Add';
 import { DeviceCard } from "../../components/DeviceCard"
 import ViewListIcon from '@mui/icons-material/ViewList';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { ColoredButton } from "components/LamassuComponents/ColoredButton";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -13,27 +14,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { LamassuTable } from "components/LamassuComponents/Table";
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import { DataControllerBar } from "components/DataControllerBar";
 
-export const DeviceList = ({ devices }) => {
+export const DeviceList = ({ devices, refreshData }) => {
     const theme = useTheme()
     const [view, setView] = useState('module');
     const navigate = useNavigate()
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleClick = (event) => {
-        if (anchorEl !== event.currentTarget) {
-            setAnchorEl(event.currentTarget);
-        }
-    }
-
-    const handleClose = (event) => {
-        setAnchorEl(null);
-    }
-
     const devicesTableColumns = [
         { key: "icon", title: "", align: "start", size: 1 },
-        { key: "id", title: "Device ID", align: "center", size: 1 },
+        { key: "id", title: "Device ID", align: "center", size: 3 },
         { key: "alias", title: "Alias", align: "center", size: 1 },
         { key: "status", title: "Status", align: "center", size: 1 },
         { key: "creation", title: "Creation Date", align: "center", size: 2 },
@@ -47,7 +37,7 @@ export const DeviceList = ({ devices }) => {
         return {
             icon: (
                 <Box component={Paper} sx={{ padding: "5px", background: device.icon_color, borderRadius: 2, width: 20, height: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <DynamicIcon icon={device.icon} size={16} color="#fff" />
+                    <DynamicIcon icon={device.icon_name} size={16} color="#fff" />
                 </Box>
             ),
             id: <Typography style={{ fontWeight: "700", fontSize: 14, color: theme.palette.text.primary }}>#{device.id}</Typography>,
@@ -88,56 +78,21 @@ export const DeviceList = ({ devices }) => {
         <Grid container style={{ height: "100%" }}>
             <Grid item xs={12} container>
                 <Box sx={{ padding: "25px", height: "calc(100% - 50px)" }}>
-                    <Grid container alignItems={"center"} justifyContent="space-between" sx={{ marginBottom: "35px" }}>
-                        <Grid item xs="auto" container alignItems={"center"}>
-                            <Box component={Paper} sx={{ padding: "5px", height: 30, display: "flex", alignItems: "center", width: 300 }}>
-                                <AiOutlineSearch size={20} color="#626365" style={{ marginLeft: 10, marginRight: 10 }} />
-                                <InputBase fullWidth={true} style={{ color: "#555", fontSize: 14 }} />
-                            </Box>
-                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 40, height: 40, marginLeft: 10 }}>
-                                <IconButton style={{ background: theme.palette.primary.light }}>
-                                    <AddIcon style={{ color: theme.palette.primary.main }} />
-                                </IconButton>
-                            </Box>
-                        </Grid>
-                        <Grid item xs="auto" container spacing={4}>
-                            <Grid item xs="auto" container alignItems={"center"} spacing={2}>
-                                <Grid item>
-                                    <Typography variant="button">Sort By</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <ColoredButton customtextcolor={theme.palette.text.primary} customcolor={theme.palette.gray.light} size="small" variant="contained" disableFocusRipple disableRipple endIcon={anchorEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleClick}>Alias</ColoredButton>
-                                    <Menu
-                                        style={{ marginTop: 1, width: 200, borderRadius: 0 }}
-                                        id="simple-menu"
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    // MenuListProps={{ onMouseLeave: handleClose }}
-                                    >
-                                        <MenuItem style={{ width: "100%" }} onClick={(ev) => { }}>Alias</MenuItem>
-                                        <MenuItem style={{ width: "100%" }} onClick={(ev) => { }}>ID</MenuItem>
-                                        <MenuItem style={{ width: "100%" }} onClick={(ev) => { }}>Expiration Date</MenuItem>
-                                    </Menu>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs="auto">
-                                <ToggleButtonGroup
-                                    value={view}
-                                    exclusive
-                                    onChange={(ev, nextView) => { nextView !== null && setView(nextView) }}
-                                    color="primary"
-                                    size="small"
-                                >
-                                    <ToggleButton value="list" aria-label="list" >
-                                        <ViewListIcon />
-                                    </ToggleButton>
-                                    <ToggleButton value="module" aria-label="module">
-                                        <ViewModuleIcon />
-                                    </ToggleButton>
-                                </ToggleButtonGroup>
-                            </Grid>
-                        </Grid>
+                    <Grid container>
+                        <DataControllerBar 
+                            query
+                            onQueryChange={(ev)=>{console.log("query change", ev)}}
+                            addItem
+                            onAddItemClick={(ev)=>{console.log("add click", ev)}}
+                            filter
+                            onFilterChange={(ev)=>{console.log("filter change", ev)}}
+                            sort
+                            onSortChange={(ev)=>{console.log("sort change", ev)}}
+                            refreshButton
+                            onRefreshClick={()=>{refreshData()}}
+                            cardListSwitch
+                            onCardListSwitchChange={(ev)=>{console.log("cardlist click", ev)}}
+                        />
                     </Grid>
                     {
                         view == "module" ? (
@@ -146,7 +101,7 @@ export const DeviceList = ({ devices }) => {
                                     devices.map(device => (
                                         <Grid item xs={3} key={device.id}>
                                             <Link to={device.id} style={{ textDecoration: 'none' }}>
-                                                <DeviceCard style={{ cursor: "pointer" }} id={device.id} alias={device.alias} description={device.description} tags={device.tags} icon={device.icon} iconColor={device.icon_color} remainigDaysBeforeExpiration={device.remainig_days_before_expiration} />
+                                                <DeviceCard style={{ cursor: "pointer" }} id={device.id} alias={device.alias} description={device.description} tags={device.tags} icon={device.icon_name} iconColor={device.icon_color} remainigDaysBeforeExpiration={device.remainig_days_before_expiration} />
                                             </Link>
                                         </Grid>
                                     ))

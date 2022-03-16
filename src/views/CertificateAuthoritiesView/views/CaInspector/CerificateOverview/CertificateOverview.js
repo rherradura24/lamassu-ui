@@ -1,10 +1,17 @@
 import React from "react"
 import { useTheme } from "@emotion/react";
 import { Certificate } from "@fidm/x509";
-import { Grid, Typography } from "@mui/material"
+import { Box, Grid, Paper, Typography } from "@mui/material"
 import moment from "moment";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { DeviceStatusChart } from "views/Home/charts/DeviceStatus";
+import { IssuedCertsKeyStrength, IssuedCertsStatus, IssuedCertsTimeline } from "./charts";
+
+import { Bar } from 'react-chartjs-2';
+import {Chart, registerables } from 'chart.js'
+
+Chart.register(...registerables );
 
 function uncamelize(str, separator) {
     // Assume default separator is a single space.
@@ -80,15 +87,14 @@ export const Overview = ({caData}) => {
         },
     }
 
-
     return (
-        <Grid item container sx={{width: "100%"}} spacing={1}>
-            <Grid item xs={7} container spacing={4}>
-                <Grid item container direction="column" >
+        <Grid item container sx={{width: "100%"}} spacing={0}>
+            <Grid item xs={12} container spacing={4}>
+                <Grid item xs={6} container>
                     <Grid item style={{marginBottom: 10}}>
                         <Typography variant="button" style={{color: theme.palette.text.primary, fontWeight: "600", fontSize: 17}}>Subject</Typography>
                     </Grid>
-                    <Grid item container spacing={1}>
+                    <Grid item container spacing={1} flexGrow={1}>
                         {
                             Object.keys(certificateSubject).map(key=>(
                                 <Grid item xs={12} container key={key}>
@@ -103,7 +109,7 @@ export const Overview = ({caData}) => {
                         }
                     </Grid>
                 </Grid>
-                <Grid item xs={12} container style={{height: "fit-content"}}>
+                <Grid item xs={6} container style={{height: "fit-content"}}>
                     <Grid item xs={12} style={{marginBottom: 10}}>
                         <Typography variant="button" style={{color: theme.palette.text.primary, fontWeight: "600", fontSize: 17}}>Properties</Typography>
                     </Grid>
@@ -123,10 +129,16 @@ export const Overview = ({caData}) => {
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item xs={5} container justifyContent={"flex-end"} style={{marginTop: 20}}>
-                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{fontSize: 10, padding:20, borderRadius: 10, width: "fit-content", height: "fit-content"}} wrapLines={true} lineProps={{style:{color: theme.palette.text.primaryLight}}}>
-                    {decodedCert}
-                </SyntaxHighlighter>
+            <Grid item container style={{marginTop: 20}} spacing={2}>
+                <Grid item xs={3}>
+                    <IssuedCertsStatus/>
+                </Grid>
+                <Grid item xs={3}>
+                    <IssuedCertsKeyStrength/>
+                </Grid>
+                <Grid item xs={6}>
+                    <IssuedCertsTimeline />
+                </Grid>
             </Grid>
         </Grid>
     )

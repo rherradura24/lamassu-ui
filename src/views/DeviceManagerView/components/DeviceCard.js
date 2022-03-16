@@ -19,11 +19,16 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
     
     return (
         <Grid container component={Paper} sx={{padding: "10px", width: "100%"}} spacing={1} {...props}>
-            <Grid item xs={12} container alignItems="center">
-                <Box component={Paper} sx={{padding: "5px", background: iconColor, borderRadius: 2, width: 25, height: 25, display: "flex",justifyContent:"center", alignItems:"center" }}>
-                    <DynamicIcon icon={icon} size={22} color="#fff"/>
-                </Box>
-                <Typography style={{marginLeft: 10}}>{`${alias} #${id}`}</Typography>
+            <Grid item xs={12} container alignItems="center" spacing={2}>
+                <Grid item xs="auto">
+                    <Box component={Paper} sx={{padding: "5px", background: iconColor, borderRadius: 2, width: 25, height: 25, display: "flex",justifyContent:"center", alignItems:"center" }}>
+                        <DynamicIcon icon={icon} size={22} color="#fff"/>
+                    </Box>
+                </Grid>
+                <Grid item>
+                    <Typography sx={{fontWeight: "500"}}>{`${alias}`}</Typography>
+                    <Typography sx={{fontSize: 12}}>{`#${id}`}</Typography>
+                </Grid>
             </Grid>
             <Grid item xs={12}>
                 <Typography style={{fontSize: 12}}>{description}</Typography>
