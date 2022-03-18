@@ -2,83 +2,87 @@ import React, { useState } from "react"
 
 import { useTheme } from "@emotion/react"
 import { Box, Button, Grid, IconButton, InputBase, Menu, MenuItem, Paper, Typography } from "@mui/material"
-import CloseIcon from '@mui/icons-material/Close';
-import DoneIcon from '@mui/icons-material/Done';
-import { dmsStatus } from "redux/ducks/dms-enroller/Constants";
-import { LamassuTable } from "components/LamassuComponents/Table";
-import { LamassuChip } from "components/LamassuComponents/Chip";
-import { ColoredButton } from "components/LamassuComponents/ColoredButton";
+import CloseIcon from "@mui/icons-material/Close"
+import DoneIcon from "@mui/icons-material/Done"
+import { dmsStatus } from "redux/ducks/dms-enroller/Constants"
+import { LamassuTable } from "components/LamassuComponents/Table"
+import { LamassuChip } from "components/LamassuComponents/Chip"
+import { ColoredButton } from "components/LamassuComponents/ColoredButton"
 import { AiOutlineSearch } from "react-icons/ai"
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useNavigate } from "react-router-dom";
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
-import ApproveDms from "../DmsActions/ApproveDms";
-import DeclineDms from "../DmsActions/DeclineDms";
-import RevokeDms from "../DmsActions/RevokeDms";
+import AddIcon from "@mui/icons-material/Add"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
+import { useNavigate } from "react-router-dom"
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify"
+import ApproveDms from "../DmsActions/ApproveDms"
+import DeclineDms from "../DmsActions/DeclineDms"
+import RevokeDms from "../DmsActions/RevokeDms"
 import moment from "moment"
-import { GoLinkExternal } from "react-icons/go";
-import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import { GoLinkExternal } from "react-icons/go"
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded"
 import downloadFile from "components/utils/FileDownloader"
 
 export const DmsList = ({ dmsList }) => {
+  console.log(dmsList)
+  const theme = useTheme()
 
-    console.log(dmsList);
-    const theme = useTheme()
+  const navigate = useNavigate()
 
-    const navigate = useNavigate()
+  const [selectedDmsId, setSelectedDmsId] = useState()
 
-    const [selectedDmsId, setSelectedDmsId] = useState();
+  const [isDialogOpen, setIsDialogOpen] = useState({ open: false })
 
-    const [isDialogOpen, setIsDialogOpen] = useState({ open: false });
-
-    const [anchorElSort, setAnchorElSort] = useState(null);
-    const handleClick = (event) => {
-        if (anchorElSort !== event.currentTarget) {
-            setAnchorElSort(event.currentTarget);
-        }
+  const [anchorElSort, setAnchorElSort] = useState(null)
+  const handleClick = (event) => {
+    if (anchorElSort !== event.currentTarget) {
+      setAnchorElSort(event.currentTarget)
     }
+  }
 
-    const handleCloseSort = (event) => {
-        setAnchorElSort(null);
-    }
+  const handleCloseSort = (event) => {
+    setAnchorElSort(null)
+  }
 
-    const dmsTableColumns = [
-        { key: "id", title: "DMS ID", align: "start", size: 3 },
-        { key: "name", title: "Name", align: "center", size: 2 },
-        { key: "creation", title: "Creation Date", align: "center", size: 1 },
-        { key: "status", title: "Status", align: "center", size: 1 },
-        { key: "expiration", title: "Expiration / Revocation / Rejection Date", align: "center", size: 1 },
-        { key: "keystrength", title: "Key Strength", align: "center", size: 1 },
-        { key: "keyprops", title: "Key Properties", align: "center", size: 1 },
-        { key: "enrolled", title: "Enrolled Devices", align: "center", size: 1 },
-        { key: "actions", title: "Actions", align: "center", size: 2 },
-    ]
+  const dmsTableColumns = [
+    { key: "id", title: "DMS ID", align: "start", size: 3 },
+    { key: "name", title: "Name", align: "center", size: 2 },
+    { key: "creation", title: "Creation Date", align: "center", size: 1 },
+    { key: "status", title: "Status", align: "center", size: 1 },
+    { key: "expiration", title: "Expiration / Revocation / Rejection Date", align: "center", size: 1 },
+    { key: "keystrength", title: "Key Strength", align: "center", size: 1 },
+    { key: "keyprops", title: "Key Properties", align: "center", size: 1 },
+    { key: "enrolled", title: "Enrolled Devices", align: "center", size: 1 },
+    { key: "actions", title: "Actions", align: "center", size: 2 }
+  ]
 
-    const dmsRender = dmsList.map(dms => {
-        return {
-            id: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{dms.id}</Typography>,
-            name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{dms.name}</Typography>,
-            status: <LamassuChip label={dms.status} color={dms.status_color} />,
-            creation: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(dms.creation_timestamp).format("DD/MM/YYYY")}</Typography>,
-            keystrength: <LamassuChip label={dms.key_metadata.strength} color={dms.key_metadata.strength_color} />,
-            keyprops: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{`${dms.key_metadata.type} ${dms.key_metadata.bits}`}</Typography>,
-            enrolled: (dms.status === dmsStatus.APPROVED || dms.status === dmsStatus.REVOKED) ? (
+  const dmsRender = dmsList.map(dms => {
+    return {
+      id: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{dms.id}</Typography>,
+      name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{dms.name}</Typography>,
+      status: <LamassuChip label={dms.status} color={dms.status_color} />,
+      creation: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(dms.creation_timestamp).format("DD/MM/YYYY")}</Typography>,
+      keystrength: <LamassuChip label={dms.key_metadata.strength} color={dms.key_metadata.strength_color} />,
+      keyprops: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{`${dms.key_metadata.type} ${dms.key_metadata.bits}`}</Typography>,
+      enrolled: (dms.status === dmsStatus.APPROVED || dms.status === dmsStatus.REVOKED)
+        ? (
                 <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dms.authorized_enroll_requests}</Typography>
-            ) : (
+          )
+        : (
                 <Typography>-</Typography>
-            ),
-            expiration: (dms.status === dmsStatus.REVOKED || dms.status === dmsStatus.APPROVED || dms.status === dmsStatus.REJECTED) ? (
+          ),
+      expiration: (dms.status === dmsStatus.REVOKED || dms.status === dmsStatus.APPROVED || dms.status === dmsStatus.REJECTED)
+        ? (
                 <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dms.status === dmsStatus.REVOKED ? dms.revocation_date : (dms.status === dmsStatus.APPROVED ? dms.expiration_date : dms.rejection_date)}</Typography>
-            ) : (
+          )
+        : (
                 <Typography>-</Typography>
-            ),
-            actions: (
+          ),
+      actions: (
                 <Box>
                     <Grid container spacing={1} alignItems="center">
                         {
-                            dms.status === dmsStatus.PENDING ? (
+                            dms.status === dmsStatus.PENDING
+                              ? (
                                 <>
                                     <Grid item>
                                         <ColoredButton
@@ -88,8 +92,8 @@ export const DmsList = ({ dmsList }) => {
                                             variant="contained"
                                             size="small"
                                             onClick={() => {
-                                                setSelectedDmsId(dms.id)
-                                                setIsDialogOpen({ open: true, type: "APPROVE" })
+                                              setSelectedDmsId(dms.id)
+                                              setIsDialogOpen({ open: true, type: "APPROVE" })
                                             }}
                                         >
                                             Approve
@@ -103,16 +107,18 @@ export const DmsList = ({ dmsList }) => {
                                             variant="contained"
                                             size="small"
                                             onClick={() => {
-                                                setSelectedDmsId(dms.id)
-                                                setIsDialogOpen({ open: true, type: "DECLINE" })
+                                              setSelectedDmsId(dms.id)
+                                              setIsDialogOpen({ open: true, type: "DECLINE" })
                                             }}
                                         >
                                             Reject
                                         </ColoredButton>
                                     </Grid>
                                 </>
-                            ) : (
-                                dms.status === dmsStatus.APPROVED ? (
+                                )
+                              : (
+                                  dms.status === dmsStatus.APPROVED
+                                    ? (
                                     <>
                                         <Grid item>
                                             <ColoredButton
@@ -122,8 +128,8 @@ export const DmsList = ({ dmsList }) => {
                                                 variant="contained"
                                                 size="small"
                                                 onClick={() => {
-                                                    setSelectedDmsId(dms.id)
-                                                    setIsDialogOpen({ open: true, type: "REVOKE" })
+                                                  setSelectedDmsId(dms.id)
+                                                  setIsDialogOpen({ open: true, type: "REVOKE" })
                                                 }}
                                             >
                                                 Revoke
@@ -131,24 +137,25 @@ export const DmsList = ({ dmsList }) => {
                                         </Grid>
                                         <Grid item>
                                             <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                <IconButton onClick={()=>{downloadFile("dms-"+dms.name+".crt", window.atob(dms.crt))}}>
+                                                <IconButton onClick={() => { downloadFile("dms-" + dms.name + ".crt", window.atob(dms.crt)) }}>
                                                     <FileDownloadRoundedIcon fontSize={"small"} />
                                                 </IconButton>
                                             </Box>
                                         </Grid>
                                     </>
-                                ) : (
+                                      )
+                                    : (
                                     <></>
+                                      )
                                 )
-                            )
                         }
                     </Grid>
                 </Box>
-            )
-        }
-    })
+      )
+    }
+  })
 
-    return (
+  return (
         <Grid container style={{ height: "100%" }}>
             <Grid item xs={12} container>
                 <Box sx={{ padding: "25px", width: "calc(100% - 50px)", height: "calc(100% - 50px)" }}>
@@ -190,11 +197,13 @@ export const DmsList = ({ dmsList }) => {
                         </Grid>
                     </Grid>
                     {
-                        dmsList.length > 0 ? (
+                        dmsList.length > 0
+                          ? (
                             <Box sx={{ padding: "25px", height: "calc(100% - 125px)" }} component={Paper}>
                                 <LamassuTable data={dmsRender} columnConf={dmsTableColumns} />
                             </Box>
-                        ) : (
+                            )
+                          : (
                             <Grid container justifyContent={"center"} alignItems={"center"} sx={{ height: "100%" }}>
                                 <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">
                                     <img src={process.env.PUBLIC_URL + "/assets/icon-dms.png"} height={150} style={{ marginBottom: "25px" }} />
@@ -207,25 +216,25 @@ export const DmsList = ({ dmsList }) => {
                                         variant="contained"
                                         sx={{ marginTop: "10px", color: theme.palette.primary.main, background: theme.palette.primary.light }}
                                         onClick={() => {
-                                            window.open("https://github.com/lamassuiot/lamassu-compose", "_blank")
+                                          window.open("https://github.com/lamassuiot/lamassu-compose", "_blank")
                                         }}
                                     >
                                         Go to DMS enrollment instructions
                                     </Button>
-                                    <Typography sx={{margin: "10px", textAlign: "center"}}>or</Typography>
+                                    <Typography sx={{ margin: "10px", textAlign: "center" }}>or</Typography>
                                     <Button
                                         endIcon={<AddIcon />}
                                         variant="contained"
                                         sx={{ color: theme.palette.primary.main, background: theme.palette.primary.light }}
                                         onClick={() => {
-                                            navigate("create")
+                                          navigate("create")
                                         }}
                                     >
                                         Register your first DMS
                                     </Button>
                                 </Grid>
                             </Grid>
-                        )
+                            )
                     }
                 </Box>
             </Grid>
@@ -234,19 +243,19 @@ export const DmsList = ({ dmsList }) => {
                 isDialogOpen.open && (
                     <>
                         {
-                            isDialogOpen.type == "APPROVE" && (
+                            isDialogOpen.type === "APPROVE" && (
                                 <ApproveDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen({ open: false }) }} />
                             )
                         }
 
                         {
-                            isDialogOpen.type == "DECLINE" && (
+                            isDialogOpen.type === "DECLINE" && (
                                 <DeclineDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen({ open: false }) }} />
                             )
                         }
 
                         {
-                            isDialogOpen.type == "REVOKE" && (
+                            isDialogOpen.type === "REVOKE" && (
                                 <RevokeDms dmsId={selectedDmsId} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen({ open: false }) }} />
                             )
                         }
@@ -254,5 +263,5 @@ export const DmsList = ({ dmsList }) => {
                 )
             }
         </Grid>
-    )
+  )
 }

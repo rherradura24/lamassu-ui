@@ -1,98 +1,98 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 
-import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
-import { RiShieldKeyholeLine } from "react-icons/ri";
-import LoadingButton from '@mui/lab/LoadingButton';
-import AddIcon from '@mui/icons-material/Add';
-import { actionType, status } from "redux/utils/constants";
-import { useNavigate } from "react-router-dom";
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material"
+import { RiShieldKeyholeLine } from "react-icons/ri"
+import LoadingButton from "@mui/lab/LoadingButton"
+import AddIcon from "@mui/icons-material/Add"
+import { actionType, status } from "redux/utils/constants"
+import { useNavigate } from "react-router-dom"
+import SyntaxHighlighter from "react-syntax-highlighter"
+import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism"
 import downloadFile from "components/utils/FileDownloader"
 
 export const CreateDms = ({ requestStatus, privateKey, resetCurretRequestStatus, createDMS }) => {
-    console.log(privateKey);
-    const theme = useTheme()
-    const navigate = useNavigate()
+  console.log(privateKey)
+  const theme = useTheme()
+  const navigate = useNavigate()
 
-    const rsaOptions = [
-        {
-            label: "2048",
-            value: 2048,
-            color: theme.palette.warning.main,
-        },
-        {
-            label: "3072",
-            value: 3072,
-            color: theme.palette.success.main,
-        },
-        {
-            label: "7680",
-            value: 7680,
-            color: theme.palette.success.main,
-        },
-    ]
-
-    const ecdsaOptions = [
-        {
-            label: "224",
-            value: 224,
-            color: theme.palette.warning.main,
-        },
-        {
-            label: "256",
-            value: 256,
-            color: theme.palette.success.main,
-        },
-        {
-            label: "384",
-            value: 384,
-            color: theme.palette.success.main,
-        },
-    ]
-
-    const [displayPrivKeyView, setDisplayPrivKeyView] = useState(false)
-
-
-    useEffect(() => {
-        if (requestStatus.status == status.SUCCEEDED && requestStatus.actionType == actionType.CREATE) {
-            resetCurretRequestStatus()
-            setDisplayPrivKeyView(true)
-        }
-    }, [requestStatus])
-
-    const handleCreateDms = () => {
-        createDMS(dmsName, country, state, city, org, orgUnit, cn, keyType, parseInt(keyBits.value))
+  const rsaOptions = [
+    {
+      label: "2048",
+      value: 2048,
+      color: theme.palette.warning.main
+    },
+    {
+      label: "3072",
+      value: 3072,
+      color: theme.palette.success.main
+    },
+    {
+      label: "7680",
+      value: 7680,
+      color: theme.palette.success.main
     }
+  ]
 
-    const [dmsName, setDmsName] = useState("")
-    const [country, setCountry] = useState("")
-    const [state, setState] = useState("")
-    const [city, setCity] = useState("")
-    const [org, setOrg] = useState("")
-    const [orgUnit, setOrgUnit] = useState("")
-    const [cn, setCN] = useState("")
-    const [keyType, setKeyType] = useState("rsa")
-    const [keyBits, setKeyBits] = useState(rsaOptions[1])
+  const ecdsaOptions = [
+    {
+      label: "224",
+      value: 224,
+      color: theme.palette.warning.main
+    },
+    {
+      label: "256",
+      value: 256,
+      color: theme.palette.success.main
+    },
+    {
+      label: "384",
+      value: 384,
+      color: theme.palette.success.main
+    }
+  ]
 
-    useEffect(() => {
-        setCN(dmsName)
-    }, [dmsName])
+  const [displayPrivKeyView, setDisplayPrivKeyView] = useState(false)
 
-    useEffect(() => {
-        if (keyType == "rsa") {
-            setKeyBits(rsaOptions[1])
-        } else {
-            setKeyBits(ecdsaOptions[1])
-        }
-    }, [keyType])
+  useEffect(() => {
+    if (requestStatus.status === status.SUCCEEDED && requestStatus.actionType === actionType.CREATE) {
+      resetCurretRequestStatus()
+      setDisplayPrivKeyView(true)
+    }
+  }, [requestStatus])
 
-    const keyBitsOptions = keyType == "rsa" ? rsaOptions : ecdsaOptions
+  const handleCreateDms = () => {
+    createDMS(dmsName, country, state, city, org, orgUnit, cn, keyType, parseInt(keyBits.value))
+  }
 
-    const disabledCreateDmsButton = dmsName == "" || cn == ""
+  const [dmsName, setDmsName] = useState("")
+  const [country, setCountry] = useState("")
+  const [state, setState] = useState("")
+  const [city, setCity] = useState("")
+  const [org, setOrg] = useState("")
+  const [orgUnit, setOrgUnit] = useState("")
+  const [cn, setCN] = useState("")
+  const [keyType, setKeyType] = useState("rsa")
+  const [keyBits, setKeyBits] = useState(rsaOptions[1])
 
-    return (
-        displayPrivKeyView === false ? (
+  useEffect(() => {
+    setCN(dmsName)
+  }, [dmsName])
+
+  useEffect(() => {
+    if (keyType === "rsa") {
+      setKeyBits(rsaOptions[1])
+    } else {
+      setKeyBits(ecdsaOptions[1])
+    }
+  }, [keyType])
+
+  const keyBitsOptions = keyType === "rsa" ? rsaOptions : ecdsaOptions
+
+  const disabledCreateDmsButton = dmsName === "" || cn === ""
+
+  return (
+    displayPrivKeyView === false
+      ? (
             <Grid container spacing={3} justifyContent="center" alignItems="center">
                 <Grid item xs={12}>
                     <TextField variant="standard" fullWidth label="Device Manufacturing System Name" required value={dmsName} onChange={(ev) => setDmsName(ev.target.value)} />
@@ -121,7 +121,7 @@ export const CreateDms = ({ requestStatus, privateKey, resetCurretRequestStatus,
                             label="Private Key Length"
                             value={keyBits.value}
                             onChange={(ev) => {
-                                setKeyBits(keyBitsOptions.filter(option => option.value == ev.target.value)[0])
+                              setKeyBits(keyBitsOptions.filter(option => option.value === ev.target.value)[0])
                             }}
                             endAdornment={
                                 <InputAdornment position="end" style={{ marginRight: "25px" }}>
@@ -172,30 +172,31 @@ export const CreateDms = ({ requestStatus, privateKey, resetCurretRequestStatus,
                     </Grid>
                 </Grid>
             </Grid>
-        ) : (
+        )
+      : (
 
             <Grid item xs={12} spacing={2} container flexDirection="column" >
                 <Grid item>
                     <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px" }}>Save the Private Key</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13,}}>Once you exit this window, you will no longer be able to obtain the private key. Save the private key first</Typography>
+                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13 }}>Once you exit this window, you will no longer be able to obtain the private key. Save the private key first</Typography>
                 </Grid>
                     <Grid item container sx={{ width: "100%" }} spacing={2}>
                 <Grid item >
-                        <Button variant="outlined" onClick={()=>{downloadFile("dms-"+dmsName +".key", window.atob(privateKey))}}>Download Private Key</Button>
+                        <Button variant="outlined" onClick={() => { downloadFile("dms-" + dmsName + ".key", window.atob(privateKey)) }}>Download Private Key</Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" onClick={()=>{navigate("/dms")}}>Go Back</Button>
+                        <Button variant="contained" onClick={() => { navigate("/dms") }}>Go Back</Button>
                     </Grid>
                 </Grid>
                 <Grid item container sx={{ width: "100%" }} spacing={1}>
-                    <SyntaxHighlighter language="json" style={theme.palette.mode == "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                    <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
                         {privateKey !== "" ? window.atob(privateKey) : ""}
                     </SyntaxHighlighter>
                 </Grid>
             </Grid>
         )
 
-    )
+  )
 }

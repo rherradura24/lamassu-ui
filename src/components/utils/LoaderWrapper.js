@@ -1,25 +1,25 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from "react"
+import PropTypes from "prop-types"
 
 class LoaderWrapper extends React.Component {
   // componentDidMount will be called after all the subcomponents are loaded too
-  componentWillMount() {
+  componentWillMount () {
     this.props.onMount()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.props.onUnmount) {
       this.props.onUnmount()
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate (prevProps) {
     if (this.props.shouldReload(prevProps.children.props)) {
       this.props.onMount()
     }
   }
 
-  render() {
+  render () {
     return this.props.children
   }
 }

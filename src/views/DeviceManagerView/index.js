@@ -1,30 +1,30 @@
 import React from "react"
 
-import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom"
 import DeviceInspector from "./views/DeviceInspector"
-import EditDevice from "./views/DeviceInspector/EditDevice";
+import EditDevice from "./views/DeviceInspector/EditDevice"
 import DeviceList from "./views/DeviceList"
 
-const RoutedDeviceInspector = ()=>{
-    let params = useParams();
-    let location = useLocation();
-    // console.log(params, location);
-    return (
+const RoutedDeviceInspector = () => {
+  const params = useParams()
+  const location = useLocation()
+  // console.log(params, location);
+  return (
         <DeviceInspector deviceId={params.deviceId}/>
-    )
+  )
 }
 
-const RoutedEditDevice = ()=>{
-    let params = useParams();
-    let location = useLocation();
-    // console.log(params, location);
-    return (
+const RoutedEditDevice = () => {
+  const params = useParams()
+  const location = useLocation()
+  // console.log(params, location);
+  return (
         <EditDevice deviceId={params.deviceId}/>
-    )
+  )
 }
 
 export default () => {
-    return (
+  return (
         <Routes>
             <Route path="/" element={<Outlet/>}>
                 <Route path=":deviceId" element={<RoutedDeviceInspector />} />
@@ -32,6 +32,5 @@ export default () => {
                 <Route index element={<DeviceList />} />
             </Route>
         </Routes>
-    )
+  )
 }
-

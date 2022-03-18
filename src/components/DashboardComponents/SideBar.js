@@ -1,42 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react"
 
-import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
-import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
-import Brightness2OutlinedIcon from '@mui/icons-material/Brightness2Outlined';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import Brightness5OutlinedIcon from '@mui/icons-material/Brightness5Outlined';
-
+import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined"
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined"
+import Brightness2OutlinedIcon from "@mui/icons-material/Brightness2Outlined"
+import ExpandMore from "@mui/icons-material/ExpandMore"
+import ExpandLess from "@mui/icons-material/ExpandLess"
+import Brightness5OutlinedIcon from "@mui/icons-material/Brightness5Outlined"
 
 import "./SideBar.css"
-import { Collapse, Grid, Link, List, ListItem, Paper, Typography, useTheme } from "@mui/material";
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Box } from '@mui/system';
-
+import { Collapse, Grid, Link, List, ListItem, Paper, Typography, useTheme } from "@mui/material"
+import { useNavigate, useLocation } from "react-router-dom"
+import { Box } from "@mui/system"
 
 const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) => {
+  const theme = useTheme()
+  const routerNavigation = useNavigate()
+  const location = useLocation()
+  const [selectedPath, setSelectedPath] = useState("")
 
-    const theme = useTheme()
-    const routerNavigation = useNavigate();
-    const location = useLocation();
-    const [selectedPath, setSelectedPath] = useState("");
+  const handleSelectedPath = (newPath) => {
+    setSelectedPath(newPath)
+    routerNavigation(newPath)
+  }
 
-    const handleSelectedPath = (newPath) => {
-        setSelectedPath(newPath)
-        routerNavigation(newPath)
-    }
+  useEffect(() => {
+    setSelectedPath(location.pathname)
+  }, [])
 
-    useEffect(() => {
-        setSelectedPath(location.pathname)
-    }, []);
-
-    return (
+  return (
         <Paper style={{ borderRadius: 0 }} elevation={0}>
             <Grid item className="sidebar-wrapper">
                 <div>
-                    <MenuButton title={"Collapse"} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon />} onClick={() => {onCollapse(collapsed) }} collapsed={collapsed} />
+                    <MenuButton title={"Collapse"} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon />} onClick={() => { onCollapse(collapsed) }} collapsed={collapsed} />
                     {
-                        menuConfig.map(configItem=>(
+                        menuConfig.map(configItem => (
                             <Box key={Math.random()}>
                                 {
                                     <>
@@ -55,7 +52,7 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) 
                                                     collapsed={collapsed}
                                                     active={selectedPath}
                                                     exactLink={!menuConfigItem.path.includes("*")}
-                                                    onSelect={(link) => {console.log(link); handleSelectedPath(link) }}
+                                                    onSelect={(link) => { console.log(link); handleSelectedPath(link) }}
                                                     icon={menuConfigItem.icon}
                                                 />
                                             ))
@@ -70,41 +67,43 @@ const SideBar = ({ darkTheme, onTogleDark, onCollapse, collapsed, menuConfig }) 
                 </div>
             </Grid>
         </Paper>
-    );
+  )
 }
 
 const MenuItem = ({ active, exactLink = false, link, title, icon, children, style, onSelect, collapsed }) => {
-    const theme = useTheme();
-    const [expand, setExpand] = useState(false);
-    
-    const selectedBorderWidth = 5;
-    var paddingLeftPxls = 0;
-    const selected = exactLink ? active === link && link !== undefined : active.startsWith(link) && link !== undefined;
-    if (selected) {
-        paddingLeftPxls = 10
-    } else {
-        paddingLeftPxls = 10 + selectedBorderWidth;
-    }
-    if (style && style.paddingLeft) {
-        paddingLeftPxls = paddingLeftPxls + style.paddingLeft;
-    }
+  const theme = useTheme()
+  const [expand, setExpand] = useState(false)
 
-    const cPrimary = theme.palette.primary;
-    return (
+  const selectedBorderWidth = 5
+  let paddingLeftPxls = 0
+  const selected = exactLink ? active === link && link !== undefined : active.startsWith(link) && link !== undefined
+  if (selected) {
+    paddingLeftPxls = 10
+  } else {
+    paddingLeftPxls = 10 + selectedBorderWidth
+  }
+  if (style && style.paddingLeft) {
+    paddingLeftPxls = paddingLeftPxls + style.paddingLeft
+  }
+
+  const cPrimary = theme.palette.primary
+  return (
         <div style={{ borderLeft: selected ? selectedBorderWidth + "px solid " + cPrimary.main : "" }}>
             <List style={{ padding: 0 }}>
                 <ListItem button style={{ height: 40, paddingLeft: paddingLeftPxls }} component={link ? Link : null} to={link} onClick={() => { link ? onSelect(link) : setExpand(!expand) }}>
 
                     {
-                        selected ? (
-                            React.Children.map(icon, (child, key) =>
+                        selected
+                          ? (
+                              React.Children.map(icon, (child, key) =>
                                 React.cloneElement(child, { style: { color: theme.palette.primary.main, fontSize: 24 }, key })
+                              )
                             )
-                        ) : (
-                            React.Children.map(icon, (child, key) =>
+                          : (
+                              React.Children.map(icon, (child, key) =>
                                 React.cloneElement(child, { style: { color: theme.palette.text.secondary, fontSize: 24 }, key })
+                              )
                             )
-                        )
                     }
 
                     {
@@ -114,51 +113,53 @@ const MenuItem = ({ active, exactLink = false, link, title, icon, children, styl
                     {children ? (expand ? <ExpandLess /> : <ExpandMore />) : null}
 
                 </ListItem>
-                {children ? (
+                {children
+                  ? (
                     <Collapse in={expand}>
                         {
                             React.Children.map(children, (child, key) =>
-                                React.cloneElement(child, { style: { paddingLeft: 25 }, key })
+                              React.cloneElement(child, { style: { paddingLeft: 25 }, key })
                             )
                         }
                     </Collapse>
-                ) : (null)
+                    )
+                  : (null)
                 }
             </List>
         </div>
-    )
+  )
 }
 
 const MenuSectionTitle = ({ title, collapsed }) => {
-    return (
-        !collapsed && <Typography className="sidebar-menu-section-title"> {title} </Typography>
-    )
+  return (
+    !collapsed && <Typography className="sidebar-menu-section-title"> {title} </Typography>
+  )
 }
 
 const MenuSeparator = ({ }) => {
-    const theme = useTheme();
-    return (
-        <div style={{ borderTop: `1px solid ${theme.palette.divider}`}}/>
-    )
+  const theme = useTheme()
+  return (
+        <div style={{ borderTop: `1px solid ${theme.palette.divider}` }}/>
+  )
 }
 
 const MenuButton = ({ onClick, icon, title, collapsed }) => {
-    const theme = useTheme();
+  const theme = useTheme()
 
-    return (
+  return (
         <ListItem button onClick={onClick}>
             {
                 React.Children.map(icon, (child, key) =>
-                    React.cloneElement(child, { style: { color: theme.palette.text.secondary }, key })
+                  React.cloneElement(child, { style: { color: theme.palette.text.secondary }, key })
                 )
             }
             {!collapsed && <Typography style={{ marginLeft: 10, width: "100%", fontSize: 14 }}> {title} </Typography>}
             {/* !collapsed && <div style={{marginLeft: 10, width: "100%", fontSize: 14, color: "#555"}}> {title} </div> */}
         </ListItem>
-    )
+  )
 }
 
 export {
-    SideBar,
-    MenuSeparator
+  SideBar,
+  MenuSeparator
 }

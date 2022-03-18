@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import { useTheme } from "@emotion/react"
 import { Box, Grid, IconButton, InputBase, Menu, MenuItem, Paper, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material"
 import { AiOutlineSearch } from "react-icons/ai"
-import AddIcon from '@mui/icons-material/Add';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { ColoredButton } from "components/LamassuComponents/ColoredButton";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import AddIcon from "@mui/icons-material/Add"
+import ViewModuleIcon from "@mui/icons-material/ViewModule"
+import { ColoredButton } from "components/LamassuComponents/ColoredButton"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
+import ViewListIcon from "@mui/icons-material/ViewList"
+import RefreshIcon from "@mui/icons-material/Refresh"
 
-
-export const LamassuTable = ({ columnConf = [], data = [], style={}, ...props }) => {
-    console.log(columnConf.reduce((prev, item) => prev + item.size, 0));
-    const theme = useTheme()
-    return (
-        <Box style={{width: "100%", ...style}} {...props}>
+export const LamassuTable = ({ columnConf = [], data = [], style = {}, ...props }) => {
+  console.log(columnConf.reduce((prev, item) => prev + item.size, 0))
+  const theme = useTheme()
+  return (
+        <Box style={{ width: "100%", ...style }} {...props}>
             <Grid container spacing={1}>
                 {
                     <Grid item columns={columnConf.reduce((prev, item) => prev + item.size, 0)} container alignItems="center" style={{ padding: "0 10px 0 10px" }}>
@@ -43,84 +42,82 @@ export const LamassuTable = ({ columnConf = [], data = [], style={}, ...props })
                 }
             </Grid>
         </Box>
-    );
-};
-
+  )
+}
 
 export const LamassuTableWithDataController = ({ columnConf = [], data = [], renderMethod = () => { }, includeCardView = false, renderCardMethod = () => { }, style = {}, onRefreshClick = () => { }, tableProps = {} }) => {
-    const theme = useTheme()
+  const theme = useTheme()
 
-    const [dataset, setDataset] = useState(data);
-    useEffect(() => {
-        setDataset(data)
-    }, [data])
+  const [dataset, setDataset] = useState(data)
+  useEffect(() => {
+    setDataset(data)
+  }, [data])
 
-    const [view, setView] = useState(includeCardView ? "card" : "list");
+  const [view, setView] = useState(includeCardView ? "card" : "list")
 
-    const [dataRender, setDataRender] = useState([[], []]);
-    useEffect(() => {
-        console.log(view);
-        var newDataRender = []
-        newDataRender.push(dataset.map(dataItem => {
-            return renderMethod(dataItem)
-        }))
-        if (includeCardView) {
-            newDataRender.push(dataset.map(dataItem => {
-                return renderCardMethod(dataItem)
-            }))
-        }
-        setDataRender(newDataRender)
-    }, [dataset, theme.palette.mode])
-
-    const queryPlaceholder = ""
-
-    const [query, setQuery] = useState("");
-    const [filters, setFilters] = useState([]);
-    const [order, setOrderBy] = useState();
-
-    const itemsPerPageOptions=[
-        15,
-        25,
-        50
-    ]
-    const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
-    const [itemsPerPageEl, setItemsPerPageEl] = useState(null);
-    const handleItemsPerPageElClick = (event) => {
-        if (itemsPerPageEl !== event.currentTarget) {
-            setItemsPerPageEl(event.currentTarget);
-        }
+  const [dataRender, setDataRender] = useState([[], []])
+  useEffect(() => {
+    console.log(view)
+    const newDataRender = []
+    newDataRender.push(dataset.map(dataItem => {
+      return renderMethod(dataItem)
+    }))
+    if (includeCardView) {
+      newDataRender.push(dataset.map(dataItem => {
+        return renderCardMethod(dataItem)
+      }))
     }
-    const handleItemsPerPageElClose = (event) => {
-        setItemsPerPageEl(null);
+    setDataRender(newDataRender)
+  }, [dataset, theme.palette.mode])
+
+  const queryPlaceholder = ""
+
+  const [query, setQuery] = useState("")
+  const [filters, setFilters] = useState([])
+  const [order, setOrderBy] = useState()
+
+  const itemsPerPageOptions = [
+    15,
+    25,
+    50
+  ]
+  const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0])
+  const [itemsPerPageEl, setItemsPerPageEl] = useState(null)
+  const handleItemsPerPageElClick = (event) => {
+    if (itemsPerPageEl !== event.currentTarget) {
+      setItemsPerPageEl(event.currentTarget)
     }
+  }
+  const handleItemsPerPageElClose = (event) => {
+    setItemsPerPageEl(null)
+  }
 
-    const [sortAnchorEl, setSortAnchorEl] = useState(null);
-    const handleSortClick = (event) => {
-        if (sortAnchorEl !== event.currentTarget) {
-            setSortAnchorEl(event.currentTarget);
-        }
+  const [sortAnchorEl, setSortAnchorEl] = useState(null)
+  const handleSortClick = (event) => {
+    if (sortAnchorEl !== event.currentTarget) {
+      setSortAnchorEl(event.currentTarget)
     }
-    const handleSortClose = (event) => {
-        setSortAnchorEl(null);
-    }
+  }
+  const handleSortClose = (event) => {
+    setSortAnchorEl(null)
+  }
 
-    const [fastTypeQuery, setFastTypeQuery] = useState("");
-    useEffect(() => {
-        let timer = setTimeout(() => {
-            setQuery(fastTypeQuery)
-        }, 1500)
+  const [fastTypeQuery, setFastTypeQuery] = useState("")
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQuery(fastTypeQuery)
+    }, 1500)
 
-        return () => clearTimeout(timer)
+    return () => clearTimeout(timer)
+  }, [fastTypeQuery])
 
-    }, [fastTypeQuery])
+  useEffect(() => {
+    console.log(query, filters, order)
+    console.log(">> Prefilter")
+    console.log(">> Post")
+  }, [query, filters, order])
 
-    useEffect(() => {
-        console.log(query, filters, order);
-        console.log(">> Prefilter");
-        console.log(">> Post");
-    }, [query, filters, order])
-
-    return (
+  return (
         <Box>
             <Box sx={{ marginBottom: "25px", display: "flex", justifyContent: "space-between", alignItems: "start", width: "100%" }}>
                 <Box sx={{ display: "flex" }}>
@@ -158,8 +155,8 @@ export const LamassuTableWithDataController = ({ columnConf = [], data = [], ren
                                 onClose={handleItemsPerPageElClose}
                             >
                                 {
-                                    itemsPerPageOptions.map(option =>{
-                                        return <MenuItem style={{ width: "100%" }} key={option} onClick={(ev) => {setItemsPerPage(option); handleItemsPerPageElClose()}}>{option}</MenuItem>
+                                    itemsPerPageOptions.map(option => {
+                                      return <MenuItem style={{ width: "100%" }} key={option} onClick={(ev) => { setItemsPerPage(option); handleItemsPerPageElClose() }}>{option}</MenuItem>
                                     })
                                 }
                             </Menu>
@@ -210,19 +207,21 @@ export const LamassuTableWithDataController = ({ columnConf = [], data = [], ren
             </Box>
             <Box>
                 {
-                    view === "list" ? (
+                    view === "list"
+                      ? (
                         <LamassuTable columnConf={columnConf} data={dataRender[0]} {...tableProps} />
-                    ) : (
+                        )
+                      : (
                         <Grid container spacing={3}>
                             {
                                 dataRender[1].map(RenderItem =>
-                                    React.cloneElement(RenderItem)
+                                  React.cloneElement(RenderItem)
                                 )
                             }
                         </Grid>
-                    )
+                        )
                 }
             </Box>
         </Box>
-    )
+  )
 }

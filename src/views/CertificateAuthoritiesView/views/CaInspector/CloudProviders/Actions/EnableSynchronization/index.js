@@ -3,17 +3,18 @@ import React, { useState } from "react"
 import { useTheme } from "@emotion/react"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
 
-import { connect } from "react-redux";
-import { createLoader } from "components/utils";
-import cloudProxyDuck from "redux/ducks/cloud-proxy";
-import casDuck from "redux/ducks/certificate-authorities";
+import { connect } from "react-redux"
+import { createLoader } from "components/utils"
+import cloudProxyDuck from "redux/ducks/cloud-proxy"
+import casDuck from "redux/ducks/certificate-authorities"
 
 const EnabledConnectorSynchronization = ({ caName, caCert, caSerialNumber, connector, isOpen, onClose = () => { }, onSync = {} }) => {
-    const theme = useTheme()
+  const theme = useTheme()
 
-    return (
-        isOpen ? (
-            <Dialog open={isOpen} onClose={() => onClose()} style={{ backgroundColor: 'transparent' }}>
+  return (
+    isOpen
+      ? (
+            <Dialog open={isOpen} onClose={() => onClose()} style={{ backgroundColor: "transparent" }}>
                 <DialogTitle>Enable synchronization for connector: {connector.name}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -40,22 +41,23 @@ const EnabledConnectorSynchronization = ({ caName, caCert, caSerialNumber, conne
 
                 </DialogActions>
             </Dialog>
-        ) : (
+        )
+      : (
             <></>
         )
-    )
+  )
 }
 
 const mapStateToProps = (state, { caName, connectorId }) => ({
-    connector: cloudProxyDuck.reducer.getCloudConnectorById(state, connectorId),
-    caCert: casDuck.reducer.getCA(state, caName).certificate.pem_base64,
-    caSerialNumber: casDuck.reducer.getCA(state, caName).serial_number
+  connector: cloudProxyDuck.reducer.getCloudConnectorById(state, connectorId),
+  caCert: casDuck.reducer.getCA(state, caName).certificate.pem_base64,
+  caSerialNumber: casDuck.reducer.getCA(state, caName).serial_number
 })
 
 const mapDispatchToProps = (dispatch, { }) => ({
-    onMount: () => {
-    },
-    onSync: (connectorId, caName, caCert, caSerialNumber) => { dispatch(cloudProxyDuck.actions.forceSynchronizeCloudConnector(connectorId, caName, caCert, caSerialNumber)) }
+  onMount: () => {
+  },
+  onSync: (connectorId, caName, caCert, caSerialNumber) => { dispatch(cloudProxyDuck.actions.forceSynchronizeCloudConnector(connectorId, caName, caCert, caSerialNumber)) }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(createLoader(EnabledConnectorSynchronization));
+export default connect(mapStateToProps, mapDispatchToProps)(createLoader(EnabledConnectorSynchronization))

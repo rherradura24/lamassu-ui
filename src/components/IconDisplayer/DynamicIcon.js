@@ -1,18 +1,17 @@
-import React, { CSSProperties, SVGAttributes } from "react";
-import { IconContext } from "react-icons";
-import loadable from "@loadable/component";
-
+import React, { CSSProperties, SVGAttributes } from "react"
+import { IconContext } from "react-icons"
+import loadable from "@loadable/component"
 
 export const DynamicIcon = ({ icon, ...props }) => {
-  const [library, iconComponent] = icon.split("/");
+  const [library, iconComponent] = icon.split("/")
 
-  if (!library || !iconComponent) return <div>Could Not Find Icon</div>;
+  if (!library || !iconComponent) return <div>Could Not Find Icon</div>
 
-  const lib = library.toLowerCase();
+  const lib = library.toLowerCase()
   const Icon = loadable(() => import(`react-icons/${lib}/index.js`), {
     resolveComponent: (el) =>
       el[iconComponent]
-  });
+  })
 
   const value = {
     color: props.color,
@@ -20,11 +19,11 @@ export const DynamicIcon = ({ icon, ...props }) => {
     className: props.className,
     style: props.style,
     attr: props.attr
-  };
+  }
 
   return (
     <IconContext.Provider value={value}>
       <Icon />
     </IconContext.Provider>
-  );
-};
+  )
+}

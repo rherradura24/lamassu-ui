@@ -1,14 +1,14 @@
-import { useTheme } from "@emotion/react";
-import { Divider, Grid, Paper, Tab, Tabs, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { useTheme } from "@emotion/react"
+import { Divider, Grid, Paper, Tab, Tabs, Typography } from "@mui/material"
+import { Box } from "@mui/system"
 import React, { useState } from "react"
 
-import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
-import CreateDms from "./DmsActions/CreateDms";
-import DmsList from "./DmsList";
+import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom"
+import CreateDms from "./DmsActions/CreateDms"
+import DmsList from "./DmsList"
 
 export default () => {
-    return (
+  return (
         <Routes>
             <Route path="/" element={<Outlet/>}>
                 <Route path="create" element={<DmsActionWrapper />} >
@@ -18,14 +18,14 @@ export default () => {
                 <Route index element={<DmsList />} />
             </Route>
         </Routes>
-    )
+  )
 }
 
 const DmsActionWrapper = () => {
-    const theme = useTheme()
-    const [selectedTab, setSelectedTab] = useState(0)
+  const theme = useTheme()
+  const [selectedTab, setSelectedTab] = useState(0)
 
-    return (
+  return (
         <Box sx={{ height: "100%" }} component={Paper}>
             <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <Box style={{ padding: "40px 40px 0 40px" }}>
@@ -40,7 +40,7 @@ const DmsActionWrapper = () => {
                         <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13, marginTop: "10px" }}>To create a new DMS instance, please provide the apropiate information</Typography>
                     </Grid>
                     <Box style={{ marginTop: 15, position: "relative", left: "-15px" }}>
-                        <Tabs value={selectedTab} onChange={(ev, newValue)=>setSelectedTab(newValue)}>
+                        <Tabs value={selectedTab} onChange={(ev, newValue) => setSelectedTab(newValue)}>
                             <Tab component={Link} to="create" label="Backend Provision" />
                             <Tab component={Link} to="import" label="Import CSR" />
                         </Tabs>
@@ -54,5 +54,5 @@ const DmsActionWrapper = () => {
                 </Box>
             </Box>
         </Box>
-    )
+  )
 }

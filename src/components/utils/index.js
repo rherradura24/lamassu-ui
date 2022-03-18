@@ -1,5 +1,5 @@
-import React from 'react'
-import { LoaderWrapper } from './LoaderWrapper'
+import React from "react"
+import { LoaderWrapper } from "./LoaderWrapper"
 
 const createLoader = WrappedComponent => ({
   onMount,

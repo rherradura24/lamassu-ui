@@ -1,32 +1,32 @@
-import { apiRequest } from "redux/utils";
+import { apiRequest } from "redux/utils"
 
 export const getCloudConnectors = async () => {
-    return apiRequest({
-        method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors"
-    })
+  return apiRequest({
+    method: "GET",
+    url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors"
+  })
 }
 
 export const synchronizeCloudConnectors = async (body) => {
-    return apiRequest({
-        method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/synchronize",
-        data: body
-    })
+  return apiRequest({
+    method: "POST",
+    url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/synchronize",
+    data: body
+  })
 }
 
 export const fireEvent = async (body) => {
-    return apiRequest({
-        method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/event",
-        data: body
-    })
+  return apiRequest({
+    method: "POST",
+    url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/event",
+    data: body
+  })
 }
 
 export const updateAccessPolicy = async (connector_id, body) => {
-    return apiRequest({
-        method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connector_id + "/access-policy",
-        data: body
-    })
+  return apiRequest({
+    method: "PUT",
+    url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connector_id + "/access-policy",
+    data: body
+  })
 }

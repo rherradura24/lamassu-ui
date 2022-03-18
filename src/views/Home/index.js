@@ -1,187 +1,183 @@
 import React from "react"
-import { Box, Grid, Paper, Typography, useTheme } from "@mui/material";
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import EqualizerRoundedIcon from '@mui/icons-material/EqualizerRounded';
-import moment from "moment";
-import { useNavigate } from "react-router-dom";
-import { Doughnut, Bar } from 'react-chartjs-2';
-import {Chart, registerables } from 'chart.js'
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { DeviceStatusChart } from "./charts/DeviceStatus";
+import { Box, Grid, Paper, Typography, useTheme } from "@mui/material"
+import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined"
+import EqualizerRoundedIcon from "@mui/icons-material/EqualizerRounded"
+import moment from "moment"
+import { useNavigate } from "react-router-dom"
+import { Doughnut, Bar } from "react-chartjs-2"
+import { Chart, registerables } from "chart.js"
+import ChartDataLabels from "chartjs-plugin-datalabels"
+import { DeviceStatusChart } from "./charts/DeviceStatus"
 
-Chart.register(...registerables );
+Chart.register(...registerables)
 // Chart.register(ChartDataLabels);
 // Chart.register(Tooltip)
 // Chart.register(CategoryScale)
 // Chart.register(LinearScale)
 
 export const Home = () => {
-    
-    const theme = useTheme()
-    const navigate = useNavigate()
+  const theme = useTheme()
+  const navigate = useNavigate()
 
-    const issuedCerts = 159
-    const cas = 4
-    const dmss = 2
-    const devices = 52
+  const issuedCerts = 159
+  const cas = 4
+  const dmss = 2
+  const devices = 52
 
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
+  function getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min)) + min
+  }
 
-    const now = new Date()
-    const daysToShow = 14
-    const numCAs=8
-    const numDMSs=3
+  const now = new Date()
+  const daysToShow = 14
+  const numCAs = 8
+  const numDMSs = 3
 
-    var daysLabels = []
-    var casDatasetData = []
-    var dmsDatasetData = []
+  const daysLabels = []
+  const casDatasetData = []
+  const dmsDatasetData = []
 
-    const colors =[
-        // "#3F4E51",
-        // "#FD625E",
-        // "#3599B8",
-        // "#DFBFBF",
-        // "#4AC5BB",
-        "#606C6E",
-        "#FB8281",
-        "#F4D25B",
-        "#808A8B",
-        "#A4DDEE",
-        // "#F2C80F",
-        // "#5F6B6D",
-        // "#8AD4EB",
-        "#FE9666",
-        "#A66999",
-        "#01B8AA",
-    ]
-    
+  const colors = [
+    // "#3F4E51",
+    // "#FD625E",
+    // "#3599B8",
+    // "#DFBFBF",
+    // "#4AC5BB",
+    "#606C6E",
+    "#FB8281",
+    "#F4D25B",
+    "#808A8B",
+    "#A4DDEE",
+    // "#F2C80F",
+    // "#5F6B6D",
+    // "#8AD4EB",
+    "#FE9666",
+    "#A66999",
+    "#01B8AA"
+  ]
+
+  for (let i = 0; i < daysToShow; i++) {
+    const current = moment(now).subtract(daysToShow + i + 1, "days").format("DD/MM")
+    daysLabels.push(current)
+  }
+
+  for (let j = 0; j < numCAs; j++) {
+    const currentCAData = []
     for (let i = 0; i < daysToShow; i++) {
-        var current = moment(now).subtract(daysToShow + i + 1, "days").format("DD/MM")
-        daysLabels.push(current)
+      currentCAData.push(getRandomInt(10, 75))
     }
+    casDatasetData.push(
+      {
+        label: "CA " + (j + 1),
+        data: currentCAData,
+        backgroundColor: colors[j % colors.length]
+      }
+    )
+  }
 
-    for (let j = 0; j < numCAs; j++) {
-        var currentCAData = []
-        for (let i = 0; i < daysToShow; i++) {
-            currentCAData.push(getRandomInt(10, 75))
-        }
-        casDatasetData.push(
-            {
-                label: 'CA ' + (j + 1),
-                data: currentCAData,
-                backgroundColor: colors[j % colors.length] ,
-            },
-        )
+  for (let j = 0; j < numDMSs; j++) {
+    const currentDMSData = []
+    for (let i = 0; i < daysToShow; i++) {
+      currentDMSData.push(getRandomInt(10, 75))
     }
+    dmsDatasetData.push(
+      {
+        label: "DMS " + (j + 1),
+        data: currentDMSData,
+        backgroundColor: colors[j % colors.length]
+      }
+    )
+  }
 
-    for (let j = 0; j < numDMSs; j++) {
-        var currentDMSData = []
-        for (let i = 0; i < daysToShow; i++) {
-            currentDMSData.push(getRandomInt(10, 75))
-        }
-        dmsDatasetData.push(
-            {
-                label: 'DMS ' + (j + 1),
-                data: currentDMSData,
-                backgroundColor: colors[j % colors.length] ,
-            },
-        )
-    }
+  const casData = {
+    labels: daysLabels,
+    datasets: casDatasetData
+  }
 
+  const dmsData = {
+    labels: daysLabels,
+    datasets: dmsDatasetData
+  }
 
-    const casData = {
-        labels: daysLabels,
-        datasets: casDatasetData
-    }
-
-    const dmsData = {
-        labels: daysLabels,
-        datasets: dmsDatasetData
-    }
-
-    const casConfig = {
-        plugins: {
-          title: {
-            display: false,
-          },
-          legend: {
-              display: false
-          }
+  const casConfig = {
+    plugins: {
+      title: {
+        display: false
+      },
+      legend: {
+        display: false
+      }
+    },
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+        grid: {
+          display: false
         },
-        responsive: true,
-        scales: {
-          x: {
-            stacked: true,
-            grid: {
-                display:false
-            },
-            ticks: {
-                color: theme.palette.homeCharts.issuedCertsPerCA.text,
-            }
-        },
-        y: {
-            stacked: true,
-            beginAtZero: true,
-            ticks: {
-                color: theme.palette.homeCharts.issuedCertsPerCA.text,
-            },
-            grid: {
-                display:false
-            }  
-          }
+        ticks: {
+          color: theme.palette.homeCharts.issuedCertsPerCA.text
         }
-    }
-
-    const dmsConfig = {
-        plugins: {
-          title: {
-            display: false,
-          },
-          legend: {
-              display: false
-          }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        ticks: {
+          color: theme.palette.homeCharts.issuedCertsPerCA.text
         },
-        responsive: true,
-        scales: {
-          x: {
-            stacked: true,
-            grid: {
-                display:false
-            },
-            ticks: {
-                color: theme.palette.homeCharts.enrolledDevicesPerDMS.text,
-            }
-        },
-        y: {
-            stacked: true,
-            beginAtZero: true,
-            ticks: {
-                color: theme.palette.homeCharts.enrolledDevicesPerDMS.text,
-            },
-            grid: {
-                display:false
-            }  
-          }
+        grid: {
+          display: false
         }
+      }
     }
+  }
 
+  const dmsConfig = {
+    plugins: {
+      title: {
+        display: false
+      },
+      legend: {
+        display: false
+      }
+    },
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+        grid: {
+          display: false
+        },
+        ticks: {
+          color: theme.palette.homeCharts.enrolledDevicesPerDMS.text
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        ticks: {
+          color: theme.palette.homeCharts.enrolledDevicesPerDMS.text
+        },
+        grid: {
+          display: false
+        }
+      }
+    }
+  }
 
-
-    return (
-        <Box sx={{ padding: "30px", display: "flex"}}>
+  return (
+        <Box sx={{ padding: "30px", display: "flex" }}>
             <Box component={Paper} style={{
-                borderRadius: 10, 
-                padding: 20, 
-                width: 300, 
-                height: 550, 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center", 
-                flexDirection: "column",
-                background: theme.palette.homeCharts.mainCard.primary, 
-                cursor: "pointer"
+              borderRadius: 10,
+              padding: 20,
+              width: 300,
+              height: 550,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              background: theme.palette.homeCharts.mainCard.primary,
+              cursor: "pointer"
             }}
                 onClick={() => navigate("/cas")}
             >
@@ -198,8 +194,13 @@ export const Home = () => {
                 </Box>
                 <Box style={{ marginTop: 50, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                     <Box component={Paper} style={{
-                        background: theme.palette.homeCharts.mainCard.secondary, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center",
-                        cursor: "pointer"
+                      background: theme.palette.homeCharts.mainCard.secondary,
+                      padding: 15,
+                      width: 250,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      cursor: "pointer"
                     }}
                         onClick={(ev) => { ev.stopPropagation(); navigate("/cas") }}
                     >
@@ -241,11 +242,10 @@ export const Home = () => {
                 </Box>
             </Box>
 
-            <DeviceStatusChart style={{marginLeft: "20px"}}/>
+            <DeviceStatusChart style={{ marginLeft: "20px" }}/>
 
-            
             {/* <Box sx={{display: "flex", flexWrap: "wrap"}}>
-                <Box sx={{marginBottom: "20px", width: "550px", height: "fit-content", borderRadius: "15px", padding: "20px", marginLeft: "20px", bgcolor: theme.palette.homeCharts.issuedCertsPerCA.primary }} component={Paper}> 
+                <Box sx={{marginBottom: "20px", width: "550px", height: "fit-content", borderRadius: "15px", padding: "20px", marginLeft: "20px", bgcolor: theme.palette.homeCharts.issuedCertsPerCA.primary }} component={Paper}>
                     <Typography variant="button" sx={{color: theme.palette.homeCharts.issuedCertsPerCA.text, marginBottom: "20px"}}>Issued Certificates per CA (last 14 days)</Typography>
                     <Box sx={{marginTop: "20px"}} >
                         <Bar data={casData} options={casConfig}/>
@@ -264,7 +264,7 @@ export const Home = () => {
                     </Grid>
                 </Box>
 
-                <Box sx={{width: "550px", height: "fit-content", borderRadius: "15px", padding: "20px", marginLeft: "20px", bgcolor: theme.palette.homeCharts.enrolledDevicesPerDMS.primary }} component={Paper}> 
+                <Box sx={{width: "550px", height: "fit-content", borderRadius: "15px", padding: "20px", marginLeft: "20px", bgcolor: theme.palette.homeCharts.enrolledDevicesPerDMS.primary }} component={Paper}>
                     <Typography variant="button" sx={{color: theme.palette.homeCharts.enrolledDevicesPerDMS.text, marginBottom: "20px"}}>Enrolled devices per DMS (last 14 days)</Typography>
                     <Box sx={{marginTop: "20px"}} >
                         <Bar data={dmsData} options={dmsConfig}/>
@@ -281,9 +281,9 @@ export const Home = () => {
                             })
                         }
                     </Grid>
-                </Box> 
+                </Box>
             </Box> */}
 
         </Box>
-    )
+  )
 }

@@ -1,41 +1,40 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from "react"
 import { FormControl, InputLabel, MenuItem, Select, TextField, Grid, Button } from "@mui/material"
 
 export const ImportCA = () => {
-    const [caName, setCaName] = useState("")
-    const [ttlValue, setTtlValue] = useState(365) 
-    const [ttlUnit, setTtlUnit] = useState(24)//24 = days | 24*365 = years 
-    const [caCert, setCaCert] = useState("")
-    const [cakey, setCaKey] = useState("")
+  const [caName, setCaName] = useState("")
+  const [ttlValue, setTtlValue] = useState(365)
+  const [ttlUnit, setTtlUnit] = useState(24)// 24 = days | 24*365 = years
+  const [caCert, setCaCert] = useState("")
+  const [cakey, setCaKey] = useState("")
 
-    const inputFileRef = useRef(null);
-    const inputFileRef2 = useRef(null);
+  const inputFileRef = useRef(null)
+  const inputFileRef2 = useRef(null)
 
-    const onFileChange = (e, setter) => {
-        /*Selected files data can be collected here.*/
-        var files = e.target.files
-        if (files.length > 0) {
-            var reader = new FileReader();
-            reader.readAsText(files[0], "UTF-8");
-            reader.onload = (evt) => {
-                var content = evt.target.result;
-                setter(content)
-            }
-        }else{
-            console.log("Nofile");
-        }
-        inputFileRef.current.value = ""
+  const onFileChange = (e, setter) => {
+    /* Selected files data can be collected here. */
+    const files = e.target.files
+    if (files.length > 0) {
+      const reader = new FileReader()
+      reader.readAsText(files[0], "UTF-8")
+      reader.onload = (evt) => {
+        const content = evt.target.result
+        setter(content)
+      }
+    } else {
+      console.log("Nofile")
     }
-    
+    inputFileRef.current.value = ""
+  }
 
-    return (
+  return (
         <Grid container spacing={3}>
             <Grid item xs={6}>
-                <TextField autoFocus variant="standard" id="caName" label="CA Name" fullWidth value={caName} onChange={(ev)=>{setCaName(ev.target.value)}} />
+                <TextField autoFocus variant="standard" id="caName" label="CA Name" fullWidth value={caName} onChange={(ev) => { setCaName(ev.target.value) }} />
             </Grid>
             <Grid item xs={6} container spacing={2}>
                 <Grid item xs={6} container>
-                    <TextField variant="standard" id="ttl" label="Issuance expiration time" type="number" fullWidth value={ttlValue} onChange={ev=>{setTtlValue(ev.target.value)}}/>
+                    <TextField variant="standard" id="ttl" label="Issuance expiration time" type="number" fullWidth value={ttlValue} onChange={ev => { setTtlValue(ev.target.value) }}/>
                 </Grid>
                 <Grid item xs={6} container>
                     <FormControl fullWidth variant="standard">
@@ -43,21 +42,21 @@ export const ImportCA = () => {
                         <Select
                             labelId="ttl-unit-label"
                             value={ttlUnit}
-                            onChange={ev=>{setTtlUnit(ev.target.value)}}
+                            onChange={ev => { setTtlUnit(ev.target.value) }}
                         >
                             <MenuItem value={1}>Hours</MenuItem>
                             <MenuItem value={24}>Days</MenuItem>
-                            <MenuItem value={24*365}>Years</MenuItem>
+                            <MenuItem value={24 * 365}>Years</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
             </Grid>
             <Grid item xs={6} container justifyContent={"center"} alignItems="center" spacing={4}>
                 <Grid item xs={12}>
-                    <Button 
-                        variant="contained" 
+                    <Button
+                        variant="contained"
                         fullWidth
-                        onClick={()=>{inputFileRef2.current.click() }}
+                        onClick={() => { inputFileRef2.current.click() }}
                     >
                         Select Certificate
                     </Button>
@@ -65,7 +64,7 @@ export const ImportCA = () => {
                         type="file"
                         ref={inputFileRef2}
                         hidden
-                        onChange={(ev)=>onFileChange(ev, setCaCert)}
+                        onChange={(ev) => onFileChange(ev, setCaCert)}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -73,20 +72,20 @@ export const ImportCA = () => {
                         label="Certificate content"
                         multiline
                         rows={15}
-                        inputProps={{style: {fontSize: 12, fontFamily: "monospace"}}}
+                        inputProps={{ style: { fontSize: 12, fontFamily: "monospace" } }}
                         variant="outlined"
                         fullWidth
                         value={caCert}
-                        onChange={(ev)=>{setCaCert(ev.target.value)}}
+                        onChange={(ev) => { setCaCert(ev.target.value) }}
                     />
                 </Grid>
             </Grid>
             <Grid item xs={6} container justifyContent={"center"} alignItems="center" spacing={4}>
                 <Grid item xs={12}>
-                    <Button 
-                        variant="contained" 
+                    <Button
+                        variant="contained"
                         fullWidth
-                        onClick={()=>{inputFileRef.current.click() }}
+                        onClick={() => { inputFileRef.current.click() }}
                     >
                         Select Private key
                     </Button>
@@ -94,7 +93,7 @@ export const ImportCA = () => {
                         type="file"
                         ref={inputFileRef}
                         hidden
-                        onChange={(ev)=>onFileChange(ev, setCaKey)}
+                        onChange={(ev) => onFileChange(ev, setCaKey)}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -103,11 +102,11 @@ export const ImportCA = () => {
                         label="Private key content"
                         multiline
                         rows={15}
-                        inputProps={{style: {fontSize: 12, fontFamily: "monospace"}}}
+                        inputProps={{ style: { fontSize: 12, fontFamily: "monospace" } }}
                         variant="outlined"
                         fullWidth
                         value={cakey}
-                        onChange={(ev)=>{setCaKey(ev.target.value)}}
+                        onChange={(ev) => { setCaKey(ev.target.value) }}
                     />
                 </Grid>
             </Grid>
@@ -115,5 +114,5 @@ export const ImportCA = () => {
                 <Button variant="contained">Import CA</Button>
             </Grid>
         </Grid>
-    )
+  )
 }

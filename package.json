@@ -66,9 +66,16 @@
     ]
   },
   "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-plugin-react": "7.29.4",
-    "remote-redux-devtools": "0.5.16",
-    "react-error-overlay": "6.0.9"
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-eqeqeq-fix": "^1.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-react": "^7.29.4",
+    "react-error-overlay": "6.0.9",
+    "remote-redux-devtools": "0.5.16"
   }
 }

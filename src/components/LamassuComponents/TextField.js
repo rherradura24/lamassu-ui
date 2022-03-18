@@ -1,13 +1,13 @@
 import React from "react"
 
-import { useTheme } from "@emotion/react";
+import { useTheme } from "@emotion/react"
 import { Box, InputBase, Paper, TextField, Typography } from "@mui/material"
 
-export const LamassuTextField = ({label=""}) => {
-    const theme = useTheme();
-    const themeMode = theme.palette.mode
+export const LamassuTextField = ({ label = "" }) => {
+  const theme = useTheme()
+  const themeMode = theme.palette.mode
 
-    return (
+  return (
         <Box>
             {/* <Typography sx={{
                 marginLeft: 1,
@@ -28,5 +28,5 @@ export const LamassuTextField = ({label=""}) => {
             </Box> */}
         </Box>
 
-    )
+  )
 }

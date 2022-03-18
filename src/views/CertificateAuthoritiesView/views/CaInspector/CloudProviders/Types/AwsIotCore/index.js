@@ -1,56 +1,56 @@
-import React, { useState } from "react";
-import { useTheme } from "@emotion/react";
-import { Button, Divider, Grid, Tab, Tabs, Typography, TextareaAutosize, TextField } from "@mui/material";
+import React, { useState } from "react"
+import { useTheme } from "@emotion/react"
+import { Button, Divider, Grid, Tab, Tabs, Typography, TextareaAutosize, TextField } from "@mui/material"
 import { Box } from "@mui/system"
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import EditIcon from '@mui/icons-material/Edit';
-import { AwsIcon } from "components/CloudProviderIcons";
-import SendIcon from '@mui/icons-material/Send';
+import SyntaxHighlighter from "react-syntax-highlighter"
+import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism"
+import EditIcon from "@mui/icons-material/Edit"
+import { AwsIcon } from "components/CloudProviderIcons"
+import SendIcon from "@mui/icons-material/Send"
 
 const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
-    console.log(onAccessPolicyChange);
-    const theme = useTheme()
-    const themeMode = theme.palette.mode
+  console.log(onAccessPolicyChange)
+  const theme = useTheme()
+  const themeMode = theme.palette.mode
 
-    const [selectedTab, setSelectedTab] = useState(0)
-    const [editMode, setEditMode] = useState(false)
+  const [selectedTab, setSelectedTab] = useState(0)
+  const [editMode, setEditMode] = useState(false)
 
-    const awsPolicy = {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "iot:Connect"
-                ],
-                "Resource": [
-                    "arn:aws:iot:eu-west-1:345876576284:client/${iot:Connection.Thing.ThingName}"
-                ]
-            },
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "iot:Publish",
-                    "iot:Receive"
-                ],
-                "Resource": [
-                    "arn:aws:iot:eu-west-1:345876576284:topic/${iot:Connection.Thing.ThingName}/*"
-                ]
-            },
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "iot:Subscribe"
-                ],
-                "Resource": [
-                    "arn:aws:iot:eu-west-1:345876576284:topicfilter/${iot:Connection.Thing.ThingName}/*"
-                ]
-            }
+  const awsPolicy = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: [
+          "iot:Connect"
+        ],
+        Resource: [
+          "arn:aws:iot:eu-west-1:345876576284:client/${iot:Connection.Thing.ThingName}"
         ]
-    }
+      },
+      {
+        Effect: "Allow",
+        Action: [
+          "iot:Publish",
+          "iot:Receive"
+        ],
+        Resource: [
+          "arn:aws:iot:eu-west-1:345876576284:topic/${iot:Connection.Thing.ThingName}/*"
+        ]
+      },
+      {
+        Effect: "Allow",
+        Action: [
+          "iot:Subscribe"
+        ],
+        Resource: [
+          "arn:aws:iot:eu-west-1:345876576284:topicfilter/${iot:Connection.Thing.ThingName}/*"
+        ]
+      }
+    ]
+  }
 
-    return (
+  return (
         <Box>
             <AwsIcon />
             <Grid container spacing={2} sx={{ marginBottom: "10px", marginTop: "5px" }}>
@@ -89,7 +89,6 @@ const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
                 </Grid>
             </Grid>
 
-
             <Box style={{ marginTop: "25px" }}>
                 <Tabs value={selectedTab} onChange={(ev, newValue) => setSelectedTab(newValue)}>
                     <Tab label="Active Policy" />
@@ -102,7 +101,8 @@ const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
                     selectedTab === 0 && (
                         <Grid container spacing={2}>
                             {
-                                editMode ? (
+                                editMode
+                                  ? (
                                     <>
                                         <Grid item xs={12}>
                                             <TextField
@@ -113,10 +113,10 @@ const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
                                                 placeholder="Minimum 3 rows"
                                                 fullWidth
                                                 InputProps={{
-                                                    style: {
-                                                        fontSize: 12,
-                                                        fontFamily: "monospace"
-                                                    }
+                                                  style: {
+                                                    fontSize: 12,
+                                                    fontFamily: "monospace"
+                                                  }
                                                 }}
                                                 value={JSON.stringify(awsPolicy, null, 4)}
                                             />
@@ -129,14 +129,15 @@ const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
                                                 </Button>
                                             </Grid>
                                             <Grid item xs="auto">
-                                                <Button variant="contained" startIcon={<SendIcon />} onClick={()=>{onAccessPolicyChange(connectorId, JSON.stringify(awsPolicy))}}>
+                                                <Button variant="contained" startIcon={<SendIcon />} onClick={() => { onAccessPolicyChange(connectorId, JSON.stringify(awsPolicy)) }}>
                                                     Save
                                                 </Button>
                                             </Grid>
                                         </Grid>
                                     </>
 
-                                ) : (
+                                    )
+                                  : (
                                     <>
                                         <Grid item xs={12}>
                                             <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
@@ -144,22 +145,20 @@ const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
                                             </Button>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                            <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
                                                 {JSON.stringify(awsPolicy, null, 4)}
                                             </SyntaxHighlighter>
                                         </Grid>
                                     </>
-                                )
+                                    )
                             }
                         </Grid>
                     )
                 }
             </Box>
 
-
         </Box>
-    )
+  )
 }
-
 
 export default AwsIotCore
