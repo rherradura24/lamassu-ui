@@ -11,7 +11,8 @@ function capitalizeFirstLetter(string) {
 const initState = {
     status: status.IDLE,
     actionType: actionType.NONE,
-    list: {}
+    list: {},
+    lastPrivateKey: ""
 }
 
 export const reducer = (state = initState, action) => {
@@ -55,6 +56,7 @@ export const reducer = (state = initState, action) => {
             var key = action.payload.priv_key
             dms.status = capitalizeFirstLetter(dms.status)
             dms.status_color = statusToColor(dms.status)
+            console.log(key);
 
             // dms.key_metadata.strength = capitalizeFirstLetter(dms.key_metadata.strength)
             // dms.key_metadata.strength_color = keyStrengthToColor(dms.key_metadata.strength)
@@ -64,7 +66,7 @@ export const reducer = (state = initState, action) => {
             
             currentList[dms.id] = dms
 
-            return {...state, status: status.SUCCEEDED, list: currentList };
+            return {...state, status: status.SUCCEEDED, list: currentList, lastPrivateKey: key };
             
 
         case t.DECLINE_DMS_REQUEST:
@@ -122,4 +124,9 @@ export const getDmsList = (state) => {
 export const getDmsById = (state, dmsId) => {
     const dmsEnrollerState = getSelector(state)
     return dmsEnrollerState.list[dmsId];
+}
+
+export const lastPrivateKey = (state, dmsId) => {
+    const dmsEnrollerState = getSelector(state)
+    return dmsEnrollerState.lastPrivateKey
 }

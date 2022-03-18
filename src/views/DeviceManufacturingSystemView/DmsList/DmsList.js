@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 import { useTheme } from "@emotion/react"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, InputBase, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Box, Button, Grid, IconButton, InputBase, Menu, MenuItem, Paper, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import { dmsStatus } from "redux/ducks/dms-enroller/Constants";
@@ -19,6 +19,8 @@ import DeclineDms from "../DmsActions/DeclineDms";
 import RevokeDms from "../DmsActions/RevokeDms";
 import moment from "moment"
 import { GoLinkExternal } from "react-icons/go";
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import downloadFile from "components/utils/FileDownloader"
 
 export const DmsList = ({ dmsList }) => {
 
@@ -129,8 +131,8 @@ export const DmsList = ({ dmsList }) => {
                                         </Grid>
                                         <Grid item>
                                             <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                <IconButton>
-                                                    <FormatAlignJustifyIcon fontSize={"small"} />
+                                                <IconButton onClick={()=>{downloadFile("dms-"+dms.name+".crt", window.atob(dms.crt))}}>
+                                                    <FileDownloadRoundedIcon fontSize={"small"} />
                                                 </IconButton>
                                             </Box>
                                         </Grid>

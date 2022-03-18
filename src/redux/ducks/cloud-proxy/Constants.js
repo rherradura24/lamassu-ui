@@ -1,5 +1,5 @@
 export const cloudConnectorStatus = {
-    HEALTHY: "Healthy",
+    HEALTHY: "Passing",
     CRITICAL: "Critical",
 }
 

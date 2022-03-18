@@ -1,8 +1,6 @@
 import React from "react"
 import { useTheme } from "@emotion/react";
-import { Certificate } from "@fidm/x509";
-import { Grid, Typography } from "@mui/material"
-import moment from "moment";
+import { Grid } from "@mui/material"
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 

@@ -26,7 +26,7 @@ export const DeviceCard = ({id, alias, description, tags=[], icon, iconColor, re
                     </Box>
                 </Grid>
                 <Grid item>
-                    <Typography sx={{fontWeight: "500"}}>{`${alias}`}</Typography>
+                    <Typography sx={{fontWeight: "500", fontSize: "15px"}}>{`${alias}`}</Typography>
                     <Typography sx={{fontSize: 12}}>{`#${id}`}</Typography>
                 </Grid>
             </Grid>

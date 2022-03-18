@@ -60,7 +60,18 @@ export const forceSynchronizeCloudConnectorsEpic = action$ => action$.pipe(
     ),
     tap(item => console.log("%c Epic-CloudProxy ", "background:#8BC63E; border-radius:5px;font-weight: bold;", "", item)),
     switchMap(({ payload, meta }) =>
-        makeRequestWithActions(lamassuCloudProxyApi.fireEvent({ name: meta.ca_name, serial_number: "", cert: meta.ca_certificate }), t.FORCE_SYNCHRONIZE_CONNECTOR, {...payload}
+        makeRequestWithActions(lamassuCloudProxyApi.fireEvent({
+            type: "io.lamassu.ca.create",
+            specversion: "1.0",
+            source: "lamassu-ui",
+            id: "123",
+            time: new Date(),
+            data: {
+                name: meta.ca_name, 
+                serial_number: meta.ca_serial_number, 
+                cert: meta.ca_certificate 
+            }
+        }), t.FORCE_SYNCHRONIZE_CONNECTOR, {...payload}
     )),
 );
 
@@ -72,4 +83,18 @@ export const forceSynchronizeCloudConnectorsEpicError = action$ => action$.pipe(
 export const forceSynchronizeCloudConnectorsEpicSuccess = action$ => action$.pipe(
     ofType(success(t.FORCE_SYNCHRONIZE_CONNECTOR)),
     mergeMap(({ payload }) => of(a.getCloudConnectors())),
+);
+
+
+// UPDATE_ACCESS_POLICY
+
+export const updateAccessPolicyCloudProxyEpic = action$ => action$.pipe(
+    ofType(t.UPDATE_ACCESS_POLICY),
+    tap(item => console.log("%c Epic-CloudProxy ", "background:#8BC63E; border-radius:5px;font-weight: bold;", "", item)),
+    mergeMap(({ payload }) => makeRequestWithActions(lamassuCloudProxyApi.updateAccessPolicy(payload.connector_id, payload.body), t.UPDATE_ACCESS_POLICY, {...payload})),
+);
+
+export const updateAccessPolicyCloudProxyEpicError = action$ => action$.pipe(
+    ofType(failed(t.UPDATE_ACCESS_POLICY)),
+    mergeMap(({ payload }) => of(notificationsDuck.actions.addNotification(notificationsDuck.constants.ERROR, `Error while updating access policy: ${payload}`))),
 );

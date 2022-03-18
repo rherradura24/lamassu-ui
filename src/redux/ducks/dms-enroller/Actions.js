@@ -36,7 +36,7 @@ export const approveDmsRequest = (dmsId, caNameList) => ({
         dmsId: dmsId,
         body: {
             status: "APPROVED",
-            cas: caNameList
+            authorized_cas: caNameList
         }
     }
 })

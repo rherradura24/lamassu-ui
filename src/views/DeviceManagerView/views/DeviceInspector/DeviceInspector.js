@@ -16,7 +16,8 @@ import { Link } from "react-router-dom";
 export const DeviceInspector = ({refreshing, deviceId, deviceData}) => {
     // console.log(deviceId,deviceData);
     const theme = useTheme()
-    const decodedCert = deviceData !== undefined ? window.atob(deviceData.pem_base64) : ""
+    // const decodedCert = deviceData !== undefined ? window.atob(deviceData.pem_base64) : ""
+    const decodedCert = ""
     const themeMode = theme.palette.mode
 
     const [anchorEl, setAnchorEl] = useState(null);

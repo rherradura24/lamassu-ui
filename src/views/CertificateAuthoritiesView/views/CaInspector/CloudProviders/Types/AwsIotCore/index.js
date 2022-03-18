@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { Button, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { Button, Divider, Grid, Tab, Tabs, Typography, TextareaAutosize, TextField } from "@mui/material";
 import { Box } from "@mui/system"
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import EditIcon from '@mui/icons-material/Edit';
 import { AwsIcon } from "components/CloudProviderIcons";
+import SendIcon from '@mui/icons-material/Send';
 
-export default ({ }) => {
+const AwsIotCore = ({ connectorId, onAccessPolicyChange = () => { } }) => {
+    console.log(onAccessPolicyChange);
     const theme = useTheme()
     const themeMode = theme.palette.mode
 
     const [selectedTab, setSelectedTab] = useState(0)
+    const [editMode, setEditMode] = useState(false)
 
     const awsPolicy = {
         "Version": "2012-10-17",
@@ -49,8 +52,8 @@ export default ({ }) => {
 
     return (
         <Box>
-            <AwsIcon/>
-            <Grid container spacing={2} sx={{marginBottom: "10px", marginTop: "5px"}}>
+            <AwsIcon />
+            <Grid container spacing={2} sx={{ marginBottom: "10px", marginTop: "5px" }}>
                 <Grid item xs={2}>
                     <Typography style={{ fontSize: 14 }}>Account ID:</Typography>
                 </Grid>
@@ -64,8 +67,8 @@ export default ({ }) => {
                     <Typography style={{ fontSize: 14 }}>a3hczhtwc7h4es-ats.iot.eu-west-1.amazonaws.com</Typography>
                 </Grid>
             </Grid>
-            <Divider/>
-            <Grid container spacing={2} sx={{marginTop: "10px"}}>
+            <Divider />
+            <Grid container spacing={2} sx={{ marginTop: "10px" }}>
                 <Grid item xs={2}>
                     <Typography style={{ fontSize: 14 }}>CA certificate ID:</Typography>
                 </Grid>
@@ -79,7 +82,7 @@ export default ({ }) => {
                     <Typography style={{ fontSize: 14 }}>arn:aws:iot:eu-west-1:345876576284:cacert/bfa2c07ec0d93e13dced643e0c175f3e95f398ef45acfff8db2f236c553c6688</Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <Typography style={{ fontSize: 14}}>Registered:</Typography>
+                    <Typography style={{ fontSize: 14 }}>Registered:</Typography>
                 </Grid>
                 <Grid item xs={10}>
                     <Typography style={{ fontSize: 14 }}>March 20, 2017, 12:44:19 (UTC+0100)</Typography>
@@ -87,27 +90,67 @@ export default ({ }) => {
             </Grid>
 
 
-            <Box style={{ marginTop: "25px"}}>
+            <Box style={{ marginTop: "25px" }}>
                 <Tabs value={selectedTab} onChange={(ev, newValue) => setSelectedTab(newValue)}>
-                    <Tab label="Binded Policy" />
+                    <Tab label="Active Policy" />
                 </Tabs>
             </Box>
 
             <Divider />
-            <Box  sx={{paddingTop: "20px"}}>
+            <Box sx={{ paddingTop: "20px" }}>
                 {
                     selectedTab === 0 && (
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Button variant="outlined" startIcon={<EditIcon />}>
-                                    Edit Policy
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                    {JSON.stringify(awsPolicy, null, 4)}
-                                </SyntaxHighlighter>
-                            </Grid>
+                            {
+                                editMode ? (
+                                    <>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                variant="outlined"
+                                                multiline
+                                                aria-label="minimum height"
+                                                minRows={10}
+                                                placeholder="Minimum 3 rows"
+                                                fullWidth
+                                                InputProps={{
+                                                    style: {
+                                                        fontSize: 12,
+                                                        fontFamily: "monospace"
+                                                    }
+                                                }}
+                                                value={JSON.stringify(awsPolicy, null, 4)}
+                                            />
+
+                                        </Grid>
+                                        <Grid item xs={12} container spacing={2}>
+                                            <Grid item xs="auto">
+                                                <Button variant="outlined">
+                                                    Cancel
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs="auto">
+                                                <Button variant="contained" startIcon={<SendIcon />} onClick={()=>{onAccessPolicyChange(connectorId, JSON.stringify(awsPolicy))}}>
+                                                    Save
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </>
+
+                                ) : (
+                                    <>
+                                        <Grid item xs={12}>
+                                            <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
+                                                Edit Policy
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <SyntaxHighlighter language="json" style={themeMode == "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                                {JSON.stringify(awsPolicy, null, 4)}
+                                            </SyntaxHighlighter>
+                                        </Grid>
+                                    </>
+                                )
+                            }
                         </Grid>
                     )
                 }
@@ -117,3 +160,6 @@ export default ({ }) => {
         </Box>
     )
 }
+
+
+export default AwsIotCore

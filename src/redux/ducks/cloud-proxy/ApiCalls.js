@@ -22,3 +22,11 @@ export const fireEvent = async (body) => {
         data: body
     })
 }
+
+export const updateAccessPolicy = async (connector_id, body) => {
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connector_id + "/access-policy",
+        data: body
+    })
+}

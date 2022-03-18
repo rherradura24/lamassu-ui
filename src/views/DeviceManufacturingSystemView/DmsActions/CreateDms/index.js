@@ -4,7 +4,8 @@ import dmsEnrollerDuck from "redux/ducks/dms-enroller";
 import { CreateDms } from "./CreateDms";
 
 const mapStateToProps = (state) => ({
-    requestStatus: dmsEnrollerDuck.reducer.isRequestInProgress(state)
+    requestStatus: dmsEnrollerDuck.reducer.isRequestInProgress(state),
+    privateKey: dmsEnrollerDuck.reducer.lastPrivateKey(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({

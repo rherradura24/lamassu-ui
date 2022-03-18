@@ -53,6 +53,16 @@ export const reducer = (state = initState, action) => {
         case success(t.FIRE_EVENT):
             return { ...state, status: status.SUCCEEDED };
 
+
+        case t.UPDATE_ACCESS_POLICY:
+            return { ...state, status: status.PENDING, actionType: actionType.UPDATE };
+
+        case failed(t.UPDATE_ACCESS_POLICY):
+            return { ...state, status: status.FAILED};
+
+        case success(t.UPDATE_ACCESS_POLICY):
+            return { ...state, status: status.SUCCEEDED };
+
         default:
             return state;
     }
