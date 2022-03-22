@@ -1,4 +1,5 @@
-import { Grid, Paper, Typography } from "@mui/material"
+import React from "react"
+import { Paper, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { Bar as BarChart } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
@@ -99,11 +100,11 @@ export const Bar = ({ title, cardColor, primaryTextColor }) => {
   }
 
   return (
-        <Box sx={{ width: "calc(100% - 40px)", height: "fit-content", borderRadius: "15px", padding: "20px", bgcolor: cardColor }} component={Paper}>
-            <Typography variant="button" sx={{ color: primaryTextColor, marginBottom: "20px" }}>{title}</Typography>
-            <Box sx={{ marginTop: "20px" }} >
-                <BarChart data={casData} options={casConfig}/>
-            </Box>
-        </Box>
+    <Box sx={{ width: "calc(100% - 40px)", height: "fit-content", borderRadius: "15px", padding: "20px", bgcolor: cardColor }} component={Paper} >
+      <Typography variant="button" sx={{ color: primaryTextColor, marginBottom: "20px" }}> {title} </Typography>
+      < Box sx={{ marginTop: "20px" }} >
+        <BarChart data={casData} options={casConfig} />
+      </Box>
+    </Box>
   )
 }

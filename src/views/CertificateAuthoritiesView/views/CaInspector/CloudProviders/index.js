@@ -1,7 +1,6 @@
 
 import { connect } from "react-redux"
 import cloudproxyDuck from "redux/ducks/cloud-proxy"
-import { createLoader } from "components/utils"
 
 import React from "react"
 import { Routes, Route, useParams, useLocation, Outlet } from "react-router-dom"

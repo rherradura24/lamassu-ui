@@ -2,7 +2,6 @@ import { createLoader } from "components/utils"
 import { connect } from "react-redux"
 import cloudProxyDuck from "redux/ducks/cloud-proxy"
 import casDuck from "redux/ducks/certificate-authorities"
-import { actionType, status } from "redux/utils/constants"
 import { CreateCA } from "./CreateCA"
 
 const mapStateToProps = (state, { caName }) => {

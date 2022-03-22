@@ -5,7 +5,7 @@ import * as t from "./ActionTypes"
 import * as a from "./Actions"
 import * as lamassuCloudProxyApi from "./ApiCalls"
 import notificationsDuck from "redux/ducks/notifications"
-import { of, from } from "rxjs"
+import { of } from "rxjs"
 
 // GET_CLOUD_CONNECTORS
 

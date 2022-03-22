@@ -1,3 +1,4 @@
+import React from "react"
 import { Grid, Paper, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { Doughnut as DoughnutChart } from "react-chartjs-2"

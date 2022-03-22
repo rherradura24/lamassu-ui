@@ -6,7 +6,6 @@ import devManager from "./device-manager"
 import dmsEnroller from "./dms-enroller"
 import cloudProxy from "./cloud-proxy"
 import notifications from "./notifications"
-import { composeWithDevTools } from "remote-redux-devtools"
 
 const epics = [
   ...Object.values(ca.epic),

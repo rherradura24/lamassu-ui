@@ -1,14 +1,10 @@
 import React from "react"
 import { useTheme } from "@emotion/react"
 import { Certificate } from "@fidm/x509"
-import { Box, Grid, Paper, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material"
 import moment from "moment"
-import SyntaxHighlighter from "react-syntax-highlighter"
-import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { DeviceStatusChart } from "views/Home/charts/DeviceStatus"
 import { IssuedCertsKeyStrength, IssuedCertsStatus, IssuedCertsTimeline } from "./charts"
 
-import { Bar } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
 
 Chart.register(...registerables)

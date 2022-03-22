@@ -1,4 +1,3 @@
-import { darkScrollbar } from "@mui/material"
 
 export const light = {
   palette: {

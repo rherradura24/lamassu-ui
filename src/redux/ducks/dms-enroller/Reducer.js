@@ -1,7 +1,7 @@
 import { failed, success } from "redux/utils"
 import { actionType, status } from "redux/utils/constants"
 import * as t from "./ActionTypes"
-import { keyStrengthToColor, statusToColor } from "./utils"
+import { statusToColor } from "./utils"
 
 function capitalizeFirstLetter (string) {
   string = string.toLowerCase()

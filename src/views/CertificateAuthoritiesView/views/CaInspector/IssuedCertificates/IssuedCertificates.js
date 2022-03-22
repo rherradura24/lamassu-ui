@@ -1,6 +1,6 @@
 import React from "react"
 import { useTheme } from "@emotion/react"
-import { Box, Grid, IconButton, LinearProgress, Paper, Skeleton, Typography } from "@mui/material"
+import { Box, Grid, IconButton, Paper, Skeleton, Typography } from "@mui/material"
 import { LamassuChip } from "components/LamassuComponents/Chip"
 import { LamassuTable } from "components/LamassuComponents/Table"
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded"

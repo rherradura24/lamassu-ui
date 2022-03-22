@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import React from "react"
 import { Box, useTheme } from "@mui/system"
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined"
 import { MenuSeparator } from "./SideBar"
 import moment from "moment"
-import { Badge, Divider, Grid, Menu, Typography } from "@mui/material"
+import { Grid, Typography } from "@mui/material"
 
 const LamassuNotifications = ({ notificationsList }) => {
   const theme = useTheme()

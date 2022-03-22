@@ -1,12 +1,10 @@
 import React from "react"
-import { Box, Grid, Paper, Typography, useTheme } from "@mui/material"
+import { Box, Paper, Typography, useTheme } from "@mui/material"
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined"
 import EqualizerRoundedIcon from "@mui/icons-material/EqualizerRounded"
 import moment from "moment"
 import { useNavigate } from "react-router-dom"
-import { Doughnut, Bar } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
-import ChartDataLabels from "chartjs-plugin-datalabels"
 import { DeviceStatusChart } from "./charts/DeviceStatus"
 
 Chart.register(...registerables)

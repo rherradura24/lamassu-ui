@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import { useTheme } from "@emotion/react"
 import { Box, Button, Grid, IconButton, Paper, Typography } from "@mui/material"
 import { DeviceCard } from "../../components/DeviceCard"

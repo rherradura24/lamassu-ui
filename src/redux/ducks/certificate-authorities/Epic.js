@@ -1,11 +1,11 @@
 import { ofType } from "redux-observable"
 import { failed, makeRequestWithActions, success } from "redux/utils"
-import { mergeMap, tap } from "rxjs/operators"
+import { mergeMap } from "rxjs/operators"
 import * as t from "./ActionTypes"
 import * as lamassuCaApi from "./ApiCalls"
 import notificationsDuck from "redux/ducks/notifications"
 import cloudProxyDuck from "redux/ducks/cloud-proxy"
-import { of, from, forkJoin, defaultIfEmpty, switchMap, debounceTime } from "rxjs"
+import { of, forkJoin, defaultIfEmpty, switchMap } from "rxjs"
 
 // GET_CAS
 

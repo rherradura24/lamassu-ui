@@ -3,7 +3,7 @@ import { FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextFi
 import { LamassuSwitch } from "components/LamassuComponents/Switch"
 import { Box } from "@mui/system"
 import { RiShieldKeyholeLine } from "react-icons/ri"
-import { AwsIcon, AzureIcon, CloudProviderIcon } from "components/CloudProviderIcons"
+import { CloudProviderIcon } from "components/CloudProviderIcons"
 import LoadingButton from "@mui/lab/LoadingButton"
 import AddIcon from "@mui/icons-material/Add"
 import { actionType, status } from "redux/utils/constants"

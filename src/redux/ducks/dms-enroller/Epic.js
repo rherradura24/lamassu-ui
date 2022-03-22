@@ -4,7 +4,7 @@ import { mergeMap, tap, switchMap } from "rxjs/operators"
 import * as t from "./ActionTypes"
 import * as lamassuDmsEnrollerApi from "./ApiCalls"
 import notificationsDuck from "redux/ducks/notifications"
-import { of, from } from "rxjs"
+import { of } from "rxjs"
 
 // GET_DMS_LIST
 export const getDmsListEpic = action$ => action$.pipe(

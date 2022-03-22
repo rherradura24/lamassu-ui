@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 import { useTheme } from "@emotion/react"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Skeleton, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Skeleton, Typography } from "@mui/material"
 
 import { connect } from "react-redux"
 import { createLoader } from "components/utils"

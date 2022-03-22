@@ -3,11 +3,11 @@ import { Divider, Grid, Paper, Tab, Tabs, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useState } from "react"
 
-import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom"
+import { Link, Outlet, Route, Routes } from "react-router-dom"
 import CreateDms from "./DmsActions/CreateDms"
 import DmsList from "./DmsList"
 
-export default () => {
+const RoutedIndex = () => {
   return (
         <Routes>
             <Route path="/" element={<Outlet/>}>
@@ -20,6 +20,7 @@ export default () => {
         </Routes>
   )
 }
+export default RoutedIndex
 
 const DmsActionWrapper = () => {
   const theme = useTheme()

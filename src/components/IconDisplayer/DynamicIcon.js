@@ -1,4 +1,4 @@
-import React, { CSSProperties, SVGAttributes } from "react"
+import React from "react"
 import { IconContext } from "react-icons"
 import loadable from "@loadable/component"
 
