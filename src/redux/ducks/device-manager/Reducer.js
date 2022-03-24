@@ -1,16 +1,17 @@
 import { failed, success } from "redux/utils"
+import { actionType, status } from "redux/utils/constants"
 import * as t from "./ActionTypes"
 
 const initState = {
-  requestInProgress: false,
-  refresh: false,
+  status: status.IDLE,
+  actionType: actionType.NONE,
   list: {}
 }
 
 export const reducer = (state = initState, action) => {
   switch (action.type) {
     case t.GET_DEVICES:
-      return { ...state, requestInProgress: true, refresh: true }
+      return { ...state, status: status.PENDING, actionType: actionType.READ }
 
     case success(t.GET_DEVICES):
       var currentList = {}
@@ -19,10 +20,10 @@ export const reducer = (state = initState, action) => {
         currentList[device.id] = device
       })
 
-      return { ...state, list: currentList, requestInProgress: false, refresh: false }
+      return { ...state, list: currentList, status: status.SUCCEEDED }
 
     case failed(t.GET_DEVICES):
-      return { ...state, requestInProgress: false, refresh: false }
+      return { ...state, status: status.FAILED }
 
     default:
       return state
@@ -33,7 +34,10 @@ const getSelector = (state) => state.devices
 
 export const isRequestInProgress = (state) => {
   const devManagerReducer = getSelector(state)
-  return devManagerReducer.requestInProgress
+  return {
+    status: devManagerReducer.status,
+    actionType: devManagerReducer.actionType
+  }
 }
 
 export const getDevices = (state) => {

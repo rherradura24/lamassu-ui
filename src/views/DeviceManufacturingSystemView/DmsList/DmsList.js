@@ -157,7 +157,7 @@ export const DmsList = ({ dmsList }) => {
   return (
         <Grid container style={{ height: "100%" }}>
             <Grid item xs={12} container>
-                <Box sx={{ padding: "25px", width: "calc(100% - 50px)", height: "calc(100% - 50px)" }}>
+                <Box sx={{ padding: "25px", width: "calc(100% - 50px)", height: "calc(100% - 50px)", display: "flex", flexDirection: "column" }}>
                     <Grid container alignItems={"center"} justifyContent="space-between" sx={{ marginBottom: "35px" }}>
                         <Grid item xs="auto" container alignItems={"center"}>
                             <Box component={Paper} sx={{ padding: "5px", height: 30, display: "flex", alignItems: "center", width: 300 }}>
@@ -198,7 +198,7 @@ export const DmsList = ({ dmsList }) => {
                     {
                         dmsList.length > 0
                           ? (
-                            <Box sx={{ padding: "25px", height: "calc(100% - 125px)" }} component={Paper}>
+                            <Box sx={{ padding: "25px", height: 300, flexGrow: 1, overflowY: "auto"}} component={Paper}>
                                 <LamassuTable data={dmsRender} columnConf={dmsTableColumns} />
                             </Box>
                             )

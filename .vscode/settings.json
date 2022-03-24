@@ -1,7 +1,8 @@
 {
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "eslint.validate": ["javascript"],
-    "eslint.packageManager": "npm"
+    // "editor.codeActionsOnSave": {
+    //     "source.fixAll.eslint": true
+    // },
+    // "eslint.validate": ["javascript"],
+    // "eslint.packageManager": "npm",
+    "eslint.enable": false
 }

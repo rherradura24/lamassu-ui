@@ -5,15 +5,19 @@ import * as t from "./ActionTypes"
 import * as lamassuCaApi from "./ApiCalls"
 import notificationsDuck from "redux/ducks/notifications"
 import cloudProxyDuck from "redux/ducks/cloud-proxy"
-import { of, forkJoin, defaultIfEmpty, switchMap } from "rxjs"
+import { of, forkJoin, defaultIfEmpty, switchMap, tap, take } from "rxjs"
+import { useEffect } from "react"
 
 // GET_CAS
 
 export const getCasEpic = action$ => {
-  console.log(action$.source.subscribe(a => console.log("%c Epic ", "background:#ee8410; border-radius:5px;font-weight: bold;", "", a)))
+  const date = new Date().getTime()
+  // console.log(action$.source.subscribe(a => console.log("%c Epic ", "background:#ee8410; border-radius:5px;font-weight: bold;", "", a)))
+  console.log("%c Epic ", "background:#ee8410; border-radius:5px;font-weight: bold;", "", "sub")
   return action$.pipe(
     ofType(t.GET_CAS),
-    // tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+    // take(1),
+    tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item, date)),
     switchMap(() => makeRequestWithActions(lamassuCaApi.getCAs(), t.GET_CAS))
   )
 }
@@ -25,11 +29,19 @@ export const getCasEpicError = action$ => action$.pipe(
 
 // GET_ISSUED_CERTS
 
-export const getIssuedCertsEpic = action$ => action$.pipe(
-  ofType(t.GET_ISSUED_CERTS),
-  // tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
-  switchMap(({ payload }) => makeRequestWithActions(lamassuCaApi.getIssuedCerts(payload.caName), t.GET_ISSUED_CERTS, { caName: payload.caName }))
-)
+export const getIssuedCertsEpic = action$ => {
+  console.log("%c Epic ", "background:#ee8410; border-radius:5px;font-weight: bold;", "", "sub2")
+
+  return (
+    action$.pipe(
+      ofType(t.GET_ISSUED_CERTS),
+      // tap(item => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+      switchMap(({ payload }) => makeRequestWithActions(lamassuCaApi.getIssuedCerts(payload.caName), t.GET_ISSUED_CERTS, { caName: payload.caName }))
+    )
+  )
+}
+
+
 
 export const getIssuedCertsEpicError = action$ => action$.pipe(
   ofType(failed(t.GET_ISSUED_CERTS)),

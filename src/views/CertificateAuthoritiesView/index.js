@@ -7,9 +7,11 @@ import { Divider, Grid, Tab, Tabs, Typography } from "@mui/material"
 import { useTheme } from "@emotion/react"
 import CreateCA from "./views/CaActions/CreateCA"
 import { ImportCA } from "./views/CaActions/ImportCA/ImportCA"
+import casDucks from "redux/ducks/certificate-authorities"
+import { useSelector } from "react-redux"
 
 export default () => {
-  return (
+    return (
         <Routes>
             <Route path="/" element={<RoutedCaList />}>
                 <Route path="actions" element={<CaCreationActionsWrapper />} >
@@ -19,32 +21,38 @@ export default () => {
                 <Route path=":caName/*" element={<RoutedCaInspector />} />
             </Route>
         </Routes>
-  )
+    )
 }
 
 const RoutedCaList = () => {
-  const params = useParams()
-  const location = useLocation()
-  // console.log(params, location);
-  return (
+    const params = useParams()
+    const location = useLocation()
+    // console.log(params, location);
+    return (
         <CaList urlCaName={params.caName} />
-  )
+    )
 }
 
 const RoutedCaInspector = () => {
-  const params = useParams()
-  const location = useLocation()
-  // console.log(params, location);
-  return (
-        <CaInspector caName={params.caName} />
+    const params = useParams()
+    const location = useLocation()
+    const ca = useSelector(state => casDucks.reducer.getCA(state, params.caName))
+    // console.log(params, location);
+
+    return (
+        ca !== undefined ?(
+            <CaInspector caName={params.caName} />
+        ): (
+            <Box sx={{ fontStyle: "italic" }}>CA not found</Box>
+        )
   )
 }
 
 const CaCreationActionsWrapper = () => {
-  const theme = useTheme()
-  const [selectedTab, setSelectedTab] = useState(0)
+    const theme = useTheme()
+    const [selectedTab, setSelectedTab] = useState(0)
 
-  return (
+    return (
         <Box sx={{ width: "100%" }}>
             <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <Box style={{ padding: "40px 40px 0 40px" }}>
@@ -73,5 +81,5 @@ const CaCreationActionsWrapper = () => {
                 </Box>
             </Box>
         </Box>
-  )
+    )
 }

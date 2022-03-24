@@ -1,9 +1,10 @@
 import { success, failed } from "redux/utils"
 import { actionType, status } from "redux/utils/constants"
 import * as t from "./ActionTypes"
-import { cloudConnectorStatusToColor } from "./utils"
+import { cloudProviders } from "./Constants"
+import { awsCaStatusColor, awsPolicyStatusColor, cloudConnectorStatusToColor } from "./utils"
 
-function capitalizeFirstLetter (string) {
+function capitalizeFirstLetter(string) {
   string = string.toLowerCase()
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
@@ -30,6 +31,25 @@ export const reducer = (state = initState, action) => {
         // Standarize Strings
         cloudConnector.status = capitalizeFirstLetter(cloudConnector.status)
         cloudConnector.status_color = cloudConnectorStatusToColor(cloudConnector.status)
+        for (let i = 0; i < cloudConnector.synchronized_cas.length; i++) {
+          var syncCA = cloudConnector.synchronized_cas[i]
+          if (cloudConnector.cloud_provider == cloudProviders.AWS) {
+            syncCA.consistency_status = capitalizeFirstLetter(syncCA.consistency_status)
+
+            if (syncCA.config && syncCA.config.status) {
+              syncCA.config.status = capitalizeFirstLetter(syncCA.config.status)
+              syncCA.config.status_color = awsCaStatusColor(syncCA.config.status)
+            }
+            if (syncCA.config && syncCA.config.policy_status) {
+              syncCA.config.policy_status = capitalizeFirstLetter(syncCA.config. policy_status)
+              syncCA.config.policy_status_color = awsPolicyStatusColor(syncCA.config.policy_status)
+            }
+
+            cloudConnector.synchronized_cas[i] = syncCA
+          }
+        }
+
+
         currentList[cloudConnector.id] = cloudConnector
       })
 
@@ -87,5 +107,6 @@ export const getCloudConnectors = (state) => {
 
 export const getCloudConnectorById = (state, connectorId) => {
   const cloudProxyReducer = getSelector(state)
+  console.log(cloudProxyReducer, connectorId);
   return cloudProxyReducer.cloudConnectorsList[connectorId]
 }
