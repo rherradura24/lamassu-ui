@@ -54,18 +54,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-<<<<<<< HEAD
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions"
-=======
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
->>>>>>> 329032338ba1cca638bd95853901a928df086efe
   },
   "browserslist": {
     "production": [
@@ -78,7 +68,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-<<<<<<< HEAD
   },
   "devDependencies": {
     "@types/react-color": "^3.0.6",
@@ -98,7 +87,5 @@
     "react-error-overlay": "6.0.9",
     "redux-devtools-extension": "^2.13.9",
     "remote-redux-devtools": "0.5.16"
-=======
->>>>>>> 329032338ba1cca638bd95853901a928df086efe
   }
 }
