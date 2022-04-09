@@ -1,0 +1,12 @@
+[
+    {
+        "id": "111111",
+        "alias": "Dev 1",
+        "dms": "DMS 1",
+        "common_name": "cn",
+        "status": "DEVICE_CREATED",
+        "key_type": "RSA",
+        "key_bits": "4096",
+        "key_strength": "high"
+    }
+]
