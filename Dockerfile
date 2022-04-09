@@ -5,12 +5,9 @@ WORKDIR /app
 
 # install app dependencies
 COPY ./package.json package.json
-COPY ./tsconfig.json tsconfig.json
 RUN npm install
 
-COPY ./public public
-COPY ./src src
-#Necesary to resolve JS absolute import paths during NPM BUILD
+COPY . .
 
 RUN npm run build
 
