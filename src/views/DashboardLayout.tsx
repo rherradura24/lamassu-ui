@@ -17,6 +17,10 @@ import { Home } from "./Home";
 import { createDarkTheme, createLightTheme } from "theme";
 import { Notification } from "ducks/features/notifications/models";
 import { CAView } from "./CertificateAuthoritiesView";
+import { DeviceView } from "./DeviceView";
+import { DMSView } from "./DeviceManufacturingSystemView";
+import { useAppSelector } from "ducks/hooks";
+import * as notificationsSelector from "ducks/features/notifications/reducer";
 
 export const DashboardLayout = () => {
     const cookies = new Cookies();
@@ -24,7 +28,7 @@ export const DashboardLayout = () => {
         cookies.set("paletteMode", "light", { path: "/" });
     }
 
-    const notificationsList : Array<Notification> = [];
+    const notificationsList : Array<Notification> = useAppSelector((state) => notificationsSelector.getNotificationList(state));
 
     const containerRef = useRef(null);
 
@@ -71,8 +75,7 @@ export const DashboardLayout = () => {
                     path: "/dms/*",
                     link: "/dms",
                     icon: <MdOutlinePrecisionManufacturing key="/2"/>,
-                    // content: <DmsView />
-                    content: <></>
+                    content: <DMSView/>
 
                 },
                 {
@@ -80,8 +83,7 @@ export const DashboardLayout = () => {
                     path: "/devmanager/*",
                     link: "/devmanager",
                     icon: <RouterOutlinedIcon key="/3"/>,
-                    // content: <DeviceManagerView />
-                    content: <></>
+                    content: <DeviceView />
                 }
             ]
         }

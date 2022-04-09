@@ -28,17 +28,17 @@ function padZero (str: string) {
 }
 
 interface Props {
-  customColor: string
-  customTextColor: string
+  customcolor: string
+  customtextcolor: string
 }
 
-export const ColoredButton = styled(Button)(({ customColor, customTextColor }: Props) => {
+export const ColoredButton = styled(Button)(({ customcolor, customtextcolor }: Props) => {
     // console.log(color);
     return ({
-        color: customTextColor,
-        backgroundColor: customColor,
+        color: customtextcolor,
+        backgroundColor: customcolor,
         "&:hover": {
-            backgroundColor: customColor
+            backgroundColor: customcolor
         }
     });
 });

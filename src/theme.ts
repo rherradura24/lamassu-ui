@@ -182,6 +182,9 @@ type CustomPalette = {
 type CustomTypeBackground = {
     [Key in keyof typeof light.palette.background]: typeof light.palette.background[Key]
 }
+type CustomTypeText = {
+    [Key in keyof typeof light.palette.text]: typeof light.palette.text[Key]
+}
 declare module "@mui/material/styles" {
     interface Palette extends CustomPalette { }
     interface Theme extends CustomTheme { }
@@ -189,6 +192,7 @@ declare module "@mui/material/styles" {
 }
 declare module "@mui/material/styles/createPalette" {
     interface TypeBackground extends CustomTypeBackground { }
+    interface TypeText extends CustomTypeText { }
 }
 
 export const createLightTheme = () => createTheme(light);

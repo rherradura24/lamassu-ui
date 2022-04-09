@@ -6,6 +6,7 @@ import { LamassuChip } from "components/LamassuComponents/Chip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import * as caActions from "ducks/features/cas/actions";
 import * as caSelector from "ducks/features/cas/reducer";
 import { useAppSelector } from "ducks/hooks";
 import { useTheme } from "@mui/system";
@@ -13,6 +14,7 @@ import { CertificateView } from "./CertificateView";
 import { IssuedCertificates } from "./IssuedCertificates";
 import { CloudProviders } from "./CloudProviders";
 import { CerificateOverview } from "./CertificateOverview";
+import { useDispatch } from "react-redux";
 
 interface CaInspectorProps {
     caName: string | undefined
@@ -54,6 +56,7 @@ interface Props {
 }
 const CaInspectorHeader: React.FC<Props> = ({ caName, preSelectedTabIndex }) => {
     const theme = useTheme();
+    const dispatch = useDispatch();
 
     const requestStatus = useAppSelector((state) => caSelector.getRequestStatus(state));
     const caData = useAppSelector((state) => caSelector.getCA(state, caName!));
@@ -169,7 +172,7 @@ const CaInspectorHeader: React.FC<Props> = ({ caName, preSelectedTabIndex }) => 
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={() => setIsRevokeDialogOpen(false)} variant="outlined">Cancel</Button>
-                                            <Button onClick={() => setIsRevokeDialogOpen(false)} variant="contained">Revoke</Button>
+                                            <Button onClick={() => { dispatch(caActions.revokeCAAction.request({ caName: caData.name })); setIsRevokeDialogOpen(false); }} variant="contained">Revoke</Button>
                                         </DialogActions>
                                     </Dialog>
                                 )

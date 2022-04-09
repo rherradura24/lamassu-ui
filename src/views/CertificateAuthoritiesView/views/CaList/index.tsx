@@ -30,16 +30,14 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
     const containerRef = React.useRef(null);
 
     useEffect(() => {
-        dispatch(caActions.getCAsAction({}));
+        dispatch(caActions.getCAsAction.request());
     }, []);
 
-    // useEffect(() => {
-    //     setSelectedCa(preSelectedCaName);
-    // }, [preSelectedCaName]);
+    useEffect(() => {
+        setSelectedCa(preSelectedCaName);
+    }, [preSelectedCaName]);
 
     useEffect(() => {
-        console.log(caList);
-
         setFilteredCaList(caList);
     }, [caList]);
 
@@ -98,13 +96,7 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
                                                     setIsMainMoadlOpen(true);
                                                     navigate(caItem.name);
                                                 }}
-                                                name={caItem.name!}
-                                                keyType={caItem.key_metadata.type}
-                                                keySize={caItem.key_metadata.bits}
-                                                keyStrength={caItem.key_metadata.strength}
-                                                keyStrengthColor={caItem.key_metadata.strength_color}
-                                                status={caItem.status}
-                                                expirationDate={caItem.valid_to}
+                                                ca={caItem}
                                                 selected={selectedCa !== undefined ? caItem.name === selectedCa : false}
                                             />
                                         </Box>

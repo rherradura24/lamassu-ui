@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
 
-const getColor = (theme: any, color: string) => {
+const getColor = (theme: any, color: string | [string, string]) => {
     switch (color) {
     case "green":
         return [theme.palette.success.main, theme.palette.success.light];
@@ -25,7 +25,7 @@ const getColor = (theme: any, color: string) => {
 };
 
 interface LamassuChipProps {
-  color: string,
+  color: string | [string, string],
   label: string,
   rounded?: boolean,
   compact?: boolean,
@@ -46,9 +46,9 @@ export const LamassuChip: React.FC<LamassuChipProps> = ({ color, label, rounded,
 };
 
 interface LamassuStatusChipProps {
-  color: string,
-  label: string,
-  style: any,
+    color: string | [string, string],
+    label: string,
+  style?: any,
   [x: string]: any,
 }
 export const LamassuStatusChip: React.FC<LamassuStatusChipProps> = ({ color, label, style = {}, ...props }) => {

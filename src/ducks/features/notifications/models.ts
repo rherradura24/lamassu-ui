@@ -9,10 +9,10 @@ export class Notification {
 }
 
 export const ONotificationType = {
-    Info: "Info",
-    Success: "Success",
-    Warn: "Warn",
-    Error: "Error"
+    Info: "INFO",
+    Success: "SUCCESS",
+    Warn: "WARN",
+    Error: "ERROR"
 };
 
 export type NotificationType = typeof ONotificationType[keyof typeof ONotificationType];

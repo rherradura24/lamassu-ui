@@ -4,14 +4,16 @@ import { Box } from "@mui/system";
 import { Divider, Grid, Tab, Tabs, Typography, useTheme } from "@mui/material";
 import { CaList } from "./views/CaList";
 import { CaInspector } from "./views/CaInspector";
+import { CreateCA } from "./views/CaActions/CreateCA";
+import { ImportCA } from "./views/CaActions/ImportCA";
 
 export const CAView = () => {
     return (
         <Routes>
             <Route path="/" element={<RoutedCaList />}>
                 <Route path="actions" element={<CaCreationActionsWrapper />} >
-                    {/* <Route path="create" element={<CreateCA />} />
-                    <Route path="import" element={<ImportCA />} /> */}
+                    <Route path="create" element={<CreateCA />} />
+                    <Route path="import" element={<ImportCA />} />
                 </Route>
                 <Route path=":caName/*" element={<RoutedCaInspector />} />
             </Route>
@@ -41,7 +43,7 @@ const CaCreationActionsWrapper = () => {
     const [selectedTab, setSelectedTab] = useState(0);
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", height: "100%" }}>
             <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <Box style={{ padding: "40px 40px 0 40px" }}>
                     <Grid item container spacing={2} justifyContent="flex-start">
@@ -62,10 +64,10 @@ const CaCreationActionsWrapper = () => {
                     </Box>
                 </Box>
                 <Divider />
-                <Box style={{ padding: "20px 40px 20px 40px", flexGrow: 1, overflowY: "auto", height: "100%" }}>
-                    <Grid container>
+                <Box style={{ overflowY: "auto", display: "flex", flexDirection: "column", height: "100%" }}>
+                    <Box sx={{ padding: "20px 40px 20px 40px", height: "300px", flexGrow: 1, overflowY: "auto" }}>
                         <Outlet />
-                    </Grid>
+                    </Box>
                 </Box>
             </Box>
         </Box>

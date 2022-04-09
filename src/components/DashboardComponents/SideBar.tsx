@@ -59,7 +59,7 @@ const SideBar: React.FC<Props> = ({ onToggleDark, onCollapse, collapsed, menuCon
                                                     collapsed={collapsed}
                                                     active={selectedPath}
                                                     exactLink={!menuConfigItem.path.includes("*")}
-                                                    onSelect={(link: string) => { console.log(link); handleSelectedPath(link); }}
+                                                    onSelect={(link: string) => { handleSelectedPath(link); }}
                                                     icon={menuConfigItem.icon}
                                                 />
                                             ))
@@ -161,7 +161,7 @@ interface MenuSectionTitleProps {
   title: string
 }
 const MenuSectionTitle: React.FC<MenuSectionTitleProps> = ({ title, collapsed }) => {
-    if (collapsed) {
+    if (!collapsed) {
         return (
             <Typography className="sidebar-menu-section-title"> {title} </Typography>
         );

@@ -21,42 +21,35 @@ export const apiRequest = async ({ method = "GET", url, data, query, headers = {
         url = url + "?" + data;
     }
 
-    const parseError = (err: any) : any => {
-        if (typeof err === "object") {
-            if (err !== {}) {
-                if (err.error) {
-                    return err.error;
-                }
-                JSON.stringify(err);
-                return "";
-            }
+    const parseErrorResponse = async (resp: Response) => {
+        try {
+            let msg = "StatusCode=" + resp.status + " " + resp.statusText;
+            const errMsg = await response.text();
+            msg = msg + " " + errMsg;
+            return msg;
+        } catch (error) {
+            console.log(error);
             return "";
         }
-        return err;
     };
 
-    try {
-        const response = await fetch(url, {
-            method,
-            headers: {
-                Authorization: "Bearer " + token,
-                ...(method === "POST" && { "Content-Type": "application/json" }),
-                ...headers
-            },
-            ...(data !== {} && { body: JSON.stringify(data) })
-        });
+    const response = await fetch(url, {
+        method: method,
+        headers: {
+            Authorization: "Bearer " + keycloak.token,
+            ...(method === "POST" && { "Content-Type": "application/json" }),
+            ...headers
+        },
+        ...(data !== {} && { body: JSON.stringify(data) })
+    });
 
+    console.log("resp", response);
+
+    if (response.status >= 200 && response.status < 300) {
         const json = await response.json();
-        if (response.status >= 200 && response.status < 300) {
-            return {
-                json,
-                status: response.status
-            };
-        }
-        return { error: "Unexpected response from server. " + parseError(json) };
-    } catch (er) {
-        return { error: "Connection error. " + parseError(er) };
+        return json;
     }
+    throw Error(await parseErrorResponse(response));
 };
 
 export const makeRequestWithActions = (fetchPromise: Promise<any>, actionType: string, meta = {}) =>

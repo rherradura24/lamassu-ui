@@ -5,7 +5,7 @@ export const actionTypes = {
 };
 
 export interface IAddNotification {
-    messgae: string
+    message: string
     type: "INFO" | "SUCCESS" | "WARN" | "ERROR"
 }
 export const addNotificationAction = createAction<IAddNotification>(actionTypes.ADD_NOTIFICATION);

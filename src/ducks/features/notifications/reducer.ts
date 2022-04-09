@@ -18,8 +18,8 @@ export const notificationsReducer = (
 ): NotificationsState => {
     switch (action.type) {
     case actionTypes.ADD_NOTIFICATION: {
-        let notifications = state.list;
-        notifications.push(new Notification({ type: action.payload.type, message: action.payload.type, timestamp: new Date() }));
+        let notifications = [...state.list];
+        notifications.push(new Notification({ type: action.payload.type, message: action.payload.message, timestamp: new Date() }));
         return { ...state, list: notifications };
     }
 
