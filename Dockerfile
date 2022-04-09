@@ -5,7 +5,7 @@ WORKDIR /app
 
 # install app dependencies
 COPY ./package.json package.json
-COPY ./jsconfig.json jsconfig.json
+COPY ./tsconfig.json tsconfig.json
 RUN npm install
 
 COPY ./public public
