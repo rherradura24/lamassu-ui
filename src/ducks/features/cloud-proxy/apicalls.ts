@@ -48,9 +48,20 @@ export const updateAccessPolicy = async (connectorID: string, caName: string, ne
     });
 };
 
-export const getDeviceConfig = async (connectorID: string): Promise<any> => {
+export const getDeviceConfig = async (connectorID: string, deviceID: string): Promise<any> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices"
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices/" + deviceID
+    });
+};
+
+export const updateDeviceCertificateStatus = async (connectorID: string, deviceID: string, serialNumber: string, status: string): Promise<any> => {
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices/" + deviceID + "/cert",
+        data: {
+            status: status,
+            serial_number: serialNumber
+        }
     });
 };

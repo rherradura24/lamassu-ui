@@ -18,10 +18,10 @@ import * as devicesSelector from "ducks/features/devices/reducer";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
 import { HistoricalCert, OHistoricalCertStatus } from "ducks/features/devices/models";
-import { CloudConnector, OCloudProviderHealthStatus } from "ducks/features/cloud-proxy/models";
+import { AWSDeviceConfig, CloudConnector, OCloudProviderHealthStatus } from "ducks/features/cloud-proxy/models";
 import { CloudProviderIcon } from "components/CloudProviderIcons";
 import { Certificate } from "@fidm/x509";
-import { DeviceInspectorCloudActions } from "./components/DeviceInspectorCloudActions";
+import { CloudConnectorDeviceActions } from "./components/CloudConnectorDeviceActions";
 import { pSBC } from "components/utils/colors";
 import { Modal } from "components/Modal";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -43,6 +43,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
 
     const [decodedCertificate, setDecodedCertificate] = useState<Certificate | undefined>();
     const [showCertificate, setShowCertificate] = useState(false);
+    const [showRevokeCertificate, setShowRevokeCertificate] = useState(false);
 
     let activeCertIssuer: string | undefined;
     if (device) {
@@ -64,11 +65,11 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     useEffect(() => {
         const connectorToFetch = [];
         for (const connector of connectors) {
-            if (connector.status === OCloudProviderHealthStatus.Passing && connector.synchronized_cas.filter(syncCA => syncCA.ca_name === activeCertIssuer).length > 0) {
+            if (connector.status === OCloudProviderHealthStatus.Passing/* && connector.synchronized_cas.filter(syncCA => syncCA.ca_name === activeCertIssuer).length > 0 */) {
                 connectorToFetch.push(connector.id);
             }
         }
-        dispatch(cloudProxyActions.getCloudConnectorDevicesConfigAction.request({ connectorIDs: connectorToFetch }));
+        dispatch(cloudProxyActions.getCloudConnectorDeviceConfigAction.request({ connectorIDs: connectorToFetch, deviceID: deviceID }));
     }, [connectors, activeCertIssuer]);
 
     useEffect(() => {
@@ -111,8 +112,8 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
         { key: "connectorType", title: "Connector Type", align: "center", size: 2 },
         { key: "connectorAlias", title: "Alias", align: "center", size: 2 },
         { key: "healthStatus", title: "Connector Health Status", align: "center", size: 1 },
-        { key: "syncStatus", title: "Connector Synchronization Status", align: "center", size: 2 },
-        { key: "connectorEnabled", title: "Connector Enabled", align: "center", size: 2 },
+        // { key: "syncStatus", title: "Connector Synchronization Status", align: "center", size: 2 },
+        // { key: "connectorEnabled", title: "Connector Enabled", align: "center", size: 2 },
         { key: "actions", title: "", align: "end", size: 1 }
     ];
 
@@ -141,9 +142,11 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
         }
 
         let awsDevice;
+        console.log(connector);
+
         const deviceIdx = connector.devices_config.map(deviceCfg => deviceCfg.device_id).indexOf(deviceID);
         if (deviceIdx >= 0) {
-            awsDevice = connector.devices_config[deviceIdx];
+            awsDevice = new AWSDeviceConfig(connector.devices_config[deviceIdx].config);
         }
 
         const awsDeviceCertificatesRender = (cert: any) => {
@@ -155,7 +158,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                     <LamassuChip label={cert.status} color={cert.status_color} />
                 ),
                 updateDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>{moment(cert.update_date).format("DD-MM-YYYY HH:mm")}</Typography>,
-                actions: <DeviceInspectorCloudActions connectorID={"connector.id"} deviceID={deviceID} />
+                actions: <CloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} serialNumber={cert.serial_number} status={cert.status}/>
             };
         };
 
@@ -183,53 +186,41 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                 enabledConnectorSync ? moment(filteredSyncCAs[0].enabled).format("DD/MM/YYYY") : "-"
             }</Typography>,
             actions: (
-                enabledConnectorSync
-                    ? (
-                        connector.status === "Passing" && (
-                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                <IconButton onClick={() => { }}>
-                                    <KeyboardArrowDownIcon fontSize={"small"} />
-                                </IconButton>
-                            </Box>
-                        )
-                    )
-                    : (
-                        <></>
-                    )
+                connector.status === "Passing" && (
+                    <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                        <IconButton onClick={() => { }}>
+                            <KeyboardArrowDownIcon fontSize={"small"} />
+                        </IconButton>
+                    </Box>
+                )
+
             ),
             expandedRowElement: (
                 <Box sx={{ width: "calc(100% - 65px)", borderLeft: `4px solid ${theme.palette.primary.main}`, background: pSBC(theme.palette.mode === "dark" ? 0.01 : -0.03, theme.palette.background.paper), marginLeft: "20px", padding: "20px 20px 0 20px", marginBottom: "20px" }}>
                     {
-                        enabledConnectorSync
-                            ? (
-                                connector.status === "Passing" && (
-                                    awsDevice
-                                        ? (
-                                            <>
-                                                <Box style={{ marginTop: "5px" }}>
-                                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>AWS Thing ID</Typography>
-                                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{awsDevice.aws_id}</Typography>
-                                                </Box>
-                                                <Box style={{ marginTop: "5px" }}>
-                                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Last connection</Typography>
-                                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(awsDevice.last_connection).format("DD-MM-YYYY HH:mm")}</Typography>
-                                                </Box>
-                                                <LamassuTable columnConf={awsDevicesCertificateTableColumn} data={awsDevice.certificates} renderDataItem={awsDeviceCertificatesRender} style={{ marginTop: "10px" }} />
-                                            </>
 
-                                        )
-                                        : (
-                                            <Box sx={{ paddingBottom: "10px" }}>
-                                                <Typography fontStyle={"italic"} fontSize="12px">{"This device has not yet connected to AWS IoT Core"}</Typography>
-                                            </Box>
-                                        )
+                        connector.status === "Passing" && (
+                            awsDevice
+                                ? (
+                                    <>
+                                        <Box style={{ marginTop: "5px" }}>
+                                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>AWS Thing ID</Typography>
+                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{awsDevice.aws_id}</Typography>
+                                        </Box>
+                                        <Box style={{ marginTop: "5px" }}>
+                                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Last connection</Typography>
+                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(awsDevice.last_connection).format("DD-MM-YYYY HH:mm")}</Typography>
+                                        </Box>
+                                        <LamassuTable columnConf={awsDevicesCertificateTableColumn} data={awsDevice.certificates} renderDataItem={awsDeviceCertificatesRender} style={{ marginTop: "10px" }} />
+                                    </>
+
                                 )
-                            )
-                            : (
-                                <Box sx={{ paddingBottom: "10px" }}>
-                                    <Typography fontStyle={"italic"} fontSize="12px">{"This connector is not enabled for this device. Synchronize the device's issuer CA"}</Typography>
-                                </Box>
-                            )
+                                : (
+                                    <Box sx={{ paddingBottom: "10px" }}>
+                                        <Typography fontStyle={"italic"} fontSize="12px">{"This device has not yet connected to AWS IoT Core"}</Typography>
+                                    </Box>
+                                )
+                        )
                     }
                 </Box>
 
@@ -374,10 +365,35 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                                             // MenuListProps={{ onMouseLeave: handleClose }}
                                             >
                                                 <MenuItem component={Link} to="edit" style={{ width: "100%" }} onClick={(ev: any) => { }}>Edit</MenuItem>
-                                                <MenuItem style={{ width: "100%" }} onClick={(ev) => { dispatch(devicesAction.revokeActiveDeviceCertificateAction.request({ deviceID: deviceID })); }}>Revoke Certificate</MenuItem>
+                                                <MenuItem style={{ width: "100%" }} onClick={(ev) => { setShowRevokeCertificate(true); }}>Revoke Certificate</MenuItem>
                                                 <MenuItem style={{ width: "100%" }} onClick={(ev) => { }} disabled>Delete Device</MenuItem>
                                             </Menu>
                                         </Grid>
+                                        <Modal
+                                            title="Revoke the active certificate used by this device"
+                                            isOpen={showRevokeCertificate}
+                                            onClose={() => { setShowRevokeCertificate(false); }}
+                                            subtitle="You are about to revoke the current device cert. By revoking this certificate, the divice will no longer be able to connect to Lamassu nor any cloud porovider IoT platform"
+                                            actions={
+                                                <Box>
+                                                    <Button variant="text" onClick={() => { setShowRevokeCertificate(false); }}>Close</Button>
+                                                    <Button variant="contained" onClick={() => { dispatch(devicesAction.revokeActiveDeviceCertificateAction.request({ deviceID: deviceID })); setShowRevokeCertificate(false); }}>Revoke</Button>
+                                                </Box>
+                                            }
+                                            content={
+                                                <>
+                                                    <div style={{ marginTop: 20 }}>
+                                                        <Typography variant="button">Device Alias: </Typography>
+                                                        <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#0D1519", padding: 5, fontSize: 12 }}>{device!.alias ? device!.alias : "-"}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography variant="button">Device ID: </Typography>
+                                                        <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#0D1519", padding: 5, fontSize: 12 }}>{deviceID}</Typography>
+                                                    </div>
+                                                </>
+                                            }
+                                        />
+
                                     </>
                                 )
                             }

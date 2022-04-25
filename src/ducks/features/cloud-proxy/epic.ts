@@ -46,19 +46,23 @@ export const forceSyncCloudConnector: Epic<RootAction, RootAction, RootState, {}
 
 export const getDeviceConfigEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
-        filter(isActionOf(actions.getCloudConnectorDevicesConfigAction.request)),
+        filter(isActionOf(actions.getCloudConnectorDeviceConfigAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#985677; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.GetDevicesConfig>) =>
             forkJoin(
                 action.payload.connectorIDs.map(async connectorID => {
-                    const devices = await apicalls.getDeviceConfig(connectorID);
-                    return new Promise(resolve => resolve({ devices_config: devices, connector_id: connectorID }));
+                    try {
+                        const device = await apicalls.getDeviceConfig(connectorID, action.payload.deviceID);
+                        return new Promise(resolve => resolve({ device_config: device, connector_id: connectorID }));
+                    } catch (er) {
+                        return new Promise(resolve => resolve({ device_config: null, connector_id: connectorID }));
+                    }
                 })
             ).pipe(
                 defaultIfEmpty({}),
                 tap((item: any) => console.log("%c Epic ", "background:#887751; border-radius:5px;font-weight: bold;", "", item)),
-                map(actions.getCloudConnectorDevicesConfigAction.success),
-                catchError((message) => of(actions.getCloudConnectorDevicesConfigAction.failure(message)))
+                map(actions.getCloudConnectorDeviceConfigAction.success)
+                // catchError((message) => of(actions.getCloudConnectorDeviceConfigAction.failure(message)))
             )
         )
     );
@@ -73,4 +77,27 @@ export const updateAccessPolicyEpic: Epic<RootAction, RootAction, RootState, {}>
                 catchError((message) => of(actions.updateAccessPolicyAction.failure(message)))
             )
         )
+    );
+
+export const updateDeviceCertificateStatus: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.updateDeviceCertificateStatusAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.UpdateDeviceCertificateStatus>) =>
+            from(apicalls.updateDeviceCertificateStatus(action.payload.connectorID, action.payload.deviceID, action.payload.serialNumber, action.payload.status)).pipe(
+                map((val) => actions.updateDeviceCertificateStatusAction.success({}, { deviceID: action.payload.deviceID, connectorID: action.payload.connectorID })),
+                catchError((message) => of(actions.updateDeviceCertificateStatusAction.failure(message)))
+            )
+        )
+    );
+
+export const triggerRefreshUpdateDeviceConfig: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.updateDeviceCertificateStatusAction.success)),
+        map((val: any) => {
+            return actions.getCloudConnectorDeviceConfigAction.request({
+                connectorIDs: [val.meta.connectorID],
+                deviceID: val.meta.deviceID
+            });
+        })
     );

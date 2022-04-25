@@ -22,6 +22,7 @@ export const DeviceList = () => {
 
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
     const deviceList = useAppSelector((state) => devicesSelector.getDevices(state));
+    const totalDevices = useAppSelector((state) => devicesSelector.getTotalDevices(state));
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -36,7 +37,7 @@ export const DeviceList = () => {
             },
             pagination: {
                 enabled: true,
-                maxItems: 500,
+                maxItems: totalDevices,
                 options: [15, 25, 50],
                 selectedItemsPerPage: 15,
                 selectedPage: 0
@@ -46,7 +47,7 @@ export const DeviceList = () => {
 
     const refreshAction = () => dispatch(devicesAction.getDevicesAction.request({
         offset: tableConfig.pagination.selectedItemsPerPage!,
-        page: tableConfig.pagination.selectedPage!,
+        page: tableConfig.pagination.selectedPage! + 1,
         sortField: tableConfig.sort.selectedField!,
         sortMode: tableConfig.sort.selectedMode!
     }));
@@ -67,9 +68,9 @@ export const DeviceList = () => {
         { key: "id", dataKey: "id", title: "Device ID", query: true, type: OperandTypes.string, align: "start", size: 4 },
         { key: "alias", dataKey: "alias", title: "Alias", query: true, type: OperandTypes.string, align: "center", size: 3 },
         { key: "status", dataKey: "status", title: "Status", type: OperandTypes.enum, align: "center", size: 2 },
-        { key: "creation", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
+        { key: "creation_ts", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
         { key: "dms", dataKey: "dms_id", title: "DMS ID", type: OperandTypes.string, align: "center", size: 2 },
-        { key: "keyStrength", dataKey: "key_metadata.strength", title: "Key Strength", type: OperandTypes.enum, align: "center", size: 1 },
+        { key: "key_strength", dataKey: "key_metadata.strength", title: "Key Strength", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "tags", dataKey: "tags", title: "Tags", type: OperandTypes.tags, align: "center", size: 2 },
         { key: "actions", title: "", align: "end", size: 2 }
     ];
@@ -94,9 +95,9 @@ export const DeviceList = () => {
             id: <Typography style={{ fontWeight: "700", fontSize: 14, color: theme.palette.text.primary }}>#{device.id}</Typography>,
             alias: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{device.alias}</Typography>,
             status: <LamassuChip label={device.status} color={device.status_color} />,
-            creation: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
+            creation_ts: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
             dms: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dmsContent}</Typography>,
-            keyStrength: <LamassuChip label={device.key_metadata.strength} color={device.key_metadata.strength_color} />,
+            key_strength: <LamassuChip label={device.key_metadata.strength} color={device.key_metadata.strength_color} />,
             keyprops: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{`${device.key_metadata.type} ${device.key_metadata.bits}`}</Typography>,
             tags: (
                 <Grid item xs={12} container spacing={1} justifyContent="center">

@@ -61,6 +61,8 @@ export const CreateDms = () => {
     const [displayPrivKeyView, setDisplayPrivKeyView] = useState(false);
 
     useEffect(() => {
+        console.log(requestStatus);
+
         if (requestStatus.status === ORequestStatus.Success && requestStatus.type === ORequestType.Create) {
             setDisplayPrivKeyView(true);
         }

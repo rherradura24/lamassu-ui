@@ -3,13 +3,18 @@ import { IconButton, Menu, MenuItem, Paper, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useDispatch } from "react-redux";
+import * as cloudProxyActions from "ducks/features/cloud-proxy/actions";
 
 interface Props {
     deviceID: string
-    connectorID: string
+    connectorID: string,
+    serialNumber: string,
+    status: string
 }
 
-export const DeviceInspectorCloudActions : React.FC<Props> = ({ deviceID, connectorID }) => {
+export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, serialNumber, status }) => {
+    console.log(deviceID, connectorID, serialNumber, status);
+
     const theme = useTheme();
     const dispatch = useDispatch();
 
@@ -36,10 +41,24 @@ export const DeviceInspectorCloudActions : React.FC<Props> = ({ deviceID, connec
                 anchorEl={anchorCloudConnectorEl}
                 open={Boolean(anchorCloudConnectorEl)}
                 onClose={handleCloudConnectorClose}
-                // MenuListProps={{ onMouseLeave: handleClose }}
+            // MenuListProps={{ onMouseLeave: handleClose }}
             >
-                <MenuItem disabled style={{ width: "100%" }} onClick={(ev: any) => { }}>Activate</MenuItem>
-                <MenuItem style={{ width: "100%" }} onClick={(ev: any) => { }}>Deactivate</MenuItem>
+                <MenuItem disabled={status === "Active" || status === "Revoked"} style={{ width: "100%" }} onClick={(ev: any) => {
+                    dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
+                        connectorID: connectorID,
+                        deviceID: deviceID,
+                        serialNumber: serialNumber,
+                        status: "ACTIVE"
+                    }));
+                }}>Activate</MenuItem>
+                <MenuItem disabled={status === "Inactive" || status === "Revoked"} style={{ width: "100%" }} onClick={(ev: any) => {
+                    dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
+                        connectorID: connectorID,
+                        deviceID: deviceID,
+                        serialNumber: serialNumber,
+                        status: "INACTIVE"
+                    }));
+                }}>Deactivate</MenuItem>
             </Menu>
         </>
     );

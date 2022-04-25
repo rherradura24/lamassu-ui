@@ -1,7 +1,7 @@
 import { KeyStrength, KeyType } from "../cas/models";
 
 export class GetDeviceListAPIResponse {
-    public total!: number
+    public total_devices!: number
     public devices!: Array<Device>
 
     constructor (args?: {}) {

@@ -1,6 +1,6 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { AWSDeviceConfig, CloudConnector } from "./models";
+import { CloudConnector, CloudConnectorDeviceConfig } from "./models";
 
 export const actionTypes = {
     GET_CONNECTORS: "GET_CONNECTORS",
@@ -8,7 +8,8 @@ export const actionTypes = {
     FORCE_SYNCHRONIZE_CONNECTOR: "FORCE_SYNCHRONIZE_CONNECTOR",
     FIRE_CREATE_CA_EVENT: "FIRE_CREATE_CA_EVENT",
     UPDATE_ACCESS_POLICY: "UPDATE_ACCESS_POLICY",
-    GET_DEVICES_CONFIG: "GET_DEVICES_CONFIG"
+    GET_DEVICE_CONFIG: "GET_DEVICE_CONFIG",
+    UPDATE_DEVICE_CERTIFICATE_STATUS: "UPDATE_DEVICE_CERTIFICATE_STATUS"
 };
 
 export const getConnectorsAction = createAsyncAction(
@@ -77,16 +78,30 @@ export const updateAccessPolicyAction = createAsyncAction(
 )();
 
 export type GetDevicesConfig = {
-    connectorIDs: Array<string>
+    connectorIDs: Array<string>,
+    deviceID: string
 }
 
-export type GetDevicesConfigSucess = {
-    devices_config: Array<AWSDeviceConfig>
+export type GetDeviceConfigSucess = {
+    device_config: CloudConnectorDeviceConfig
     connector_id: string
 }
 
-export const getCloudConnectorDevicesConfigAction = createAsyncAction(
-    [actionTypes.GET_DEVICES_CONFIG, (req: GetDevicesConfig) => req],
-    [success(actionTypes.GET_DEVICES_CONFIG), (req: Array<GetDevicesConfigSucess>, meta: any) => { return req; }, (req: Array<GetDevicesConfigSucess>, meta: any) => { return meta; }],
-    [failed(actionTypes.GET_DEVICES_CONFIG), (req: Error) => req]
+export const getCloudConnectorDeviceConfigAction = createAsyncAction(
+    [actionTypes.GET_DEVICE_CONFIG, (req: GetDevicesConfig) => req],
+    [success(actionTypes.GET_DEVICE_CONFIG), (req: Array<GetDeviceConfigSucess>) => { return req; }],
+    [failed(actionTypes.GET_DEVICE_CONFIG), (req: Error) => req]
+)();
+
+export type UpdateDeviceCertificateStatus = {
+    connectorID: string,
+    deviceID: string,
+    serialNumber: string,
+    status: string
+}
+
+export const updateDeviceCertificateStatusAction = createAsyncAction(
+    [actionTypes.UPDATE_DEVICE_CERTIFICATE_STATUS, (req: UpdateDeviceCertificateStatus) => req],
+    [success(actionTypes.UPDATE_DEVICE_CERTIFICATE_STATUS), (req: any, meta: any) => req, (req: any, meta: any) => meta],
+    [failed(actionTypes.UPDATE_DEVICE_CERTIFICATE_STATUS), (req: Error) => req]
 )();

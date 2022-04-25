@@ -3,7 +3,7 @@ import { apiRequest } from "ducks/services/api";
 export const getDevices = async (offset: number, page: number, sortMode: "asc" | "desc", sortField: string): Promise<any> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices?" + `s={${sortMode},${sortField}}`
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices?" + `s={${sortMode},${sortField}}&page={${page},${offset}}`
     });
 };
 

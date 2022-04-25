@@ -87,34 +87,34 @@ export const cloudProxyReducer = createReducer<CloudProxyState, RootAction>(init
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.cloudProxyActions.getCloudConnectorDevicesConfigAction.request, (state, action) => {
+    .handleAction(actions.cloudProxyActions.getCloudConnectorDeviceConfigAction.request, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
     })
 
-    .handleAction(actions.cloudProxyActions.getCloudConnectorDevicesConfigAction.success, (state, action) => {
-        console.log(action);
+    .handleAction(actions.cloudProxyActions.getCloudConnectorDeviceConfigAction.success, (state, action) => {
         const connectors = state.list;
         const connectorsDevices = action.payload;
 
         for (let k = 0; k < connectorsDevices.length; k++) {
-            const awsDevices = connectorsDevices[k].devices_config;
-            for (let i = 0; i < awsDevices.length; i++) {
-                console.log(awsDevices[i]);
-                console.log(awsDevices[i].certificates);
-
-                for (let j = 0; j < awsDevices[i].certificates.length; j++) {
-                    awsDevices[i].certificates[j].status = capitalizeFirstLetter(awsDevices[i].certificates[j].status);
-                    awsDevices[i].certificates[j].status_color = awsDeviceStatusToColor(awsDevices[i].certificates[j].status);
+            if (connectorsDevices[k].device_config !== null && connectorsDevices[k].device_config.status === 200) {
+                const awsDevice = connectorsDevices[k].device_config.config;
+                for (let j = 0; j < awsDevice.certificates.length; j++) {
+                    awsDevice.certificates[j].status = capitalizeFirstLetter(awsDevice.certificates[j].status);
+                    awsDevice.certificates[j].status_color = awsDeviceStatusToColor(awsDevice.certificates[j].status);
                 }
-            }
 
-            const idx = connectors.map(connector => connector.id).indexOf(connectorsDevices[k].connector_id);
-            connectors[idx].devices_config = awsDevices;
+                const idx = connectors.map(connector => connector.id).indexOf(connectorsDevices[k].connector_id);
+                connectorsDevices[k].device_config.config = awsDevice;
+                connectors[idx].devices_config = [connectorsDevices[k].device_config];
+            }
         }
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: connectors };
+        // return { ...state };
     })
 
-    .handleAction(actions.cloudProxyActions.getCloudConnectorDevicesConfigAction.failure, (state, action) => {
+    .handleAction(actions.cloudProxyActions.getCloudConnectorDeviceConfigAction.failure, (state, action) => {
+        console.log(action);
+
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     });
 

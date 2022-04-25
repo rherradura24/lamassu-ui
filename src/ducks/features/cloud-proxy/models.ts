@@ -9,7 +9,7 @@ export class CloudConnector {
 
     public synchronized_cas!: Array<SynchronizedCA>
 
-    public devices_config: Array<any>
+    public devices_config: Array<CloudConnectorDeviceConfig>
 
     constructor (args?: {}) {
         Object.assign(this, args);
@@ -108,9 +108,18 @@ export class AWSDeviceCertificate {
     }
 }
 
+export class CloudConnectorDeviceConfig {
+    public device_id!: string
+    public config!: any
+    public status!: number
+
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
 export class AWSDeviceConfig {
     public aws_id!: string
-    public device_id!: string
     public last_connection!: Date | null
     public certificates!: Array<AWSDeviceCertificate>
 

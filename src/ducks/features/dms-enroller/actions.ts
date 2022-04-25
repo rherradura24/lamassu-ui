@@ -35,9 +35,14 @@ export type CreateDMSRequest = {
     form: CreateDMSForm
 }
 
+export type CreateDMSRequestSuccess = {
+    dms: DMS
+    priv_key: string
+}
+
 export const createDMSWithFormAction = createAsyncAction(
     [actionTypes.CREATE_DMS, (req: CreateDMSRequest) => req],
-    [success(actionTypes.CREATE_DMS), (req: DMS) => req],
+    [success(actionTypes.CREATE_DMS), (req: CreateDMSRequestSuccess) => req],
     [failed(actionTypes.CREATE_DMS), (req: Error) => req]
 )();
 

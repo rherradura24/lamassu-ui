@@ -47,7 +47,7 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     })
 
     .handleAction(actions.dmsActions.approveDMSRequestAction.request, (state, action) => {
-        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Pending } };
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Update } };
     })
 
     .handleAction(actions.dmsActions.approveDMSRequestAction.failure, (state, action) => {
@@ -55,6 +55,19 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     })
     .handleAction(actions.dmsActions.approveDMSRequestAction.success, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+    })
+
+    .handleAction(actions.dmsActions.createDMSWithFormAction.request, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Create } };
+    })
+
+    .handleAction(actions.dmsActions.createDMSWithFormAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+    .handleAction(actions.dmsActions.createDMSWithFormAction.success, (state, action) => {
+        console.log(action);
+
+        return { ...state, privateKey: action.payload.priv_key, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
     });
 
 const getSelector = (state: RootState): DeviceManufacturingSystemStatus => state.dmss;

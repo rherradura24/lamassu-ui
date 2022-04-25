@@ -10,6 +10,7 @@ import { deviceStatusToColor, historicalCertStatusToColor } from "./utils";
 export interface DevicesState {
     status: ActionStatus
     list: Array<Device>
+    totalDevices: number
     historyCertsStatus: ActionStatus
 
 }
@@ -21,6 +22,7 @@ const initialState = {
         type: ORequestType.None
     },
     list: [],
+    totalDevices: 0,
     historyCertsStatus: {
         isLoading: false,
         status: ORequestStatus.Idle,
@@ -38,6 +40,8 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     })
 
     .handleAction(actions.devicesActions.getDevicesAction.success, (state, action) => {
+        console.log(action);
+
         let devices: Array<Device> = action.payload.devices;
 
         for (let i = 0; i < devices.length; i++) {
@@ -47,7 +51,7 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
             devices[i].key_metadata.strength = capitalizeFirstLetter(devices[i].key_metadata.strength);
             devices[i].key_metadata.strength_color = keyStrengthToColor(devices[i].key_metadata.strength);
         }
-        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: devices };
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: devices, totalDevices: action.payload.total_devices };
     })
 
     .handleAction(actions.devicesActions.getDeviceByIDAction.request, (state, action) => {
@@ -117,6 +121,10 @@ const getSelector = (state: RootState): DevicesState => state.devices;
 export const getDevices = (state: RootState): Array<Device> => {
     const reducer = getSelector(state);
     return reducer.list;
+};
+export const getTotalDevices = (state: RootState): number => {
+    const reducer = getSelector(state);
+    return reducer.totalDevices;
 };
 
 export const getDevice = (state: RootState, id: string): Device | undefined => {

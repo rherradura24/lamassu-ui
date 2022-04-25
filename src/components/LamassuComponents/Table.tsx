@@ -522,7 +522,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                                             {
                                                 config.pagination.options!.map((option: number) => {
                                                     return <MenuItem style={{ width: "100%" }} key={option} onClick={(ev) => {
-                                                        onChange({ pagination: { ...config.pagination, selectedItemsPerPage: option } });
+                                                        onChange({ pagination: { ...config.pagination, selectedItemsPerPage: option, selectedPage: 0 } });
                                                         handleItemsPerPageElClose(ev);
                                                     }}>{option} Items per page</MenuItem>;
                                                 })
