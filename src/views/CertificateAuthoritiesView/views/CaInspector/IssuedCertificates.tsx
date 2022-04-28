@@ -33,7 +33,7 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
     const [showCertificate, setShowCertificate] = useState<string | undefined>(undefined);
 
     const certTableColumns = [
-        { key: "serialNumber", dataKey: "serialNumber", query: true, title: "Serial Number", type: OperandTypes.string, align: "start", size: 4 },
+        { key: "serialNumber", dataKey: "serial_number", query: true, title: "Serial Number", type: OperandTypes.string, align: "start", size: 4 },
         { key: "commonName", dataKey: "subject.common_name", query: true, title: "Common Name", type: OperandTypes.string, align: "start", size: 3 },
         { key: "keyStrength", dataKey: "key_metadata.strength", title: "Key Strength", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "certificateStatus", dataKey: "status", title: "Certificate Status", type: OperandTypes.enum, align: "center", size: 1 },

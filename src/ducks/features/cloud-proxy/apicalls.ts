@@ -55,13 +55,14 @@ export const getDeviceConfig = async (connectorID: string, deviceID: string): Pr
     });
 };
 
-export const updateDeviceCertificateStatus = async (connectorID: string, deviceID: string, serialNumber: string, status: string): Promise<any> => {
+export const updateDeviceCertificateStatus = async (connectorID: string, deviceID: string, caName: string, serialNumber: string, status: string): Promise<any> => {
     return apiRequest({
         method: "PUT",
         url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices/" + deviceID + "/cert",
         data: {
             status: status,
-            serial_number: serialNumber
+            serial_number: serialNumber,
+            ca_name: caName
         }
     });
 };

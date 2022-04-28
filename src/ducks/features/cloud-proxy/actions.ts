@@ -96,6 +96,7 @@ export const getCloudConnectorDeviceConfigAction = createAsyncAction(
 export type UpdateDeviceCertificateStatus = {
     connectorID: string,
     deviceID: string,
+    caName: string,
     serialNumber: string,
     status: string
 }

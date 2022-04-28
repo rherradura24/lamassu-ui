@@ -9,11 +9,12 @@ interface Props {
     deviceID: string
     connectorID: string,
     serialNumber: string,
+    caName: string,
     status: string
 }
 
-export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, serialNumber, status }) => {
-    console.log(deviceID, connectorID, serialNumber, status);
+export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, caName, serialNumber, status }) => {
+    console.log(deviceID, connectorID, caName, serialNumber, status);
 
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -47,6 +48,7 @@ export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connect
                     dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
                         connectorID: connectorID,
                         deviceID: deviceID,
+                        caName: caName,
                         serialNumber: serialNumber,
                         status: "ACTIVE"
                     }));
@@ -55,6 +57,7 @@ export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connect
                     dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
                         connectorID: connectorID,
                         deviceID: deviceID,
+                        caName: caName,
                         serialNumber: serialNumber,
                         status: "INACTIVE"
                     }));

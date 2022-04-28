@@ -84,7 +84,7 @@ export const updateDeviceCertificateStatus: Epic<RootAction, RootAction, RootSta
         filter(isActionOf(actions.updateDeviceCertificateStatusAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.UpdateDeviceCertificateStatus>) =>
-            from(apicalls.updateDeviceCertificateStatus(action.payload.connectorID, action.payload.deviceID, action.payload.serialNumber, action.payload.status)).pipe(
+            from(apicalls.updateDeviceCertificateStatus(action.payload.connectorID, action.payload.deviceID, action.payload.caName, action.payload.serialNumber, action.payload.status)).pipe(
                 map((val) => actions.updateDeviceCertificateStatusAction.success({}, { deviceID: action.payload.deviceID, connectorID: action.payload.connectorID })),
                 catchError((message) => of(actions.updateDeviceCertificateStatusAction.failure(message)))
             )

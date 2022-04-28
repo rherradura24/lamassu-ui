@@ -47,7 +47,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
 
     let activeCertIssuer: string | undefined;
     if (device) {
-        const filteredCerts = device.historicalCerts.filter(cert => cert.status === OHistoricalCertStatus.ACTIVE);
+        const filteredCerts = device.historicalCerts.filter(cert => cert.status === OHistoricalCertStatus.ISSUED);
         if (filteredCerts.length > 0) {
             activeCertIssuer = filteredCerts[0].issuer_name;
         }
@@ -158,7 +158,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                     <LamassuChip label={cert.status} color={cert.status_color} />
                 ),
                 updateDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>{moment(cert.update_date).format("DD-MM-YYYY HH:mm")}</Typography>,
-                actions: <CloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} serialNumber={cert.serial_number} status={cert.status}/>
+                actions: <CloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} caName={cert.ca_name} serialNumber={cert.serial_number} status={cert.status}/>
             };
         };
 

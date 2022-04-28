@@ -317,10 +317,12 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
             data.forEach(datasetItem => {
                 for (let i = 0; i < queryableColumns.length; i++) {
                     const queryableColumn = queryableColumns[i];
-                    // @ts-ignore
-                    if (queryableColumn.dataKey && datasetItem[queryableColumn.dataKey].toLowerCase().includes(query.toLowerCase())) {
-                        newDataset.push(datasetItem);
-                        break;
+                    if (queryableColumn.dataKey) {
+                        const opt = ObjectByString(datasetItem, queryableColumn.dataKey);
+                        if (opt && opt.toLowerCase().includes(query.toLowerCase())) {
+                            newDataset.push(datasetItem);
+                            break;
+                        }
                     }
                 }
             });

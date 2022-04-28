@@ -15,7 +15,7 @@ export const deviceStatusToColor = (status: DeviceStatus) => {
 
 export const historicalCertStatusToColor = (status: HistoricalCertStatus) => {
     switch (status) {
-    case OHistoricalCertStatus.ACTIVE:
+    case OHistoricalCertStatus.ISSUED:
         return "green";
     case OHistoricalCertStatus.REVOKED:
         return "red";

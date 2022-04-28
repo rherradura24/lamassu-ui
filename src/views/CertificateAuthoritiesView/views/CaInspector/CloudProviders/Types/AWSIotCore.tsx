@@ -255,8 +255,8 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                                         </Button>
                                                                     </Grid>
                                                                     <Grid item xs="auto">
-                                                                        <Button variant="contained" startIcon={<SendIcon />} onClick={() => { dispatch(cloudProxyActions.updateAccessPolicyAction.request({ body: { connector_id: connectorID, policy: awsPolicy, ca_name: caName } })); }} >
-                                                                        Save
+                                                                        <Button variant="contained" startIcon={<SendIcon />} onClick={() => { dispatch(cloudProxyActions.updateAccessPolicyAction.request({ body: { connector_id: connectorID, policy: JSON.stringify(JSON.parse(awsPolicy)), ca_name: caName } })); }} >
+                                                                            Save
                                                                         </Button>
                                                                     </Grid>
                                                                 </Grid>
@@ -267,7 +267,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                             <>
                                                                 <Grid item xs={12}>
                                                                     <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
-                                                Edit Policy
+                                                                        Edit Policy
                                                                     </Button>
                                                                 </Grid>
 

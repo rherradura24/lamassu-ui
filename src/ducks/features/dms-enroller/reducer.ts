@@ -5,6 +5,7 @@ import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } fro
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 import { dmsStatusToColor } from "./utils";
+import { keyStrengthToColor } from "../cas/utils";
 
 export interface DeviceManufacturingSystemStatus {
     status: ActionStatus
@@ -37,11 +38,8 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
             dmss[i].status = capitalizeFirstLetter(dmss[i].status);
             dmss[i].status_color = dmsStatusToColor(dmss[i].status);
 
-            // dmss[i].key_metadata.strength = capitalizeFirstLetter(dmss[i].key_metadata.strength);
-            // dmss[i].key_metadata.strength_color = keyStrengthToColor(dmss[i].key_metadata.strength);
-
-            dmss[i].key_metadata.strength = "ToDo";
-            dmss[i].key_metadata.strength_color = "red";
+            dmss[i].key_metadata.strength = capitalizeFirstLetter(dmss[i].key_metadata.strength);
+            dmss[i].key_metadata.strength_color = keyStrengthToColor(dmss[i].key_metadata.strength);
         }
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: dmss };
     })

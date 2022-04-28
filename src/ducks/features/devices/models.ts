@@ -72,7 +72,7 @@ export const ODeviceStatus = {
 };
 
 export const OHistoricalCertStatus = {
-    ACTIVE: "Active",
+    ISSUED: "Issued",
     REVOKED: "Revoked"
 };
 
