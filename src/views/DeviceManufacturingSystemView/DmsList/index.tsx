@@ -185,6 +185,7 @@ export const DmsList = () => {
             <LamassuTableWithDataController
                 columnConf={dmsTableColumns}
                 data={dmsList}
+                totalDataItems={dmsList.length}
                 renderDataItem={dmsRender}
                 isLoading={requestStatus.isLoading}
                 withAdd={() => { navigate("create"); }}

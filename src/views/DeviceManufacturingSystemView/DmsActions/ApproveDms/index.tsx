@@ -67,7 +67,7 @@ export const ApproveDms: React.FC<Props> = ({ dmsID, isOpen, onClose = () => {} 
             <DialogTitle>Approve DMS Enrollment: {dms.name}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    You are about to approve the enrollment of a new DMS instance. The DMS will only be able to enroll devices with the selectes CAs from below. Please, select the enrollable CAs granted to this DMS and confirm your action.
+                    You are about to approve the enrollment of a new DMS instance. The DMS will only be able to enroll devices with the selects CAs from below. Please, select the enrollable CAs granted to this DMS and confirm your action.
                 </DialogContentText>
                 <Grid container style={{ marginTop: "10px" }}>
                     <Grid item xs={12}>

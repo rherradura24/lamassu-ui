@@ -236,7 +236,6 @@ export interface LamassuTableWithDataControllerConfigProps {
     },
     pagination: {
         enabled: boolean,
-        maxItems?: number
         options?: Array<number>,
         selectedItemsPerPage?: number,
         selectedPage?: number
@@ -244,6 +243,7 @@ export interface LamassuTableWithDataControllerConfigProps {
 }
 interface LamassuTableWithDataControllerProps extends LamassuTableProps {
     tableProps?: any
+    totalDataItems: number,
     invertContrast?: boolean,
     isLoading: boolean,
     emptyContentComponent: any,
@@ -259,6 +259,7 @@ interface LamassuTableWithDataControllerProps extends LamassuTableProps {
 }
 export const LamassuTableWithDataController: React.FC<LamassuTableWithDataControllerProps> = ({
     columnConf, data, renderDataItem, style = {},
+    totalDataItems,
     tableProps = {},
     isLoading,
     emptyContentComponent,
@@ -641,7 +642,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                     <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                         <Grid container spacing={1} alignItems="center" sx={{ width: "fit-content", marginRight: "15px" }}>
                             <Grid item xs="auto">
-                                <Box>{`${(config.pagination.selectedItemsPerPage! * config.pagination.selectedPage!) + 1}-${config.pagination.selectedItemsPerPage! * (config.pagination.selectedPage! + 1)} of ${config.pagination.maxItems}`}</Box>
+                                <Box>{`${(config.pagination.selectedItemsPerPage! * config.pagination.selectedPage!) + 1}-${config.pagination.selectedItemsPerPage! * (config.pagination.selectedPage! + 1)} of ${totalDataItems}`}</Box>
                             </Grid>
                             <Grid item xs="auto">
                                 <IconButton size="small" disabled={config.pagination.selectedPage! === 0} onClick={() => { onChange({ pagination: { ...config.pagination, selectedPage: config.pagination.selectedPage! - 1 } }); }}>
@@ -649,7 +650,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                                 </IconButton>
                             </Grid>
                             <Grid item xs="auto">
-                                <IconButton size="small" disabled={(config.pagination.selectedPage! + 1) * config.pagination.selectedItemsPerPage! >= config.pagination.maxItems!} onClick={() => { onChange({ pagination: { ...config.pagination, selectedPage: config.pagination.selectedPage! + 1 } }); }}>
+                                <IconButton size="small" disabled={(config.pagination.selectedPage! + 1) * config.pagination.selectedItemsPerPage! >= totalDataItems} onClick={() => { onChange({ pagination: { ...config.pagination, selectedPage: config.pagination.selectedPage! + 1 } }); }}>
                                     <ArrowForwardIosIcon sx={{ fontSize: "15px" }} />
                                 </IconButton>
                             </Grid>

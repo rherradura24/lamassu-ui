@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Grid, IconButton, Paper, Typography, useTheme } from "@mui/material";
+import { Box, Button, Grid, IconButton, Paper, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, useTheme } from "@mui/material";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import { Link, useNavigate } from "react-router-dom";
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
@@ -14,15 +14,24 @@ import * as devicesSelector from "ducks/features/devices/reducer";
 import { useAppSelector } from "ducks/hooks";
 import { DeviceCard } from "./components/DeviceCard";
 import deepEqual from "fast-deep-equal/es6";
+import TerminalIcon from "@mui/icons-material/Terminal";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
+import SyntaxHighlighter from "react-syntax-highlighter";
 
 export const DeviceList = () => {
     const theme = useTheme();
+    const themeMode = theme.palette.mode;
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
     const deviceList = useAppSelector((state) => devicesSelector.getDevices(state));
     const totalDevices = useAppSelector((state) => devicesSelector.getTotalDevices(state));
+
+    const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState<{ open: boolean, id: string }>({ open: false, id: "" });
+    const [isValidateCertOpen, setIsValidateCertOpen] = useState<{ open: boolean, device: Device | null }>({ open: false, device: null });
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -37,9 +46,8 @@ export const DeviceList = () => {
             },
             pagination: {
                 enabled: true,
-                maxItems: totalDevices,
-                options: [15, 25, 50],
-                selectedItemsPerPage: 15,
+                options: [50, 75, 100],
+                selectedItemsPerPage: 50,
                 selectedPage: 0
             }
         }
@@ -113,12 +121,28 @@ export const DeviceList = () => {
             actions: (
                 <Box>
                     <Grid container spacing={1}>
-                        <Grid item>
-                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                <IconButton onClick={() => navigate(device.id)}>
-                                    <FormatAlignJustifyIcon fontSize={"small"} />
-                                </IconButton>
-                            </Box>
+                        <Grid item container spacing={2}>
+                            <Grid item>
+                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <IconButton onClick={() => setIsValidateCertOpen({ open: true, device: device })} sx={{ }}>
+                                        <FactCheckOutlinedIcon fontSize={"small"} />
+                                    </IconButton>
+                                </Box>
+                            </Grid>
+                            <Grid item>
+                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                    <IconButton onClick={() => setIsEnrollDialogOpen({ open: true, id: device.id })}>
+                                        <TerminalIcon fontSize={"small"} />
+                                    </IconButton>
+                                </Box>
+                            </Grid>
+                            <Grid item>
+                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                    <IconButton onClick={() => navigate(device.id)}>
+                                        <FormatAlignJustifyIcon fontSize={"small"} />
+                                    </IconButton>
+                                </Box>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Box>
@@ -138,6 +162,7 @@ export const DeviceList = () => {
         <Box sx={{ padding: "20px", height: "calc(100% - 40px)" }}>
             <LamassuTableWithDataController
                 data={deviceList}
+                totalDataItems={totalDevices}
                 columnConf={devicesTableColumns}
                 renderDataItem={deviceRender}
                 isLoading={requestStatus.isLoading}
@@ -164,10 +189,8 @@ export const DeviceList = () => {
                     </Grid>
                 }
                 config={tableConfig}
-
                 onChange={(ev: any) => {
                     console.log(ev, tableConfig);
-
                     if (!deepEqual(ev, tableConfig)) {
                         setTableConfig(prev => ({ ...prev, ...ev }));
                         // refreshAction();
@@ -186,6 +209,124 @@ export const DeviceList = () => {
                     }
                 }}
             />
+            {
+                isEnrollDialogOpen.open && (
+                    <Dialog open={isEnrollDialogOpen.open} onClose={() => setIsEnrollDialogOpen({ open: false, id: "" })} maxWidth={"xl"}>
+                        <DialogTitle>Enroll your device</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Run the following commands to enroll this device using the Enroll over Secure Transport protocol
+                            </DialogContentText>
+                            <Grid container style={{ marginTop: "10px" }}>
+                                <Grid item xs={12}>
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px" color="primary">Step 1</Typography>
+                                        Define the Device Manager EST server and the credentials to be used during the enrollment process performed in step 6. Those credentials are one of your DMS instances key and cert files:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"export DEVICE_MANAGER_EST_SERVER=dev.lamassu.io:443 \nexport DMS_CRT=your_dms.crt \nexport DMS_KEY=your_dms.key"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 2</Typography>
+                                        Obtain the Root certificate used by the server:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"openssl s_client -connect $DEVICE_MANAGER_EST_SERVER 2>/dev/null </dev/null |  sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > root-ca.pem"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 3</Typography>
+                                        Obtain the available CA certs:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {
+                                            "curl https://$DEVICE_MANAGER_EST_SERVER/api/devmanager/.well-known/est/cacerts -o cacerts.p7 --cacert root-ca.pem \nopenssl base64 -d -in cacerts.p7 | openssl pkcs7 -inform DER -outform PEM -print_certs -out cacerts.pem"
+                                        }
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px" color="primary">Step 4</Typography>
+                                        Select the CA to enroll. Note that the APS variable must contain the Common Name of one of the previously obtained CAs. Also, the DMS credentials used during the enrollment (Step 6) will only be valid for a subset of those CAs. Contact the PKI administrator for more information:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"export APS=test"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 5</Typography>
+                                        Create a CSR request:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {`openssl req -new -newkey rsa:2048 -nodes -keyout device-${isEnrollDialogOpen.id}.key -out device-${isEnrollDialogOpen.id}.csr -subj "/CN=${isEnrollDialogOpen.id}"`}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 6</Typography>
+                                        Request a certificate from the EST server:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {`curl https://$DEVICE_MANAGER_EST_SERVER/api/devmanager/.well-known/est/$APS/simpleenroll --cert $DMS_CRT --key $DMS_KEY -s -o cert.p7 --cacert root-ca.pem  --data-binary @device-${isEnrollDialogOpen.id}.csr -H "Content-Type: application/pkcs10" \nopenssl base64 -d -in cert.p7 | openssl pkcs7 -inform DER -outform PEM -print_certs -out cert.pem \nopenssl x509 -text -in cert.pem`}
+                                    </SyntaxHighlighter>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setIsEnrollDialogOpen({ open: false, id: "" })} variant="contained">Close</Button>
+                        </DialogActions>
+                    </Dialog>
+                )
+            }
+            {
+                isValidateCertOpen.open && (
+                    <Dialog open={isValidateCertOpen.open} onClose={() => setIsValidateCertOpen({ open: false, device: null })} maxWidth={"md"}>
+                        <DialogTitle>Validate the device certificate</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Run the following commands to validate the device certificate using the Online Certificate Status Protocol
+                            </DialogContentText>
+                            <Grid container style={{ marginTop: "10px" }}>
+                                <Grid item xs={12}>
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px" color="primary">Step 1</Typography>
+                                        Define the Device Manager EST server and the credentials to be used during the enrollment process performed in step 6. Those credentials are one of your DMS instances key and cert files:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"export OCSP_SERVER=dev.lamassu.io:443 \nexport CA_CERTIFICATE=issuer_ca.crt \nexport DEVICE_CERTIFICATE=device.crt"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 2</Typography>
+                                        Obtain the Root certificate used by the server:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"openssl s_client -connect $OCSP_SERVER  2>/dev/null </dev/null |  sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > root-ca.pem"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 3</Typography>
+                                        Obtain the available CA certs:
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"OCSP_REQUEST=$(openssl ocsp -CAfile $CA_CERTIFICATE -issuer $CA_CERTIFICATE -cert $DEVICE_CERTIFICATE -reqout - | base64 -w 0)"}
+                                    </SyntaxHighlighter>
+
+                                    <Typography>
+                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 4</Typography>
+                                        Check the status of the certificate
+                                    </Typography>
+                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                        {"curl --location --request GET \"$OCSP_SERVER/$OCSP_REQUEST\" > ocspresponse.der \nopenssl ocsp -respin ocspresponse.der -VAfile root-ca.pem -resp_text"}
+                                    </SyntaxHighlighter>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setIsValidateCertOpen({ open: false, device: null })} variant="contained">Close</Button>
+                        </DialogActions>
+                    </Dialog>
+                )
+            }
         </Box>
     );
 };

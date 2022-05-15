@@ -156,6 +156,7 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
             <LamassuTableWithDataController
                 columnConf={cloudConnectorTableColumns}
                 data={cloudConnectors}
+                totalDataItems={cloudConnectors.length}
                 renderDataItem={cloudConnectorsRender}
                 invertContrast={true}
                 isLoading={requestStatus.isLoading}

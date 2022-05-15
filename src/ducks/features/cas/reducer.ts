@@ -5,6 +5,7 @@ import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } fro
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 import { keyStrengthToColor, statusToColor } from "./utils";
+import { GetIssuedCertsResponse } from "./actions";
 
 export interface CertificateAuthoritiesState {
     status: ActionStatus
@@ -45,6 +46,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
             ca.key_metadata.strength_color = keyStrengthToColor(ca.key_metadata.strength);
 
             ca.issued_certs = [];
+            ca.total_issued_certs = 0;
 
             list.push(ca);
         });
@@ -62,7 +64,10 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
 
     .handleAction(actions.caActions.getIssuedCertsActions.success, (state, action) => {
         let list: Array<Certificate> = [];
-        action.payload.forEach((issuedCert: Certificate) => {
+        const response: GetIssuedCertsResponse = action.payload as GetIssuedCertsResponse;
+        const certs = response.certs ? response.certs : [];
+
+        certs.forEach((issuedCert: Certificate) => {
             issuedCert.key_metadata.strength = capitalizeFirstLetter(issuedCert.key_metadata.strength);
             issuedCert.key_metadata.strength_color = keyStrengthToColor(issuedCert.key_metadata.strength);
 
@@ -78,6 +83,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
             // @ts-ignore
             if (cas[i].name === action.meta.caName) {
                 cas[i].issued_certs = list;
+                cas[i].total_issued_certs = response.total_certs;
             }
         }
         return { ...state, issuedCertsStatus: { ...state.issuedCertsStatus, isLoading: false, status: ORequestStatus.Success }, list: cas };
@@ -102,6 +108,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         issuedCert.status_color = statusToColor(issuedCert.status);
 
         issuedCert.issued_certs = [];
+        issuedCert.total_issued_certs = 0;
 
         currentList.push(issuedCert);
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: currentList };
@@ -126,6 +133,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         issuedCert.status_color = statusToColor(issuedCert.status);
 
         issuedCert.issued_certs = [];
+        issuedCert.total_issued_certs = 0;
 
         currentList.push(issuedCert);
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: currentList };
@@ -149,13 +157,36 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
 
     .handleAction(actions.caActions.revokeCAAction.failure, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
+    .handleAction(actions.caActions.revokeCertAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Delete } };
+    })
+
+    .handleAction(actions.caActions.revokeCertAction.success, (state, action) => {
+        console.log(action);
+        let currentList: Array<CertificateAuthority> = state.list;
+        let index = currentList.map(ca => ca.name).indexOf(action.meta.caName);
+        if (index >= 0) {
+            const certIdx = currentList[index].issued_certs.map((cert: Certificate) => cert.serial_number).indexOf(action.meta.serialNumber);
+            if (certIdx >= 0) {
+                currentList[index].issued_certs[certIdx].status = statusToColor(OCAStatus.Revoked);
+                currentList[index].issued_certs[certIdx].status = statusToColor(currentList[index].issued_certs[certIdx].status);
+            }
+        }
+
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: currentList };
+    })
+
+    .handleAction(actions.caActions.revokeCertAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     });
 
 const getSelector = (state: RootState): CertificateAuthoritiesState => state.cas;
 
 export const getCAs = (state: RootState): Array<CertificateAuthority> => {
     const caReducer = getSelector(state);
-    return caReducer.list.sort((a:CertificateAuthority, b:CertificateAuthority) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    return caReducer.list.sort((a: CertificateAuthority, b: CertificateAuthority) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 };
 
 export const getCA = (state: RootState, caName: string): CertificateAuthority | undefined => {
@@ -181,6 +212,13 @@ export const getIssuedCerts = (state: RootState, caName: string): Array<Certific
     const ca = getCA(state, caName);
     if (ca !== undefined) {
         return ca.issued_certs;
+    }
+    return undefined;
+};
+export const getTotalIssuedCerts = (state: RootState, caName: string): number | undefined => {
+    const ca = getCA(state, caName);
+    if (ca !== undefined) {
+        return ca.total_issued_certs;
     }
     return undefined;
 };

@@ -27,7 +27,7 @@ export const getIssuedCertsEpic: Epic<RootAction, RootAction, RootState, {}> = (
         filter(isActionOf(actions.getIssuedCertsActions.request)),
         tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.GetIssuedCerts>) =>
-            from(apicalls.getIssuedCerts(action.payload.caName)).pipe(
+            from(apicalls.getIssuedCerts(action.payload.caName, action.payload.offset, action.payload.page)).pipe(
                 tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),
                 mergeMap(successAction => of(actions.getIssuedCertsActions.success(successAction, { ...action.payload }))),
                 tap((item: any) => console.log("%c Epic ", "background:#ff1477; border-radius:5px;font-weight: bold;", "", item)),
@@ -100,6 +100,20 @@ export const revokeCAEpic: Epic<RootAction, RootAction, RootState, {}> = (action
                 mergeMap(successAction => of(actions.revokeCAAction.success(successAction, { ...action.payload }))),
                 tap((item: any) => console.log("%c Epic ", "background:#ff1477; border-radius:5px;font-weight: bold;", "", item)),
                 catchError((message) => of(actions.revokeCAAction.failure(message)))
+            )
+        )
+    );
+
+export const revokeCertEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.revokeCertAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.RevokeCert>) =>
+            from(apicalls.revokeCertificate(action.payload.caName, action.payload.serialNumber)).pipe(
+                tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),
+                mergeMap(successAction => of(actions.revokeCertAction.success(successAction, { ...action.payload }))),
+                tap((item: any) => console.log("%c Epic ", "background:#ff1477; border-radius:5px;font-weight: bold;", "", item)),
+                catchError((message) => of(actions.revokeCertAction.failure(message)))
             )
         )
     );

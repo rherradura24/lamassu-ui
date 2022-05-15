@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Grid, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { LamassuChip } from "components/LamassuComponents/Chip";
-import { LamassuTableWithDataController, OperandTypes } from "components/LamassuComponents/Table";
+import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigProps, OperandTypes } from "components/LamassuComponents/Table";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -15,6 +15,7 @@ import { Certificate } from "ducks/features/cas/models";
 import { Modal } from "components/Modal";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import deepEqual from "fast-deep-equal/es6";
 
 interface Props {
     caName: string
@@ -25,12 +26,45 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
 
     const requestStatus = useAppSelector((state) => caSelector.getIssuedCertsRequestStatus(state));
     const certificates = useAppSelector((state) => caSelector.getIssuedCerts(state, caName))!;
+    const totalCACerts = useAppSelector((state) => caSelector.getTotalIssuedCerts(state, caName))!;
+
+    const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
+        {
+            filter: {
+                enabled: false
+            },
+            sort: {
+                enabled: false
+            },
+            pagination: {
+                enabled: true,
+                options: [50, 75, 100],
+                selectedItemsPerPage: 50,
+                selectedPage: 0
+            }
+        }
+    );
+
+    console.log(tableConfig);
+
+    const refreshAction = () => dispatch(caActions.getIssuedCertsActions.request({
+        caName: caName,
+        offset: tableConfig.pagination.selectedItemsPerPage!,
+        page: tableConfig.pagination.selectedPage! + 1
+    }));
 
     useEffect(() => {
-        dispatch(caActions.getIssuedCertsActions.request({ caName: caName }));
+        refreshAction();
     }, []);
 
+    useEffect(() => {
+        if (tableConfig !== undefined) {
+            refreshAction();
+        }
+    }, [tableConfig]);
+
     const [showCertificate, setShowCertificate] = useState<string | undefined>(undefined);
+    const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState({ isOpen: false, serialNumber: "" });
 
     const certTableColumns = [
         { key: "serialNumber", dataKey: "serial_number", query: true, title: "Serial Number", type: OperandTypes.string, align: "start", size: 4 },
@@ -45,7 +79,6 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
         return {
             serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
             commonName: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, overflowWrap: "break-word", width: "100%" }}>{cert.subject.common_name}</Typography>,
-
             keyStrength: (
                 <LamassuChip label={cert.key_metadata.strength} color={cert.key_metadata.strength_color} />
             ),
@@ -89,8 +122,30 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
                         <Grid item>
                             <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
                                 <IconButton>
-                                    <DeleteIcon fontSize={"small"} />
+                                    <DeleteIcon fontSize={"small"} onClick={() => { setIsRevokeDialogOpen({ isOpen: true, serialNumber: cert.serial_number }); }} />
                                 </IconButton>
+                                <Dialog open={isRevokeDialogOpen.isOpen && isRevokeDialogOpen.serialNumber === cert.serial_number} onClose={() => setIsRevokeDialogOpen({ isOpen: false, serialNumber: "" })}>
+                                    <DialogTitle>Revoke Certificate: {cert.serial_number}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                                You are about to revoke a CA. By revoing the certificate, you will also revoke al issued certificates.
+                                        </DialogContentText>
+                                        <Grid container style={{ marginTop: "10px" }}>
+                                            <Grid item xs={12}>
+                                                <Typography variant="button">CA Name: </Typography>
+                                                <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#666", padding: 5, fontSize: 12 }}>{caName}</Typography>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Typography variant="button">CA Serial Number: </Typography>
+                                                <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#666", padding: 5, fontSize: 12 }}>{cert.serial_number }</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={() => setIsRevokeDialogOpen({ isOpen: false, serialNumber: "" })} variant="outlined">Cancel</Button>
+                                        <Button onClick={() => { dispatch(caActions.revokeCertAction.request({ caName: caName, serialNumber: cert.serial_number })); }} variant="contained">Revoke</Button>
+                                    </DialogActions>
+                                </Dialog>
                             </Box>
                         </Grid>
                     </Grid>
@@ -103,9 +158,25 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
         <LamassuTableWithDataController
             columnConf={certTableColumns}
             data={certificates}
+            totalDataItems={totalCACerts}
             renderDataItem={renderCA}
             invertContrast={true}
             isLoading={requestStatus.isLoading}
+            config={{
+                filter: {
+                    enabled: false,
+                    filters: []
+                },
+                sort: {
+                    enabled: false
+                },
+                pagination: {
+                    enabled: true,
+                    options: [50, 75, 100],
+                    selectedPage: 0,
+                    selectedItemsPerPage: 50
+                }
+            }}
             emptyContentComponent={
                 <Grid container justifyContent={"center"} alignItems={"center"} sx={{ height: "100%" }}>
                     <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">
@@ -118,9 +189,12 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
                     </Grid>
                 </Grid>
             }
-            withRefresh={() => { dispatch(caActions.getIssuedCertsActions.request({ caName: caName })); }}
-            onChange={(ev: any) => { console.log("callback", ev); }}
-
+            withRefresh={() => { refreshAction(); }}
+            onChange={(ev: any) => {
+                if (!deepEqual(ev, tableConfig)) {
+                    setTableConfig(prev => ({ ...prev, ...ev }));
+                }
+            }}
         />
     );
 };

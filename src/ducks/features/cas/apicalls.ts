@@ -7,10 +7,10 @@ export const getCAs = async (): Promise<any> => {
     });
 };
 
-export const getIssuedCerts = async (caName: string) => {
+export const getIssuedCerts = async (caName: string, offset: number, page: number) => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + "/issued"
+        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + `/issued?&page={${page},${offset}}`
     });
 };
 
@@ -56,5 +56,12 @@ export const revokeCA = async (caName: string) => {
     return apiRequest({
         method: "DELETE",
         url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName
+    });
+};
+
+export const revokeCertificate = async (caName: string, serialNumber: string) => {
+    return apiRequest({
+        method: "DELETE",
+        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + "/cert/" + serialNumber
     });
 };

@@ -7,7 +7,8 @@ export const actionTypes = {
     GET_ISSUED_CERTS: "GET_ISSUED_CERTS",
     CREATE_CA: "CREATE_CA",
     IMPORT_CA: "IMPORT_CA",
-    REVOKE_CA: "REVOKE_CA"
+    REVOKE_CA: "REVOKE_CA",
+    REVOKE_CERT: "REVOKE_CERT"
 };
 
 export const getCAsAction = createAsyncAction(
@@ -18,12 +19,19 @@ export const getCAsAction = createAsyncAction(
 )();
 
 export type GetIssuedCerts = {
-    caName: string
+    caName: string,
+    offset: number,
+    page: number
+}
+
+export type GetIssuedCertsResponse = {
+    certs: Array<CertificateAuthority>
+    total_certs: number
 }
 
 export const getIssuedCertsActions = createAsyncAction(
     [actionTypes.GET_ISSUED_CERTS, (req: GetIssuedCerts) => req],
-    [success(actionTypes.GET_ISSUED_CERTS), (req: Array<CertificateAuthority>, meta: any) => req, (req: Array<CertificateAuthority>, meta: any) => meta],
+    [success(actionTypes.GET_ISSUED_CERTS), (req: GetIssuedCertsResponse, meta: any) => req, (req: GetIssuedCertsResponse, meta: any) => meta],
     [failed(actionTypes.GET_ISSUED_CERTS), (req: Error) => req]
 
 )();
@@ -75,4 +83,14 @@ export const revokeCAAction = createAsyncAction(
     [actionTypes.REVOKE_CA, (req: RevokeCA) => req],
     [success(actionTypes.REVOKE_CA), (req: any, meta: RevokeCA) => req, (req: any, meta: RevokeCA) => meta],
     [failed(actionTypes.REVOKE_CA), (req: Error) => req]
+)();
+
+export type RevokeCert = {
+    caName: string,
+    serialNumber: string
+}
+export const revokeCertAction = createAsyncAction(
+    [actionTypes.REVOKE_CERT, (req: RevokeCert) => req],
+    [success(actionTypes.REVOKE_CERT), (req: any, meta: RevokeCert) => req, (req: any, meta: RevokeCert) => meta],
+    [failed(actionTypes.REVOKE_CERT), (req: Error) => req]
 )();

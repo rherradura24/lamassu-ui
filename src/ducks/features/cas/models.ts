@@ -27,6 +27,7 @@ export class CertificateAuthority {
     public valid_from!: Date
     public valid_to!: Date
 
+    public total_issued_certs!: number
     public issued_certs!: Array<Certificate>
 
     constructor (args?: {}) {
