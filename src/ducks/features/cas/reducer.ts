@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { Certificate, CertificateAuthority, OCAStatus } from "./models";
+import { CAStats, Certificate, CertificateAuthority, OCAStatus } from "./models";
 import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
@@ -9,6 +9,7 @@ import { GetIssuedCertsResponse } from "./actions";
 
 export interface CertificateAuthoritiesState {
     status: ActionStatus
+    caStats: CAStats
     list: Array<CertificateAuthority>
     issuedCertsStatus: ActionStatus
 }
@@ -18,6 +19,11 @@ const initialState = {
         isLoading: false,
         status: ORequestStatus.Idle,
         type: ORequestType.None
+    },
+    caStats: {
+        issued_certs: 0,
+        cas: 0,
+        scan_date: new Date()
     },
     issuedCertsStatus: {
         isLoading: false,
@@ -30,6 +36,11 @@ const initialState = {
 export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritiesState, RootAction>(initialState)
     .handleAction(actions.caActions.getCAsAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [] };
+    })
+    .handleAction(actions.caActions.getStatsAction.success, (state, action) => {
+        console.log(action.payload);
+
+        return { ...state, caStats: action.payload };
     })
 
     .handleAction(actions.caActions.getCAsAction.failure, (state, action) => {
@@ -183,6 +194,11 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
     });
 
 const getSelector = (state: RootState): CertificateAuthoritiesState => state.cas;
+
+export const getStats = (state: RootState): CAStats => {
+    const caReducer = getSelector(state);
+    return caReducer.caStats;
+};
 
 export const getCAs = (state: RootState): Array<CertificateAuthority> => {
     const caReducer = getSelector(state);

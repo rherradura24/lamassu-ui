@@ -1,3 +1,9 @@
+export class CAStats {
+    public issued_certs!: number
+    public cas!: number
+    public scan_date!: Date
+}
+
 export class CertificateAuthority {
     public certificate!: {
         pem_base64: string

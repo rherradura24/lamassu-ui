@@ -1,5 +1,12 @@
 import { apiRequest } from "ducks/services/api";
 
+export const getStats = async (): Promise<any> => {
+    return apiRequest({
+        method: "GET",
+        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/stats"
+    });
+};
+
 export const getCAs = async (): Promise<any> => {
     return apiRequest({
         method: "GET",
@@ -8,9 +15,14 @@ export const getCAs = async (): Promise<any> => {
 };
 
 export const getIssuedCerts = async (caName: string, offset: number, page: number) => {
+    const idFilter = "";
+    let url = window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + `/issued?&page={${page},${offset}}`;
+    if (idFilter !== "") {
+        url = url + `&filter={and(contains(id,${idFilter}))}`;
+    }
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + `/issued?&page={${page},${offset}}`
+        url: url
     });
 };
 

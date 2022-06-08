@@ -31,7 +31,8 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
             filter: {
-                enabled: false
+                enabled: false,
+                filters: []
             },
             sort: {
                 enabled: false
@@ -39,8 +40,8 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
             pagination: {
                 enabled: true,
                 options: [50, 75, 100],
-                selectedItemsPerPage: 50,
-                selectedPage: 0
+                selectedPage: 0,
+                selectedItemsPerPage: 50
             }
         }
     );
@@ -162,21 +163,7 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
             renderDataItem={renderCA}
             invertContrast={true}
             isLoading={requestStatus.isLoading}
-            config={{
-                filter: {
-                    enabled: false,
-                    filters: []
-                },
-                sort: {
-                    enabled: false
-                },
-                pagination: {
-                    enabled: true,
-                    options: [50, 75, 100],
-                    selectedPage: 0,
-                    selectedItemsPerPage: 50
-                }
-            }}
+            config={tableConfig}
             emptyContentComponent={
                 <Grid container justifyContent={"center"} alignItems={"center"} sx={{ height: "100%" }}>
                     <Grid item xs="auto" container justifyContent={"center"} alignItems={"center"} flexDirection="column">
@@ -191,6 +178,8 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
             }
             withRefresh={() => { refreshAction(); }}
             onChange={(ev: any) => {
+                console.log(ev, tableConfig);
+
                 if (!deepEqual(ev, tableConfig)) {
                     setTableConfig(prev => ({ ...prev, ...ev }));
                 }

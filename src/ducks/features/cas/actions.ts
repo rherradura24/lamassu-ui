@@ -1,8 +1,9 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { CertificateAuthority } from "./models";
+import { CertificateAuthority, CAStats } from "./models";
 
 export const actionTypes = {
+    GET_CA_STATS: "GET_CA_STATS",
     GET_CAS: "GET_CAS",
     GET_ISSUED_CERTS: "GET_ISSUED_CERTS",
     CREATE_CA: "CREATE_CA",
@@ -11,17 +12,22 @@ export const actionTypes = {
     REVOKE_CERT: "REVOKE_CERT"
 };
 
+export const getStatsAction = createAsyncAction(
+    [actionTypes.GET_CA_STATS, () => { }],
+    [success(actionTypes.GET_CA_STATS), (req: CAStats) => req],
+    [failed(actionTypes.GET_CA_STATS), (req: Error) => req]
+)();
+
 export const getCAsAction = createAsyncAction(
     [actionTypes.GET_CAS, () => { }],
     [success(actionTypes.GET_CAS), (req: Array<CertificateAuthority>) => req],
     [failed(actionTypes.GET_CAS), (req: Error) => req]
-
 )();
 
 export type GetIssuedCerts = {
     caName: string,
     offset: number,
-    page: number
+    page: number,
 }
 
 export type GetIssuedCertsResponse = {

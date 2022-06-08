@@ -21,6 +21,7 @@ import { DeviceView } from "./DeviceView";
 import { DMSView } from "./DeviceManufacturingSystemView";
 import { useAppSelector } from "ducks/hooks";
 import * as notificationsSelector from "ducks/features/notifications/reducer";
+import { InfoView } from "./Info";
 
 export const DashboardLayout = () => {
     const cookies = new Cookies();
@@ -143,6 +144,8 @@ export const DashboardLayout = () => {
                                             );
                                         })
                                     }
+                                    <Route path="info" element={<InfoView />}/>
+                                    <Route path="*" element={<Typography>404</Typography>}/>
                                 </Routes>
                             </Grid>
                             <Slide direction="left" in={displayNotifications} container={containerRef.current}>

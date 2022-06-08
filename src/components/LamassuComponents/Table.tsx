@@ -21,6 +21,7 @@ import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import Collapse from "@mui/material/Collapse";
 import { TransitionGroup } from "react-transition-group";
+import { numberToHumanReadableString } from "components/utils/NumberToHumanReadableString";
 
 export const Operands = {
     number: {
@@ -224,6 +225,24 @@ export const LamassuCardWrapper: React.FC<LamassuCardWrapperProps> = ({ data, re
     );
 };
 
+export interface LamassuQueryInputProps {
+    queryPlaceholder: string
+    onChange: any
+}
+
+const LamassuQueryInput: React.FC<LamassuQueryInputProps> = ({ queryPlaceholder, onChange }) => {
+    const [fastTypeQuery, setFastTypeQuery] = useState("");
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onChange(fastTypeQuery);
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, [fastTypeQuery]);
+
+    return <InputBase fullWidth={true} style={{ color: "#555", fontSize: 14 }} placeholder={queryPlaceholder} value={fastTypeQuery} onChange={(ev) => setFastTypeQuery(ev.target.value)} />;
+};
+
 export interface LamassuTableWithDataControllerConfigProps {
     sort: {
         enabled: boolean,
@@ -310,26 +329,26 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
 
     const [query, setQuery] = useState("");
 
-    useEffect(() => {
-        let newDataset: Array<any> = [];
-        if (query === "") {
-            newDataset = data;
-        } else {
-            data.forEach(datasetItem => {
-                for (let i = 0; i < queryableColumns.length; i++) {
-                    const queryableColumn = queryableColumns[i];
-                    if (queryableColumn.dataKey) {
-                        const opt = ObjectByString(datasetItem, queryableColumn.dataKey);
-                        if (opt && opt.toLowerCase().includes(query.toLowerCase())) {
-                            newDataset.push(datasetItem);
-                            break;
-                        }
-                    }
-                }
-            });
-        }
-        setDataset(newDataset);
-    }, [query]);
+    // useEffect(() => {
+    //     let newDataset: Array<any> = [];
+    //     if (query === "") {
+    //         newDataset = data;
+    //     } else {
+    //         data.forEach(datasetItem => {
+    //             for (let i = 0; i < queryableColumns.length; i++) {
+    //                 const queryableColumn = queryableColumns[i];
+    //                 if (queryableColumn.dataKey) {
+    //                     const opt = ObjectByString(datasetItem, queryableColumn.dataKey);
+    //                     if (opt && opt.toLowerCase().includes(query.toLowerCase())) {
+    //                         newDataset.push(datasetItem);
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     setDataset(newDataset);
+    // }, [query]);
 
     const [newFilter, setNewFiler] = useState({
         propertyKey: "",
@@ -367,14 +386,32 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
         setAddFilerAnchorEl(null);
     };
 
-    const [fastTypeQuery, setFastTypeQuery] = useState("");
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setQuery(fastTypeQuery);
-        }, 1500);
+        const queryableColumns: Array<ColumnConfItem> = columnConf.filter((columnConfItem: ColumnConfItem) => { return columnConfItem.query && columnConfItem.type === OperandTypes.string; });
+        if (queryableColumns.length > 0) {
+            const newFilter = {
+                propertyKey: queryableColumns[0].dataKey,
+                propertyOperator: "contains",
+                propertyOperatorType: "string",
+                propertyValue: query
+            };
+            const newFilters = config.filter!.filters!;
+            const indexOfExistingFilter = newFilters.map((f: any) => f.propertyKey).indexOf(newFilter.propertyKey);
 
-        return () => clearTimeout(timer);
-    }, [fastTypeQuery]);
+            if (indexOfExistingFilter >= 0) {
+                if (query !== "") {
+                    newFilters[indexOfExistingFilter] = newFilter;
+                } else {
+                    newFilters.splice(indexOfExistingFilter);
+                }
+            } else {
+                if (query !== "") {
+                    newFilters.push(newFilter);
+                }
+            }
+            onChange({ filter: { ...config.filter, filters: [...newFilters] } });
+        }
+    }, [query]);
 
     const loadOptionsForPropertyKey = (key: string) => {
         if (key !== "") {
@@ -441,7 +478,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
         }
     };
 
-    const addNewFilterItem = (ev: any) => {
+    const addNewFilterItem = (ev: any, newFilter: any) => {
         const newFilters = config.filter!.filters!;
         newFilters.push(newFilter);
         onChange({ filter: { ...config.filter, filters: [...newFilters] } });
@@ -480,7 +517,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                     <Box>
                         <Box component={Paper} sx={{ padding: "5px", height: 30, display: "flex", alignItems: "center", width: 300, background: invertContrast && theme.palette.background.lightContrast }}>
                             <AiOutlineSearch size={20} color="#626365" style={{ marginLeft: 10, marginRight: 10 }} />
-                            <InputBase fullWidth={true} style={{ color: "#555", fontSize: 14 }} placeholder={queryPlaceholder} value={fastTypeQuery} onChange={(ev) => setFastTypeQuery(ev.target.value)} />
+                            <LamassuQueryInput queryPlaceholder={queryPlaceholder} onChange={(newValue: any) => { setQuery(newValue); }} />
                         </Box>
                     </Box>
 
@@ -600,7 +637,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                                                     {loadInputForPropertyKey(newFilter.propertyKey, newFilter.propertyOperator)}
                                                 </Grid>
                                                 <Grid item xs="auto">
-                                                    <Button variant="contained" disabled={newFilter.propertyKey === "" || newFilter.propertyOperator === "" || newFilter.propertyValue === ""} onClick={(ev) => { addNewFilterItem(ev); }}>Add</Button>
+                                                    <Button variant="contained" disabled={newFilter.propertyKey === "" || newFilter.propertyOperator === "" || newFilter.propertyValue === ""} onClick={(ev) => { addNewFilterItem(ev, newFilter); }}>Add</Button>
                                                 </Grid>
                                             </Grid>
                                         </Menu>
@@ -621,16 +658,19 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                     <Grid item xs container justifyContent={"flex-end"} gap={2}>
                         {
                             config.filter.filters!.map((filter: any, idx: number) => {
-                                return (
-                                    <Grid item xs="auto" key={idx} sx={{ borderRadius: "10px", border: `1px solid ${theme.palette.divider}`, padding: "5px 10px", cursor: "pointer", display: "flex", alignItems: "center" }}>
-                                        {renderFilterTypeIcon(filter.propertyOperatorType)}
-                                        <Typography fontWeight={500} sx={{ marginRight: "10px", color: theme.palette.text.primaryLight, fontSize: "14px" }}>{columnConf.filter(item => item.key === filter.propertyKey)[0].title}</Typography>
-                                        <Typography fontWeight={400} sx={{ marginRight: "10px", fontSize: "12px", lineHeight: "10px" }}>{`(${filter.propertyOperator.toLowerCase()}) ${filter.propertyValue}`}</Typography>
-                                        <IconButton size="small" onClick={() => { removeFilter(idx); }}>
-                                            <CloseRoundedIcon sx={{ fontSize: "16px" }} />
-                                        </IconButton>
-                                    </Grid>
-                                );
+                                if (filter.propertyKey !== "") {
+                                    return (
+                                        <Grid item xs="auto" key={idx} sx={{ borderRadius: "10px", border: `1px solid ${theme.palette.divider}`, padding: "5px 10px", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                                            {renderFilterTypeIcon(filter.propertyOperatorType)}
+                                            <Typography fontWeight={500} sx={{ marginRight: "10px", color: theme.palette.text.primaryLight, fontSize: "14px" }}>{columnConf.filter(item => item.dataKey === filter.propertyKey)[0].title}</Typography>
+                                            <Typography fontWeight={400} sx={{ marginRight: "10px", fontSize: "12px", lineHeight: "10px" }}>{`(${filter.propertyOperator.toLowerCase()}) ${filter.propertyValue}`}</Typography>
+                                            <IconButton size="small" onClick={() => { removeFilter(idx); }}>
+                                                <CloseRoundedIcon sx={{ fontSize: "16px" }} />
+                                            </IconButton>
+                                        </Grid>
+                                    );
+                                }
+                                return <></>;
                             })
                         }
                     </Grid>
@@ -642,7 +682,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                     <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                         <Grid container spacing={1} alignItems="center" sx={{ width: "fit-content", marginRight: "15px" }}>
                             <Grid item xs="auto">
-                                <Box>{`${(config.pagination.selectedItemsPerPage! * config.pagination.selectedPage!) + 1}-${config.pagination.selectedItemsPerPage! * (config.pagination.selectedPage! + 1)} of ${totalDataItems}`}</Box>
+                                <Box>{`${(config.pagination.selectedItemsPerPage! * config.pagination.selectedPage!) + 1}-${config.pagination.selectedItemsPerPage! * (config.pagination.selectedPage! + 1)} of ${numberToHumanReadableString(totalDataItems, ".")}`}</Box>
                             </Grid>
                             <Grid item xs="auto">
                                 <IconButton size="small" disabled={config.pagination.selectedPage! === 0} onClick={() => { onChange({ pagination: { ...config.pagination, selectedPage: config.pagination.selectedPage! - 1 } }); }}>

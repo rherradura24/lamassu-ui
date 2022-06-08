@@ -1,21 +1,33 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { Device, GetDeviceListAPIResponse, HistoricalCert } from "./models";
+import { Device, GetDeviceListAPIResponse, HistoricalCert, DevicesStats } from "./models";
 
 export const actionTypes = {
+    GET_STATS: "GET_STATS",
     GET_DEVICES: "GET_DEVICES",
     GET_DEVICE: "GET_DEVICE",
     GET_DEVICE_CERT_HISTORY: "GET_DEVICE_CERT_HISTORY",
     REVOKE_ACTIVE_DEVICE_CERTIFICATE: "REVOKE_ACTIVE_DEVICE_CERTIFICATE",
     REGISTER_DEVICE: "REGISTER_DEVICE"
 };
+export type GetStats = {
+    force: boolean
+}
+
+export const getStatsAction = createAsyncAction(
+    [actionTypes.GET_STATS, (req: GetStats) => req],
+    [success(actionTypes.GET_STATS), (req: DevicesStats) => { return req; }],
+    [failed(actionTypes.GET_STATS), (req: Error) => req]
+)();
 
 export type GetDevicesAction = {
     sortMode: "asc" | "desc",
     sortField: string,
     offset: number,
-    page: number
+    page: number,
+    filterQuery: string,
 }
+
 export const getDevicesAction = createAsyncAction(
     [actionTypes.GET_DEVICES, (req: GetDevicesAction) => req],
     [success(actionTypes.GET_DEVICES), (req: GetDeviceListAPIResponse) => { return req; }],

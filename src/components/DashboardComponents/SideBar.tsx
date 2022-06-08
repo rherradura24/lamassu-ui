@@ -6,6 +6,7 @@ import Brightness2OutlinedIcon from "@mui/icons-material/Brightness2Outlined";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import Brightness5OutlinedIcon from "@mui/icons-material/Brightness5Outlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import "./SideBar.css";
 import { Collapse, Grid, List, ListItem, Paper, Typography, useTheme } from "@mui/material";
@@ -35,9 +36,9 @@ const SideBar: React.FC<Props> = ({ onToggleDark, onCollapse, collapsed, menuCon
     }, []);
 
     return (
-        <Paper style={{ borderRadius: 0 }} elevation={0}>
-            <Grid item className="sidebar-wrapper">
-                <div>
+        <Paper style={{ borderRadius: 0, height: "100%" }} elevation={0}>
+            <Grid item className="sidebar-wrapper" sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <Box>
                     <MenuButton title={"Collapse"} icon={collapsed ? <KeyboardArrowRightOutlinedIcon /> : <KeyboardArrowLeftOutlinedIcon />} onClick={() => { onCollapse(collapsed); }} collapsed={collapsed} />
                     {
                         menuConfig.map((configItem: any) => (
@@ -71,7 +72,11 @@ const SideBar: React.FC<Props> = ({ onToggleDark, onCollapse, collapsed, menuCon
                     }
                     <MenuSeparator />
                     <MenuButton title={theme.palette.mode === "dark" ? "Light" : "Dark"} icon={theme.palette.mode === "dark" ? <Brightness5OutlinedIcon /> : <Brightness2OutlinedIcon />} onClick={onToggleDark} collapsed={collapsed} />
-                </div>
+                </Box>
+                <Box>
+                    <MenuSeparator />
+                    <MenuButton title="Info" icon={<InfoOutlinedIcon />} onClick={() => { handleSelectedPath("/info"); }} collapsed={collapsed} />
+                </Box>
             </Grid>
         </Paper>
     );

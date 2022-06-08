@@ -36,7 +36,7 @@ const DmsActionWrapper = () => {
                         </Grid>
                     </Grid>
                     <Grid>
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13, marginTop: "10px" }}>To create a new DMS instance, please provide the apropiate information</Typography>
+                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13, marginTop: "10px" }}>To create a new DMS instance, please provide the appropriate information</Typography>
                     </Grid>
                     <Box style={{ marginTop: 15, position: "relative", left: "-15px" }}>
                         <Tabs value={selectedTab} onChange={(ev, newValue) => setSelectedTab(newValue)}>

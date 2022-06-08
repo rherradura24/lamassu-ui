@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { Device, HistoricalCert } from "./models";
+import { Device, HistoricalCert, DevicesStats } from "./models";
 import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
@@ -9,6 +9,7 @@ import { deviceStatusToColor, historicalCertStatusToColor } from "./utils";
 
 export interface DevicesState {
     status: ActionStatus
+    devicesStats: DevicesStats
     list: Array<Device>
     totalDevices: number
     historyCertsStatus: ActionStatus
@@ -20,6 +21,17 @@ const initialState = {
         isLoading: false,
         status: ORequestStatus.Idle,
         type: ORequestType.None
+    },
+    devicesStats: {
+        stats: {
+            pending_enrollment: 0,
+            provisioned: 0,
+            decommissioned: 0,
+            provisioned_devices: 0,
+            expired: 0,
+            revoked: 0
+        },
+        scan_date: new Date()
     },
     list: [],
     totalDevices: 0,
@@ -33,6 +45,10 @@ const initialState = {
 export const devicesReducer = createReducer<DevicesState, RootAction>(initialState)
     .handleAction(actions.devicesActions.getDevicesAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [] };
+    })
+
+    .handleAction(actions.devicesActions.getStatsAction.success, (state, action) => {
+        return { ...state, devicesStats: action.payload };
     })
 
     .handleAction(actions.devicesActions.getDevicesAction.failure, (state, action) => {
@@ -96,7 +112,7 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
                     historicalCerts[j].status = capitalizeFirstLetter(historicalCerts[j].status);
                     historicalCerts[j].status_color = historicalCertStatusToColor(historicalCerts[j].status);
                 }
-                devices[i].historicalCerts = historicalCerts.sort((a:HistoricalCert, b:HistoricalCert) => (a.creation_timestamp < b.creation_timestamp) ? 1 : ((b.creation_timestamp < a.creation_timestamp) ? -1 : 0));
+                devices[i].historicalCerts = historicalCerts.sort((a: HistoricalCert, b: HistoricalCert) => (a.creation_timestamp < b.creation_timestamp) ? 1 : ((b.creation_timestamp < a.creation_timestamp) ? -1 : 0));
             }
         }
         return { ...state, historyCertsStatus: { ...state.historyCertsStatus, isLoading: false, status: ORequestStatus.Success }, list: devices };
@@ -121,6 +137,11 @@ const getSelector = (state: RootState): DevicesState => state.devices;
 export const getDevices = (state: RootState): Array<Device> => {
     const reducer = getSelector(state);
     return reducer.list;
+};
+
+export const getDevicesStats = (state: RootState): DevicesStats => {
+    const reducer = getSelector(state);
+    return reducer.devicesStats;
 };
 export const getTotalDevices = (state: RootState): number => {
     const reducer = getSelector(state);

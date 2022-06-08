@@ -65,6 +65,23 @@ export class HistoricalCert {
     }
 }
 
+export class DevicesStats {
+    public stats!: {
+        pending_enrollment?: number
+        provisioned?: number
+        decommissioned?: number
+        about_to_expire?: number
+        expired?: number
+        revoked?: number
+    }
+
+    public scan_date!: Date
+
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
 export const ODeviceStatus = {
     DEVICE_PROVISIONED: "Device Provisioned",
     CERT_REVOKED: "Cert Revoked",

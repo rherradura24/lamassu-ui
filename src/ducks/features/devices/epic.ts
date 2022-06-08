@@ -18,10 +18,23 @@ export const getDevicesEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
                 action.payload.offset,
                 action.payload.page,
                 action.payload.sortMode,
-                action.payload.sortField
+                action.payload.sortField,
+                action.payload.filterQuery
             )).pipe(
                 map(actions.getDevicesAction.success),
                 catchError((message) => of(actions.getDevicesAction.failure(message)))
+            )
+        )
+    );
+
+export const getStatsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getStatsAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.GetStats>) =>
+            from(apicalls.getStats(action.payload.force)).pipe(
+                map(actions.getStatsAction.success),
+                catchError((message) => of(actions.getStatsAction.failure(message)))
             )
         )
     );

@@ -26,6 +26,7 @@ module.exports = {
             "error",
             "double"
         ],
+        // "@typescript-eslint/no-explicit-any": "error",
         "unused-imports/no-unused-imports": "error",
         "no-use-before-define": "off",
         "consistent-return": 2,

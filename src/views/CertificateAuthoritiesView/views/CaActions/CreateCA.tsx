@@ -280,11 +280,15 @@ export const CreateCA = () => {
                 </Grid>
 
                 <Grid item container>
-                    <Grid item container>
-                        <LamassuTable columnConf={cloudConnectorsColumnConf} data={cloudConnectors} renderDataItem={cloudConnectorRender} />
-                    </Grid>
-
+                    {
+                        cloudConnectors.length > 0 && (
+                            <Grid item container>
+                                <LamassuTable columnConf={cloudConnectorsColumnConf} data={cloudConnectors} renderDataItem={cloudConnectorRender} />
+                            </Grid>
+                        )
+                    }
                 </Grid>
+
                 <Grid item container>
                     <LoadingButton
                         variant="contained"

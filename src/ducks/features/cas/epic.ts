@@ -21,6 +21,17 @@ export const getCAsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$,
             )
         )
     );
+export const getStatsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getStatsAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action) =>
+            from(apicalls.getStats()).pipe(
+                map(actions.getStatsAction.success),
+                catchError((message) => of(actions.getStatsAction.failure(message)))
+            )
+        )
+    );
 
 export const getIssuedCertsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
