@@ -79,7 +79,7 @@ export const CreateCA = () => {
     const [ttlUnit, setTtlUnit] = useState(24);// 24 = days | 24*365 = years
     const [enrollerTtlValue, setEnrollerTtlValue] = useState(100);
     const [enrollerTtlUnit, setEnrollerTtlUnit] = useState(24);// 24 = days | 24*365 = years
-    const [keyType, setKeyType] = useState("rsa");
+    const [keyType, setKeyType] = useState("RSA");
     const [keyBits, setKeyBits] = useState(rsaOptions[1]);
 
     useEffect(() => {
@@ -112,7 +112,7 @@ export const CreateCA = () => {
     };
 
     useEffect(() => {
-        if (keyType === "rsa") {
+        if (keyType === "RSA") {
             setKeyBits(rsaOptions[1]);
         } else {
             setKeyBits(ecdsaOptions[1]);
@@ -185,8 +185,8 @@ export const CreateCA = () => {
                         value={keyType}
                         onChange={(ev) => setKeyType(ev.target.value)}
                     >
-                        <MenuItem value="rsa">RSA</MenuItem>
-                        <MenuItem value="ec">ECDSA</MenuItem>
+                        <MenuItem value="RSA">RSA</MenuItem>
+                        <MenuItem value="EC">ECDSA</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>

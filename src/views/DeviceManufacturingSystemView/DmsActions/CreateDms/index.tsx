@@ -132,7 +132,7 @@ export const CreateDms = () => {
                                 onChange={(ev: any) => setKeyType(ev.target.value)}
                             >
                                 <MenuItem value="RSA">RSA</MenuItem>
-                                <MenuItem value="ECDSA">ECDSA</MenuItem>
+                                <MenuItem value="EC">ECDSA</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
