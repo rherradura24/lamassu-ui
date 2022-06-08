@@ -1,6 +1,6 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { CertificateAuthority, CAStats } from "./models";
+import { CertificateAuthority, CAStats, GetCAsListAPIResponse } from "./models";
 
 export const actionTypes = {
     GET_CA_STATS: "GET_CA_STATS",
@@ -20,7 +20,7 @@ export const getStatsAction = createAsyncAction(
 
 export const getCAsAction = createAsyncAction(
     [actionTypes.GET_CAS, () => { }],
-    [success(actionTypes.GET_CAS), (req: Array<CertificateAuthority>) => req],
+    [success(actionTypes.GET_CAS), (req: GetCAsListAPIResponse) => req],
     [failed(actionTypes.GET_CAS), (req: Error) => req]
 )();
 

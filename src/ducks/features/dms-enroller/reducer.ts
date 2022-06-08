@@ -33,7 +33,7 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     })
 
     .handleAction(actions.dmsActions.getDMSListAction.success, (state, action) => {
-        let dmss: Array<DMS> = action.payload;
+        let dmss: Array<DMS> = action.payload.dmss;
         for (let i = 0; i < dmss.length; i++) {
             dmss[i].status = capitalizeFirstLetter(dmss[i].status);
             dmss[i].status_color = dmsStatusToColor(dmss[i].status);

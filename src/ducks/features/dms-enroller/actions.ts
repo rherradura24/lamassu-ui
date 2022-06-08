@@ -1,6 +1,6 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { DMS } from "./models";
+import { DMS, GetDMSsListAPIResponse } from "./models";
 
 export const actionTypes = {
     GET_DMS_LIST: "GET_DMS_LIST",
@@ -12,7 +12,7 @@ export const actionTypes = {
 
 export const getDMSListAction = createAsyncAction(
     [actionTypes.GET_DMS_LIST, () => { }],
-    [success(actionTypes.GET_DMS_LIST), (req: Array<DMS>) => { return req; }],
+    [success(actionTypes.GET_DMS_LIST), (req: GetDMSsListAPIResponse) => { return req; }],
     [failed(actionTypes.GET_DMS_LIST), (req: Error) => req]
 )();
 

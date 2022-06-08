@@ -28,9 +28,9 @@ export const DeviceView = () => {
     return (
         <Routes>
             <Route path="/" element={<Outlet/>}>
+                <Route path="create" element={<CreateDevice />} />
                 <Route path=":deviceId/edit" element={<RoutedEditDevice />} />
                 <Route path=":deviceId*" element={<RoutedDeviceInspector />} />
-                <Route path="create" element={<CreateDevice />} />
                 <Route index element={<DeviceList />} />
             </Route>
         </Routes>

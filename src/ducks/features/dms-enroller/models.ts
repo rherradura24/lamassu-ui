@@ -1,5 +1,14 @@
 import { KeyStrength, KeyType } from "../cas/models";
 
+export class GetDMSsListAPIResponse {
+    public total_dmss!: number
+    public dmss!: Array<DMS>
+
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
 export class DMS {
     public id!: string
     public name!: string

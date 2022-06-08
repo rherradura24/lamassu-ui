@@ -1,3 +1,13 @@
+
+export class GetCAsListAPIResponse {
+    public total_cas!: number
+    public cas!: Array<CertificateAuthority>
+
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
 export class CAStats {
     public issued_certs!: number
     public cas!: number

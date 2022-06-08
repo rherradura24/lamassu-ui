@@ -49,7 +49,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
 
     .handleAction(actions.caActions.getCAsAction.success, (state, action) => {
         let list: Array<CertificateAuthority> = [];
-        action.payload.forEach((ca: CertificateAuthority) => {
+        action.payload.cas.forEach((ca: CertificateAuthority) => {
             ca.status = capitalizeFirstLetter(ca.status);
             ca.status_color = statusToColor(ca.status);
 
