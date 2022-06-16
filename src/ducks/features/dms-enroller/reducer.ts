@@ -10,6 +10,7 @@ import { keyStrengthToColor } from "../cas/utils";
 export interface DeviceManufacturingSystemStatus {
     status: ActionStatus
     list: Array<DMS>,
+    totalDMSs: number,
     privateKey: string | undefined
 }
 
@@ -20,12 +21,13 @@ const initialState = {
         type: ORequestType.None
     },
     list: [],
+    totalDMSs: 0,
     privateKey: undefined
 };
 
 export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAction>(initialState)
     .handleAction(actions.dmsActions.getDMSListAction.request, (state, action) => {
-        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [] };
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [], totalDMSs: 0 };
     })
 
     .handleAction(actions.dmsActions.getDMSListAction.failure, (state, action) => {
@@ -41,7 +43,7 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
             dmss[i].key_metadata.strength = capitalizeFirstLetter(dmss[i].key_metadata.strength);
             dmss[i].key_metadata.strength_color = keyStrengthToColor(dmss[i].key_metadata.strength);
         }
-        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: dmss };
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: dmss, totalDMSs: action.payload.total_dmss };
     })
 
     .handleAction(actions.dmsActions.approveDMSRequestAction.request, (state, action) => {
@@ -69,6 +71,11 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     });
 
 const getSelector = (state: RootState): DeviceManufacturingSystemStatus => state.dmss;
+
+export const getTotalDMSs = (state: RootState): number => {
+    const reducer = getSelector(state);
+    return reducer.totalDMSs;
+};
 
 export const getDMSs = (state: RootState): Array<DMS> => {
     const reducer = getSelector(state);

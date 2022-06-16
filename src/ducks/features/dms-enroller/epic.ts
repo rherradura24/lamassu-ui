@@ -13,8 +13,14 @@ export const getCloudConnectorsEpic: Epic<RootAction, RootAction, RootState, {}>
     action$.pipe(
         filter(isActionOf(actions.getDMSListAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
-        exhaustMap((action) =>
-            from(apicalls.getDMSList()).pipe(
+        exhaustMap((action: PayloadAction<string, actions.GetDMSsAction>) =>
+            from(apicalls.getDMSList(
+                action.payload.limit,
+                action.payload.offset,
+                action.payload.sortMode,
+                action.payload.sortField,
+                action.payload.filterQuery
+            )).pipe(
                 map(actions.getDMSListAction.success),
                 catchError((message) => of(actions.getDMSListAction.failure(message)))
             )
@@ -75,7 +81,13 @@ export const updateAfterSuccessStatusChangeEpic: Epic<RootAction, RootAction, Ro
             actions.revokeDMSAction.success
         ], rootAction)),
         tap((item: any) => console.log("%c Epic ", "background:#884101; border-radius:5px;font-weight: bold;", "", item)),
-        map(actions.getDMSListAction.request)
+        map(() => actions.getDMSListAction.request({
+            filterQuery: [],
+            limit: 10,
+            offset: 0,
+            sortField: "id",
+            sortMode: "asc"
+        }))
     );
 
 export const reportError: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>

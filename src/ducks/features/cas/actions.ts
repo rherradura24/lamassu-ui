@@ -18,8 +18,16 @@ export const getStatsAction = createAsyncAction(
     [failed(actionTypes.GET_CA_STATS), (req: Error) => req]
 )();
 
+export type GetCAsAction = {
+    sortMode: "asc" | "desc",
+    sortField: string,
+    limit: number,
+    offset: number,
+    filterQuery: Array<string>,
+}
+
 export const getCAsAction = createAsyncAction(
-    [actionTypes.GET_CAS, () => { }],
+    [actionTypes.GET_CAS, (req: GetCAsAction) => req],
     [success(actionTypes.GET_CAS), (req: GetCAsListAPIResponse) => req],
     [failed(actionTypes.GET_CAS), (req: Error) => req]
 )();

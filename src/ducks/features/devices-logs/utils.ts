@@ -1,0 +1,16 @@
+import { LogType, OLogType } from "./models";
+
+export const logTypeToColor = (status: LogType) => {
+    switch (status) {
+    case OLogType.INFO:
+        return "blue";
+    case OLogType.SUCCESS:
+        return "green";
+    case OLogType.WARNING:
+        return "orange";
+    case OLogType.CRITICAL:
+        return "red";
+    default:
+        return "gray";
+    }
+};

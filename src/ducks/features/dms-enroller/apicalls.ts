@@ -2,10 +2,14 @@ import { apiRequest } from "ducks/services/api";
 import { CreateDMSForm } from "./actions";
 import { DMSStatus } from "./models";
 
-export const getDMSList = async (): Promise<any> => {
+export const getDMSList = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
+    let url = window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/?" + `sort=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
+    filterQuery.forEach(filter => {
+        url += `&filter=${filter}`;
+    });
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/"
+        url: url
     });
 };
 

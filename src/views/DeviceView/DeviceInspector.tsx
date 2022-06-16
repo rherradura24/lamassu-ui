@@ -62,7 +62,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     useEffect(() => {
         const connectorToFetch = [];
         for (const connector of connectors) {
-            if (connector.status === OCloudProviderHealthStatus.Passing/* && connector.synchronized_cas.filter(syncCA => syncCA.ca_name === activeCertIssuer).length > 0 */) {
+            if (connector.status === OCloudProviderHealthStatus.Passing) {
                 connectorToFetch.push(connector.id);
             }
         }
@@ -71,8 +71,8 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
 
     useEffect(() => {
         if (device && device.current_certificate.crt) {
-            const parsaedCert = Certificate.fromPEM(Buffer.from(window.atob(device.current_certificate.crt), "utf8"));
-            setDecodedCertificate(parsaedCert);
+            const parsedCert = Certificate.fromPEM(Buffer.from(window.atob(device.current_certificate.crt), "utf8"));
+            setDecodedCertificate(parsedCert);
         }
     }, [device]);
 

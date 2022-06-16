@@ -10,8 +10,16 @@ export const actionTypes = {
     REVOKE_DMS: "REVOKE_DMS"
 };
 
+export type GetDMSsAction = {
+    sortMode: "asc" | "desc",
+    sortField: string,
+    limit: number,
+    offset: number,
+    filterQuery: Array<string>,
+}
+
 export const getDMSListAction = createAsyncAction(
-    [actionTypes.GET_DMS_LIST, () => { }],
+    [actionTypes.GET_DMS_LIST, (req: GetDMSsAction) => req],
     [success(actionTypes.GET_DMS_LIST), (req: GetDMSsListAPIResponse) => { return req; }],
     [failed(actionTypes.GET_DMS_LIST), (req: Error) => req]
 )();
@@ -26,7 +34,7 @@ export type CreateDMSForm= {
         common_name: string
     },
     key_metadata: {
-        type: "RSA" | "ECDSA",
+        type: "RSA" | "EC",
         bits: number
     }
 }

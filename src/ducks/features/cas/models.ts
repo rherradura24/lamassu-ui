@@ -92,7 +92,7 @@ export const OKeyStrength = {
 
 export const OKeyType = {
     RSA: "RSA",
-    ECDSA: "ECDSA"
+    EC: "EC"
 };
 
 export const OCAStatus = {

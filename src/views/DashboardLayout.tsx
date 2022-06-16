@@ -129,8 +129,8 @@ export const DashboardLayout = () => {
                             menuConfig={routes}
                         />
                     </Box>
-                    <Box className="content" sx={{ background: theme.palette.background.lightContrast }}>
-                        <Grid container sx={{ height: "100%", overflow: "hidden" }} ref={containerRef}>
+                    <Box className="content" sx={{ background: theme.palette.background.lightContrast, display: "flex", flexDirection: "column" }}>
+                        <Grid container sx={{ height: "100px", flexGrow: 1, overflow: "hidden" }} ref={containerRef}>
                             <Grid item xs={displayNotifications ? 9 : 12} sx={{ height: "100%" }} >
                                 <Routes>
                                     {

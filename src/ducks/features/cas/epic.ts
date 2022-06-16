@@ -6,7 +6,7 @@ import { filter, exhaustMap, catchError, map } from "rxjs/operators";
 import { from, of, tap, mergeMap, forkJoin, defaultIfEmpty } from "rxjs";
 
 import * as apicalls from "./apicalls";
-import * as cloudProxyApicalls from "ducks/features/cloud-proxy/apicalls";
+import * as cloudProxyApiCalls from "ducks/features/cloud-proxy/apicalls";
 import { isActionOf, PayloadAction } from "typesafe-actions";
 import { RootAction } from "ducks/actions";
 
@@ -14,8 +14,14 @@ export const getCAsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$,
     action$.pipe(
         filter(isActionOf(actions.getCAsAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
-        exhaustMap((action) =>
-            from(apicalls.getCAs()).pipe(
+        exhaustMap((action: PayloadAction<string, actions.GetCAsAction>) =>
+            from(apicalls.getCAs(
+                action.payload.limit,
+                action.payload.offset,
+                action.payload.sortMode,
+                action.payload.sortField,
+                action.payload.filterQuery
+            )).pipe(
                 map(actions.getCAsAction.success),
                 catchError((message) => of(actions.getCAsAction.failure(message)))
             )
@@ -53,7 +59,7 @@ export const importCAEpic: Epic<RootAction, RootAction, RootState, {}> = (action
         tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.ImportCA>) =>
             forkJoin(
-                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApicalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.caName))
+                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApiCalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.caName))
             ).pipe(
                 defaultIfEmpty({}),
                 tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),
@@ -80,7 +86,7 @@ export const createCAEpic: Epic<RootAction, RootAction, RootState, {}> = (action
         tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.CreateCA>) =>
             forkJoin(
-                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApicalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.caName))
+                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApiCalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.caName))
             ).pipe(
                 defaultIfEmpty({}),
                 tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),

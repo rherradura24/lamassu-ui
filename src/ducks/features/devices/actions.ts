@@ -23,9 +23,9 @@ export const getStatsAction = createAsyncAction(
 export type GetDevicesAction = {
     sortMode: "asc" | "desc",
     sortField: string,
+    limit: number,
     offset: number,
-    page: number,
-    filterQuery: string,
+    filterQuery: Array<string>,
 }
 
 export const getDevicesAction = createAsyncAction(

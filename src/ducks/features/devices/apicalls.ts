@@ -1,9 +1,11 @@
 import { apiRequest } from "ducks/services/api";
 
-export const getDevices = async (offset: number, page: number, sortMode: "asc" | "desc", sortField: string, filterQuery: string): Promise<any> => {
-    let url = window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices?" + `s={${sortMode},${sortField}}&page={${page},${offset}}`;
-    if (filterQuery !== "") {
-        url = url + `&filter={${filterQuery}}`;
+export const getDevices = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
+    let url = window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices?" + `sort_by=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
+    if (filterQuery.length > 0) {
+        filterQuery.forEach(filter => {
+            url = url + `&filter=${filter}`;
+        });
     }
     return apiRequest({
         method: "GET",

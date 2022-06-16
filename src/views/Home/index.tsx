@@ -18,10 +18,6 @@ import * as dmsEnrollerSelector from "ducks/features/dms-enroller/reducer";
 import { numberToHumanReadableString } from "components/utils/NumberToHumanReadableString";
 
 Chart.register(...registerables);
-// Chart.register(ChartDataLabels);
-// Chart.register(Tooltip)
-// Chart.register(CategoryScale)
-// Chart.register(LinearScale)
 
 export const Home = () => {
     const theme = useTheme();
@@ -30,7 +26,7 @@ export const Home = () => {
 
     const caStats = useAppSelector((state) => caSelector.getStats(state));
     const devices = useAppSelector((state) => devicesSelector.getTotalDevices(state));
-    const caList = useAppSelector((state) => caSelector.getCAs(state));
+    const totalCAs = useAppSelector((state) => caSelector.getTotalCAs(state));
     const dmsList = useAppSelector((state) => dmsEnrollerSelector.getDMSs(state));
 
     const devicesRequestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
@@ -39,10 +35,22 @@ export const Home = () => {
 
     const refreshAction = () => {
         dispatch(caAction.getStatsAction.request());
-        dispatch(caAction.getCAsAction.request());
+        dispatch(caAction.getCAsAction.request({
+            filterQuery: [],
+            limit: 10,
+            offset: 0,
+            sortField: "name",
+            sortMode: "asc"
+        }));
         dispatch(devicesAction.getStatsAction.request({ force: false }));
-        dispatch(devicesAction.getDevicesAction.request({ offset: 10, page: 1, sortField: "id", sortMode: "asc", filterQuery: "" }));
-        dispatch(dmsEnrollerAction.getDMSListAction.request());
+        dispatch(devicesAction.getDevicesAction.request({ offset: 0, limit: 10, sortField: "id", sortMode: "asc", filterQuery: [] }));
+        dispatch(dmsEnrollerAction.getDMSListAction.request({
+            filterQuery: [],
+            limit: 10,
+            offset: 0,
+            sortField: "id",
+            sortMode: "asc"
+        }));
     };
 
     useEffect(() => {
@@ -50,7 +58,7 @@ export const Home = () => {
     }, []);
 
     const issuedCerts = caStats.issued_certs;
-    const cas = caList.length;
+    const cas = totalCAs;
     const dmss = dmsList.length;
 
     console.log(caStats, issuedCerts);

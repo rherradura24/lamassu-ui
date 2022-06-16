@@ -130,6 +130,16 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     })
     .handleAction(actions.devicesActions.revokeActiveDeviceCertificateAction.failure, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Failed } };
+    })
+
+    .handleAction(actions.devicesActions.registerDeviceAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Create } };
+    })
+    .handleAction(actions.devicesActions.registerDeviceAction.success, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.devicesActions.registerDeviceAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Failed } };
     });
 
 const getSelector = (state: RootState): DevicesState => state.devices;

@@ -5,6 +5,9 @@ import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { AiFillWarning } from "react-icons/ai";
 import { Device } from "ducks/features/devices/models";
+import { Certificate } from "@fidm/x509";
+import moment from "moment";
+import { getColor } from "components/utils/lamassuColors";
 
 interface Props {
     device: Device
@@ -17,11 +20,23 @@ export const DeviceCard: React.FC<Props> = ({ device, ...props }) => {
     let alertColorBg = theme.palette.warning.light;
     let alertColorIcon = theme.palette.warning.main;
 
-    const remainigDaysBeforeExpiration = Math.floor(Math.random() * 100); ;
+    let remainingDaysBeforeExpiration = -1;
+    if (device.current_certificate.crt) {
+        const parsedCert = Certificate.fromPEM(Buffer.from(window.atob(device.current_certificate.crt), "utf8"));
+        const now = new Date();
+        remainingDaysBeforeExpiration = moment(parsedCert.validTo).diff(moment(now), "days");
+        console.log(remainingDaysBeforeExpiration);
+    }
 
-    if (remainigDaysBeforeExpiration < 10) {
+    if (remainingDaysBeforeExpiration < 30) {
+        alertColorBg = theme.palette.warning.light;
+        alertColorIcon = theme.palette.warning.main;
+    } else if (remainingDaysBeforeExpiration < 10) {
         alertColorBg = theme.palette.error.light;
         alertColorIcon = theme.palette.error.main;
+    } else {
+        alertColorBg = getColor(theme, "gray")[1];
+        alertColorIcon = getColor(theme, "gray")[0];
     }
 
     return (
@@ -58,14 +73,14 @@ export const DeviceCard: React.FC<Props> = ({ device, ...props }) => {
             </Box>
             <Box>
                 {
-                    remainigDaysBeforeExpiration < 30 && (
+                    remainingDaysBeforeExpiration >= 0 && (
                         <Grid item xs={12} container justifyContent={"space-between"} sx={{ background: alertColorBg, borderRadius: 1, padding: "5px 10px 5px 10px" }}>
                             <Grid item container xs={9}>
-                                <AiFillWarning color={alertColorIcon} />
-                                <Typography style={{ fontSize: 12, fontWeight: "bold", marginLeft: 5 }}>Certificate Expiration</Typography>
+                                {remainingDaysBeforeExpiration < 30 && (<AiFillWarning color={alertColorIcon} style={{ marginRight: "5px" }}/>)}
+                                <Typography style={{ fontSize: 12, fontWeight: "bold" }}>Certificate Expiration</Typography>
                             </Grid>
                             <Grid item xs={3} container justifyContent={"flex-end"}>
-                                <Typography style={{ fontSize: 12 }}>{`In ${remainigDaysBeforeExpiration} days`}</Typography>
+                                <Typography style={{ fontSize: 12 }}>{`In ${remainingDaysBeforeExpiration} days`}</Typography>
                             </Grid>
                         </Grid>
                     )

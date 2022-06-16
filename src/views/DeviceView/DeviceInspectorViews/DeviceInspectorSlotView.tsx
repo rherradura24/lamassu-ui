@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Divider, Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import moment from "moment";
@@ -7,6 +7,8 @@ import { LamassuTable } from "components/LamassuComponents/Table";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import * as cloudProxySelector from "ducks/features/cloud-proxy/reducer";
 import * as devicesSelector from "ducks/features/devices/reducer";
+import * as deviceLogsSelector from "ducks/features/devices-logs/reducer";
+import * as deviceLogsActions from "ducks/features/devices-logs/actions";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
 import { Device, HistoricalCert, OHistoricalCertStatus } from "ducks/features/devices/models";
@@ -27,6 +29,8 @@ import { CloudProviderIcon } from "components/CloudProviderIcons";
 import { CloudConnectorDeviceActions } from "../components/CloudConnectorDeviceActions";
 import { pSBC } from "components/utils/colors";
 import { useNavigate } from "react-router-dom";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { getColor } from "components/utils/lamassuColors";
 
 interface Props {
     slotID: string,
@@ -44,10 +48,29 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
     const connectorsRequestStatus = useAppSelector((state) => cloudProxySelector.getRequestStatus(state));
     const connectors = useAppSelector((state) => cloudProxySelector.getCloudConnectors(state));
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
+    const logRequestStatus = useAppSelector((state) => deviceLogsSelector.getRequestStatus(state));
+    const logs = useAppSelector((state) => deviceLogsSelector.getLogs(state, deviceID));
     const historicalCertRequestStatus = useAppSelector((state) => devicesSelector.getHistoricalCertRequestStatus(state));
 
     const [showCertificate, setShowCertificate] = useState(false);
     const [showRevokeCertificate, setShowRevokeCertificate] = useState(false);
+
+    const refreshAction = () => {
+        dispatch(deviceLogsActions.getDeviceLogs.request({
+            deviceID: deviceID,
+            filterQuery: [],
+            limit: 10,
+            offset: 0,
+            sortField: "id",
+            sortMode: "asc"
+        }));
+    };
+
+    useEffect(() => {
+        refreshAction();
+    }, []);
+
+    console.log(device);
 
     const certTableColumns = [
         { key: "serialNumber", title: "Serial Number", align: "start", size: 3 },
@@ -110,7 +133,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
         const awsDeviceCertificatesRender = (cert: any) => {
             return {
                 serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
-                arn: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.arn}</Typography>,
+                arn: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary, overflowWrap: "anywhere" }}>#{cert.arn}</Typography>,
                 certificateId: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.id}</Typography>,
                 status: (
                     <LamassuChip label={cert.status} color={cert.status_color} />
@@ -151,7 +174,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                         </IconButton>
                     </Box>
                 )
-
             ),
             expandedRowElement: (
                 <Box sx={{ width: "calc(100% - 65px)", borderLeft: `4px solid ${theme.palette.primary.main}`, background: pSBC(theme.palette.mode === "dark" ? 0.01 : -0.03, theme.palette.background.paper), marginLeft: "20px", padding: "20px 20px 0 20px", marginBottom: "20px" }}>
@@ -181,7 +203,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                         )
                     }
                 </Box>
-
             )
         };
     };
@@ -218,7 +239,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                     <Grid item xs="auto">
                         <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Serial Number</Typography>
                         {
-                            device
+                            device && Object.keys(device.current_certificate).length > 0
                                 ? (
                                     <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{device!.current_certificate.serial_number}</Typography>
                                 )
@@ -230,7 +251,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                     <Grid item xs="auto">
                         <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Key Properties</Typography>
                         {
-                            device
+                            device && device.key_metadata.type && device.key_metadata.bits
                                 ? (
                                     <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{`${device?.key_metadata.type.toUpperCase()} ${device?.key_metadata.bits}`}</Typography>
                                 )
@@ -268,7 +289,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                         </Typography>
                     </Grid>
                     {
-                        device && (
+                        device && Object.keys(device.current_certificate).length > 0 && (
                             <Grid item xs container alignItems={"center"} justifyContent={"flex-end"}>
                                 <Button variant="outlined" size="small" onClick={() => { setShowCertificate(true); }}>View Certificate</Button>
                                 <Modal
@@ -293,7 +314,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                     }
                 </Grid>
             </Box>
-            <Grid container sx={{ flexGrow: 1, overflowY: "auto", height: "300px" }} columns={13}>
+            <Grid container sx={{ flexGrow: 1, overflowY: "hidden", height: "300px" }} columns={13}>
                 <Grid item xs={10} sx={{ padding: "30px" }} container>
                     {
                         !requestStatus.isLoading && (
@@ -346,100 +367,54 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                     }
                 </Grid>
 
-                <Grid item xs={3} component={Paper} borderRadius={0} sx={{ overflowX: "hidden" }}>
-                    <Timeline position="left" sx={{ width: "100%", marginLeft: "-40px" }}>
-                        <TimelineItem>
-                            <TimelineOppositeContent style={{ maxWidth: "1px", paddingLeft: "0px", paddingRight: "0px" }} />
-                            <TimelineSeparator>
-                                <TimelineDot variant="outlined" sx={{ margin: 0 }} />
-                                <TimelineConnector />
-                            </TimelineSeparator>
-                            <TimelineContent sx={{ marginTop: "-11.5px", marginBottom: "25px" }}>
-                                <Typography fontWeight="500">Device Provisioned</Typography>
-                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                                    <Typography sx={{ color: theme.palette.text.secondary, marginRight: "5px" }} fontSize="13px">{moment(new Date()).format("DD-MM-YYYY HH:mm")}</Typography>
-                                    <Typography sx={{ color: theme.palette.info.main }} fontSize="13px" fontWeight="500">Info</Typography>
-                                </Box>
-                                <Box sx={{ marginTop: "10px" }}>
-                                    <Typography sx={{ marginRight: "5px" }} fontSize="13px" fontWeight="500">
-                                                Slot A provisioned
-                                    </Typography>
-                                    <Typography fontSize="12px">
-                                                #74-76-a9-8a-12-17-5c-5d-13-09-ff-8e-1a-46-aa-54-cc-b4-34
-                                    </Typography>
-                                </Box>
-                            </TimelineContent>
-                        </TimelineItem>
-
-                        <TimelineItem>
-                            <TimelineOppositeContent style={{ maxWidth: "1px", paddingLeft: "0px", paddingRight: "0px" }} />
-                            <TimelineSeparator>
-                                <TimelineDot variant="outlined" sx={{ margin: 0 }} />
-                                <TimelineConnector />
-                            </TimelineSeparator>
-                            <TimelineContent sx={{ marginTop: "-11.5px", marginBottom: "25px" }}>
-                                <Typography fontWeight="500">Reenroll</Typography>
-                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                                    <Typography sx={{ color: theme.palette.text.secondary, marginRight: "5px" }} fontSize="13px">{moment(new Date()).format("DD-MM-YYYY HH:mm")}</Typography>
-                                    <Typography sx={{ color: theme.palette.success.main }} fontSize="13px" fontWeight="500">Success</Typography>
-                                </Box>
-                                <Box sx={{ marginTop: "10px" }}>
-                                    <Typography sx={{ marginRight: "5px" }} fontSize="13px" fontWeight="500">
-                                                Reenrollment through EST protocol
-                                    </Typography>
-                                    <Typography fontSize="12px">
-                                                #74-76-a9-8a-12-17-5c-5d-13-09-ff-8e-1a-46-aa-54-cc-b4-34
-                                    </Typography>
-                                </Box>
-                            </TimelineContent>
-                        </TimelineItem>
-
-                        <TimelineItem>
-                            <TimelineOppositeContent style={{ maxWidth: "1px", paddingLeft: "0px", paddingRight: "0px" }} />
-                            <TimelineSeparator>
-                                <TimelineDot variant="outlined" sx={{ margin: 0 }} />
-                                <TimelineConnector />
-                            </TimelineSeparator>
-                            <TimelineContent sx={{ marginTop: "-11.5px", marginBottom: "25px" }}>
-                                <Typography fontWeight="500" sx={{ color: theme.palette.text.primary }}>About to expire</Typography>
-                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                                    <Typography sx={{ color: theme.palette.text.secondary, marginRight: "5px" }} fontSize="13px">{moment(new Date()).format("DD-MM-YYYY HH:mm")}</Typography>
-                                    <Typography sx={{ color: theme.palette.warning.main }} fontSize="13px" fontWeight="500">Warn</Typography>
-                                </Box>
-                                <Box sx={{ marginTop: "10px" }}>
-                                    <Typography sx={{ marginRight: "5px" }} fontSize="13px" fontWeight="500">
-                                                Slot A certificate expires 01-09-2022 19:47
-                                    </Typography>
-                                    <Typography fontSize="12px">
-                                                #74-76-a9-8a-12-17-5c-5d-13-09-ff-8e-1a-46-aa-54-cc-b4-34
-                                    </Typography>
-                                </Box>
-                            </TimelineContent>
-                        </TimelineItem>
-
-                        <TimelineItem>
-                            <TimelineOppositeContent style={{ maxWidth: "1px", paddingLeft: "0px", paddingRight: "0px" }} />
-                            <TimelineSeparator>
-                                <TimelineDot variant="outlined" sx={{ margin: 0 }} />
-                                <TimelineConnector />
-                            </TimelineSeparator>
-                            <TimelineContent sx={{ marginTop: "-11.5px" }}>
-                                <Typography fontWeight="500" sx={{ color: theme.palette.text.primary }}>Expiration</Typography>
-                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                                    <Typography sx={{ color: theme.palette.text.secondary, marginRight: "5px" }} fontSize="13px">{moment(new Date()).format("DD-MM-YYYY HH:mm")}</Typography>
-                                    <Typography sx={{ color: theme.palette.error.main }} fontSize="13px" fontWeight="500">Critical</Typography>
-                                </Box>
-                                <Box sx={{ marginTop: "10px" }}>
-                                    <Typography sx={{ marginRight: "5px" }} fontSize="13px" fontWeight="500">
-                                                Slot A certificate has expired as of 01-09-2022 19:47
-                                    </Typography>
-                                    <Typography fontSize="12px">
-                                                #74-76-a9-8a-12-17-5c-5d-13-09-ff-8e-1a-46-aa-54-cc-b4-34
-                                    </Typography>
-                                </Box>
-                            </TimelineContent>
-                        </TimelineItem>
-                    </Timeline>
+                <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ overflowX: "hidden", padding: "20px" }}>
+                    <Grid item container justifyContent={"flex-end"}>
+                        <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => { refreshAction(); }}>
+                            <RefreshIcon style={{ color: theme.palette.primary.main }} />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        {
+                            logRequestStatus.isLoading
+                                ? (
+                                    <>
+                                        <Skeleton variant="rectangular" width={"100%"} height={20} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                        <Skeleton variant="rectangular" width={"100%"} height={20} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                        <Skeleton variant="rectangular" width={"100%"} height={20} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                    </>
+                                )
+                                : (
+                                    <Timeline position="left" sx={{ width: "100%", marginLeft: "-20px" }}>
+                                        {
+                                            logs.map((log, idx) => (
+                                                <TimelineItem key={idx}>
+                                                    <TimelineOppositeContent style={{ maxWidth: "1px", paddingLeft: "0px", paddingRight: "0px" }} />
+                                                    <TimelineSeparator>
+                                                        <TimelineDot variant="outlined" sx={{ margin: 0 }} />
+                                                        <TimelineConnector />
+                                                    </TimelineSeparator>
+                                                    <TimelineContent sx={{ marginTop: "-11.5px", marginBottom: "25px" }}>
+                                                        <Typography fontWeight="500">{log.log_message}</Typography>
+                                                        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                                            <Typography sx={{ color: theme.palette.text.secondary, marginRight: "5px" }} fontSize="13px">{moment(log.timestamp).format("DD-MM-YYYY HH:mm")}</Typography>
+                                                            <Typography sx={{ color: getColor(theme, log.log_type_color)[0] }} fontSize="13px" fontWeight="500">{log.log_type}</Typography>
+                                                        </Box>
+                                                        <Box sx={{ marginTop: "10px" }}>
+                                                            {/* <Typography sx={{ marginRight: "5px" }} fontSize="13px" fontWeight="500">
+                                                        Slot A provisioned
+                                                </Typography> */}
+                                                            <Typography fontSize="12px">
+                                                                {log.log_description}
+                                                            </Typography>
+                                                        </Box>
+                                                    </TimelineContent>
+                                                </TimelineItem>
+                                            ))
+                                        }
+                                    </Timeline>
+                                )
+                        }
+                    </Grid>
                 </Grid>
             </Grid>
         </>

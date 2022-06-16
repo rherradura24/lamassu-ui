@@ -48,7 +48,7 @@ export const CreateCA = () => {
         }
     ];
 
-    const ecdsaOptions = [
+    const ecOptions = [
         {
             label: "224",
             value: 224,
@@ -115,7 +115,7 @@ export const CreateCA = () => {
         if (keyType === "RSA") {
             setKeyBits(rsaOptions[1]);
         } else {
-            setKeyBits(ecdsaOptions[1]);
+            setKeyBits(ecOptions[1]);
         }
     }, [keyType]);
 
@@ -168,7 +168,7 @@ export const CreateCA = () => {
         };
     };
 
-    const keyBitsOptions = keyType === "rsa" ? rsaOptions : ecdsaOptions;
+    const keyBitsOptions = keyType === "RSA" ? rsaOptions : ecOptions;
 
     return (
         <Grid container spacing={3} justifyContent="center" alignItems="center" >
@@ -186,7 +186,7 @@ export const CreateCA = () => {
                         onChange={(ev) => setKeyType(ev.target.value)}
                     >
                         <MenuItem value="RSA">RSA</MenuItem>
-                        <MenuItem value="EC">ECDSA</MenuItem>
+                        <MenuItem value="EC">EC</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>

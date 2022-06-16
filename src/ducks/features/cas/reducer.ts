@@ -12,6 +12,7 @@ export interface CertificateAuthoritiesState {
     caStats: CAStats
     list: Array<CertificateAuthority>
     issuedCertsStatus: ActionStatus
+    totalCAs: number
 }
 
 const initialState = {
@@ -30,12 +31,13 @@ const initialState = {
         status: ORequestStatus.Idle,
         type: ORequestType.None
     },
-    list: []
+    list: [],
+    totalCAs: 0
 };
 
 export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritiesState, RootAction>(initialState)
     .handleAction(actions.caActions.getCAsAction.request, (state, action) => {
-        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [] };
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [], totalCAs: 0 };
     })
     .handleAction(actions.caActions.getStatsAction.success, (state, action) => {
         console.log(action.payload);
@@ -62,7 +64,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
             list.push(ca);
         });
 
-        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: list };
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: list, totalCAs: action.payload.total_cas };
     })
 
     .handleAction(actions.caActions.getIssuedCertsActions.request, (state, action) => {
@@ -198,6 +200,11 @@ const getSelector = (state: RootState): CertificateAuthoritiesState => state.cas
 export const getStats = (state: RootState): CAStats => {
     const caReducer = getSelector(state);
     return caReducer.caStats;
+};
+
+export const getTotalCAs = (state: RootState): number => {
+    const caReducer = getSelector(state);
+    return caReducer.totalCAs;
 };
 
 export const getCAs = (state: RootState): Array<CertificateAuthority> => {

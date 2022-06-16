@@ -14,9 +14,9 @@ export const InfoView = () => {
         ["RSA Supported", true],
         ["RSA Minimum Key Size (bits)", "512"],
         ["RSA Maximum Key Size (bits)", "16384"],
-        ["ECDSA Supported", false],
-        ["ECDSA Minimum Key Size (bits)", "-"],
-        ["ECDSA Maximum Key Size (bits)", "-"]
+        ["EC Supported", false],
+        ["EC Minimum Key Size (bits)", "-"],
+        ["EC Maximum Key Size (bits)", "-"]
     ];
 
     const dmsInfo: Array<[string, any]> = [

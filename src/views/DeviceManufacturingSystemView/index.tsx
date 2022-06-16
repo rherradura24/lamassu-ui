@@ -46,8 +46,8 @@ const DmsActionWrapper = () => {
                     </Box>
                 </Box>
                 <Divider />
-                <Box style={{ padding: "20px 40px 20px 40px", flexGrow: 1, overflowY: "auto", height: "100%" }}>
-                    <Grid container>
+                <Box style={{ padding: "20px 40px 20px 40px", flexGrow: 1, overflowY: "auto", height: "100%", display: "flex" }}>
+                    <Grid container style={{ width: "300px", flexGrow: 1 }}>
                         <Outlet />
                     </Grid>
                 </Box>

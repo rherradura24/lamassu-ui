@@ -13,6 +13,8 @@ import * as dmsActions from "ducks/features/dms-enroller/actions";
 import * as dmsSelector from "ducks/features/dms-enroller/reducer";
 import { Device } from "ducks/features/devices/models";
 import CachedIcon from "@mui/icons-material/Cached";
+import { ORequestStatus, ORequestType } from "ducks/reducers_utils";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
 }
@@ -20,13 +22,22 @@ interface Props {
 export const CreateDevice: React.FC<Props> = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
     const dmsRequestStatus = useAppSelector((state) => dmsSelector.getRequestStatus(state));
     const dmsList = useAppSelector((state) => dmsSelector.getDMSs(state));
 
+    console.log(requestStatus);
+
     useEffect(() => {
-        dispatch(dmsActions.getDMSListAction.request());
+        dispatch(dmsActions.getDMSListAction.request({
+            offset: 0,
+            limit: 5,
+            sortField: "id",
+            sortMode: "asc",
+            filterQuery: []
+        }));
     }, []);
 
     const [device, setDevice] = useState<Device>(new Device({ icon_name: "Cg/CgSmartphoneChip", icon_color: "#0068D1", alias: "", tags: [], description: "" }));
@@ -35,6 +46,12 @@ export const CreateDevice: React.FC<Props> = () => {
     useEffect(() => {
         console.log(device);
     }, [device]);
+
+    useEffect(() => {
+        if (requestStatus.status === ORequestStatus.Success && requestStatus.type === ORequestType.Create) {
+            navigate("/devmanager");
+        }
+    }, [requestStatus]);
 
     const handleClickColorPicker = (event: any) => {
         if (anchorElColorPicker !== event.currentTarget) {

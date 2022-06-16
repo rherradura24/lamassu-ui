@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, IconButton, Paper, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import { LamassuTableWithDataController, OperandTypes } from "components/LamassuComponents/Table";
+import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigProps, OperandTypes } from "components/LamassuComponents/Table";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { ColoredButton } from "components/LamassuComponents/ColoredButton";
 import AddIcon from "@mui/icons-material/Add";
@@ -17,8 +17,11 @@ import * as dmsAction from "ducks/features/dms-enroller/actions";
 import * as dmsSelector from "ducks/features/dms-enroller/reducer";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
-import { ApproveDms } from "../DmsActions/ApproveDms/index";
 import { pSBC } from "components/utils/colors";
+import deepEqual from "fast-deep-equal/es6";
+import { RevokeDMS } from "../DmsActions/RevokeDms";
+import { DeclineDMS } from "../DmsActions/DeclineDms";
+import { ApproveDMS } from "../DmsActions/ApproveDms/index";
 
 export const DmsList = () => {
     const theme = useTheme();
@@ -28,27 +31,53 @@ export const DmsList = () => {
 
     const requestStatus = useAppSelector((state) => dmsSelector.getRequestStatus(state));
     const dmsList = useAppSelector((state) => dmsSelector.getDMSs(state));
-
-    useEffect(() => {
-        dispatch(dmsAction.getDMSListAction.request());
-    }, []);
+    const totalDMSs = useAppSelector((state) => dmsSelector.getTotalDMSs(state));
 
     const [isDialogOpen, setIsDialogOpen] = useState<{ open: boolean, type: "APPROVE" | "REVOKE" | "DECLINE", id: string }>({ open: false, type: "APPROVE", id: "" });
-
     const [anchorElSort, setAnchorElSort] = useState(null);
-    const handleClick = (event: any) => {
-        if (anchorElSort !== event.currentTarget) {
-            setAnchorElSort(event.currentTarget);
-        }
-    };
 
-    const handleCloseSort = (event: any) => {
-        setAnchorElSort(null);
-    };
+    const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
+        {
+            filter: {
+                enabled: true,
+                filters: []
+            },
+            sort: {
+                enabled: true,
+                selectedField: "id",
+                selectedMode: "asc"
+            },
+            pagination: {
+                enabled: true,
+                options: [10, 75, 100],
+                selectedItemsPerPage: 10,
+                selectedPage: 0
+            }
+        }
+    );
+
+    const refreshAction = () => dispatch(dmsAction.getDMSListAction.request({
+        offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
+        limit: tableConfig.pagination.selectedItemsPerPage!,
+        sortField: tableConfig.sort.selectedField!,
+        sortMode: tableConfig.sort.selectedMode!,
+        filterQuery: tableConfig.filter.filters!.map((f:any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
+    }));
+
+    useEffect(() => {
+        refreshAction();
+    }, []);
+
+    useEffect(() => {
+        if (tableConfig !== undefined) {
+            console.log("call ", tableConfig);
+            refreshAction();
+        }
+    }, [tableConfig]);
 
     const dmsTableColumns = [
         { key: "id", title: "DMS ID", dataKey: "id", align: "start", query: true, type: OperandTypes.string, size: 3 },
-        { key: "name", title: "Name", dataKey: "name", align: "center", query: true, type: OperandTypes.string, size: 2 },
+        { key: "name", title: "Name", dataKey: "name", align: "center", type: OperandTypes.string, size: 2 },
         { key: "creation", title: "Creation Date", dataKey: "creation_timestamp", type: OperandTypes.date, align: "center", size: 1 },
         { key: "status", title: "Status", dataKey: "status", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "expiration", title: "Expiration / Revocation / Rejection Date", dataKey: "modification_timestamp", type: OperandTypes.date, align: "center", size: 1 },
@@ -94,7 +123,8 @@ export const DmsList = () => {
                                                 startIcon={<DoneIcon />}
                                                 variant="contained"
                                                 size="small"
-                                                onClick={() => {
+                                                onClick={(ev) => {
+                                                    ev.stopPropagation();
                                                     setIsDialogOpen({ open: true, type: "APPROVE", id: dms.id });
                                                 }}
                                             >
@@ -108,11 +138,12 @@ export const DmsList = () => {
                                                 startIcon={<CloseIcon />}
                                                 variant="contained"
                                                 size="small"
-                                                onClick={() => {
+                                                onClick={(ev) => {
+                                                    ev.stopPropagation();
                                                     setIsDialogOpen({ open: true, type: "DECLINE", id: dms.id });
                                                 }}
                                             >
-                                                Reject
+                                                Decline
                                             </ColoredButton>
                                         </Grid>
                                     </>
@@ -128,7 +159,8 @@ export const DmsList = () => {
                                                         startIcon={<CloseIcon />}
                                                         variant="contained"
                                                         size="small"
-                                                        onClick={() => {
+                                                        onClick={(ev) => {
+                                                            ev.stopPropagation();
                                                             setIsDialogOpen({ open: true, type: "REVOKE", id: dms.id });
                                                         }}
                                                     >
@@ -185,24 +217,18 @@ export const DmsList = () => {
             <LamassuTableWithDataController
                 columnConf={dmsTableColumns}
                 data={dmsList}
-                totalDataItems={dmsList.length}
+                totalDataItems={totalDMSs}
                 renderDataItem={dmsRender}
                 isLoading={requestStatus.isLoading}
                 withAdd={() => { navigate("create"); }}
-                config={{
-                    filter: {
-                        enabled: false,
-                        filters: []
-                    },
-                    sort: {
-                        enabled: false
-                    },
-                    pagination: {
-                        enabled: false
+                config={tableConfig}
+                onChange={(ev: any) => {
+                    console.log(ev, tableConfig);
+                    if (!deepEqual(ev, tableConfig)) {
+                        setTableConfig(prev => ({ ...prev, ...ev }));
+                        // refreshAction();
                     }
                 }}
-                onChange={(ev: any) => { console.log("callback", ev); }}
-
                 tableProps={{
                     component: Paper,
                     style: {
@@ -243,7 +269,7 @@ export const DmsList = () => {
                         </Grid>
                     </Grid>
                 }
-                withRefresh={() => { dispatch(dmsAction.getDMSListAction.request()); }}
+                withRefresh={() => { refreshAction(); }}
             />
 
             {
@@ -251,23 +277,23 @@ export const DmsList = () => {
                     <>
                         {
                             isDialogOpen.type === "APPROVE" && (
-                                <ApproveDms dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <ApproveDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
                             )
                         }
 
-                        {/* {
+                        {
                             isDialogOpen.type === "DECLINE" && (
-                                <DeclineDms dmsId={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <DeclineDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
 
                             )
                         }
 
                         {
                             isDialogOpen.type === "REVOKE" && (
-                                <RevokeDms dmsId={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <RevokeDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
 
                             )
-                        } */}
+                        }
                     </>
                 )
             }

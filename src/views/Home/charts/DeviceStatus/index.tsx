@@ -11,6 +11,7 @@ export const DeviceStatusChart = ({ ...props }) => {
     const dispatch = useDispatch();
 
     const devicesStats = useAppSelector((state) => devicesSelector.getDevicesStats(state));
+    console.log(devicesStats);
     const refreshAction = () => {
         dispatch(devicesAction.getStatsAction.request({ force: false }));
     };
@@ -20,7 +21,9 @@ export const DeviceStatusChart = ({ ...props }) => {
     }, []);
 
     const totalDevices = devicesStats.stats !== undefined ? devicesStats.stats.pending_enrollment! + devicesStats.stats.expired! + devicesStats.stats.provisioned! + devicesStats.stats.revoked! + devicesStats.stats.decommissioned! : 0;
-    const primaryStat = devicesStats.stats !== undefined ? Math.floor(devicesStats.stats.provisioned! * 100 / totalDevices) : "-";
+
+    const enablePrimaryStat = devicesStats.stats !== undefined && totalDevices !== 0;
+    const primaryStat = enablePrimaryStat ? Math.floor(devicesStats.stats.provisioned! * 100 / totalDevices) : "-";
 
     const dataset = [
         {
@@ -32,11 +35,6 @@ export const DeviceStatusChart = ({ ...props }) => {
             label: "Provisioned",
             value: devicesStats.stats ? devicesStats.stats.provisioned : 0,
             color: theme.palette.chartsColors.green
-        },
-        {
-            label: "About to expire",
-            value: devicesStats.stats ? devicesStats.stats.expired : 0,
-            color: theme.palette.chartsColors.yellow
         },
         {
             label: "About to expire",
@@ -62,7 +60,7 @@ export const DeviceStatusChart = ({ ...props }) => {
             title="Device Provisioning Status"
             primaryStat={primaryStat}
             statLabel={"Provisioned Devices"}
-            percentage={true}
+            percentage={enablePrimaryStat}
             cardColor={theme.palette.homeCharts.deviceStatusCard.primary}
             primaryTextColor={theme.palette.homeCharts.deviceStatusCard.text}
             secondaryTextColor={theme.palette.homeCharts.deviceStatusCard.textSecondary}

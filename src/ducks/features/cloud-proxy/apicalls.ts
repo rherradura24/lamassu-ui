@@ -26,13 +26,13 @@ export const fireEvent = async (eventType: string, eventData: any): Promise<any>
         id: now,
         source: "lamassu-ui-" + keycloak.tokenParsed!.sub,
         type: eventType,
-        datacontenttype: "datacontenttype",
+        datacontenttype: "application/json",
         time: now,
         data: eventData
     };
     return apiRequest({
         method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/synchronize",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/event",
         data: event
     });
 };

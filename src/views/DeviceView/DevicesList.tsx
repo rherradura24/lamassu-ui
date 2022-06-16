@@ -54,11 +54,11 @@ export const DeviceList = () => {
     );
 
     const refreshAction = () => dispatch(devicesAction.getDevicesAction.request({
-        offset: tableConfig.pagination.selectedItemsPerPage!,
-        page: tableConfig.pagination.selectedPage! + 1,
+        offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
+        limit: tableConfig.pagination.selectedItemsPerPage!,
         sortField: tableConfig.sort.selectedField!,
         sortMode: tableConfig.sort.selectedMode!,
-        filterQuery: tableConfig.filter!.filters!.length > 0 ? `and(${tableConfig.filter.filters?.map((f:any) => { return f.propertyOperator + "(" + f.propertyKey + "," + f.propertyValue + ")"; })})` : ""
+        filterQuery: tableConfig.filter.filters!.map((f:any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
     }));
 
     useEffect(() => {

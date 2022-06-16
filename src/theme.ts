@@ -28,6 +28,11 @@ export const light : any = {
             main: "#da565f",
             dark: "#8C3239"
         },
+        blue: {
+            light: "#CDDEF5",
+            main: "#2099C6",
+            dark: "#214A75"
+        },
         gray: {
             light: "#fff",
             main: "#EFF0F2",
@@ -109,6 +114,11 @@ export const dark : any = {
             light: "#6d504e",
             main: "#da565f",
             dark: "#8C3239"
+        },
+        blue: {
+            light: "#184d60", // 184d60    4a6952
+            main: "#63B2F6", // 2099C6    25ee32
+            dark: "#104c63" // 104c63   2F6140
         },
         gray: {
             light: "#666",

@@ -273,6 +273,7 @@ interface LamassuTableWithDataControllerProps extends LamassuTableProps {
         enabled: boolean,
         renderDataItem: any
     }
+    enableRowExpand?: boolean
     withAdd?: any
     [x: string]: any
 }
@@ -699,7 +700,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                 )
             }
 
-            <Box sx={{ height: 300, flexGrow: 1, overflowY: "auto", padding: "10px" }}>
+            <Box sx={{ height: "100%", flexGrow: 1, overflowY: "auto", padding: "10px" }}>
                 {
                     isLoading
                         ? (

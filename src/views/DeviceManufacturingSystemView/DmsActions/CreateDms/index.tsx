@@ -40,7 +40,7 @@ export const CreateDms = () => {
         }
     ];
 
-    const ecdsaOptions = [
+    const ecOptions = [
         {
             label: "224",
             value: 224,
@@ -96,7 +96,7 @@ export const CreateDms = () => {
     const [org, setOrg] = useState("");
     const [orgUnit, setOrgUnit] = useState("");
     const [cn, setCN] = useState("");
-    const [keyType, setKeyType] = useState<"RSA" | "ECDSA">("RSA");
+    const [keyType, setKeyType] = useState<"RSA" | "EC">("RSA");
     const [keyBits, setKeyBits] = useState(rsaOptions[1]);
 
     useEffect(() => {
@@ -107,17 +107,17 @@ export const CreateDms = () => {
         if (keyType === "RSA") {
             setKeyBits(rsaOptions[1]);
         } else {
-            setKeyBits(ecdsaOptions[1]);
+            setKeyBits(ecOptions[1]);
         }
     }, [keyType]);
 
-    const keyBitsOptions = keyType === "RSA" ? rsaOptions : ecdsaOptions;
+    const keyBitsOptions = keyType === "RSA" ? rsaOptions : ecOptions;
     const disabledCreateDmsButton = dmsName === "" || cn === "";
 
     return (
         displayPrivKeyView === false
             ? (
-                <Grid container spacing={3} justifyContent="center" alignItems="center">
+                <Grid container item spacing={3} justifyContent="center" alignItems="center">
                     <Grid item xs={12}>
                         <TextField variant="standard" fullWidth label="Device Manufacturing System Name" required value={dmsName} onChange={(ev) => setDmsName(ev.target.value)} />
                     </Grid>
@@ -132,7 +132,7 @@ export const CreateDms = () => {
                                 onChange={(ev: any) => setKeyType(ev.target.value)}
                             >
                                 <MenuItem value="RSA">RSA</MenuItem>
-                                <MenuItem value="EC">ECDSA</MenuItem>
+                                <MenuItem value="EC">EC</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -198,26 +198,47 @@ export const CreateDms = () => {
                 </Grid>
             )
             : (
+                <Grid item container>
 
-                <Grid item xs={12} spacing={2} container flexDirection="column" >
-                    <Grid item>
-                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px" }}>Save the Private Key</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13 }}>Once you exit this window, you will no longer be able to obtain the private key. Save the private key first</Typography>
-                    </Grid>
-                    <Grid item container sx={{ width: "100%" }} spacing={2}>
-                        <Grid item >
-                            <Button variant="outlined" onClick={() => { downloadFile("dms-" + dmsName + ".key", window.atob(privateKey)); }}>Download Private Key</Button>
+                    <Grid item xs={6} spacing={2} container flexDirection="column" >
+                        <Grid item>
+                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px" }}>Save the Private Key</Typography>
                         </Grid>
                         <Grid item>
-                            <Button variant="contained" onClick={() => { navigate("/dms"); }}>Go Back</Button>
+                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13 }}>Once you exit this window, you will no longer be able to obtain the private key. Save the private key first</Typography>
+                        </Grid>
+                        <Grid item container sx={{ width: "100%" }} spacing={2}>
+                            <Grid item >
+                                <Button variant="outlined" onClick={() => { downloadFile("dms-" + dmsName + ".key", window.atob(privateKey)); }}>Download Private Key</Button>
+                            </Grid>
+                            <Grid item>
+                                <Button variant="contained" onClick={() => { navigate("/dms"); }}>Go Back</Button>
+                            </Grid>
+                        </Grid>
+                        <Grid item container sx={{ width: "100%" }} spacing={1}>
+                            <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                {privateKey !== undefined ? window.atob(privateKey) : ""}
+                            </SyntaxHighlighter>
                         </Grid>
                     </Grid>
-                    <Grid item container sx={{ width: "100%" }} spacing={1}>
-                        <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                            {privateKey !== undefined ? window.atob(privateKey) : ""}
-                        </SyntaxHighlighter>
+                    <Grid item xs={6} spacing={2} container flexDirection="column" >
+                        <Grid item>
+                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px" }}>Run the Virtual DMS</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13 }}>Start enrolling your devices using the Virtual DMS, a demo tool that performs automatic device registration</Typography>
+                        </Grid>
+                        <Grid item container sx={{ width: "100%" }} spacing={1}>
+                            <SyntaxHighlighter
+                                style={theme.palette.mode === "light" ? materialLight : materialOceanic}
+                                customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }}
+                                wrapLines={true}
+                                wrapLongLines={true}
+                                lineProps={{ style: { color: theme.palette.text.primaryLight, overflowWrap: "break-word" } }}
+                            >
+                                {privateKey !== undefined ? `docker run -e DMS_B64_PRIVATE_KEY=${privateKey.replace(/(\r\n|\n|\r)/gm, "")} lamassuiot/virtual-dms` : ""}
+                            </SyntaxHighlighter>
+                        </Grid>
                     </Grid>
                 </Grid>
             )
