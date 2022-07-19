@@ -73,7 +73,7 @@ export const DeviceCard: React.FC<Props> = ({ device, ...props }) => {
             </Box>
             <Box>
                 {
-                    remainingDaysBeforeExpiration >= 0 && (
+                    remainingDaysBeforeExpiration < 30 && (
                         <Grid item xs={12} container justifyContent={"space-between"} sx={{ background: alertColorBg, borderRadius: 1, padding: "5px 10px 5px 10px" }}>
                             <Grid item container xs={9}>
                                 {remainingDaysBeforeExpiration < 30 && (<AiFillWarning color={alertColorIcon} style={{ marginRight: "5px" }}/>)}

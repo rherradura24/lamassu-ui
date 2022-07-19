@@ -81,9 +81,9 @@ export const DmsList = () => {
         { key: "creation", title: "Creation Date", dataKey: "creation_timestamp", type: OperandTypes.date, align: "center", size: 1 },
         { key: "status", title: "Status", dataKey: "status", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "expiration", title: "Expiration / Revocation / Rejection Date", dataKey: "modification_timestamp", type: OperandTypes.date, align: "center", size: 1 },
-        { key: "keystrength", title: "Key Strength", dataKey: "key_metadata.strength", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "keyprops", title: "Key Properties", align: "center", size: 1 },
-        { key: "enrolled", title: "Enrolled Devices", align: "center", size: 1 },
+        { key: "keystrength", title: "Key Strength", dataKey: "key_metadata.strength", type: OperandTypes.enum, align: "center", size: 1 },
+        // { key: "enrolled", title: "Enrolled Devices", align: "center", size: 1 },
         { key: "actions", title: "Actions", align: "center", size: 2 }
     ];
 
@@ -169,7 +169,7 @@ export const DmsList = () => {
                                                 </Grid>
                                                 <Grid item>
                                                     <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                        <IconButton onClick={() => { downloadFile("dms-" + dms.name + ".crt", window.atob(dms.crt)); }}>
+                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("dms-" + dms.name + ".crt", window.atob(dms.crt)); }}>
                                                             <FileDownloadRoundedIcon fontSize={"small"} />
                                                         </IconButton>
                                                     </Box>

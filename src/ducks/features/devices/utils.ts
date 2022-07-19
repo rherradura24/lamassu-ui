@@ -6,6 +6,8 @@ export const deviceStatusToColor = (status: DeviceStatus) => {
         return "green";
     case ODeviceStatus.CERT_REVOKED:
         return "red";
+    case ODeviceStatus.CERT_EXPIRED:
+        return "red";
     case ODeviceStatus.PENDING_PROVISION:
         return "orange";
     default:

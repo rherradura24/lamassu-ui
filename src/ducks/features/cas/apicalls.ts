@@ -8,7 +8,7 @@ export const getStats = async (): Promise<any> => {
 };
 
 export const getCAs = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
-    let url = window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki?" + `sort_by=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
+    let url = window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki?"/* + `sort_by=${sortField}.${sortMode}&` */ + `limit=${limit}&offset=${offset}`;
     filterQuery.forEach(filter => {
         url += `&filter=${filter}`;
     });

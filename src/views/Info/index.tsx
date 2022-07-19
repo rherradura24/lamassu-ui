@@ -26,7 +26,8 @@ export const InfoView = () => {
 
     const deviceManagerInfo: Array<[string, any]> = [
         ["Version", "1.0.0"],
-        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"]
+        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"],
+        ["Minimum Reenrollment Days", "10 days"]
     ];
 
     const cloudProxyInfo: Array<[string, any]> = [
@@ -38,7 +39,7 @@ export const InfoView = () => {
         <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
             <Grid sx={{ overflowY: "auto", flexGrow: 1, height: "300px" }} component={Paper}>
                 <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                    <Box style={{ padding: "40px 40px 0 40px" }}>
+                    <Box style={{ padding: "40px" }}>
                         <Grid item container spacing={2} justifyContent="flex-start">
                             <Grid item xs={12}>
                                 <Box style={{ display: "flex", alignItems: "center" }}>
@@ -53,7 +54,7 @@ export const InfoView = () => {
                         <Box component={Paper} sx={{
                             height: "75px",
                             width: "150px",
-                            backgroundImage: "url('https://www.datocms-assets.com/2885/1534364757-vault-black-back.png')",
+                            backgroundImage: "url('assets/vault.png')",
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             backgroundRepeat: "no-repeat",
@@ -178,7 +179,7 @@ export const InfoView = () => {
                             <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13, marginTop: "10px" }}>Version, Build number, and other information regarding Lamassu Cloud Proxy API</Typography>
                         </Grid>
                         {
-                            deviceManagerInfo.map((info: any, index: number) => {
+                            cloudProxyInfo.map((info: any, index: number) => {
                                 return (
                                     <Grid key={index} item container spacing={2} justifyContent="space-between">
                                         <Grid item xs={6}>

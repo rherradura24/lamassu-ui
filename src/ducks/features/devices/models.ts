@@ -85,6 +85,7 @@ export class DevicesStats {
 export const ODeviceStatus = {
     DEVICE_PROVISIONED: "Device Provisioned",
     CERT_REVOKED: "Cert Revoked",
+    CERT_EXPIRED: "Cert Expired",
     PENDING_PROVISION: "Pending Provision"
 };
 

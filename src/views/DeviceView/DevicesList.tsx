@@ -131,16 +131,16 @@ export const DeviceList = () => {
                                 </Box>
                             </Grid>
                             <Grid item>
-                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <IconButton onClick={() => setIsValidateCertOpen({ open: true, device: device })} sx={{}}>
-                                        <FactCheckOutlinedIcon fontSize={"small"} />
+                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                    <IconButton onClick={() => setIsESTDialogOpen({ open: true, id: device.id, selectedTab: 0 })}>
+                                        <TerminalIcon fontSize={"small"} />
                                     </IconButton>
                                 </Box>
                             </Grid>
                             <Grid item>
-                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                    <IconButton onClick={() => setIsESTDialogOpen({ open: true, id: device.id, selectedTab: 0 })}>
-                                        <TerminalIcon fontSize={"small"} />
+                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <IconButton onClick={() => setIsValidateCertOpen({ open: true, device: device })} sx={{}}>
+                                        <FactCheckOutlinedIcon fontSize={"small"} />
                                     </IconButton>
                                 </Box>
                             </Grid>
@@ -348,18 +348,10 @@ export const DeviceList = () => {
 
                                     <Typography>
                                         <Typography variant="button" fontWeight="bold" marginRight="10px">Step 3</Typography>
-                                        Prepare the OCSP Request payload:
-                                    </Typography>
-                                    <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                        {"OCSP_REQUEST=$(openssl ocsp -CAfile $CA_CERTIFICATE -issuer $CA_CERTIFICATE -cert $DEVICE_CERTIFICATE -reqout - | base64 -w 0)"}
-                                    </SyntaxHighlighter>
-
-                                    <Typography>
-                                        <Typography variant="button" fontWeight="bold" marginRight="10px">Step 4</Typography>
                                         Check the status of the certificate
                                     </Typography>
                                     <SyntaxHighlighter language="markdown" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 11, padding: "10px 20px 10px 20px", borderRadius: 10, width: "calc(100% - 40px)", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                        {"curl --location --request GET \"https://$OCSP_SERVER/api/ocsp/$OCSP_REQUEST\" > ocspresponse.der \nopenssl ocsp -respin ocspresponse.der -VAfile root-ca.pem -resp_text"}
+                                        {"openssl ocsp -issuer ca.crt \\\n   -issuer $CA_CERTIFICATE \\\n   -cert $DEVICE_CERTIFICATE \\\n   -CAfile root-ca.pem \\\n   -VAfile root-ca.pem \\\n   -url https://$OCSP_SERVER/api/ocsp/"}
                                     </SyntaxHighlighter>
                                 </Grid>
                             </Grid>
