@@ -28,8 +28,12 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
     const cloudConnector = useAppSelector((state) => cloudProxySelector.getCloudConnector(state, connectorID));
     const [awsCloudConnector, setAwsCloudConnector] = useState<AWSCloudConnector>();
 
-    useEffect(() => {
+    const refreshAction = () => {
         dispatch(cloudProxyActions.getConnectorsAction.request());
+    };
+
+    useEffect(() => {
+        refreshAction();
     }, []);
 
     const [selectedTab, setSelectedTab] = useState(0);
@@ -90,12 +94,14 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                 setAwsSyncCA(newSelectedCAConfig);
             }
 
-            if (newSelectedCAConfig !== undefined && newSelectedCAConfig.config) {
-                if (newSelectedCAConfig.config.policy_status === OAWSPolicyStatus.Active) {
-                    setAwsPolicy(JSON.stringify(JSON.parse(newSelectedCAConfig.config.policy_document!), null, 4));
+            console.log(awsCloudConnector);
+
+            if (newSelectedCAConfig !== undefined && newSelectedCAConfig.configuration) {
+                if (newSelectedCAConfig.configuration.policy_status === OAWSPolicyStatus.Active) {
+                    setAwsPolicy(JSON.stringify(JSON.parse(newSelectedCAConfig.configuration.policy_document!), null, 4));
                 } else {
                     setUsingDefaultPolicy(true);
-                    setAwsPolicy(JSON.stringify(buildAwsPolicy(awsCloudConnector.cloud_configuration.iot_core_endpoint.split(".")[2], awsCloudConnector.cloud_configuration.account_id), null, 4));
+                    setAwsPolicy(JSON.stringify(buildAwsPolicy(awsCloudConnector.configuration.iot_core_endpoint.split(".")[2], awsCloudConnector.configuration.account_id), null, 4));
                 }
             }
         }
@@ -120,7 +126,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                 <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                             )
                             : (
-                                <Typography style={{ fontSize: 14 }}>{awsCloudConnector.cloud_configuration.account_id}</Typography>
+                                <Typography style={{ fontSize: 14 }}>{awsCloudConnector.configuration.account_id}</Typography>
                             )
                     }
                 </Grid>
@@ -134,7 +140,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                 <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                             )
                             : (
-                                <Typography style={{ fontSize: 14 }}>{awsCloudConnector.cloud_configuration.iot_core_endpoint}</Typography>
+                                <Typography style={{ fontSize: 14 }}>{awsCloudConnector.configuration.iot_core_endpoint}</Typography>
                             )
                     }
                 </Grid>
@@ -156,7 +162,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                     <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                                                 )
                                                 : (
-                                                    <Typography style={{ fontSize: 14 }}>{awsSyncCA.config.id}</Typography>
+                                                    <Typography style={{ fontSize: 14 }}>{awsSyncCA.configuration.id}</Typography>
                                                 )
                                         }
                                     </Grid>
@@ -170,7 +176,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                     <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                                                 )
                                                 : (
-                                                    <Typography style={{ fontSize: 14 }}>{awsSyncCA.config.arn}</Typography>
+                                                    <Typography style={{ fontSize: 14 }}>{awsSyncCA.configuration.arn}</Typography>
                                                 )
                                         }
                                     </Grid>
@@ -184,7 +190,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                     <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                                                 )
                                                 : (
-                                                    <LamassuChip color={awsSyncCA.config.status_color} label={awsSyncCA.config.status} />
+                                                    <LamassuChip color={awsSyncCA.configuration.status_color} label={awsSyncCA.configuration.status} />
                                                 )
                                         }
                                     </Grid>
@@ -198,7 +204,7 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                     <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
                                                 )
                                                 : (
-                                                    <Typography style={{ fontSize: 14 }}>{moment(awsSyncCA.config.creation_date).format("DD-MM-YYYY HH:mm")}</Typography>
+                                                    <Typography style={{ fontSize: 14 }}>{moment(awsSyncCA.configuration.creation_date).format("DD-MM-YYYY HH:mm")}</Typography>
                                                 )
                                         }
                                     </Grid>
@@ -255,8 +261,16 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                                         </Button>
                                                                     </Grid>
                                                                     <Grid item xs="auto">
-                                                                        <Button variant="contained" startIcon={<SendIcon />} onClick={() => { dispatch(cloudProxyActions.updateAccessPolicyAction.request({ body: { connector_id: connectorID, policy: JSON.stringify(JSON.parse(awsPolicy)), ca_name: caName } })); }} >
-                                                                            Save
+                                                                        <Button variant="contained" startIcon={<SendIcon />} onClick={() => {
+                                                                            dispatch(cloudProxyActions.updateConfiguration.request({
+                                                                                connector_id: connectorID,
+                                                                                configuration: {
+                                                                                    policy: JSON.stringify(JSON.parse(awsPolicy)),
+                                                                                    ca_name: caName
+                                                                                }
+                                                                            }));
+                                                                        }}>
+                                                                        Save
                                                                         </Button>
                                                                     </Grid>
                                                                 </Grid>
@@ -267,13 +281,13 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                                                             <>
                                                                 <Grid item xs={12}>
                                                                     <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setEditMode(true)}>
-                                                                        Edit Policy
+                                                Edit Policy
                                                                     </Button>
                                                                 </Grid>
 
                                                                 <Grid item xs={12}>
                                                                     {
-                                                                        awsSyncCA.config.policy_status === OAWSPolicyStatus.Active
+                                                                        awsSyncCA.configuration.policy_status === OAWSPolicyStatus.Active
                                                                             ? (
                                                                                 <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 12, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primary } }}>
                                                                                     {awsPolicy}

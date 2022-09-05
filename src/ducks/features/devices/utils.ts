@@ -1,25 +1,48 @@
-import { DeviceStatus, HistoricalCertStatus, ODeviceStatus, OHistoricalCertStatus } from "./models";
+import { Theme } from "@mui/material";
+import { DeviceStatus, ODeviceStatus, OSlotCertificateStatus, SlotCertificateStatus } from "./models";
 
 export const deviceStatusToColor = (status: DeviceStatus) => {
     switch (status) {
-    case ODeviceStatus.DEVICE_PROVISIONED:
+    case ODeviceStatus.FULLY_PROVISIONED:
         return "green";
-    case ODeviceStatus.CERT_REVOKED:
+    case ODeviceStatus.DECOMMISSIONED:
         return "red";
-    case ODeviceStatus.CERT_EXPIRED:
-        return "red";
-    case ODeviceStatus.PENDING_PROVISION:
+    case ODeviceStatus.PENDING_PROVISIONING:
+        return "orange";
+    case ODeviceStatus.PROVISIONED_WITH_WARNINGS:
+        return "orange";
+    case ODeviceStatus.REQUIRES_ACTION:
         return "orange";
     default:
         return "gray";
     }
 };
-
-export const historicalCertStatusToColor = (status: HistoricalCertStatus) => {
+export const deviceStatusToColorWithTheme = (status: DeviceStatus, theme: Theme) => {
     switch (status) {
-    case OHistoricalCertStatus.ISSUED:
+    case ODeviceStatus.FULLY_PROVISIONED:
+        return theme.palette.chartsColors.green;
+    case ODeviceStatus.DECOMMISSIONED:
+        return theme.palette.chartsColors.purple;
+    case ODeviceStatus.PENDING_PROVISIONING:
+        return theme.palette.chartsColors.blue;
+    case ODeviceStatus.PROVISIONED_WITH_WARNINGS:
+        return theme.palette.chartsColors.yellow;
+    case ODeviceStatus.REQUIRES_ACTION:
+        return theme.palette.chartsColors.red;
+    default:
+        return "gray";
+    }
+};
+
+export const slotCertificateStatusToColor = (status: SlotCertificateStatus) => {
+    switch (status) {
+    case OSlotCertificateStatus.ACTIVE:
         return "green";
-    case OHistoricalCertStatus.REVOKED:
+    case OSlotCertificateStatus.EXPIRED:
+        return "red";
+    case OSlotCertificateStatus.ABOUT_TO_EXPIRE:
+        return "orange";
+    case OSlotCertificateStatus.REVOKED:
         return "red";
     default:
         return "gray";

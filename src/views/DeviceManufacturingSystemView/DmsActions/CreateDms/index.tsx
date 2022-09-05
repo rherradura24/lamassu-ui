@@ -70,9 +70,7 @@ export const CreateDms = () => {
 
     const handleCreateDms = () => {
         dispatch(dmsAction.createDMSWithFormAction.request({
-            dmsName: dmsName,
             form: {
-
                 subject: {
                     common_name: cn,
                     country: country,
@@ -96,7 +94,7 @@ export const CreateDms = () => {
     const [org, setOrg] = useState("");
     const [orgUnit, setOrgUnit] = useState("");
     const [cn, setCN] = useState("");
-    const [keyType, setKeyType] = useState<"RSA" | "EC">("RSA");
+    const [keyType, setKeyType] = useState<"RSA" | "ECDSA">("RSA");
     const [keyBits, setKeyBits] = useState(rsaOptions[1]);
 
     useEffect(() => {
@@ -117,7 +115,7 @@ export const CreateDms = () => {
     return (
         displayPrivKeyView === false
             ? (
-                <Grid container item spacing={3} justifyContent="center" alignItems="center">
+                <Grid container spacing={2} justifyContent="center" alignItems="center">
                     <Grid item xs={12}>
                         <TextField variant="standard" fullWidth label="Device Manufacturing System Name" required value={dmsName} onChange={(ev) => setDmsName(ev.target.value)} />
                     </Grid>
@@ -132,7 +130,7 @@ export const CreateDms = () => {
                                 onChange={(ev: any) => setKeyType(ev.target.value)}
                             >
                                 <MenuItem value="RSA">RSA</MenuItem>
-                                <MenuItem value="EC">EC</MenuItem>
+                                <MenuItem value="ECDSA">ECDSA</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

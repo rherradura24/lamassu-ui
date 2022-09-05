@@ -1,4 +1,11 @@
 import { KeyStrength, KeyType } from "../cas/models";
+export class DMSManagerInfo {
+    public build_version!: string
+    public build_time!: string
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
 
 export class GetDMSsListAPIResponse {
     public total_dmss!: number
@@ -10,7 +17,6 @@ export class GetDMSsListAPIResponse {
 }
 
 export class DMS {
-    public id!: string
     public name!: string
 
     public key_metadata!: {
@@ -30,11 +36,11 @@ export class DMS {
     }
 
     public creation_timestamp!: Date
-    public modification_timestamp!: Date
+    public last_status_update_timestamp!: Date
     public status!: DMSStatus
     public status_color!: string
-    public crt!: string
-    public csr!: string
+    public certificate!: string
+    public certificate_request!: string
 
     public authorized_cas!: Array<string>
 
@@ -45,10 +51,11 @@ export class DMS {
 }
 
 export const ODMSStatus = {
-    PendingApproval: "Pending Approval",
-    Approved: "Approved",
-    Denied: "Denied",
-    Revoked: "Revoked"
+    PENDING_APPROVAL: "PENDING_APPROVAL",
+    APPROVED: "APPROVED",
+    REJECTED: "REJECTED",
+    EXPIRED: "EXPIRED",
+    REVOKED: "REVOKED"
 };
 
 export type DMSStatus = typeof ODMSStatus[keyof typeof ODMSStatus];

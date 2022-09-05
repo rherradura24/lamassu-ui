@@ -1,30 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, IconButton, Menu, MenuItem, Paper, Skeleton, Typography, useTheme } from "@mui/material";
+import { Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import moment from "moment";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { ColoredButton } from "components/LamassuComponents/ColoredButton";
-import { Link, Outlet, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { Outlet, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import * as cloudProxyActions from "ducks/features/cloud-proxy/actions";
-import * as cloudProxySelector from "ducks/features/cloud-proxy/reducer";
 import * as devicesAction from "ducks/features/devices/actions";
 import * as devicesSelector from "ducks/features/devices/reducer";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
-import { Device, OHistoricalCertStatus } from "ducks/features/devices/models";
-import { OCloudProviderHealthStatus } from "ducks/features/cloud-proxy/models";
-import { Certificate } from "@fidm/x509";
-import { Modal } from "components/Modal";
 import { DeviceInspectorSlotList } from "./DeviceInspectorViews/DeviceInspectorSlotList";
 import { DeviceInspectorSlotView } from "./DeviceInspectorViews/DeviceInspectorSlotView";
+import moment from "moment";
+import { capitalizeFirstLetter } from "ducks/reducers_utils";
+import SplitButton from "components/LamassuComponents/SplitButton";
+import { ODeviceStatus } from "ducks/features/devices/models";
 
 interface Props {
-    deviceID: string
+    deviceID: string,
 }
 
 export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
@@ -32,23 +27,8 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const connectorsRequestStatus = useAppSelector((state) => cloudProxySelector.getRequestStatus(state));
-    const connectors = useAppSelector((state) => cloudProxySelector.getCloudConnectors(state));
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
-    const historicalCertRequestStatus = useAppSelector((state) => devicesSelector.getHistoricalCertRequestStatus(state));
     const device = useAppSelector((state) => devicesSelector.getDevice(state, deviceID));
-
-    const [decodedCertificate, setDecodedCertificate] = useState<Certificate | undefined>();
-    const [showCertificate, setShowCertificate] = useState(false);
-    const [showRevokeCertificate, setShowRevokeCertificate] = useState(false);
-
-    let activeCertIssuer: string | undefined;
-    if (device) {
-        const filteredCerts = device.historicalCerts.filter(cert => cert.status === OHistoricalCertStatus.ISSUED);
-        if (filteredCerts.length > 0) {
-            activeCertIssuer = filteredCerts[0].issuer_name;
-        }
-    }
 
     const refreshAction = () => {
         dispatch(devicesAction.getDeviceByIDAction.request({ deviceID: deviceID }));
@@ -58,23 +38,6 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     useEffect(() => {
         refreshAction();
     }, []);
-
-    useEffect(() => {
-        const connectorToFetch = [];
-        for (const connector of connectors) {
-            if (connector.status === OCloudProviderHealthStatus.Passing) {
-                connectorToFetch.push(connector.id);
-            }
-        }
-        dispatch(cloudProxyActions.getCloudConnectorDeviceConfigAction.request({ connectorIDs: connectorToFetch, deviceID: deviceID }));
-    }, [connectors, activeCertIssuer]);
-
-    useEffect(() => {
-        if (device && device.current_certificate.crt) {
-            const parsedCert = Certificate.fromPEM(Buffer.from(window.atob(device.current_certificate.crt), "utf8"));
-            setDecodedCertificate(parsedCert);
-        }
-    }, [device]);
 
     const [anchorDeviceActionEl, setAnchorDeviceActionEl] = useState(null);
 
@@ -131,7 +94,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                                                     <Skeleton variant="rectangular" width={"60px"} height={"20px"} sx={{ borderRadius: "10px", marginBottom: "20px" }} />
                                                 )
                                                 : (
-                                                    <LamassuChip label={device!.status} color={device!.status_color} />
+                                                    <LamassuChip label={capitalizeFirstLetter(device!.status)} color={device!.status_color} />
                                                 )
                                         }
                                     </Grid>
@@ -189,45 +152,15 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                                             </IconButton>
                                         </Grid>
                                         <Grid item>
-                                            <ColoredButton customtextcolor={theme.palette.text.primary} customcolor={theme.palette.gray.main} variant="contained" disableFocusRipple disableRipple endIcon={anchorDeviceActionEl ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleDeviceActionClick}>Actions</ColoredButton>
-                                            <Menu
-                                                style={{ marginTop: 1, width: 200, borderRadius: 0 }}
-                                                id="simple-menu"
-                                                anchorEl={anchorDeviceActionEl}
-                                                open={Boolean(anchorDeviceActionEl)}
-                                                onClose={handleDeviceActionClose}
-                                            // MenuListProps={{ onMouseLeave: handleClose }}
-                                            >
-                                                <MenuItem component={Link} to="edit" style={{ width: "100%" }} onClick={(ev: any) => { }}>Edit</MenuItem>
-                                                <MenuItem style={{ width: "100%" }} onClick={(ev) => { setShowRevokeCertificate(true); }}>Revoke Certificate</MenuItem>
-                                                <MenuItem style={{ width: "100%" }} onClick={(ev) => { }} disabled>Delete Device</MenuItem>
-                                            </Menu>
+                                            <SplitButton options={
+                                                [
+                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Edit", onClick: () => { } },
+                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Force Certificate Renewal", onClick: () => { } },
+                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Revoke Slot Certificate", onClick: () => { } },
+                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Decommission Device", onClick: () => { dispatch(devicesAction.decommissionDeviceAction.request({ deviceID: deviceID })); } }
+                                                ]
+                                            } />
                                         </Grid>
-                                        <Modal
-                                            title="Revoke the active certificate used by this device"
-                                            isOpen={showRevokeCertificate}
-                                            onClose={() => { setShowRevokeCertificate(false); }}
-                                            subtitle="You are about to revoke the current device cert. By revoking this certificate, the divice will no longer be able to connect to Lamassu nor any cloud porovider IoT platform"
-                                            actions={
-                                                <Box>
-                                                    <Button variant="text" onClick={() => { setShowRevokeCertificate(false); }}>Close</Button>
-                                                    <Button variant="contained" onClick={() => { dispatch(devicesAction.revokeActiveDeviceCertificateAction.request({ deviceID: deviceID })); setShowRevokeCertificate(false); }}>Revoke</Button>
-                                                </Box>
-                                            }
-                                            content={
-                                                <>
-                                                    <div style={{ marginTop: 20 }}>
-                                                        <Typography variant="button">Device Alias: </Typography>
-                                                        <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#0D1519", padding: 5, fontSize: 12 }}>{device!.alias ? device!.alias : "-"}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography variant="button">Device ID: </Typography>
-                                                        <Typography variant="button" style={{ background: theme.palette.mode === "light" ? "#efefef" : "#0D1519", padding: 5, fontSize: 12 }}>{deviceID}</Typography>
-                                                    </div>
-                                                </>
-                                            }
-                                        />
-
                                     </>
                                 )
                             }
@@ -238,12 +171,13 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                     device !== undefined && (
                         <Routes>
                             <Route path="/" element={<Outlet />}>
-                                <Route path=":slotID" element={<RoutedDeviceInspectorSlotView deviceID={deviceID} activeCertIssuer={activeCertIssuer} device={device} decodedCertificate={decodedCertificate}/>} />
+                                <Route path=":slotID" element={<RoutedDeviceInspectorSlotView deviceID={deviceID} />} />
                                 <Route index element={
-                                    <DeviceInspectorSlotList deviceID={deviceID} activeCertIssuer={activeCertIssuer} device={device} decodedCertificate={decodedCertificate} onSlotClick={(slotID: any) => {
+                                    <DeviceInspectorSlotList deviceID={deviceID} onSlotClick={(slotID: any) => {
                                         navigate(slotID);
                                     }} />
-                                } />
+                                }
+                                />
                             </Route>
                         </Routes>
                     )
@@ -251,19 +185,18 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
             </Box>
         );
     }
-    return <Typography sx={{ marginTop: "10px", fontStyle: "italic" }}>Device with ID {deviceID} does not exist</Typography>;
+    return <Box padding="20px">
+        <Typography sx={{ marginTop: "10px", fontStyle: "italic" }}>Device with ID {deviceID} does not exist</Typography>
+    </Box>;
 };
 
 interface RoutedDeviceInspectorSlotViewProps {
     deviceID: string,
-    device: Device,
-    activeCertIssuer: string | undefined
-    decodedCertificate: Certificate | undefined
 }
-const RoutedDeviceInspectorSlotView: React.FC<RoutedDeviceInspectorSlotViewProps> = ({ deviceID, activeCertIssuer, device, decodedCertificate }) => {
+const RoutedDeviceInspectorSlotView: React.FC<RoutedDeviceInspectorSlotViewProps> = ({ deviceID }) => {
     const params = useParams();
     // console.log(params, location);
     return (
-        <DeviceInspectorSlotView slotID={params.slotID!} deviceID={deviceID} activeCertIssuer={activeCertIssuer} device={device} decodedCertificate={decodedCertificate}/>
+        <DeviceInspectorSlotView slotID={params.slotID!} deviceID={deviceID} />
     );
 };

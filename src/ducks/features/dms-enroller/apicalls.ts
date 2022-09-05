@@ -2,8 +2,15 @@ import { apiRequest } from "ducks/services/api";
 import { CreateDMSForm } from "./actions";
 import { DMSStatus } from "./models";
 
+export const getInfo = async (): Promise<any> => {
+    return apiRequest({
+        method: "GET",
+        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/info"
+    });
+};
+
 export const getDMSList = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
-    let url = window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/?" + `sort=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
+    let url = window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/?" + `sort=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
     filterQuery.forEach(filter => {
         url += `&filter=${filter}`;
     });
@@ -13,26 +20,36 @@ export const getDMSList = async (limit: number, offset: number, sortMode: "asc" 
     });
 };
 
-export const createDMS = async (dmsName: string, dmsForm: CreateDMSForm): Promise<any> => {
+export const createDMS = async (dmsForm: CreateDMSForm): Promise<any> => {
     return apiRequest({
         method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/" + dmsName + "/form",
+        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/",
         data: dmsForm
     });
 };
 
-export const updateDMS = async (dmsID: string, status: DMSStatus, authorizedCAs?: Array<string>): Promise<any> => {
+export const updateDMSStatus = async (dmsName: string, status: DMSStatus): Promise<any> => {
     // eslint-disable-next-line prefer-const
     let payload: any = {
         status: status
     };
 
-    if (authorizedCAs) {
-        payload.authorized_cas = authorizedCAs;
-    }
     return apiRequest({
         method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_DMS_ENROLLER_API + "/v1/" + dmsID,
+        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/status",
+        data: payload
+    });
+};
+
+export const updateDMSAuthorizedCAs = async (dmsName: string, authorizedCAs: Array<string>): Promise<any> => {
+    // eslint-disable-next-line prefer-const
+    let payload: any = {
+        authorized_cas: authorizedCAs
+    };
+
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/auth",
         data: payload
     });
 };

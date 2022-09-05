@@ -140,23 +140,23 @@ export const CreateDevice: React.FC<Props> = () => {
                                             variant="standard"
                                             fullWidth
                                             required={true}
-                                            error={device.dms_id === ""}
+                                            error={device.dms_name === ""}
                                         >
                                             <InputLabel>DMS</InputLabel>
                                             <Select
                                                 label="Operand"
-                                                value={device.dms_id}
-                                                onChange={(ev: any) => { setDevice((prevData: any) => ({ ...prevData, dms_id: ev.target.value })); }}
-                                                renderValue={(dmsID) => <Box sx={{ display: "flex", alignItems: "center" }}>
-                                                    <Typography>{`${dmsList.filter(dms => dms.id === dmsID)[0].name}`}</Typography>
-                                                    <Typography sx={{ marginLeft: "5px", fontSize: "12px", lineHeight: "10px" }}>{`#${dmsID}`}</Typography>
+                                                value={device.dms_name}
+                                                onChange={(ev: any) => { setDevice((prevData: any) => ({ ...prevData, dms_name: ev.target.value })); }}
+                                                renderValue={(dmsName) => <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                    <Typography>{`${dmsList.filter(dms => dms.name === dmsName)[0].name}`}</Typography>
+                                                    <Typography sx={{ marginLeft: "5px", fontSize: "12px", lineHeight: "10px" }}>{`#${dmsName}`}</Typography>
                                                 </Box>}
                                             >
                                                 {
                                                     dmsList.map(dms =>
-                                                        <MenuItem key={dms.id} value={dms.id} sx={{ display: "flex" }}>
+                                                        <MenuItem key={dms.name} value={dms.name} sx={{ display: "flex" }}>
                                                             <Typography>{`${dms.name}`}</Typography>
-                                                            <Typography sx={{ marginLeft: "5px", fontSize: "12px" }}>{`#${dms.id}`}</Typography>
+                                                            <Typography sx={{ marginLeft: "5px", fontSize: "12px" }}>{`#${dms.name}`}</Typography>
                                                         </MenuItem>
                                                     )
                                                 }
@@ -239,7 +239,7 @@ export const CreateDevice: React.FC<Props> = () => {
                                 <Button
                                     variant="contained"
                                     disabled={
-                                        device.id === "" || device.dms_id === undefined
+                                        device.id === "" || device.dms_name === undefined
                                     }
                                     onClick={() => {
                                         dispatch(devicesAction.registerDeviceAction.request({
@@ -249,7 +249,7 @@ export const CreateDevice: React.FC<Props> = () => {
                                             tags: device.tags,
                                             icon: device.icon_name,
                                             color: device.icon_color,
-                                            dmsID: device.dms_id
+                                            dmsName: device.dms_name
                                         }));
                                     }}
                                 >Register Device</Button>

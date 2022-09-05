@@ -1,5 +1,12 @@
 import { apiRequest } from "ducks/services/api";
 
+export const getInfo = async (): Promise<any> => {
+    return apiRequest({
+        method: "GET",
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/info"
+    });
+};
+
 export const getDevices = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
     let url = window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices?" + `sort_by=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
     if (filterQuery.length > 0) {
@@ -16,7 +23,7 @@ export const getDevices = async (limit: number, offset: number, sortMode: "asc" 
 export const getStats = async (force: boolean): Promise<any> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/stats?refresh=" + force
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/stats?force_refresh=" + force
     });
 };
 
@@ -27,13 +34,6 @@ export const getDeviceByID = async (deviceID: string): Promise<any> => {
     });
 };
 
-export const getDeviceCertHistory = async (deviceID: string): Promise<any> => {
-    return apiRequest({
-        method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/cert-history"
-    });
-};
-
 export const revokeActiveDeviceCertificate = async (deviceID: string): Promise<any> => {
     return apiRequest({
         method: "DELETE",
@@ -41,7 +41,14 @@ export const revokeActiveDeviceCertificate = async (deviceID: string): Promise<a
     });
 };
 
-export const registerDevice = async (deviceID: string, alias: string, description: string, tags: Array<string>, iconName: string, iconColor: string, dmsID: string): Promise<any> => {
+export const decommissionDevice = async (deviceID: string): Promise<any> => {
+    return apiRequest({
+        method: "DELETE",
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID
+    });
+};
+
+export const registerDevice = async (deviceID: string, alias: string, description: string, tags: Array<string>, iconName: string, iconColor: string, dmsName: string): Promise<any> => {
     return apiRequest({
         method: "POST",
         url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices",
@@ -52,7 +59,7 @@ export const registerDevice = async (deviceID: string, alias: string, descriptio
             tags: tags,
             icon_name: iconName,
             icon_color: iconColor,
-            dms_id: dmsID
+            dms_name: dmsName
         }
     });
 };

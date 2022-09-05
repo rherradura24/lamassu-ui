@@ -35,7 +35,9 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
                 filters: []
             },
             sort: {
-                enabled: false
+                enabled: true,
+                selectedField: "status",
+                selectedMode: "asc"
             },
             pagination: {
                 enabled: true,
@@ -46,12 +48,13 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
         }
     );
 
-    console.log(tableConfig);
-
     const refreshAction = () => dispatch(caActions.getIssuedCertsActions.request({
         caName: caName,
-        offset: tableConfig.pagination.selectedItemsPerPage!,
-        page: tableConfig.pagination.selectedPage! + 1
+        offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
+        limit: tableConfig.pagination.selectedItemsPerPage!,
+        sortField: tableConfig.sort.selectedField!,
+        sortMode: tableConfig.sort.selectedMode!,
+        filterQuery: tableConfig.filter.filters!.map((f:any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
     }));
 
     useEffect(() => {
@@ -108,7 +111,7 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
                                 }
                                 content={
                                     <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                        {window.atob(cert.certificate.pem_base64)}
+                                        {window.atob(cert.certificate)}
                                     </SyntaxHighlighter>
                                 }
                             />
@@ -178,8 +181,6 @@ export const IssuedCertificates: React.FC<Props> = ({ caName }) => {
             }
             withRefresh={() => { refreshAction(); }}
             onChange={(ev: any) => {
-                console.log(ev, tableConfig);
-
                 if (!deepEqual(ev, tableConfig)) {
                     setTableConfig(prev => ({ ...prev, ...ev }));
                 }

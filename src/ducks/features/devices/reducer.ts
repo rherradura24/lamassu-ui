@@ -1,36 +1,49 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { Device, HistoricalCert, DevicesStats } from "./models";
-import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } from "ducks/reducers_utils";
+import { Device, DeviceManagerInfo, ODeviceStatus, OSlotCertificateStatus } from "./models";
+import { ActionStatus, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 import { keyStrengthToColor } from "../cas/utils";
-import { deviceStatusToColor, historicalCertStatusToColor } from "./utils";
+import { deviceStatusToColor, slotCertificateStatusToColor } from "./utils";
 
 export interface DevicesState {
+    info: DeviceManagerInfo
     status: ActionStatus
-    devicesStats: DevicesStats
+    stats: {
+        devices_stats: Map<string, number>
+        slot_stats: Map<string, number>
+        scan_date: Date
+    }
     list: Array<Device>
     totalDevices: number
     historyCertsStatus: ActionStatus
 
 }
 
+let baseDeviceStats = new Map<string, number>();
+Object.keys(ODeviceStatus).forEach(key => {
+    baseDeviceStats.set(key, 0);
+});
+
+let baseSlotStats = new Map<string, number>();
+Object.keys(OSlotCertificateStatus).forEach(key => {
+    baseSlotStats.set(key, 0);
+});
+
 const initialState = {
+    info: {
+        build_version: "",
+        build_time: ""
+    },
     status: {
         isLoading: false,
         status: ORequestStatus.Idle,
         type: ORequestType.None
     },
-    devicesStats: {
-        stats: {
-            pending_enrollment: 0,
-            provisioned: 0,
-            decommissioned: 0,
-            provisioned_devices: 0,
-            expired: 0,
-            revoked: 0
-        },
+    stats: {
+        devices_stats: baseDeviceStats,
+        slot_stats: baseSlotStats,
         scan_date: new Date()
     },
     list: [],
@@ -43,12 +56,45 @@ const initialState = {
 };
 
 export const devicesReducer = createReducer<DevicesState, RootAction>(initialState)
+    .handleAction(actions.devicesActions.getInfoAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
+    })
+    .handleAction(actions.devicesActions.getInfoAction.success, (state, action) => {
+        return { ...state, info: action.payload, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.devicesActions.getInfoAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
     .handleAction(actions.devicesActions.getDevicesAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [] };
     })
 
     .handleAction(actions.devicesActions.getStatsAction.success, (state, action) => {
-        return { ...state, devicesStats: action.payload };
+        let baseDeviceStats = new Map<string, number>();
+        Object.keys(ODeviceStatus).forEach(key => {
+            baseDeviceStats.set(key, 0);
+        });
+
+        let baseSlotStats = new Map<string, number>();
+        Object.keys(OSlotCertificateStatus).forEach(key => {
+            baseSlotStats.set(key, 0);
+        });
+
+        baseDeviceStats.forEach((value, key) => {
+            if (action.payload.stats.devices_stats[key] !== undefined) {
+                baseDeviceStats.set(key, action.payload.stats.devices_stats[key]);
+            }
+        });
+
+        return {
+            ...state,
+            stats: {
+                devices_stats: baseDeviceStats,
+                slot_stats: action.payload.stats.slots_stats,
+                scan_date: action.payload.scan_date
+            }
+        };
     })
 
     .handleAction(actions.devicesActions.getDevicesAction.failure, (state, action) => {
@@ -56,16 +102,10 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     })
 
     .handleAction(actions.devicesActions.getDevicesAction.success, (state, action) => {
-        console.log(action);
-
         let devices: Array<Device> = action.payload.devices;
 
         for (let i = 0; i < devices.length; i++) {
-            devices[i].historicalCerts = [];
-            devices[i].status = capitalizeFirstLetter(devices[i].status);
-            devices[i].status_color = deviceStatusToColor(devices[i].status);
-            devices[i].key_metadata.strength = capitalizeFirstLetter(devices[i].key_metadata.strength);
-            devices[i].key_metadata.strength_color = keyStrengthToColor(devices[i].key_metadata.strength);
+            devices[i] = parseDevice(devices[i]);
         }
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: devices, totalDevices: action.payload.total_devices };
     })
@@ -77,11 +117,8 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     .handleAction(actions.devicesActions.getDeviceByIDAction.success, (state, action) => {
         let newDevice: Device = new Device(action.payload);
         let devices: Array<Device> = state.list;
-        newDevice.status = capitalizeFirstLetter(newDevice.status);
-        newDevice.status_color = deviceStatusToColor(newDevice.status);
-        newDevice.key_metadata.strength = capitalizeFirstLetter(newDevice.key_metadata.strength);
-        newDevice.key_metadata.strength_color = keyStrengthToColor(newDevice.key_metadata.strength);
-        newDevice.historicalCerts = [];
+
+        newDevice = parseDevice(newDevice);
 
         const index = state.list.map(device => device.id).indexOf(newDevice.id);
         if (index === -1) {
@@ -98,30 +135,6 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.devicesActions.getDeviceCertHistoryAction.request, (state, action) => {
-        return { ...state, historyCertsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
-    })
-
-    .handleAction(actions.devicesActions.getDeviceCertHistoryAction.success, (state, action) => {
-        let devices: Array<Device> = state.list;
-        for (let i = 0; i < devices.length; i++) {
-            // @ts-ignore
-            if (devices[i].id === action.meta.deviceId!) {
-                let historicalCerts: Array<HistoricalCert> = action.payload;
-                for (let j = 0; j < historicalCerts.length; j++) {
-                    historicalCerts[j].status = capitalizeFirstLetter(historicalCerts[j].status);
-                    historicalCerts[j].status_color = historicalCertStatusToColor(historicalCerts[j].status);
-                }
-                devices[i].historicalCerts = historicalCerts.sort((a: HistoricalCert, b: HistoricalCert) => (a.creation_timestamp < b.creation_timestamp) ? 1 : ((b.creation_timestamp < a.creation_timestamp) ? -1 : 0));
-            }
-        }
-        return { ...state, historyCertsStatus: { ...state.historyCertsStatus, isLoading: false, status: ORequestStatus.Success }, list: devices };
-    })
-
-    .handleAction(actions.devicesActions.getDeviceCertHistoryAction.failure, (state, action) => {
-        return { ...state, historyCertsStatus: { ...state.historyCertsStatus, isLoading: false, status: ORequestStatus.Failed } };
-    })
-
     .handleAction(actions.devicesActions.revokeActiveDeviceCertificateAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Delete } };
     })
@@ -131,7 +144,15 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     .handleAction(actions.devicesActions.revokeActiveDeviceCertificateAction.failure, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Failed } };
     })
-
+    .handleAction(actions.devicesActions.decommissionDeviceAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Delete } };
+    })
+    .handleAction(actions.devicesActions.decommissionDeviceAction.success, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.devicesActions.decommissionDeviceAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: true, status: ORequestStatus.Failed } };
+    })
     .handleAction(actions.devicesActions.registerDeviceAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Create } };
     })
@@ -144,14 +165,19 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
 
 const getSelector = (state: RootState): DevicesState => state.devices;
 
+export const getInfo = (state: RootState): DeviceManagerInfo => {
+    const caReducer = getSelector(state);
+    return caReducer.info;
+};
+
 export const getDevices = (state: RootState): Array<Device> => {
     const reducer = getSelector(state);
     return reducer.list;
 };
 
-export const getDevicesStats = (state: RootState): DevicesStats => {
+export const getDevicesStats = (state: RootState) => {
     const reducer = getSelector(state);
-    return reducer.devicesStats;
+    return reducer.stats;
 };
 export const getTotalDevices = (state: RootState): number => {
     const reducer = getSelector(state);
@@ -175,4 +201,21 @@ export const getRequestStatus = (state: RootState): ActionStatus => {
 export const getHistoricalCertRequestStatus = (state: RootState): ActionStatus => {
     const reducer = getSelector(state);
     return reducer.historyCertsStatus;
+};
+
+// ----------------------------------------------------------------------------------------
+
+const parseDevice = (newDevice: Device) => {
+    newDevice.status_color = deviceStatusToColor(newDevice.status);
+
+    for (let i = 0; i < newDevice.slots.length; i++) {
+        newDevice.slots[i].active_certificate.status_color = slotCertificateStatusToColor(newDevice.slots[i].active_certificate.status);
+        newDevice.slots[i].active_certificate.key_metadata.strength_color = keyStrengthToColor(newDevice.slots[i].active_certificate.key_metadata.strength);
+
+        for (let j = 0; j < newDevice.slots[i].archive_certificates.length; j++) {
+            newDevice.slots[i].archive_certificates[j].status_color = slotCertificateStatusToColor(newDevice.slots[i].archive_certificates[j].status);
+            newDevice.slots[i].archive_certificates[j].key_metadata.strength_color = keyStrengthToColor(newDevice.slots[i].archive_certificates[j].key_metadata.strength);
+        }
+    }
+    return newDevice;
 };

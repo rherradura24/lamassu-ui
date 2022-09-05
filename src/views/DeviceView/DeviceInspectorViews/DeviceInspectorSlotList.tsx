@@ -1,55 +1,49 @@
 import { Grid, Paper, Typography } from "@mui/material";
 import { Box, useTheme } from "@mui/system";
-import { Device } from "ducks/features/devices/models";
-import { Certificate } from "@fidm/x509";
 import React from "react";
 import moment from "moment";
 import { LamassuChip } from "components/LamassuComponents/Chip";
+import { useAppSelector } from "ducks/hooks";
+import * as devicesSelector from "ducks/features/devices/reducer";
 
 interface Props {
     deviceID: string,
-    device: Device,
-    activeCertIssuer: string | undefined,
-    decodedCertificate: Certificate | undefined,
     onSlotClick: Function
 }
 
-export const DeviceInspectorSlotList: React.FC<Props> = ({ deviceID, device, activeCertIssuer, decodedCertificate, onSlotClick }) => {
+export const DeviceInspectorSlotList: React.FC<Props> = ({ deviceID, onSlotClick }) => {
     const theme = useTheme();
+    const device = useAppSelector((state) => devicesSelector.getDevice(state, deviceID));
 
     return (
         <Box>
-            <Grid container sx={{ padding: "20px" }} gap={4}>
+            <Grid container sx={{ padding: "20px" }} spacing={4}>
                 {
-                    ["A", "B"].map((slot, idx) => {
+                    device?.slots.map((slot, idx) => {
                         return (
-                            <Grid key={idx} item xs={4} container flexDirection={"column"} component={Paper} sx={{ padding: "20px", cursor: "pointer" }} onClick={() => { onSlotClick(slot); }}>
-                                <Grid item xs sx={{ margin: "20px" }}>
-                                    <Typography variant="h6" fontSize="25px" textAlign={"center"}>Slot {slot}</Typography>
-                                    <Typography fontSize="12px" textAlign={"center"}>#{device.current_certificate.serial_number}</Typography>
-                                </Grid>
-                                <Grid item xs container spacing={8}>
-                                    <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
-                                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Status</Typography>
-                                        <LamassuChip label={device!.status} color={device!.status_color} compact/>
+                            <Grid key={idx} item xs={4}>
+                                <Box component={Paper} padding="20px" sx={{ cursor: "pointer" }} onClick={() => { onSlotClick(slot.id); }}>
+                                    <Grid flexDirection={"column"} >
+                                        <Grid item xs sx={{ margin: "20px" }}>
+                                            <Typography variant="h6" fontSize="25px" textAlign={"center"}>Slot {slot.id}</Typography>
+                                            <Typography fontSize="12px" textAlign={"center"}>#{slot.active_certificate.serial_number}</Typography>
+                                        </Grid>
+                                        <Grid item xs container spacing={8}>
+                                            <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
+                                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Status</Typography>
+                                                <LamassuChip label={slot!.active_certificate.status} color={slot!.active_certificate.status_color} compact/>
+                                            </Grid>
+                                            <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
+                                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Expiration Date</Typography>
+                                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(slot.active_certificate.valid_to).format("DD-MM-YYYY HH:mm")}</Typography>
+                                            </Grid>
+                                            <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
+                                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>CA Name</Typography>
+                                                <Typography textAlign="center" style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{slot.active_certificate.ca_name}</Typography>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
-                                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Expiration Date</Typography>
-                                        {
-                                            decodedCertificate
-                                                ? (
-                                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(decodedCertificate!.validTo).format("DD-MM-YYYY HH:mm")}</Typography>
-                                                )
-                                                : (
-                                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                                )
-                                        }
-                                    </Grid>
-                                    <Grid item xs container flexDirection="column" justifyContent={"center"} alignItems="center">
-                                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>CA Name</Typography>
-                                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{activeCertIssuer}</Typography>
-                                    </Grid>
-                                </Grid>
+                                </Box>
                             </Grid>
                         );
                     })

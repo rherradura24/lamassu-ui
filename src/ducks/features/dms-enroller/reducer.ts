@@ -1,13 +1,14 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { DMS } from "./models";
-import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } from "ducks/reducers_utils";
+import { DMS, DMSManagerInfo } from "./models";
+import { ActionStatus, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 import { dmsStatusToColor } from "./utils";
 import { keyStrengthToColor } from "../cas/utils";
 
 export interface DeviceManufacturingSystemStatus {
+    info: DMSManagerInfo
     status: ActionStatus
     list: Array<DMS>,
     totalDMSs: number,
@@ -15,6 +16,10 @@ export interface DeviceManufacturingSystemStatus {
 }
 
 const initialState = {
+    info: {
+        build_version: "",
+        build_time: ""
+    },
     status: {
         isLoading: false,
         status: ORequestStatus.Idle,
@@ -26,6 +31,16 @@ const initialState = {
 };
 
 export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAction>(initialState)
+    .handleAction(actions.dmsActions.getInfoAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
+    })
+    .handleAction(actions.dmsActions.getInfoAction.success, (state, action) => {
+        return { ...state, info: action.payload, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.dmsActions.getInfoAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
     .handleAction(actions.dmsActions.getDMSListAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [], totalDMSs: 0 };
     })
@@ -37,10 +52,8 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     .handleAction(actions.dmsActions.getDMSListAction.success, (state, action) => {
         let dmss: Array<DMS> = action.payload.dmss;
         for (let i = 0; i < dmss.length; i++) {
-            dmss[i].status = capitalizeFirstLetter(dmss[i].status);
             dmss[i].status_color = dmsStatusToColor(dmss[i].status);
 
-            dmss[i].key_metadata.strength = capitalizeFirstLetter(dmss[i].key_metadata.strength);
             dmss[i].key_metadata.strength_color = keyStrengthToColor(dmss[i].key_metadata.strength);
         }
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: dmss, totalDMSs: action.payload.total_dmss };
@@ -67,10 +80,15 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
     .handleAction(actions.dmsActions.createDMSWithFormAction.success, (state, action) => {
         console.log(action);
 
-        return { ...state, privateKey: action.payload.priv_key, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+        return { ...state, privateKey: action.payload.private_key, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
     });
 
 const getSelector = (state: RootState): DeviceManufacturingSystemStatus => state.dmss;
+
+export const getInfo = (state: RootState): DMSManagerInfo => {
+    const caReducer = getSelector(state);
+    return caReducer.info;
+};
 
 export const getTotalDMSs = (state: RootState): number => {
     const reducer = getSelector(state);
@@ -82,9 +100,9 @@ export const getDMSs = (state: RootState): Array<DMS> => {
     return reducer.list;
 };
 
-export const getDMS = (state: RootState, id: string): DMS | undefined => {
+export const getDMS = (state: RootState, name: string): DMS | undefined => {
     const reducer = getSelector(state);
-    const filteredList = reducer.list.filter((dms: DMS) => dms.id === id);
+    const filteredList = reducer.list.filter((dms: DMS) => dms.name === name);
     if (filteredList.length === 1) {
         return filteredList[0];
     }

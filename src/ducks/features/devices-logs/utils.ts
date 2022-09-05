@@ -6,7 +6,7 @@ export const logTypeToColor = (status: LogType) => {
         return "blue";
     case OLogType.SUCCESS:
         return "green";
-    case OLogType.WARNING:
+    case OLogType.WARN:
         return "orange";
     case OLogType.CRITICAL:
         return "red";

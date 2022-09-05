@@ -17,6 +17,7 @@ import { CloudConnector } from "ducks/features/cloud-proxy/models";
 import { useDispatch } from "react-redux";
 import { EnabledConnectorSynchronizationModal } from "./CloudProviders/Actions/EnabledConnectorSynchronization";
 import AwsIotCore from "./CloudProviders/Types/AWSIotCore";
+import Azure from "./CloudProviders/Types/Azure";
 
 interface CloudProvidersProps {
     caName: string
@@ -26,8 +27,11 @@ export const CloudProviders: React.FC<CloudProvidersProps> = ({ caName }) => {
     return (
         <Routes>
             <Route path="/" element={<Outlet />}>
-                <Route path="awsiotcore" element={<Outlet />}>
+                <Route path="aws" element={<Outlet />}>
                     <Route path=":connectorId" element={<RoutedAwsIotCoreConnector caName={caName} />} />
+                </Route>
+                <Route path="azure" element={<Outlet />}>
+                    <Route path=":connectorId" element={<RoutedAzureConnector caName={caName} />} />
                 </Route>
                 <Route index element={<CloudProviderSelector caName={caName} />} />
             </Route>
@@ -50,6 +54,21 @@ const RoutedAwsIotCoreConnector: React.FC<RoutedAwsIotCoreConnectorProps> = ({ c
     return <Box sx={{ fontStyle: "italic" }}>Missing cloud connector ID</Box>;
 };
 
+interface RoutedAzureConnectorProps {
+    caName: string
+}
+
+const RoutedAzureConnector: React.FC<RoutedAzureConnectorProps> = ({ caName }) => {
+    const params = useParams();
+
+    if (params.connectorId !== undefined) {
+        return (
+            <Azure caName={caName} connectorID={params.connectorId} />
+        );
+    }
+    return <Box sx={{ fontStyle: "italic" }}>Missing cloud connector ID</Box>;
+};
+
 interface Props {
     caName: string
 }
@@ -66,6 +85,8 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
     const requestStatus = useAppSelector((state) => cloudProxySelector.getRequestStatus(state));
     const cloudConnectors = useAppSelector((state) => cloudProxySelector.getCloudConnectors(state)!);
 
+    console.log(cloudConnectors);
+
     const [isEnableConnectorOpen, setIsEnableConnectorOpen] = useState({ isOpen: false, connectorId: "" });
 
     const cloudConnectorTableColumns = [
@@ -80,6 +101,8 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
 
     const cloudConnectorsRender = (cloudConnector: CloudConnector) => {
         const filteredSynchronizedCAs = cloudConnector.synchronized_cas.filter(syncCa => syncCa.ca_name === caName);
+        console.log(filteredSynchronizedCAs, cloudConnector.synchronized_cas);
+
         const enabledConnectorSync = filteredSynchronizedCAs.length === 1;
         return {
             connectorId: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{cloudConnector.id}</Typography>,
@@ -114,11 +137,11 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
                         {
                             enabledConnectorSync
                                 ? (
-                                    cloudConnector.status === "Passing" && (
+                                    cloudConnector.status === "passing" && (
                                         <>
                                             <Grid item>
                                                 <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                    <IconButton onClick={() => navigate(`awsiotcore/${cloudConnector.id}`)} >
+                                                    <IconButton onClick={() => navigate(`${cloudConnector.cloud_provider + "/" + cloudConnector.id}`)} >
                                                         <FormatAlignJustifyIcon fontSize={"small"} />
                                                     </IconButton>
                                                 </Box>

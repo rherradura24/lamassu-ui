@@ -4,15 +4,13 @@ import { Box } from "@mui/system";
 import moment from "moment";
 import { LamassuChip, LamassuStatusChip } from "components/LamassuComponents/Chip";
 import { LamassuTable } from "components/LamassuComponents/Table";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import * as cloudProxySelector from "ducks/features/cloud-proxy/reducer";
+import * as cloudProxyActions from "ducks/features/cloud-proxy/actions";
 import * as devicesSelector from "ducks/features/devices/reducer";
 import * as deviceLogsSelector from "ducks/features/devices-logs/reducer";
 import * as deviceLogsActions from "ducks/features/devices-logs/actions";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
-import { Device, HistoricalCert, OHistoricalCertStatus } from "ducks/features/devices/models";
-import { Certificate } from "@fidm/x509";
 import { Modal } from "components/Modal";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter";
@@ -24,53 +22,89 @@ import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import { TimelineOppositeContent } from "@mui/lab";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { AWSDeviceConfig, CloudConnector } from "ducks/features/cloud-proxy/models";
-import { CloudProviderIcon } from "components/CloudProviderIcons";
-import { CloudConnectorDeviceActions } from "../components/CloudConnectorDeviceActions";
-import { pSBC } from "components/utils/colors";
 import { useNavigate } from "react-router-dom";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { getColor } from "components/utils/lamassuColors";
+import { DeviceSlot, OSlotCertificateStatus, SlotCertificate } from "ducks/features/devices/models";
+import { AWSDeviceConfig, AzureDeviceConfig, CloudConnector, OCloudProvider, OCloudProviderHealthStatus } from "ducks/features/cloud-proxy/models";
+import { AWSCloudConnectorDeviceActions } from "../components/AWSCloudConnectorDeviceActions";
+import { CloudProviderIcon } from "components/CloudProviderIcons";
+import { pSBC } from "components/utils/colors";
+import { AzureCloudConnectorDeviceActions } from "../components/AzureCloudConnectorDeviceActions";
 
 interface Props {
     slotID: string,
     deviceID: string,
-    device: Device,
-    activeCertIssuer: string | undefined
-    decodedCertificate: Certificate | undefined
 }
 
-export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, device, activeCertIssuer, decodedCertificate }) => {
+export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const device = useAppSelector((state) => devicesSelector.getDevice(state, deviceID));
+    const filteredSlot = device!.slots.filter((s) => s.id === slotID);
+
     const connectorsRequestStatus = useAppSelector((state) => cloudProxySelector.getRequestStatus(state));
     const connectors = useAppSelector((state) => cloudProxySelector.getCloudConnectors(state));
+    const deviceCloudConfiguration = useAppSelector((state) => cloudProxySelector.getDeviceCloudConfiguration(state, deviceID));
     const requestStatus = useAppSelector((state) => devicesSelector.getRequestStatus(state));
     const logRequestStatus = useAppSelector((state) => deviceLogsSelector.getRequestStatus(state));
     const logs = useAppSelector((state) => deviceLogsSelector.getLogs(state, deviceID));
-    const historicalCertRequestStatus = useAppSelector((state) => devicesSelector.getHistoricalCertRequestStatus(state));
 
     const [showCertificate, setShowCertificate] = useState(false);
     const [showRevokeCertificate, setShowRevokeCertificate] = useState(false);
 
-    const refreshAction = () => {
+    const logsRefreshAction = () => {
         dispatch(deviceLogsActions.getDeviceLogs.request({
-            deviceID: deviceID,
-            filterQuery: [],
-            limit: 10,
-            offset: 0,
-            sortField: "id",
-            sortMode: "asc"
+            deviceID: deviceID
+            // filterQuery: [],
+            // limit: 10,
+            // offset: 0,
+            // sortField: "id",
+            // sortMode: "asc"
         }));
+    };
+
+    const refreshAction = () => {
+        logsRefreshAction();
+        dispatch(cloudProxyActions.getConnectorsAction.request());
     };
 
     useEffect(() => {
         refreshAction();
     }, []);
 
-    console.log(device);
+    useEffect(() => {
+        dispatch(cloudProxyActions.getCloudConnectorDeviceConfigAction.request({
+            connectorIDs: connectors.map((c) => c.id),
+            deviceID: deviceID
+        }));
+    }, [connectors]);
+
+    let slot: DeviceSlot | undefined;
+    if (filteredSlot.length === 1) {
+        slot = filteredSlot[0];
+    } else {
+        return (
+            <>
+                <Box padding="20px">
+                    <Typography sx={{ marginTop: "10px", fontStyle: "italic" }}>Device with ID {deviceID} does not have slot {slotID}</Typography>
+                </Box>
+            </>
+        );
+    }
+
+    let decodedCertificateSubject = "";
+    if (slot !== undefined) {
+        if (slot.active_certificate.subject.country !== undefined) decodedCertificateSubject += "C=" + slot.active_certificate.subject.country + "\\";
+        if (slot.active_certificate.subject.state !== undefined) decodedCertificateSubject += "ST=" + slot.active_certificate.subject.state + "\\";
+        if (slot.active_certificate.subject.locality !== undefined) decodedCertificateSubject += "L=" + slot.active_certificate.subject.locality + "\\";
+        if (slot.active_certificate.subject.organization !== undefined) decodedCertificateSubject += "O=" + slot.active_certificate.subject.organization + "\\";
+        if (slot.active_certificate.subject.organization_unit !== undefined) decodedCertificateSubject += "OU=" + slot.active_certificate.subject.organization_unit + "\\";
+        if (slot.active_certificate.subject.common_name !== undefined) decodedCertificateSubject += "CN=" + slot.active_certificate.subject.common_name + "\\";
+    }
 
     const certTableColumns = [
         { key: "serialNumber", title: "Serial Number", align: "start", size: 3 },
@@ -98,39 +132,37 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
         { key: "actions", title: "", align: "end", size: 1 }
     ];
 
-    const certificatesRenderer = (cert: HistoricalCert) => {
+    const certificatesRenderer = (cert: SlotCertificate) => {
         return {
             serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
-            caName: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.issuer_name}</Typography>,
+            caName: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.ca_name}</Typography>,
             certificateStatus: (
                 <LamassuChip label={cert.status} color={cert.status_color} />
             ),
-            issuedDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>{moment(cert.creation_timestamp).format("DD-MM-YYYY HH:mm")}</Typography>,
+            issuedDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>{moment(cert.valid_from).format("DD-MM-YYYY HH:mm")}</Typography>,
             revokeDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>
-                {cert.status === OHistoricalCertStatus.REVOKED ? moment(cert.revocation_timestamp).format("DD-MM-YYYY HH:mm") : "-"}
+                {cert.status === OSlotCertificateStatus.REVOKED ? moment(cert.revocation_timestamp).format("DD-MM-YYYY HH:mm") : "-"}
             </Typography>
         };
     };
 
+    console.log(deviceCloudConfiguration);
+
     const cloudConnectorsRender = (connector: CloudConnector) => {
+        console.log(connector, connector.cloud_provider === OCloudProvider.Aws);
+        console.log(connector, connector.cloud_provider === OCloudProvider.Azure);
         let enabledConnectorSync = false;
-        let filteredSyncCAs: Array<any> = [];
-        if (activeCertIssuer) {
-            filteredSyncCAs = connector.synchronized_cas.filter(syncCA => syncCA.ca_name === activeCertIssuer);
-            if (filteredSyncCAs.length > 0) {
-                enabledConnectorSync = true;
-            }
+        const filteredSyncCAs = connector.synchronized_cas.filter((syncCA) => syncCA.ca_name === slot!.active_certificate.ca_name);
+        if (filteredSyncCAs.length > 0) {
+            enabledConnectorSync = true;
         }
 
-        let awsDevice;
-        console.log(connector);
-
-        const deviceIdx = connector.devices_config.map(deviceCfg => deviceCfg.device_id).indexOf(deviceID);
-        if (deviceIdx >= 0) {
-            awsDevice = new AWSDeviceConfig(connector.devices_config[deviceIdx].config);
+        if (connector.status !== OCloudProviderHealthStatus.Passing) {
+            return <>a</>;
         }
 
-        const awsDeviceCertificatesRender = (cert: any) => {
+        console.log(connector.cloud_provider);
+        const awsTableRenderer = (cert: any) => {
             return {
                 serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
                 arn: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary, overflowWrap: "anywhere" }}>#{cert.arn}</Typography>,
@@ -139,8 +171,66 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                     <LamassuChip label={cert.status} color={cert.status_color} />
                 ),
                 updateDate: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary }}>{moment(cert.update_date).format("DD-MM-YYYY HH:mm")}</Typography>,
-                actions: <CloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} caName={cert.ca_name} serialNumber={cert.serial_number} status={cert.status} />
+                actions: <AWSCloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} caName={cert.ca_name} serialNumber={cert.serial_number} status={cert.status} />
             };
+        };
+
+        const awsRenderer = (deviceConfig: any) => {
+            const awsDeviceConfig = (deviceConfig as AWSDeviceConfig);
+            console.log(awsDeviceConfig);
+            return (
+                <>
+                    <Box style={{ marginTop: "5px" }}>
+                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Last connection</Typography>
+                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(awsDeviceConfig.last_connection).format("DD-MM-YYYY HH:mm")}</Typography>
+                    </Box>
+                    <LamassuTable columnConf={awsDevicesCertificateTableColumn} data={awsDeviceConfig.certificates} renderDataItem={awsTableRenderer} style={{ marginTop: "10px" }} />
+                </>
+            );
+        };
+
+        const azureRender = (deviceConfig: any) => {
+            const azureDeviceConfig = (deviceConfig as AzureDeviceConfig);
+            console.log(azureDeviceConfig);
+            return (
+                <>
+                    <Box style={{ marginTop: "5px" }}>
+                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Status</Typography>
+                        <LamassuChip label={azureDeviceConfig.status} color={azureDeviceConfig.status_color} />
+                    </Box>
+                    <Box style={{ marginTop: "5px" }}>
+                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Connection State</Typography>
+                        <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>{azureDeviceConfig.connection_state}</Typography>
+                    </Box>
+                    <Box style={{ marginTop: "5px" }}>
+                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Last connection</Typography>
+                        <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>{moment(azureDeviceConfig.last_activity_time).format("DD-MM-YYYY HH:mm")}</Typography>
+                    </Box>
+                    <Box style={{ marginTop: "5px" }}>
+                        <AzureCloudConnectorDeviceActions connectorID={connector.id} deviceID={deviceID} caName={slot!.active_certificate.ca_name} serialNumber={slot!.active_certificate.serial_number} status={azureDeviceConfig.status} />
+                    </Box>
+                </>
+            );
+        };
+
+        const renderExpandedRow = () => {
+            if (deviceCloudConfiguration !== undefined && deviceCloudConfiguration.has(connector.id)) {
+                if (connector.cloud_provider === OCloudProvider.Aws) {
+                    return awsRenderer(deviceCloudConfiguration.get(connector.id));
+                } else if (connector.cloud_provider === OCloudProvider.Azure) {
+                    return azureRender(deviceCloudConfiguration.get(connector.id));
+                }
+                return (
+                    <Box marginTop="10px" marginBottom="10px">
+                        <Typography sx={{ fontStyle: "italic" }}>Unsupported cloud provider</Typography>
+                    </Box>
+                );
+            }
+            return (
+                <Box marginTop="10px" marginBottom="10px">
+                    <Typography sx={{ fontStyle: "italic" }}>Device not connected to cloud provider</Typography>
+                </Box>
+            );
         };
 
         return {
@@ -167,7 +257,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
                 enabledConnectorSync ? moment(filteredSyncCAs[0].enabled).format("DD/MM/YYYY") : "-"
             }</Typography>,
             actions: (
-                connector.status === "Passing" && (
+                connector.status === OCloudProviderHealthStatus.Passing && (
                     <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
                         <IconButton onClick={() => { }}>
                             <KeyboardArrowDownIcon fontSize={"small"} />
@@ -178,29 +268,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
             expandedRowElement: (
                 <Box sx={{ width: "calc(100% - 65px)", borderLeft: `4px solid ${theme.palette.primary.main}`, background: pSBC(theme.palette.mode === "dark" ? 0.01 : -0.03, theme.palette.background.paper), marginLeft: "20px", padding: "20px 20px 0 20px", marginBottom: "20px" }}>
                     {
-
-                        connector.status === "Passing" && (
-                            awsDevice
-                                ? (
-                                    <>
-                                        <Box style={{ marginTop: "5px" }}>
-                                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>AWS Thing ID</Typography>
-                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{awsDevice.aws_id}</Typography>
-                                        </Box>
-                                        <Box style={{ marginTop: "5px" }}>
-                                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Last connection</Typography>
-                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(awsDevice.last_connection).format("DD-MM-YYYY HH:mm")}</Typography>
-                                        </Box>
-                                        <LamassuTable columnConf={awsDevicesCertificateTableColumn} data={awsDevice.certificates} renderDataItem={awsDeviceCertificatesRender} style={{ marginTop: "10px" }} />
-                                    </>
-
-                                )
-                                : (
-                                    <Box sx={{ paddingBottom: "10px" }}>
-                                        <Typography fontStyle={"italic"} fontSize="12px">{"This device has not yet connected to AWS IoT Core"}</Typography>
-                                    </Box>
-                                )
-                        )
+                        renderExpandedRow()
                     }
                 </Box>
             )
@@ -210,156 +278,118 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
     return (
         <>
             <Box sx={{ padding: "10px 20px", display: "flex", alignItems: "center", zIndex: 2 }} component={Paper} borderRadius={0}>
-                <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => {
-                    const url = location.pathname;
-                    navigate(url.substring(0, url.lastIndexOf("/")));
-                }}>
-                    <ArrowBackIcon style={{ color: theme.palette.primary.main }} />
-                </IconButton>
-                <Box sx={{ margin: "0 25px" }}>
-                    <Typography variant="h5" fontWeight="500" fontSize="15px" textAlign={"center"} sx={{ color: theme.palette.text.main, background: theme.palette.background.lightContrast, width: "50px", padding: "3px 5px", borderRadius: "5px" }}>Slot {slotID}</Typography>
-                </Box>
-                <Grid container spacing={8}>
+                <Grid container spacing={6} alignItems="center">
                     <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Expiration Date</Typography>
-                        {
-                            decodedCertificate
-                                ? (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(decodedCertificate!.validTo).format("DD-MM-YYYY HH:mm")}</Typography>
-                                )
-                                : (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                )
-                        }
+                        <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => {
+                            const url = location.pathname;
+                            navigate(url.substring(0, url.lastIndexOf("/")));
+                        }}>
+                            <ArrowBackIcon style={{ color: theme.palette.primary.main }} />
+                        </IconButton>
                     </Grid>
                     <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>CA Name</Typography>
-                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{activeCertIssuer}</Typography>
+                        <Typography variant="h5" fontWeight="500" fontSize="15px" textAlign={"center"} sx={{ color: theme.palette.text.main, background: theme.palette.background.lightContrast, display: "inline", padding: "5px 10px", borderRadius: "5px" }}>Slot {slotID}</Typography>
                     </Grid>
                     <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Serial Number</Typography>
-                        {
-                            device && Object.keys(device.current_certificate).length > 0
-                                ? (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{device!.current_certificate.serial_number}</Typography>
-                                )
-                                : (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                )
-                        }
+                        <LamassuChip label={slot.active_certificate.status} color={slot.active_certificate.status_color} />
                     </Grid>
-                    <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Key Properties</Typography>
-                        {
-                            device && device.key_metadata.type && device.key_metadata.bits
-                                ? (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{`${device?.key_metadata.type.toUpperCase()} ${device?.key_metadata.bits}`}</Typography>
-                                )
-                                : (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                )
-                        }
-                    </Grid>
-                    <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Key Strength</Typography>
-                        {
-                            device
-                                ? (
-                                    <LamassuChip label={device!.key_metadata.strength} color={device!.key_metadata.strength_color} compact/>
-                                )
-                                : (
-                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                )
-                        }
-                    </Grid>
-                    <Grid item xs="auto">
-                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Subject</Typography>
-                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>
-                            {
-                                decodedCertificate
-                                    ? (
-                                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>
-                                            {`C=${decodedCertificate!.subject.countryName}/ST=${decodedCertificate!.subject.attributes.find(attr => attr.shortName === "ST")?.value}/L=${decodedCertificate!.subject.localityName}/O=${decodedCertificate!.subject.organizationName}/OU=${decodedCertificate!.subject.organizationalUnitName}`}
-                                        </Typography>
-                                    )
-                                    : (
-                                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>-</Typography>
-                                    )
-                            }
-                        </Typography>
-                    </Grid>
-                    {
-                        device && Object.keys(device.current_certificate).length > 0 && (
-                            <Grid item xs container alignItems={"center"} justifyContent={"flex-end"}>
-                                <Button variant="outlined" size="small" onClick={() => { setShowCertificate(true); }}>View Certificate</Button>
-                                <Modal
-                                    title=""
-                                    isOpen={showCertificate}
-                                    onClose={() => { setShowCertificate(false); }}
-                                    subtitle=""
-                                    actions={
-                                        <Box>
-                                            <Button onClick={() => { setShowCertificate(false); }}>Close</Button>
-                                        </Box>
-                                    }
-                                    content={
-                                        <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                            {window.atob(device!.current_certificate.crt)}
-                                        </SyntaxHighlighter>
-                                    }
-                                />
+                    <Grid item xs container flexDirection="column">
+                        <Grid item container columnSpacing={8} rowSpacing={0}>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Expiration Date</Typography>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{moment(slot!.active_certificate.valid_to).format("DD-MM-YYYY HH:mm")}</Typography>
                             </Grid>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>CA Name</Typography>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{slot!.active_certificate.ca_name}</Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Serial Number</Typography>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{slot!.active_certificate.serial_number}</Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Key Properties</Typography>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>{`${slot!.active_certificate!.key_metadata.type.toUpperCase()} ${slot!.active_certificate!.key_metadata.bits}`}</Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Key Strength</Typography>
+                                <LamassuChip label={slot!.active_certificate!.key_metadata.strength} color={slot!.active_certificate!.key_metadata.strength_color} compact />
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Subject</Typography>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "400", fontSize: 14 }}>
+                                    {decodedCertificateSubject}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs="auto">
+                        {
+                            slot!.active_certificate && (
+                                <Grid item xs container alignItems={"center"} justifyContent={"flex-end"}>
+                                    <Button variant="outlined" size="small" onClick={() => { setShowCertificate(true); }}>View Certificate</Button>
+                                    <Modal
+                                        title=""
+                                        isOpen={showCertificate}
+                                        onClose={() => { setShowCertificate(false); }}
+                                        subtitle=""
+                                        actions={
+                                            <Box>
+                                                <Button onClick={() => { setShowCertificate(false); }}>Close</Button>
+                                            </Box>
+                                        }
+                                        content={
+                                            <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                                {window.atob(slot!.active_certificate.certificate)}
+                                            </SyntaxHighlighter>
+                                        }
+                                    />
+                                </Grid>
 
-                        )
-                    }
+                            )
+                        }
+                    </Grid>
                 </Grid>
+
             </Box>
             <Grid container sx={{ flexGrow: 1, overflowY: "hidden", height: "300px" }} columns={13}>
-                <Grid item xs={10} sx={{ padding: "30px" }} container>
+                <Grid item xs={10} sx={{ padding: "30px", overflowY: "scroll", height: "100%" }} container>
                     {
                         !requestStatus.isLoading && (
-                            <Grid item xs={13} container gap={2}>
-                                <Grid item xs={13} component={Paper}>
-                                    <Box sx={{ padding: "15px" }}>
-                                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 18 }}>Certificates</Typography>
-                                    </Box>
-                                    <Divider />
-                                    <Box sx={{ height: "100%", padding: "20px" }}>
-                                        {
-                                            historicalCertRequestStatus.isLoading
-                                                ? (
-                                                    <>
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                    </>
-                                                )
-                                                : (
-                                                    <LamassuTable columnConf={certTableColumns} data={device!.historicalCerts} renderDataItem={certificatesRenderer} />
-                                                )
-                                        }
+                            <Grid item container flexDirection="column" gap={2}>
+                                <Grid item xs="auto" >
+                                    <Box component={Paper}>
+                                        <Box sx={{ padding: "15px" }}>
+                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 18 }}>Certificates</Typography>
+                                        </Box>
+                                        <Divider />
+                                        <Box sx={{ height: "100%", padding: "20px" }}>
+                                            <LamassuTable columnConf={certTableColumns} data={slot!.archive_certificates} renderDataItem={certificatesRenderer} />
+                                        </Box>
                                     </Box>
                                 </Grid>
 
-                                <Grid item xs={13} component={Paper}>
-                                    <Box sx={{ padding: "15px" }}>
-                                        <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 18 }}>Cloud Connectors</Typography>
-                                    </Box>
-                                    <Divider />
-                                    <Box sx={{ height: "calc(100% - 40px)", padding: "20px" }}>
-                                        {
-                                            connectorsRequestStatus.isLoading || historicalCertRequestStatus.isLoading
-                                                ? (
-                                                    <>
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                        <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
-                                                    </>
-                                                )
-                                                : (
-                                                    <LamassuTable columnConf={connectorsTableColumns} data={connectors} renderDataItem={cloudConnectorsRender} enableRowExpand={true} />
-                                                )
-                                        }
+                                <Grid item xs="auto" >
+                                    <Box component={Paper}>
+                                        <Box sx={{ padding: "15px" }}>
+                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 18 }}>Cloud Connectors</Typography>
+                                        </Box>
+                                        <Divider />
+                                        <Box sx={{ height: "calc(100% - 40px)", padding: "20px" }}>
+                                            {
+                                                connectorsRequestStatus.isLoading
+                                                    ? (
+                                                        <>
+                                                            <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                                            <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                                            <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                                                        </>
+                                                    )
+                                                    : (
+                                                        <LamassuTable columnConf={connectorsTableColumns} data={connectors} renderDataItem={cloudConnectorsRender} enableRowExpand={true} />
+                                                    )
+                                            }
+                                        </Box>
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -369,7 +399,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID, dev
 
                 <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ overflowX: "hidden", padding: "20px" }}>
                     <Grid item container justifyContent={"flex-end"}>
-                        <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => { refreshAction(); }}>
+                        <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => { logsRefreshAction(); }}>
                             <RefreshIcon style={{ color: theme.palette.primary.main }} />
                         </IconButton>
                     </Grid>

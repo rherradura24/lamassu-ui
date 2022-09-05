@@ -1,4 +1,11 @@
 import { KeyStrength, KeyType } from "../cas/models";
+export class DeviceManagerInfo {
+    public build_version!: string
+    public build_time!: string
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
 
 export class GetDeviceListAPIResponse {
     public total_devices!: number
@@ -9,22 +16,25 @@ export class GetDeviceListAPIResponse {
     }
 }
 
-export class Device {
-    public id!: string
-    public alias!: string
-    public description!: string
-    public tags!: Array<string>
-    public icon_name!: string
-    public icon_color!: string
-    public status!: DeviceStatus
-    public status_color!: DeviceStatus
-    public dms_id!: string
+export class SlotCertificate {
     public key_metadata!: {
         bits: number
         strength: KeyStrength
         strength_color: string
         type: KeyType
     }
+
+    public status!: string
+    public status_color!: string
+
+    public ca_name!: string
+    public certificate!: string
+    public serial_number!: string
+    public valid_from!: Date
+    public valid_to!: Date
+
+    public revocation_timestamp!: Date
+    public revocation_reason!: string
 
     public subject!: {
         common_name?: string
@@ -34,31 +44,27 @@ export class Device {
         organization_unit?: string
         state?: string
     }
-
-    public creation_timestamp!: Date
-    public modification_timestamp!: Date
-    public current_certificate!: {
-        crt: string
-        serial_number: string
-        valid_to: Date
-    }
-
-    public historicalCerts!: Array<HistoricalCert>
-
-    constructor (args?: {}) {
-        Object.assign(this, args);
-    }
 }
 
-export class HistoricalCert {
-    public device_id!: string
-    public serial_number!: string
-    public issuer_serial_number!: string
-    public issuer_name!: string
-    public status!: HistoricalCertStatus
-    public status_color!: string
+export class DeviceSlot {
+    public id!: string
+    public active_certificate!: SlotCertificate
+    public archive_certificates!: Array<SlotCertificate>
+}
+
+export class Device {
+    public id!: string
+    public alias!: string
+    public description!: string
+    public tags!: Array<string>
+    public slots!: Array<DeviceSlot>
+    public icon_name!: string
+    public icon_color!: string
+    public status!: DeviceStatus
+    public status_color!: DeviceStatus
+    public dms_name!: string
+
     public creation_timestamp!: Date
-    public revocation_timestamp!: Date
 
     constructor (args?: {}) {
         Object.assign(this, args);
@@ -67,12 +73,8 @@ export class HistoricalCert {
 
 export class DevicesStats {
     public stats!: {
-        pending_enrollment?: number
-        provisioned?: number
-        decommissioned?: number
-        about_to_expire?: number
-        expired?: number
-        revoked?: number
+        devices_stats: any
+        slots_stats: any
     }
 
     public scan_date!: Date
@@ -83,16 +85,19 @@ export class DevicesStats {
 }
 
 export const ODeviceStatus = {
-    DEVICE_PROVISIONED: "Device Provisioned",
-    CERT_REVOKED: "Cert Revoked",
-    CERT_EXPIRED: "Cert Expired",
-    PENDING_PROVISION: "Pending Provision"
+    PENDING_PROVISIONING: "PENDING_PROVISIONING",
+    FULLY_PROVISIONED: "FULLY_PROVISIONED",
+    PROVISIONED_WITH_WARNINGS: "PROVISIONED_WITH_WARNINGS",
+    REQUIRES_ACTION: "REQUIRES_ACTION",
+    DECOMMISSIONED: "DECOMMISSIONED"
 };
 
-export const OHistoricalCertStatus = {
-    ISSUED: "Issued",
-    REVOKED: "Revoked"
+export const OSlotCertificateStatus = {
+    ACTIVE: "ACTIVE",
+    ABOUT_TO_EXPIRE: "ABOUT_TO_EXPIRE",
+    EXPIRED: "EXPIRED",
+    REVOKED: "REVOKED"
 };
 
-export type HistoricalCertStatus = typeof OHistoricalCertStatus[keyof typeof OHistoricalCertStatus];
+export type SlotCertificateStatus = typeof OSlotCertificateStatus[keyof typeof OSlotCertificateStatus];
 export type DeviceStatus = typeof ODeviceStatus[keyof typeof ODeviceStatus];

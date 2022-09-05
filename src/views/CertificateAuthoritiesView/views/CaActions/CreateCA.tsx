@@ -75,10 +75,10 @@ export const CreateCA = () => {
     const [org, setOrg] = useState("");
     const [orgUnit, setOrgUnit] = useState("");
     const [cn, setCN] = useState("");
-    const [ttlValue, setTtlValue] = useState(365);
-    const [ttlUnit, setTtlUnit] = useState(24);// 24 = days | 24*365 = years
-    const [enrollerTtlValue, setEnrollerTtlValue] = useState(100);
-    const [enrollerTtlUnit, setEnrollerTtlUnit] = useState(24);// 24 = days | 24*365 = years
+    const [caExpirationValue, setCaExpirationValue] = useState(365);
+    const [caExpirationUnit, setCaExpirationUnit] = useState(60 * 60 * 24);// 24 = days | 24*365 = years
+    const [issuanceDurationValue, setIssuanceDurationValue] = useState(100);
+    const [isuanceDurationUnit, setIsuanceDurationUnit] = useState(60 * 60 * 24);// 24 = days | 24*365 = years
     const [keyType, setKeyType] = useState("RSA");
     const [keyBits, setKeyBits] = useState(rsaOptions[1]);
 
@@ -90,7 +90,6 @@ export const CreateCA = () => {
 
     const handleCreateCa = () => {
         dispatch(caActions.createCAAction.request({
-            caName: caName,
             selectedConnectorIDs: selectedCloudConnectors,
             body: {
                 subject: {
@@ -105,8 +104,8 @@ export const CreateCA = () => {
                     type: keyType,
                     bits: keyBits.value
                 },
-                ca_ttl: ttlValue * ttlUnit,
-                enroller_ttl: enrollerTtlValue * enrollerTtlUnit
+                ca_duration: caExpirationValue * caExpirationUnit,
+                issuance_duration: issuanceDurationValue * isuanceDurationUnit
             }
         }));
     };
@@ -121,8 +120,8 @@ export const CreateCA = () => {
 
     useEffect(() => {
         if (caRequestStatus.status === ORequestStatus.Success && caRequestStatus.type === ORequestType.Create) {
-            // resetCurretRequestStatus();
             navigate("/cas/" + caName);
+            dispatch(caActions.resetStateAction());
         }
     }, [caRequestStatus]);
 
@@ -186,7 +185,7 @@ export const CreateCA = () => {
                         onChange={(ev) => setKeyType(ev.target.value)}
                     >
                         <MenuItem value="RSA">RSA</MenuItem>
-                        <MenuItem value="EC">EC</MenuItem>
+                        <MenuItem value="ECDSA">ECDSA</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>
@@ -236,7 +235,7 @@ export const CreateCA = () => {
             <Grid item xs={12} spacing={4} container>
                 <Grid item container alignItems="center" spacing={4}>
                     <Grid item xs={6}>
-                        <TextField variant="standard" type="number" fullWidth label="CA expiration time" value={ttlValue} onChange={(ev) => setTtlValue(parseInt(ev.target.value))} />
+                        <TextField variant="standard" type="number" fullWidth label="CA expiration time" value={caExpirationValue} onChange={(ev) => setCaExpirationValue(parseInt(ev.target.value))} />
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl variant="standard" fullWidth>
@@ -245,13 +244,16 @@ export const CreateCA = () => {
                                 labelId="ca-exp-simple-select-label"
                                 id="ca-exp-simple-select"
                                 label="CA expiration time units"
-                                value={ttlUnit}
-                                onChange={(ev) => setTtlUnit(parseInt(ev.target.value + ""))}
+                                value={caExpirationUnit}
+                                onChange={(ev) => setCaExpirationUnit(parseInt(ev.target.value + ""))}
 
                             >
-                                <MenuItem value={1}>Hours</MenuItem>
-                                <MenuItem value={24}>Days</MenuItem>
-                                <MenuItem value={24 * 365}>Years</MenuItem>
+                                <MenuItem value={1}>Seconds</MenuItem>
+                                <MenuItem value={60}>Minutes</MenuItem>
+                                <MenuItem value={60 * 60}>Hours</MenuItem>
+                                <MenuItem value={60 * 60 * 24}>Days</MenuItem>
+                                <MenuItem value={60 * 60 * 24 * 30}>Months</MenuItem>
+                                <MenuItem value={60 * 60 * 24 * 365}>Years</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -259,7 +261,7 @@ export const CreateCA = () => {
 
                 <Grid item container alignItems="center" spacing={4}>
                     <Grid item xs={6}>
-                        <TextField variant="standard" type="number" fullWidth label="Issuance expiration time" value={enrollerTtlValue} onChange={(ev) => setEnrollerTtlValue(parseInt(ev.target.value))} />
+                        <TextField variant="standard" type="number" fullWidth label="Issuance expiration time" value={issuanceDurationValue} onChange={(ev) => setIssuanceDurationValue(parseInt(ev.target.value))} />
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl variant="standard" fullWidth>
@@ -268,12 +270,15 @@ export const CreateCA = () => {
                                 labelId="ca-exp-units-simple-select-label"
                                 id="ca-exp-units-simple-select"
                                 label="CA expiration time units"
-                                value={enrollerTtlUnit}
-                                onChange={(ev) => setEnrollerTtlUnit(parseInt(ev.target.value + ""))}
+                                value={isuanceDurationUnit}
+                                onChange={(ev) => setIsuanceDurationUnit(parseInt(ev.target.value + ""))}
                             >
-                                <MenuItem value={1}>Hours</MenuItem>
-                                <MenuItem value={24}>Days</MenuItem>
-                                <MenuItem value={24 * 365}>Years</MenuItem>
+                                <MenuItem value={1}>Seconds</MenuItem>
+                                <MenuItem value={60}>Minutes</MenuItem>
+                                <MenuItem value={60 * 60}>Hours</MenuItem>
+                                <MenuItem value={60 * 60 * 24}>Days</MenuItem>
+                                <MenuItem value={60 * 60 * 24 * 30}>Months</MenuItem>
+                                <MenuItem value={60 * 60 * 24 * 365}>Years</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

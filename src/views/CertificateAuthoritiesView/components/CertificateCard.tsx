@@ -41,7 +41,7 @@ export const CertificateCard: React.FC<Props> = ({ ca, selected = false, onClick
             <Box style={{ height: "40%" }}>
                 <Grid container style={{ height: "100%", padding: "0 0 0 30px" }} justifyContent="center" alignItems="center">
                     <Grid item xs={8}>
-                        <Typography style={{ color: (ca.status === OCAStatus.Revoked || ca.status === OCAStatus.Expired) ? theme.palette.error.main : theme.palette.text.secondary, fontWeight: "400", fontSize: "13px" }}>{`${ca.status} · ${moment(ca.valid_to).format("DD/MM/YYYY")}`}</Typography>
+                        <Typography style={{ color: (ca.status === OCAStatus.REVOKED || ca.status === OCAStatus.EXPIRED) ? theme.palette.error.main : theme.palette.text.secondary, fontWeight: "400", fontSize: "13px" }}>{`${ca.status} · ${moment(ca.valid_to).format("DD/MM/YYYY")}`}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400" }}></Typography>

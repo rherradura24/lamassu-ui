@@ -15,7 +15,7 @@ export const CertificateView: React.FC<Props> = ({ caName }) => {
     const themeMode = theme.palette.mode;
 
     const caData = useAppSelector((state) => caSelector.getCA(state, caName)!);
-    const decodedCert = window.atob(caData.certificate.pem_base64);
+    const decodedCert = window.atob(caData.certificate);
 
     return (
         <Grid item container sx={{ width: "100%" }} spacing={1}>

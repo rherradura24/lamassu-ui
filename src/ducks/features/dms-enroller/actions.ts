@@ -1,14 +1,21 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { DMS, GetDMSsListAPIResponse } from "./models";
+import { DMS, DMSManagerInfo, GetDMSsListAPIResponse } from "./models";
 
 export const actionTypes = {
+    GET_INFO_DMS_MANAGER_API: "GET_INFO_DMS_MANAGER_API",
     GET_DMS_LIST: "GET_DMS_LIST",
     CREATE_DMS: "CREATE_DMS",
     APPROVE_DMS_REQUEST: "APPROVE_DMS_REQUEST",
     DECLINE_DMS_REQUEST: "DECLINE_DMS_REQUEST",
     REVOKE_DMS: "REVOKE_DMS"
 };
+
+export const getInfoAction = createAsyncAction(
+    [actionTypes.GET_INFO_DMS_MANAGER_API, () => { }],
+    [success(actionTypes.GET_INFO_DMS_MANAGER_API), (req: DMSManagerInfo) => req],
+    [failed(actionTypes.GET_INFO_DMS_MANAGER_API), (req: Error) => req]
+)();
 
 export type GetDMSsAction = {
     sortMode: "asc" | "desc",
@@ -34,18 +41,17 @@ export type CreateDMSForm= {
         common_name: string
     },
     key_metadata: {
-        type: "RSA" | "EC",
+        type: "RSA" | "ECDSA",
         bits: number
     }
 }
 export type CreateDMSRequest = {
-    dmsName: string
     form: CreateDMSForm
 }
 
 export type CreateDMSRequestSuccess = {
     dms: DMS
-    priv_key: string
+    private_key: string
 }
 
 export const createDMSWithFormAction = createAsyncAction(
@@ -55,7 +61,7 @@ export const createDMSWithFormAction = createAsyncAction(
 )();
 
 export type ApproveDMSRequest = {
-    dmsID: string
+    dmsName: string
     status: "APPROVED"
     authorized_cas: Array<string>
 }
@@ -67,7 +73,7 @@ export const approveDMSRequestAction = createAsyncAction(
 )();
 
 export type RevokeDMSRequest = {
-    dmsID: string
+    dmsName: string
     status: "REVOKED"
 }
 
@@ -78,8 +84,8 @@ export const revokeDMSAction = createAsyncAction(
 )();
 
 export type DeclineDMSRequest = {
-    dmsID: string
-    status: "DENIED"
+    dmsName: string
+    status: "REJECTED"
 }
 
 export const declineDMSRequestAction = createAsyncAction(

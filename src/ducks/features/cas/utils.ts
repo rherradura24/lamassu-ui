@@ -2,11 +2,11 @@ import { CAStatus, KeyStrength, OCAStatus, OKeyStrength } from "./models";
 
 export const keyStrengthToColor = (strength: KeyStrength) => {
     switch (strength) {
-    case OKeyStrength.High:
+    case OKeyStrength.HIGH:
         return "green";
-    case OKeyStrength.Medium:
+    case OKeyStrength.MEDIUM:
         return "orange";
-    case OKeyStrength.Low:
+    case OKeyStrength.LOW:
         return "red";
     default:
         return "gray";
@@ -15,11 +15,13 @@ export const keyStrengthToColor = (strength: KeyStrength) => {
 
 export const statusToColor = (keyStrength: CAStatus) => {
     switch (keyStrength) {
-    case OCAStatus.Issued:
+    case OCAStatus.ACTIVE:
         return "green";
-    case OCAStatus.Expired:
+    case OCAStatus.ABOUT_TO_EXPIRED:
+        return "orange";
+    case OCAStatus.EXPIRED:
         return "red";
-    case OCAStatus.Revoked:
+    case OCAStatus.REVOKED:
         return "red";
     default:
         return "gray";

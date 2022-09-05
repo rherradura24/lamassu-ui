@@ -15,20 +15,20 @@ export const getDeviceLogs: Epic<RootAction, RootAction, RootState, {}> = (actio
         tap((item: any) => console.log("%c Epic ", "background:#25eee3; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.GetDeviceLogs>) =>
             from(apicalls.getDeviceLogs(
-                action.payload.deviceID,
-                action.payload.limit,
-                action.payload.offset,
-                action.payload.sortMode,
-                action.payload.sortField,
-                action.payload.filterQuery
+                action.payload.deviceID
+                // action.payload.limit,
+                // action.payload.offset,
+                // action.payload.sortMode,
+                // action.payload.sortField,
+                // action.payload.filterQuery
             )).pipe(
                 map((val) => actions.getDeviceLogs.success(val, {
-                    deviceID: action.payload.deviceID,
-                    limit: action.payload.limit,
-                    offset: action.payload.offset,
-                    sortMode: action.payload.sortMode,
-                    sortField: action.payload.sortField,
-                    filterQuery: action.payload.filterQuery
+                    deviceID: action.payload.deviceID
+                    // limit: action.payload.limit,
+                    // offset: action.payload.offset,
+                    // sortMode: action.payload.sortMode,
+                    // sortField: action.payload.sortField,
+                    // filterQuery: action.payload.filterQuery
                 })),
                 catchError((message) => of(actions.getDeviceLogs.failure(message)))
             )

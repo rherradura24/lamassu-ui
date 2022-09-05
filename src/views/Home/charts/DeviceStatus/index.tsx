@@ -5,52 +5,42 @@ import * as devicesAction from "ducks/features/devices/actions";
 import * as devicesSelector from "ducks/features/devices/reducer";
 import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material";
+import { ODeviceStatus } from "ducks/features/devices/models";
+import { capitalizeFirstLetter } from "ducks/reducers_utils";
+import { deviceStatusToColorWithTheme } from "ducks/features/devices/utils";
+import moment from "moment";
 
 export const DeviceStatusChart = ({ ...props }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
 
-    const devicesStats = useAppSelector((state) => devicesSelector.getDevicesStats(state));
-    console.log(devicesStats);
-    const refreshAction = () => {
-        dispatch(devicesAction.getStatsAction.request({ force: false }));
+    const deviceManagerStats = useAppSelector((state) => devicesSelector.getDevicesStats(state));
+    console.log(deviceManagerStats);
+    const refreshAction = (forceRefresh: boolean) => {
+        dispatch(devicesAction.getStatsAction.request({ force: forceRefresh }));
     };
 
     useEffect(() => {
-        refreshAction();
+        refreshAction(false);
     }, []);
 
-    const totalDevices = devicesStats.stats !== undefined ? devicesStats.stats.pending_enrollment! + devicesStats.stats.expired! + devicesStats.stats.provisioned! + devicesStats.stats.revoked! + devicesStats.stats.decommissioned! : 0;
+    let totalDevices = 0;
+    deviceManagerStats.devices_stats.forEach((st) => {
+        totalDevices += st;
+    });
 
-    const enablePrimaryStat = devicesStats.stats !== undefined && totalDevices !== 0;
-    const primaryStat = enablePrimaryStat ? Math.floor(devicesStats.stats.provisioned! * 100 / totalDevices) : "-";
+    const enablePrimaryStat = totalDevices !== 0;
+    const primaryStat = enablePrimaryStat ? Math.floor(deviceManagerStats.devices_stats.get(ODeviceStatus.FULLY_PROVISIONED)! * 100 / totalDevices) : "-";
 
-    const dataset = [
-        {
-            label: "Pending enrollment",
-            value: devicesStats.stats ? devicesStats.stats.pending_enrollment : 0,
-            color: theme.palette.chartsColors.blue
-        },
-        {
-            label: "Provisioned",
-            value: devicesStats.stats ? devicesStats.stats.provisioned : 0,
-            color: theme.palette.chartsColors.green
-        },
-        {
-            label: "About to expire",
-            value: devicesStats.stats ? devicesStats.stats.expired : 0,
-            color: theme.palette.chartsColors.yellow
-        },
-        {
-            label: "Revoked",
-            value: devicesStats.stats ? devicesStats.stats.revoked : 0,
-            color: theme.palette.chartsColors.red
-        },
-        {
-            label: "Decommissioned",
-            value: devicesStats.stats ? devicesStats.stats.decommissioned : 0,
-            color: theme.palette.chartsColors.purple
-        }];
+    const dataset: any = [];
+    deviceManagerStats.devices_stats.forEach((value, key) => {
+        console.log(value, key);
+        dataset.push({
+            label: capitalizeFirstLetter(key),
+            value: value,
+            color: deviceStatusToColorWithTheme(key, theme)
+        });
+    });
 
     return (
 
@@ -58,6 +48,10 @@ export const DeviceStatusChart = ({ ...props }) => {
             small={false}
             dataset={dataset}
             title="Device Provisioning Status"
+            subtitle={`Last update: ${moment(deviceManagerStats.scan_date).format("DD/MM/YYYY HH:mm")}`}
+            onRefresh={() => {
+                refreshAction(true);
+            }}
             primaryStat={primaryStat}
             statLabel={"Provisioned Devices"}
             percentage={enablePrimaryStat}

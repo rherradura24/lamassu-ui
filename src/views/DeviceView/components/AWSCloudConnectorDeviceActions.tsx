@@ -13,7 +13,7 @@ interface Props {
     status: string
 }
 
-export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, caName, serialNumber, status }) => {
+export const AWSCloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, caName, serialNumber, status }) => {
     console.log(deviceID, connectorID, caName, serialNumber, status);
 
     const theme = useTheme();
@@ -44,7 +44,7 @@ export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connect
                 onClose={handleCloudConnectorClose}
             // MenuListProps={{ onMouseLeave: handleClose }}
             >
-                <MenuItem disabled={status === "Active" || status === "Revoked"} style={{ width: "100%" }} onClick={(ev: any) => {
+                <MenuItem disabled={status === "ACTIVE" || status === "REVOKED"} style={{ width: "100%" }} onClick={(ev: any) => {
                     dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
                         connectorID: connectorID,
                         deviceID: deviceID,
@@ -53,7 +53,7 @@ export const CloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connect
                         status: "ACTIVE"
                     }));
                 }}>Activate</MenuItem>
-                <MenuItem disabled={status === "Inactive" || status === "Revoked"} style={{ width: "100%" }} onClick={(ev: any) => {
+                <MenuItem disabled={status === "INACTIVE" || status === "REVOKED"} style={{ width: "100%" }} onClick={(ev: any) => {
                     dispatch(cloudProxyActions.updateDeviceCertificateStatusAction.request({
                         connectorID: connectorID,
                         deviceID: deviceID,

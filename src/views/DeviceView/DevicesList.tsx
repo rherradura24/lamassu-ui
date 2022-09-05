@@ -6,7 +6,6 @@ import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigProps, OperandTypes } from "components/LamassuComponents/Table";
 import { GoLinkExternal } from "react-icons/go";
-import moment from "moment";
 import { Device } from "ducks/features/devices/models";
 import { useDispatch } from "react-redux";
 import * as devicesAction from "ducks/features/devices/actions";
@@ -18,6 +17,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import { capitalizeFirstLetter } from "ducks/reducers_utils";
 
 export const DeviceList = () => {
     const theme = useTheme();
@@ -53,6 +53,8 @@ export const DeviceList = () => {
         }
     );
 
+    console.log(tableConfig);
+
     const refreshAction = () => dispatch(devicesAction.getDevicesAction.request({
         offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
         limit: tableConfig.pagination.selectedItemsPerPage!,
@@ -77,9 +79,9 @@ export const DeviceList = () => {
         { key: "id", dataKey: "id", title: "Device ID", query: true, type: OperandTypes.string, align: "start", size: 4 },
         { key: "alias", dataKey: "alias", title: "Alias", query: true, type: OperandTypes.string, align: "center", size: 3 },
         { key: "status", dataKey: "status", title: "Status", type: OperandTypes.enum, align: "center", size: 2 },
-        { key: "creation_ts", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
+        // { key: "creation_ts", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
         { key: "dms", dataKey: "dms_id", title: "DMS ID", type: OperandTypes.string, align: "center", size: 2 },
-        { key: "key_strength", dataKey: "key_metadata.strength", title: "Key Strength", type: OperandTypes.enum, align: "center", size: 1 },
+        { key: "slots", dataKey: "slots", title: "Slots", align: "center", size: 3 },
         { key: "tags", dataKey: "tags", title: "Tags", type: OperandTypes.tags, align: "center", size: 2 },
         { key: "actions", title: "", align: "end", size: 2 }
     ];
@@ -91,7 +93,7 @@ export const DeviceList = () => {
     // }
 
     const deviceRender = (device: Device) => {
-        const dmsContent = device.dms_id;
+        const dmsContent = device.dms_name;
         // if (dmsKeyList[device.dms_id] !== undefined) {
         //     dmsContent = dmsKeyList[device.dms_id].name;
         // }
@@ -103,11 +105,20 @@ export const DeviceList = () => {
             ),
             id: <Typography style={{ fontWeight: "700", fontSize: 14, color: theme.palette.text.primary }}>#{device.id}</Typography>,
             alias: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{device.alias}</Typography>,
-            status: <LamassuChip label={device.status} color={device.status_color} />,
-            creation_ts: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
+            status: <LamassuChip label={capitalizeFirstLetter(device.status)} color={device.status_color} />,
+            // creation_ts: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
             dms: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dmsContent}</Typography>,
-            key_strength: <LamassuChip label={device.key_metadata.strength} color={device.key_metadata.strength_color} />,
-            keyprops: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{`${device.key_metadata.type} ${device.key_metadata.bits}`}</Typography>,
+            slots: (
+                <Grid item xs={12} container spacing={1} justifyContent="center">
+                    {
+                        device.slots.map((slot, idx) => (
+                            <Grid item key={idx}>
+                                <LamassuChip color={theme.palette.mode === "dark" ? ["#EEE", "#555"] : ["#555", "#EEEEEE"]} label={"slot " + slot.id} compact={true} compactFontSize />
+                            </Grid>
+                        ))
+                    }
+                </Grid>
+            ),
             tags: (
                 <Grid item xs={12} container spacing={1} justifyContent="center">
                     {

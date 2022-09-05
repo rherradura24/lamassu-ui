@@ -2,6 +2,7 @@ import { styled, Switch } from "@mui/material";
 
 export const LamassuSwitch = styled(Switch)(({ theme }) => ({
     padding: 8,
+    marginLeft: -8,
     "& .MuiSwitch-track": {
         borderRadius: 22 / 2,
         "&:before, &:after": {

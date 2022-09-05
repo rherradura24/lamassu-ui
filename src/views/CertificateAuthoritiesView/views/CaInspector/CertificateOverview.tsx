@@ -4,7 +4,6 @@ import { Box, useTheme } from "@mui/system";
 import { useAppSelector } from "ducks/hooks";
 import * as caSelector from "ducks/features/cas/reducer";
 import { Certificate } from "@fidm/x509";
-import { capitalizeFirstLetter, uncamelize } from "ducks/reducers_utils";
 import { Grid, Typography } from "@mui/material";
 
 interface Props {
@@ -15,8 +14,8 @@ export const CerificateOverview: React.FC<Props> = ({ caName }) => {
     const theme = useTheme();
     const caData = useAppSelector((state) => caSelector.getCA(state, caName)!);
 
-    const decodedCert = window.atob(caData.certificate.pem_base64);
-    const parsaedCert = Certificate.fromPEM(Buffer.from(decodedCert, "utf8"));
+    const decodedCert = window.atob(caData.certificate);
+    const parsedCert = Certificate.fromPEM(Buffer.from(decodedCert, "utf8"));
     const certificateSubject = {
         country: "Country",
         state: "State / Province",
@@ -26,38 +25,50 @@ export const CerificateOverview: React.FC<Props> = ({ caName }) => {
         common_name: "Common Name"
     };
 
+    const issuanceDuration = moment.duration(caData.issuance_duration * 1000);
+    let issuanceDurationString = "";
+    if (issuanceDuration.asSeconds() > 60) {
+        if (issuanceDuration.asMinutes() > 60) {
+            if (issuanceDuration.asHours() > 24) {
+                issuanceDurationString += Math.round(issuanceDuration.asDays()) + " days";
+            } else {
+                issuanceDurationString += Math.round(issuanceDuration.asHours()) + " hours";
+            }
+        } else {
+            issuanceDurationString += Math.round(issuanceDuration.asMinutes()) + " minutes";
+        }
+    } else {
+        issuanceDurationString += Math.round(issuanceDuration.asSeconds()) + " seconds";
+    }
+
     const certificateProperties = {
         serialNumber: {
             title: "Serial Number",
-            value: chunk(parsaedCert.serialNumber, 2).join("-")
+            value: chunk(parsedCert.serialNumber, 2).join("-")
         },
         validFrom: {
             title: "Valid From",
-            value: moment(parsaedCert.validFrom).format("D MMMM YYYY")
+            value: moment(parsedCert.validFrom).format("D MMMM YYYY")
         },
         validTo: {
             title: "Valid To",
-            value: moment(parsaedCert.validTo).format("D MMMM YYYY")
+            value: moment(parsedCert.validTo).format("D MMMM YYYY")
         },
-        issuer: {
-            title: "Issuer",
-            value: parsaedCert.subject.attributes.map(attr => {
-                const label = capitalizeFirstLetter(uncamelize(attr.name));
-                const value = attr.value;
-                return `${label}: ${value}`;
-            }).reduce((previousValue, currentValue) => previousValue === "" ? currentValue : previousValue + "; " + currentValue, "")
+        issuanceDuration: {
+            title: "Issuance Duration",
+            value: issuanceDurationString
         },
         sans: {
             title: "SANS",
-            value: parsaedCert.dnsNames
+            value: parsedCert.dnsNames
         },
         signatureAlgorithm: {
             title: "Signature Algorithm",
-            value: parsaedCert.signatureAlgorithm
+            value: parsedCert.signatureAlgorithm
         },
         ocspServer: {
             title: "OCSP Server",
-            value: parsaedCert.ocspServer
+            value: parsedCert.ocspServer
         }
     };
 
@@ -90,7 +101,7 @@ export const CerificateOverview: React.FC<Props> = ({ caName }) => {
                 <Grid item xs={6} container>
                     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
                         <Box style={{ marginBottom: 10 }}>
-                            <Typography variant="button" style={{ color: theme.palette.text.primary, fontWeight: "600", fontSize: 17 }}>Issued</Typography>
+                            <Typography variant="button" style={{ color: theme.palette.text.primary, fontWeight: "600", fontSize: 17 }}>Metadata</Typography>
                         </Box>
                         <Box>
                             {

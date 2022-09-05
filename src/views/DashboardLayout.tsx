@@ -22,6 +22,9 @@ import { DMSView } from "./DeviceManufacturingSystemView";
 import { useAppSelector } from "ducks/hooks";
 import * as notificationsSelector from "ducks/features/notifications/reducer";
 import { InfoView } from "./Info";
+import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
+import SelectAllOutlinedIcon from "@mui/icons-material/SelectAllOutlined";
+import { EventsView } from "./EventsView";
 
 export const DashboardLayout = () => {
     const cookies = new Cookies();
@@ -85,6 +88,38 @@ export const DashboardLayout = () => {
                     link: "/devmanager",
                     icon: <RouterOutlinedIcon key="/3"/>,
                     content: <DeviceView />
+                }
+            ]
+        },
+        {
+            menuTitle: "Events",
+            menuItems: [
+                {
+                    title: "Events",
+                    path: "/events/*",
+                    link: "/events",
+                    icon: <MailOutlinedIcon/>,
+                    content: <EventsView/>
+
+                }
+            ]
+        },
+        {
+            menuTitle: "Simulation Tools",
+            menuItems: [
+                {
+                    title: "Virtual DMS",
+                    path: "/vdms/*",
+                    link: "/vdms",
+                    icon: <SelectAllOutlinedIcon/>,
+                    content: <DMSView/>
+                },
+                {
+                    title: "Virtual Device",
+                    path: "/vdev/*",
+                    link: "/vdev",
+                    icon: <SelectAllOutlinedIcon/>,
+                    content: <DMSView/>
                 }
             ]
         }

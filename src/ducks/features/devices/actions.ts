@@ -1,18 +1,25 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { Device, GetDeviceListAPIResponse, HistoricalCert, DevicesStats } from "./models";
+import { Device, GetDeviceListAPIResponse, DevicesStats, DeviceManagerInfo } from "./models";
 
 export const actionTypes = {
+    GET_INFO_DEVICE_MANAGER_API: "GET_INFO_DEVICE_MANAGER_API",
     GET_STATS: "GET_STATS",
     GET_DEVICES: "GET_DEVICES",
     GET_DEVICE: "GET_DEVICE",
-    GET_DEVICE_CERT_HISTORY: "GET_DEVICE_CERT_HISTORY",
     REVOKE_ACTIVE_DEVICE_CERTIFICATE: "REVOKE_ACTIVE_DEVICE_CERTIFICATE",
+    DECOMMISSION_DEVICE: "DECOMMISSION_DEVICE",
     REGISTER_DEVICE: "REGISTER_DEVICE"
 };
 export type GetStats = {
     force: boolean
 }
+
+export const getInfoAction = createAsyncAction(
+    [actionTypes.GET_INFO_DEVICE_MANAGER_API, () => { }],
+    [success(actionTypes.GET_INFO_DEVICE_MANAGER_API), (req: DeviceManagerInfo) => req],
+    [failed(actionTypes.GET_INFO_DEVICE_MANAGER_API), (req: Error) => req]
+)();
 
 export const getStatsAction = createAsyncAction(
     [actionTypes.GET_STATS, (req: GetStats) => req],
@@ -44,14 +51,14 @@ export const getDeviceByIDAction = createAsyncAction(
     [failed(actionTypes.GET_DEVICE), (req: Error) => req]
 )();
 
-export type GetDeviceCertHistory = {
+export type DecommissionDeviceAction = {
     deviceID: string
 }
 
-export const getDeviceCertHistoryAction = createAsyncAction(
-    [actionTypes.GET_DEVICE_CERT_HISTORY, (req: GetDeviceCertHistory) => req],
-    [success(actionTypes.GET_DEVICE_CERT_HISTORY), (req: Array<HistoricalCert>, meta: any) => { return req; }, (req: Array<HistoricalCert>, meta: any) => { return meta; }],
-    [failed(actionTypes.GET_DEVICE_CERT_HISTORY), (req: Error) => req]
+export const decommissionDeviceAction = createAsyncAction(
+    [actionTypes.DECOMMISSION_DEVICE, (req: DecommissionDeviceAction) => req],
+    [success(actionTypes.DECOMMISSION_DEVICE), (req: any, meta: any) => { return req; }, (req: any, meta: any) => { return meta; }],
+    [failed(actionTypes.DECOMMISSION_DEVICE), (req: Error) => req]
 )();
 
 export type RevokeActiveDeviceCertificate = {
@@ -71,7 +78,7 @@ export type RegisterDevice = {
     tags: Array<string>,
     color: string,
     icon: string,
-    dmsID: string,
+    dmsName: string,
 }
 
 export const registerDeviceAction = createAsyncAction(

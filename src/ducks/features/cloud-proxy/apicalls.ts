@@ -1,6 +1,13 @@
 import { apiRequest } from "ducks/services/api";
 import keycloak from "keycloak";
 
+export const getInfo = async (): Promise<any> => {
+    return apiRequest({
+        method: "GET",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/info"
+    });
+};
+
 export const getCloudConnectors = async (): Promise<any> => {
     return apiRequest({
         method: "GET",
@@ -37,13 +44,12 @@ export const fireEvent = async (eventType: string, eventData: any): Promise<any>
     });
 };
 
-export const updateAccessPolicy = async (connectorID: string, caName: string, newPolicy: any): Promise<any> => {
+export const updateConfiguration = async (connectorID: string, configuration: any): Promise<any> => {
     return apiRequest({
         method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/access-policy",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/config",
         data: {
-            ca_name: caName,
-            access_policy: newPolicy
+            configuration: configuration
         }
     });
 };
@@ -58,7 +64,7 @@ export const getDeviceConfig = async (connectorID: string, deviceID: string): Pr
 export const updateDeviceCertificateStatus = async (connectorID: string, deviceID: string, caName: string, serialNumber: string, status: string): Promise<any> => {
     return apiRequest({
         method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices/" + deviceID + "/cert",
+        url: window._env_.REACT_APP_LAMASSU_CLOUD_PROXY_API + "/v1/connectors/" + connectorID + "/devices/" + deviceID + "/certificate",
         data: {
             status: status,
             serial_number: serialNumber,

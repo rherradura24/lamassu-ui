@@ -10,6 +10,30 @@ import * as cloudProxyApiCalls from "ducks/features/cloud-proxy/apicalls";
 import { isActionOf, PayloadAction } from "typesafe-actions";
 import { RootAction } from "ducks/actions";
 
+export const getInfoEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getInfoAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action) =>
+            from(apicalls.getInfo()).pipe(
+                map(actions.getInfoAction.success),
+                catchError((message) => of(actions.getInfoAction.failure(message)))
+            )
+        )
+    );
+
+export const getCryptoEngineEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getCryptoEngineAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action) =>
+            from(apicalls.getCryptoEngine()).pipe(
+                map(actions.getCryptoEngineAction.success),
+                catchError((message) => of(actions.getCryptoEngineAction.failure(message)))
+            )
+        )
+    );
+
 export const getCAsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
         filter(isActionOf(actions.getCAsAction.request)),
@@ -44,7 +68,14 @@ export const getIssuedCertsEpic: Epic<RootAction, RootAction, RootState, {}> = (
         filter(isActionOf(actions.getIssuedCertsActions.request)),
         tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.GetIssuedCerts>) =>
-            from(apicalls.getIssuedCerts(action.payload.caName, action.payload.offset, action.payload.page)).pipe(
+            from(apicalls.getIssuedCerts(
+                action.payload.caName,
+                action.payload.limit,
+                action.payload.offset,
+                action.payload.sortMode,
+                action.payload.sortField,
+                action.payload.filterQuery
+            )).pipe(
                 tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),
                 mergeMap(successAction => of(actions.getIssuedCertsActions.success(successAction, { ...action.payload }))),
                 tap((item: any) => console.log("%c Epic ", "background:#ff1477; border-radius:5px;font-weight: bold;", "", item)),
@@ -86,7 +117,7 @@ export const createCAEpic: Epic<RootAction, RootAction, RootState, {}> = (action
         tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.CreateCA>) =>
             forkJoin(
-                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApiCalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.caName))
+                action.payload.selectedConnectorIDs.map(cloudConnectorID => cloudProxyApiCalls.synchronizeCloudConnectors(cloudConnectorID, action.payload.body.subject.common_name))
             ).pipe(
                 defaultIfEmpty({}),
                 tap((item: any) => console.log("%c Epic ", "background:#25ee32; border-radius:5px;font-weight: bold;", "", item)),
@@ -94,7 +125,7 @@ export const createCAEpic: Epic<RootAction, RootAction, RootState, {}> = (action
                     console.log(successAction); return of(cloudProxyActions.synchronizeCloudConnectorAction.success()).pipe(
                         tap((item: any) => console.log("%c Epic ", "background:#888001; border-radius:5px;font-weight: bold;", "", item)),
                         exhaustMap((action2) =>
-                            from(apicalls.createCA(action.payload.caName, action.payload.body)).pipe(
+                            from(apicalls.createCA(action.payload.body)).pipe(
                                 tap((item: any) => console.log("%c Epic ", "background:#A198A1; border-radius:5px;font-weight: bold;", "", item)),
                                 map(actions.createCAAction.success),
                                 tap((item: any) => console.log("%c Epic ", "background:#F32111; border-radius:5px;font-weight: bold;", "", item)),

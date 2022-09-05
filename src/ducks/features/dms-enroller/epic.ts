@@ -9,7 +9,19 @@ import * as apicalls from "./apicalls";
 import { isActionOf, PayloadAction } from "typesafe-actions";
 import { RootAction } from "ducks/actions";
 
-export const getCloudConnectorsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+export const getInfoEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getInfoAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action) =>
+            from(apicalls.getInfo()).pipe(
+                map(actions.getInfoAction.success),
+                catchError((message) => of(actions.getInfoAction.failure(message)))
+            )
+        )
+    );
+
+export const getDMSListEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
         filter(isActionOf(actions.getDMSListAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
@@ -31,7 +43,7 @@ export const createDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (actio
         filter(isActionOf(actions.createDMSWithFormAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.CreateDMSRequest>) =>
-            from(apicalls.createDMS(action.payload.dmsName, action.payload.form)).pipe(
+            from(apicalls.createDMS(action.payload.form)).pipe(
                 map(actions.createDMSWithFormAction.success),
                 catchError((message) => of(actions.createDMSWithFormAction.failure(message)))
             )
@@ -42,8 +54,13 @@ export const approveDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
         filter(isActionOf(actions.approveDMSRequestAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.ApproveDMSRequest>) =>
-            from(apicalls.updateDMS(action.payload.dmsID, action.payload.status, action.payload.authorized_cas)).pipe(
-                map(actions.approveDMSRequestAction.success),
+            from(apicalls.updateDMSStatus(action.payload.dmsName, action.payload.status)).pipe(
+                exhaustMap(() =>
+                    from(apicalls.updateDMSAuthorizedCAs(action.payload.dmsName, action.payload.authorized_cas)).pipe(
+                        map(actions.approveDMSRequestAction.success),
+                        catchError((message) => of(actions.approveDMSRequestAction.failure(message)))
+                    )
+                ),
                 catchError((message) => of(actions.approveDMSRequestAction.failure(message)))
             )
         )
@@ -54,7 +71,7 @@ export const revokeDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (actio
         filter(isActionOf(actions.revokeDMSAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.RevokeDMSRequest>) =>
-            from(apicalls.updateDMS(action.payload.dmsID, action.payload.status)).pipe(
+            from(apicalls.updateDMSStatus(action.payload.dmsName, action.payload.status)).pipe(
                 map(actions.revokeDMSAction.success),
                 catchError((message) => of(actions.revokeDMSAction.failure(message)))
             )
@@ -66,7 +83,7 @@ export const declimeDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
         filter(isActionOf(actions.declineDMSRequestAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.DeclineDMSRequest>) =>
-            from(apicalls.updateDMS(action.payload.dmsID, action.payload.status)).pipe(
+            from(apicalls.updateDMSStatus(action.payload.dmsName, action.payload.status)).pipe(
                 map(actions.declineDMSRequestAction.success),
                 catchError((message) => of(actions.declineDMSRequestAction.failure(message)))
             )
@@ -100,5 +117,5 @@ export const reportError: Epic<RootAction, RootAction, RootState, {}> = (action$
             actions.revokeDMSAction.failure
         ], rootAction)),
         tap((item: any) => console.log("%c Epic ", "background:#884101; border-radius:5px;font-weight: bold;", "", item)),
-        map(({ type, payload }: {type: string, payload: Error}) => { return notificationsActions.addNotificationAction({ message: type + ": " + payload.message, type: "ERROR" }); })
+        map(({ type, payload }: { type: string, payload: Error }) => { return notificationsActions.addNotificationAction({ message: type + ": " + payload.message, type: "ERROR" }); })
     );

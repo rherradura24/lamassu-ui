@@ -7,11 +7,11 @@ export const actionTypes = {
 };
 
 export type GetDeviceLogs = {
-    sortMode: "asc" | "desc",
-    sortField: string,
-    limit: number,
-    offset: number,
-    filterQuery: Array<string>,
+    // sortMode: "asc" | "desc",
+    // sortField: string,
+    // limit: number,
+    // offset: number,
+    // filterQuery: Array<string>,
     deviceID: string
 }
 

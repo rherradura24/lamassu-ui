@@ -4,10 +4,7 @@ import { Box, Grid, Paper, Typography, useTheme } from "@mui/material";
 import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { AiFillWarning } from "react-icons/ai";
-import { Device } from "ducks/features/devices/models";
-import { Certificate } from "@fidm/x509";
-import moment from "moment";
-import { getColor } from "components/utils/lamassuColors";
+import { Device, ODeviceStatus } from "ducks/features/devices/models";
 
 interface Props {
     device: Device
@@ -17,27 +14,8 @@ interface Props {
 export const DeviceCard: React.FC<Props> = ({ device, ...props }) => {
     const theme = useTheme();
 
-    let alertColorBg = theme.palette.warning.light;
-    let alertColorIcon = theme.palette.warning.main;
-
-    let remainingDaysBeforeExpiration = -1;
-    if (device.current_certificate.crt) {
-        const parsedCert = Certificate.fromPEM(Buffer.from(window.atob(device.current_certificate.crt), "utf8"));
-        const now = new Date();
-        remainingDaysBeforeExpiration = moment(parsedCert.validTo).diff(moment(now), "days");
-        console.log(remainingDaysBeforeExpiration);
-    }
-
-    if (remainingDaysBeforeExpiration < 30) {
-        alertColorBg = theme.palette.warning.light;
-        alertColorIcon = theme.palette.warning.main;
-    } else if (remainingDaysBeforeExpiration < 10) {
-        alertColorBg = theme.palette.error.light;
-        alertColorIcon = theme.palette.error.main;
-    } else {
-        alertColorBg = getColor(theme, "gray")[1];
-        alertColorIcon = getColor(theme, "gray")[0];
-    }
+    const alertColorBg = theme.palette.warning.light;
+    const alertColorIcon = theme.palette.warning.main;
 
     return (
         <Box component={Paper} sx={{ padding: "10px", minHeight: "120px", display: "flex", flexDirection: "column" }} {...props}>
@@ -73,14 +51,14 @@ export const DeviceCard: React.FC<Props> = ({ device, ...props }) => {
             </Box>
             <Box>
                 {
-                    remainingDaysBeforeExpiration < 30 && (
+                    device.status !== ODeviceStatus.FULLY_PROVISIONED && (
                         <Grid item xs={12} container justifyContent={"space-between"} sx={{ background: alertColorBg, borderRadius: 1, padding: "5px 10px 5px 10px" }}>
                             <Grid item container xs={9}>
-                                {remainingDaysBeforeExpiration < 30 && (<AiFillWarning color={alertColorIcon} style={{ marginRight: "5px" }}/>)}
-                                <Typography style={{ fontSize: 12, fontWeight: "bold" }}>Certificate Expiration</Typography>
+                                <AiFillWarning color={device.status_color} style={{ marginRight: "5px" }}/>
+                                <Typography style={{ fontSize: 12, fontWeight: "bold" }}>Status</Typography>
                             </Grid>
                             <Grid item xs={3} container justifyContent={"flex-end"}>
-                                <Typography style={{ fontSize: 12 }}>{`In ${remainingDaysBeforeExpiration} days`}</Typography>
+                                <Typography style={{ fontSize: 12 }}>{device.status}</Typography>
                             </Grid>
                         </Grid>
                     )

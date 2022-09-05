@@ -1,4 +1,4 @@
-import { AWSPolicyStatus, AWSSyncCAStatus, CloudProviderHealthStatus, OAWSDeviceCertificateStatus, OAWSPolicyStatus, OAWSSyncCAStatus, OCloudProviderHealthStatus } from "./models";
+import { AWSPolicyStatus, AWSSyncCAStatus, AzureDeviceStatus, CloudProviderHealthStatus, OAWSDeviceCertificateStatus, OAWSPolicyStatus, OAWSSyncCAStatus, OAzureDeviceStatus, OCloudProviderHealthStatus } from "./models";
 
 export const cloudConnectorStatusToColor = (status: CloudProviderHealthStatus) => {
     switch (status) {
@@ -41,6 +41,17 @@ export const awsDeviceStatusToColor = (status: AWSPolicyStatus) => {
         return "orange";
     case OAWSDeviceCertificateStatus.Revoked:
         return "red";
+    default:
+        return "gray";
+    }
+};
+
+export const azuresDeviceStatusToColor = (status: AzureDeviceStatus) => {
+    switch (status) {
+    case OAzureDeviceStatus.Enabled:
+        return "green";
+    case OAzureDeviceStatus.Disabled:
+        return "orange";
     default:
         return "gray";
     }

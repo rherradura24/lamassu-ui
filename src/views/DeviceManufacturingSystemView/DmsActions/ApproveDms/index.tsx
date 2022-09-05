@@ -15,19 +15,19 @@ import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigPro
 import deepEqual from "fast-deep-equal/es6";
 
 interface Props {
-    dmsID: string,
+    dmsName: string,
     isOpen: boolean,
     onClose: any
 }
 
-export const ApproveDMS: React.FC<Props> = ({ dmsID, isOpen, onClose = () => { } }) => {
+export const ApproveDMS: React.FC<Props> = ({ dmsName, isOpen, onClose = () => { } }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
 
     const caRequestStatus = useAppSelector((state) => caSelector.getRequestStatus(state));
     const caList = useAppSelector((state) => caSelector.getCAs(state));
     const totalCAs = useAppSelector((state) => caSelector.getTotalCAs(state));
-    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsID)!);
+    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
 
     const [selectedCas, setSelectedCas] = useState<Array<string>>([]);
     console.log(selectedCas);
@@ -113,10 +113,6 @@ export const ApproveDMS: React.FC<Props> = ({ dmsID, isOpen, onClose = () => { }
                         <Typography variant="button">DMS Name: </Typography>
                         <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{dms.name}</Typography>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Typography variant="button">DMS ID: </Typography>
-                        <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{dms.id}</Typography>
-                    </Grid>
                 </Grid>
                 <Grid item xs={12} container sx={{ marginTop: "20px" }}>
                     <LamassuTableWithDataController
@@ -142,7 +138,7 @@ export const ApproveDMS: React.FC<Props> = ({ dmsID, isOpen, onClose = () => { }
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={() => { dispatch(dmsAction.approveDMSRequestAction.request({ status: "APPROVED", dmsID: dms.id, authorized_cas: selectedCas })); onClose(); }} variant="contained">Approve</Button>
+                <Button onClick={() => { dispatch(dmsAction.approveDMSRequestAction.request({ status: "APPROVED", dmsName: dms.name, authorized_cas: selectedCas })); onClose(); }} variant="contained">Approve</Button>
             </DialogActions>
         </Dialog>
     );

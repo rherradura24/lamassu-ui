@@ -1,13 +1,15 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { CAStats, Certificate, CertificateAuthority, OCAStatus } from "./models";
-import { ActionStatus, capitalizeFirstLetter, ORequestStatus, ORequestType } from "ducks/reducers_utils";
+import { CAInfo, CAStats, Certificate, CertificateAuthority, CryptoEngine, OCAStatus } from "./models";
+import { ActionStatus, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 import { keyStrengthToColor, statusToColor } from "./utils";
 import { GetIssuedCertsResponse } from "./actions";
 
 export interface CertificateAuthoritiesState {
+    info: CAInfo
+    cryptoEngine: CryptoEngine
     status: ActionStatus
     caStats: CAStats
     list: Array<CertificateAuthority>
@@ -16,13 +18,25 @@ export interface CertificateAuthoritiesState {
 }
 
 const initialState = {
+    info: {
+        build_version: "",
+        build_time: ""
+    },
+    cryptoEngine: {
+        provider: "HSM",
+        cryptoki_version: "",
+        manufacturer: "",
+        model: "",
+        library: "",
+        supported_key_types: []
+    },
     status: {
         isLoading: false,
         status: ORequestStatus.Idle,
         type: ORequestType.None
     },
     caStats: {
-        issued_certs: 0,
+        issued_certificates: 0,
         cas: 0,
         scan_date: new Date()
     },
@@ -36,12 +50,30 @@ const initialState = {
 };
 
 export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritiesState, RootAction>(initialState)
+    .handleAction(actions.caActions.getInfoAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
+    })
+    .handleAction(actions.caActions.getInfoAction.success, (state, action) => {
+        return { ...state, info: action.payload, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.caActions.getInfoAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
+    .handleAction(actions.caActions.getCryptoEngineAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
+    })
+    .handleAction(actions.caActions.getCryptoEngineAction.success, (state, action) => {
+        return { ...state, cryptoEngine: action.payload, status: { ...state.status, isLoading: false, status: ORequestStatus.Success } };
+    })
+    .handleAction(actions.caActions.getCryptoEngineAction.failure, (state, action) => {
+        return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
     .handleAction(actions.caActions.getCAsAction.request, (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [], totalCAs: 0 };
     })
     .handleAction(actions.caActions.getStatsAction.success, (state, action) => {
-        console.log(action.payload);
-
         return { ...state, caStats: action.payload };
     })
 
@@ -52,14 +84,10 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
     .handleAction(actions.caActions.getCAsAction.success, (state, action) => {
         let list: Array<CertificateAuthority> = [];
         action.payload.cas.forEach((ca: CertificateAuthority) => {
-            ca.status = capitalizeFirstLetter(ca.status);
             ca.status_color = statusToColor(ca.status);
-
-            ca.key_metadata.strength = capitalizeFirstLetter(ca.key_metadata.strength);
             ca.key_metadata.strength_color = keyStrengthToColor(ca.key_metadata.strength);
-
             ca.issued_certs = [];
-            ca.total_issued_certs = 0;
+            ca.total_issued_certificates = 0;
 
             list.push(ca);
         });
@@ -78,13 +106,10 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
     .handleAction(actions.caActions.getIssuedCertsActions.success, (state, action) => {
         let list: Array<Certificate> = [];
         const response: GetIssuedCertsResponse = action.payload as GetIssuedCertsResponse;
-        const certs = response.certs ? response.certs : [];
+        const certs = response.certificates ? response.certificates : [];
 
         certs.forEach((issuedCert: Certificate) => {
-            issuedCert.key_metadata.strength = capitalizeFirstLetter(issuedCert.key_metadata.strength);
             issuedCert.key_metadata.strength_color = keyStrengthToColor(issuedCert.key_metadata.strength);
-
-            issuedCert.status = capitalizeFirstLetter(issuedCert.status);
             issuedCert.status_color = statusToColor(issuedCert.status);
 
             list.push(issuedCert);
@@ -96,7 +121,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
             // @ts-ignore
             if (cas[i].name === action.meta.caName) {
                 cas[i].issued_certs = list;
-                cas[i].total_issued_certs = response.total_certs;
+                cas[i].total_issued_certificates = response.total_certificates;
             }
         }
         return { ...state, issuedCertsStatus: { ...state.issuedCertsStatus, isLoading: false, status: ORequestStatus.Success }, list: cas };
@@ -114,14 +139,11 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         let currentList = state.list;
 
         let issuedCert = action.payload;
-        issuedCert.key_metadata.strength = capitalizeFirstLetter(issuedCert.key_metadata.strength);
         issuedCert.key_metadata.strength_color = keyStrengthToColor(issuedCert.key_metadata.strength);
-
-        issuedCert.status = capitalizeFirstLetter(issuedCert.status);
         issuedCert.status_color = statusToColor(issuedCert.status);
 
         issuedCert.issued_certs = [];
-        issuedCert.total_issued_certs = 0;
+        issuedCert.total_issued_certificates = 0;
 
         currentList.push(issuedCert);
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: currentList };
@@ -139,14 +161,10 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         let currentList = state.list;
 
         let issuedCert = action.payload;
-        issuedCert.key_metadata.strength = capitalizeFirstLetter(issuedCert.key_metadata.strength);
         issuedCert.key_metadata.strength_color = keyStrengthToColor(issuedCert.key_metadata.strength);
-
-        issuedCert.status = capitalizeFirstLetter(issuedCert.status);
         issuedCert.status_color = statusToColor(issuedCert.status);
-
         issuedCert.issued_certs = [];
-        issuedCert.total_issued_certs = 0;
+        issuedCert.total_issued_certificates = 0;
 
         currentList.push(issuedCert);
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: currentList };
@@ -161,7 +179,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         let currentList: Array<CertificateAuthority> = state.list;
         let index = currentList.map(ca => ca.name).indexOf(action.meta.caName);
         if (index >= 0) {
-            currentList[index].status = OCAStatus.Revoked;
+            currentList[index].status = OCAStatus.REVOKED;
             currentList[index].status_color = statusToColor(currentList[index].status);
         }
 
@@ -183,7 +201,7 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         if (index >= 0) {
             const certIdx = currentList[index].issued_certs.map((cert: Certificate) => cert.serial_number).indexOf(action.meta.serialNumber);
             if (certIdx >= 0) {
-                currentList[index].issued_certs[certIdx].status = statusToColor(OCAStatus.Revoked);
+                currentList[index].issued_certs[certIdx].status = statusToColor(OCAStatus.REVOKED);
                 currentList[index].issued_certs[certIdx].status = statusToColor(currentList[index].issued_certs[certIdx].status);
             }
         }
@@ -193,9 +211,23 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
 
     .handleAction(actions.caActions.revokeCertAction.failure, (state, action) => {
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
+    .handleAction(actions.caActions.resetStateAction, (state, _) => {
+        return { ...state, status: { isLoading: false, status: ORequestStatus.Idle, type: ORequestType.None } };
     });
 
 const getSelector = (state: RootState): CertificateAuthoritiesState => state.cas;
+
+export const getInfo = (state: RootState): CAInfo => {
+    const caReducer = getSelector(state);
+    return caReducer.info;
+};
+
+export const getCryptoEngine = (state: RootState): CryptoEngine => {
+    const caReducer = getSelector(state);
+    return caReducer.cryptoEngine;
+};
 
 export const getStats = (state: RootState): CAStats => {
     const caReducer = getSelector(state);
@@ -241,7 +273,7 @@ export const getIssuedCerts = (state: RootState, caName: string): Array<Certific
 export const getTotalIssuedCerts = (state: RootState, caName: string): number | undefined => {
     const ca = getCA(state, caName);
     if (ca !== undefined) {
-        return ca.total_issued_certs;
+        return ca.total_issued_certificates;
     }
     return undefined;
 };

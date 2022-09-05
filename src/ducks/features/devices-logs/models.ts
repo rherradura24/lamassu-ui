@@ -1,11 +1,9 @@
 export class GetDeviceLogsResponse {
-    public total_logs!: number
     public logs!: Array<DeviceLog>
+    public slot_logs!: any
 }
 
 export class DeviceLog {
-    public id!: string
-    public device_id!: string
     public log_message!: string
     public log_description!: string
     public log_type!: LogType
@@ -16,7 +14,7 @@ export class DeviceLog {
 export const OLogType = {
     INFO: "INFO",
     SUCCESS: "SUCCESS",
-    WARNING: "WARNING",
+    WARN: "WARN",
     CRITICAL: "CRITICAL"
 };
 

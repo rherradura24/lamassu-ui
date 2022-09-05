@@ -1,3 +1,31 @@
+export class CAInfo {
+    public build_version!: string
+    public build_time!: string
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
+export class CryptoEngineSupportedKey {
+    public type!: string
+    public minimum_size!: number
+    public maximum_size!: number
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
+export class CryptoEngine {
+    public provider!: string
+    public cryptoki_version!: string
+    public manufacturer!: string
+    public model!: string
+    public library!: string
+    public supported_key_types!: Array<CryptoEngineSupportedKey>
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
 
 export class GetCAsListAPIResponse {
     public total_cas!: number
@@ -9,16 +37,13 @@ export class GetCAsListAPIResponse {
 }
 
 export class CAStats {
-    public issued_certs!: number
+    public issued_certificates!: number
     public cas!: number
     public scan_date!: Date
 }
 
 export class CertificateAuthority {
-    public certificate!: {
-        pem_base64: string
-        public_key_base64: string
-    }
+    public certificate!: string
 
     public key_metadata!: {
         bits: number
@@ -40,10 +65,13 @@ export class CertificateAuthority {
         state: string
     }
 
-    public valid_from!: Date
-    public valid_to!: Date
+    public valid_from!: number
+    public valid_to!: number
 
-    public total_issued_certs!: number
+    public issuance_duration!: number
+    public ca_duration!: number
+
+    public total_issued_certificates!: number
     public issued_certs!: Array<Certificate>
 
     constructor (args?: {}) {
@@ -52,10 +80,7 @@ export class CertificateAuthority {
 }
 
 export class Certificate {
-    public certificate!: {
-        pem_base64: string
-        public_key_base64: string
-    }
+    public certificate!: string
 
     public key_metadata!: {
         bits: number
@@ -76,8 +101,8 @@ export class Certificate {
         state: string
     }
 
-    public valid_from!: Date
-    public valid_to!: Date
+    public valid_from!: number
+    public valid_to!: number
 
     constructor (args?: {}) {
         Object.assign(this, args);
@@ -85,20 +110,21 @@ export class Certificate {
 }
 
 export const OKeyStrength = {
-    High: "High",
-    Medium: "Medium",
-    Low: "Low"
+    HIGH: "HIGH",
+    MEDIUM: "MEDIUM",
+    LOW: "LOW"
 };
 
 export const OKeyType = {
     RSA: "RSA",
-    EC: "EC"
+    ECDSA: "ECDSA"
 };
 
 export const OCAStatus = {
-    Issued: "Issued",
-    Expired: "Expired",
-    Revoked: "Revoked"
+    ACTIVE: "ACTIVE",
+    EXPIRED: "EXPIRED",
+    ABOUT_TO_EXPIRED: "ABOUT_TO_EXPIRED",
+    REVOKED: "REVOKED"
 };
 
 export type KeyStrength = typeof OKeyStrength[keyof typeof OKeyStrength];

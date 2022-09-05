@@ -22,6 +22,7 @@ import deepEqual from "fast-deep-equal/es6";
 import { RevokeDMS } from "../DmsActions/RevokeDms";
 import { DeclineDMS } from "../DmsActions/DeclineDms";
 import { ApproveDMS } from "../DmsActions/ApproveDms/index";
+import { capitalizeFirstLetter } from "ducks/reducers_utils";
 
 export const DmsList = () => {
     const theme = useTheme();
@@ -44,7 +45,7 @@ export const DmsList = () => {
             },
             sort: {
                 enabled: true,
-                selectedField: "id",
+                selectedField: "name",
                 selectedMode: "asc"
             },
             pagination: {
@@ -70,15 +71,13 @@ export const DmsList = () => {
 
     useEffect(() => {
         if (tableConfig !== undefined) {
-            console.log("call ", tableConfig);
             refreshAction();
         }
     }, [tableConfig]);
 
     const dmsTableColumns = [
-        { key: "id", title: "DMS ID", dataKey: "id", align: "start", query: true, type: OperandTypes.string, size: 3 },
-        { key: "name", title: "Name", dataKey: "name", align: "center", type: OperandTypes.string, size: 2 },
-        { key: "creation", title: "Creation Date", dataKey: "creation_timestamp", type: OperandTypes.date, align: "center", size: 1 },
+        { key: "name", title: "DMS Name", dataKey: "name", align: "center", query: true, type: OperandTypes.string, size: 2 },
+        { key: "creation_timestamp", title: "Creation Date", dataKey: "creation_timestamp", type: OperandTypes.date, align: "center", size: 1 },
         { key: "status", title: "Status", dataKey: "status", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "expiration", title: "Expiration / Revocation / Rejection Date", dataKey: "modification_timestamp", type: OperandTypes.date, align: "center", size: 1 },
         { key: "keyprops", title: "Key Properties", align: "center", size: 1 },
@@ -89,22 +88,21 @@ export const DmsList = () => {
 
     const dmsRender = (dms: DMS) => {
         return {
-            id: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{dms.id}</Typography>,
-            name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{dms.name}</Typography>,
-            status: <LamassuChip label={dms.status} color={dms.status_color} />,
-            creation: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(dms.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
+            name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{dms.name}</Typography>,
+            status: <LamassuChip label={capitalizeFirstLetter(dms.status)} color={dms.status_color} />,
+            creation_timestamp: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(dms.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
             keystrength: <LamassuChip label={dms.key_metadata.strength} color={dms.key_metadata.strength_color} />,
             keyprops: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{`${dms.key_metadata.type} ${dms.key_metadata.bits}`}</Typography>,
-            enrolled: (dms.status === ODMSStatus.Approved || dms.status === ODMSStatus.Revoked)
+            enrolled: (dms.status === ODMSStatus.APPROVED || dms.status === ODMSStatus.REVOKED)
                 ? (
                     <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{50}</Typography>
                 )
                 : (
                     <Typography>-</Typography>
                 ),
-            expiration: (dms.status === ODMSStatus.Revoked || dms.status === ODMSStatus.Approved || dms.status === ODMSStatus.Denied)
+            expiration: (dms.status === ODMSStatus.REVOKED || dms.status === ODMSStatus.APPROVED || dms.status === ODMSStatus.REJECTED)
                 ? (
-                    <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dms.status === ODMSStatus.Revoked ? moment(dms.modification_timestamp).format("DD/MM/YYYY HH:mm") : (dms.status === ODMSStatus.Approved ? moment(dms.modification_timestamp).format("DD/MM/YYYY HH:mm") : moment(dms.modification_timestamp).format("DD/MM/YYYY HH:mm"))}</Typography>
+                    <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dms.status === ODMSStatus.REVOKED ? moment(dms.last_status_update_timestamp).format("DD/MM/YYYY HH:mm") : (dms.status === ODMSStatus.APPROVED ? moment(dms.last_status_update_timestamp).format("DD/MM/YYYY HH:mm") : moment(dms.last_status_update_timestamp).format("DD/MM/YYYY HH:mm"))}</Typography>
                 )
                 : (
                     <Typography>-</Typography>
@@ -113,7 +111,7 @@ export const DmsList = () => {
                 <Box>
                     <Grid container spacing={1} alignItems="center">
                         {
-                            dms.status === ODMSStatus.PendingApproval
+                            dms.status === ODMSStatus.PENDING_APPROVAL
                                 ? (
                                     <>
                                         <Grid item>
@@ -125,7 +123,7 @@ export const DmsList = () => {
                                                 size="small"
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
-                                                    setIsDialogOpen({ open: true, type: "APPROVE", id: dms.id });
+                                                    setIsDialogOpen({ open: true, type: "APPROVE", id: dms.name });
                                                 }}
                                             >
                                                 Approve
@@ -140,7 +138,7 @@ export const DmsList = () => {
                                                 size="small"
                                                 onClick={(ev) => {
                                                     ev.stopPropagation();
-                                                    setIsDialogOpen({ open: true, type: "DECLINE", id: dms.id });
+                                                    setIsDialogOpen({ open: true, type: "DECLINE", id: dms.name });
                                                 }}
                                             >
                                                 Decline
@@ -149,7 +147,7 @@ export const DmsList = () => {
                                     </>
                                 )
                                 : (
-                                    dms.status === ODMSStatus.Approved
+                                    dms.status === ODMSStatus.APPROVED
                                         ? (
                                             <>
                                                 <Grid item>
@@ -161,7 +159,7 @@ export const DmsList = () => {
                                                         size="small"
                                                         onClick={(ev) => {
                                                             ev.stopPropagation();
-                                                            setIsDialogOpen({ open: true, type: "REVOKE", id: dms.id });
+                                                            setIsDialogOpen({ open: true, type: "REVOKE", id: dms.name });
                                                         }}
                                                     >
                                                         Revoke
@@ -169,7 +167,7 @@ export const DmsList = () => {
                                                 </Grid>
                                                 <Grid item>
                                                     <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("dms-" + dms.name + ".crt", window.atob(dms.crt)); }}>
+                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("dms-" + dms.name + ".crt", window.atob(dms.certificate)); }}>
                                                             <FileDownloadRoundedIcon fontSize={"small"} />
                                                         </IconButton>
                                                     </Box>
@@ -188,7 +186,7 @@ export const DmsList = () => {
                 <Box sx={{ width: "calc(100% - 65px)", borderLeft: `4px solid ${theme.palette.primary.main}`, background: pSBC(theme.palette.mode === "dark" ? 0.01 : -0.03, theme.palette.background.paper), marginLeft: "20px", padding: "20px", marginBottom: "20px" }}>
                     {
 
-                        dms.status === ODMSStatus.Approved
+                        dms.status === ODMSStatus.APPROVED
                             ? (
                                 <>
                                     <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Authorized CAs</Typography>
@@ -226,7 +224,6 @@ export const DmsList = () => {
                     console.log(ev, tableConfig);
                     if (!deepEqual(ev, tableConfig)) {
                         setTableConfig(prev => ({ ...prev, ...ev }));
-                        // refreshAction();
                     }
                 }}
                 tableProps={{
@@ -277,20 +274,20 @@ export const DmsList = () => {
                     <>
                         {
                             isDialogOpen.type === "APPROVE" && (
-                                <ApproveDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <ApproveDMS dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
                             )
                         }
 
                         {
                             isDialogOpen.type === "DECLINE" && (
-                                <DeclineDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <DeclineDMS dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
 
                             )
                         }
 
                         {
                             isDialogOpen.type === "REVOKE" && (
-                                <RevokeDMS dmsID={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
+                                <RevokeDMS dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
 
                             )
                         }

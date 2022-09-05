@@ -1,8 +1,11 @@
-import { createAsyncAction } from "typesafe-actions";
+import { createAsyncAction, createAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { CertificateAuthority, CAStats, GetCAsListAPIResponse } from "./models";
+import { CertificateAuthority, CAStats, GetCAsListAPIResponse, CAInfo, CryptoEngine } from "./models";
 
 export const actionTypes = {
+    RESET_CA_REQUEST_STATE: "RESET_CA_REQUEST_STATE",
+    GET_INFO_CA_API: "GET_INFO_CA_API",
+    GET_CRYPTO_ENGINE: "GET_CRYPTO_ENGINE",
     GET_CA_STATS: "GET_CA_STATS",
     GET_CAS: "GET_CAS",
     GET_ISSUED_CERTS: "GET_ISSUED_CERTS",
@@ -11,6 +14,22 @@ export const actionTypes = {
     REVOKE_CA: "REVOKE_CA",
     REVOKE_CERT: "REVOKE_CERT"
 };
+
+export const resetStateAction = createAction(
+    actionTypes.RESET_CA_REQUEST_STATE
+)();
+
+export const getInfoAction = createAsyncAction(
+    [actionTypes.GET_INFO_CA_API, () => { }],
+    [success(actionTypes.GET_INFO_CA_API), (req: CAInfo) => req],
+    [failed(actionTypes.GET_INFO_CA_API), (req: Error) => req]
+)();
+
+export const getCryptoEngineAction = createAsyncAction(
+    [actionTypes.GET_CRYPTO_ENGINE, () => { }],
+    [success(actionTypes.GET_CRYPTO_ENGINE), (req: CryptoEngine) => req],
+    [failed(actionTypes.GET_CRYPTO_ENGINE), (req: Error) => req]
+)();
 
 export const getStatsAction = createAsyncAction(
     [actionTypes.GET_CA_STATS, () => { }],
@@ -34,13 +53,16 @@ export const getCAsAction = createAsyncAction(
 
 export type GetIssuedCerts = {
     caName: string,
+    sortMode: "asc" | "desc",
+    sortField: string,
+    limit: number,
     offset: number,
-    page: number,
+    filterQuery: Array<string>,
 }
 
 export type GetIssuedCertsResponse = {
-    certs: Array<CertificateAuthority>
-    total_certs: number
+    certificates: Array<CertificateAuthority>
+    total_certificates: number
 }
 
 export const getIssuedCertsActions = createAsyncAction(
@@ -51,7 +73,6 @@ export const getIssuedCertsActions = createAsyncAction(
 )();
 
 export type CreateCA = {
-    caName: string
     selectedConnectorIDs: Array<string>,
     body: {
         subject: {
@@ -66,8 +87,8 @@ export type CreateCA = {
             type: string,
             bits: number
         },
-        ca_ttl: number,
-        enroller_ttl: number
+        ca_duration: number
+        issuance_duration: number,
     }
 }
 

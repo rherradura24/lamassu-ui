@@ -1,38 +1,101 @@
 import { Box, Divider, Grid, Paper, Typography, useTheme } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "ducks/hooks";
+import * as cloudProxyAction from "ducks/features/cloud-proxy/actions";
+import * as cloudProxySelector from "ducks/features/cloud-proxy/reducer";
+import * as devicesAction from "ducks/features/devices/actions";
+import * as devicesSelector from "ducks/features/devices/reducer";
+import * as caAction from "ducks/features/cas/actions";
+import * as caSelector from "ducks/features/cas/reducer";
+import * as dmsEnrollerAction from "ducks/features/dms-enroller/actions";
+import * as dmsEnrollerSelector from "ducks/features/dms-enroller/reducer";
 
 export const InfoView = () => {
     const theme = useTheme();
+
+    const dispatch = useDispatch();
+
+    const dmsManagerApiInfo = useAppSelector((state) => dmsEnrollerSelector.getInfo(state));
+    const deviceManagerApiInfo = useAppSelector((state) => devicesSelector.getInfo(state));
+    const cloudProxyApiInfo = useAppSelector((state) => cloudProxySelector.getInfo(state));
+    const caApiInfo = useAppSelector((state) => caSelector.getInfo(state));
+    const caCryptoEngine = useAppSelector((state) => caSelector.getCryptoEngine(state));
+
+    console.log(dmsManagerApiInfo, deviceManagerApiInfo, cloudProxyApiInfo, caApiInfo);
+
+    const refreshAction = () => {
+        dispatch(caAction.getInfoAction.request());
+        dispatch(caAction.getCryptoEngineAction.request());
+        dispatch(devicesAction.getInfoAction.request());
+        dispatch(dmsEnrollerAction.getInfoAction.request());
+        dispatch(cloudProxyAction.getInfoAction.request());
+    };
+
+    useEffect(() => {
+        refreshAction();
+    }, []);
+
+    let crypyoEngineManufacturerImage = "";
+    switch (caCryptoEngine.manufacturer.toLowerCase()) {
+    case "softhsm":
+        crypyoEngineManufacturerImage = "assets/softhsm.png";
+        break;
+
+    case "vault":
+        crypyoEngineManufacturerImage = "assets/vault.png";
+        break;
+
+    default:
+        break;
+    }
+
+    console.log(caCryptoEngine.provider.toLowerCase());
+    console.log(crypyoEngineManufacturerImage);
+
     const caInfo: Array<[string, any]> = [
-        ["Version", "1.0.0"],
-        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"],
-        ["Certificate Engine Provider", "SoftHSM v2.0"],
-        ["Cryptoki version", "2.40"],
-        ["Manufacturer", "SoftHSM"],
-        ["Library", "Implementation of PKCS11 (ver 2.6)"],
-        ["RSA Supported", true],
-        ["RSA Minimum Key Size (bits)", "512"],
-        ["RSA Maximum Key Size (bits)", "16384"],
-        ["EC Supported", false],
-        ["EC Minimum Key Size (bits)", "-"],
-        ["EC Maximum Key Size (bits)", "-"]
+        ["Build Version", caApiInfo.build_version],
+        ["Build Time", caApiInfo.build_time],
+        ["Certificate Engine Provider", caCryptoEngine.provider],
+        ["Cryptoki version", caCryptoEngine.cryptoki_version],
+        ["Manufacturer", caCryptoEngine.manufacturer],
+        ["Library", caCryptoEngine.library]
     ];
+    if (caCryptoEngine.supported_key_types.filter(key => key.type === "RSA").length > 0) {
+        const rsaInfo = caCryptoEngine.supported_key_types.filter(key => key.type === "RSA")[0];
+        console.log(rsaInfo.minimum_size);
+
+        caInfo.push(["RSA Supported", true]);
+        caInfo.push(["RSA Minimum Key Size (bits)", rsaInfo.minimum_size]);
+        caInfo.push(["RSA Maximum Key Size (bits)", rsaInfo.maximum_size]);
+    } else {
+        caInfo.push(["RSA Supported", false]);
+    }
+
+    if (caCryptoEngine.supported_key_types.filter(key => key.type === "ECDSA").length > 0) {
+        const ecdsaInfo = caCryptoEngine.supported_key_types.filter(key => key.type === "ECDSA")[0];
+        caInfo.push(["ECDSA Supported", true]);
+        caInfo.push(["ECDSA Minimum Key Size (bits)", ecdsaInfo.minimum_size]);
+        caInfo.push(["ECDSA Maximum Key Size (bits)", ecdsaInfo.maximum_size]);
+    } else {
+        caInfo.push(["ECDSA Supported", false]);
+    }
 
     const dmsInfo: Array<[string, any]> = [
-        ["Version", "1.0.0"],
-        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"]
+        ["Build Version", dmsManagerApiInfo.build_version],
+        ["Build Time", dmsManagerApiInfo.build_time]
     ];
 
     const deviceManagerInfo: Array<[string, any]> = [
-        ["Version", "1.0.0"],
-        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"],
-        ["Minimum Reenrollment Days", "10 days"]
+        ["Build Version", deviceManagerApiInfo.build_version],
+        ["Build Time", deviceManagerApiInfo.build_time]
     ];
 
     const cloudProxyInfo: Array<[string, any]> = [
-        ["Version", "1.0.0"],
-        ["Build", "606fa0a84ea055932e0ae9e38a72f14f6284291b"]
+        ["Build Version", cloudProxyApiInfo.build_version],
+        ["Build Time", cloudProxyApiInfo.build_time]
     ];
 
     return (
@@ -54,7 +117,7 @@ export const InfoView = () => {
                         <Box component={Paper} sx={{
                             height: "75px",
                             width: "150px",
-                            backgroundImage: "url('assets/vault.png')",
+                            backgroundImage: "url('" + crypyoEngineManufacturerImage + "')",
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             backgroundRepeat: "no-repeat",
@@ -83,7 +146,7 @@ export const InfoView = () => {
                                                 )
                                             }
                                             {
-                                                typeof info[1] === "string" && (
+                                                (typeof info[1] === "string" || typeof info[1] === "number") && (
                                                     <Typography style={{ color: theme.palette.text.primaryLight, fontWeight: "500", fontSize: 13 }}>
                                                         {info[1]}
                                                     </Typography>

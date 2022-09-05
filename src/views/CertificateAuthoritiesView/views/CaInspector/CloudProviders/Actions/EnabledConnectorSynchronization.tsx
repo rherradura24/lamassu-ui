@@ -8,10 +8,10 @@ import * as cloudProxyActions from "ducks/features/cloud-proxy/actions";
 import { useDispatch } from "react-redux";
 
 interface Props {
-  caName: string
-  connectorID: string
-  isOpen: boolean,
-  onClose: any
+    caName: string
+    connectorID: string
+    isOpen: boolean,
+    onClose: any
 }
 export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, connectorID, isOpen, onClose }) => {
     const theme = useTheme();
@@ -19,7 +19,8 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
 
     const caData = useAppSelector((state) => caSelector.getCA(state, caName)!);
     const cloudConnector = useAppSelector((state) => cloudProxySelector.getCloudConnector(state, connectorID)!);
-
+    console.log(caData);
+    console.log(caData, caData.valid_from);
     return (
         isOpen
             ? (
@@ -27,7 +28,7 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
                     <DialogTitle>Enable synchronization for connector: {cloudConnector.name}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-              You are about to enable the synchronization between this connector and the selected CA. Please, confirm your action.
+                            You are about to enable the synchronization between this connector and the selected CA. Please, confirm your action.
                         </DialogContentText>
                         <Grid container style={{ marginTop: "10px" }}>
                             <Grid item xs={12}>
@@ -46,7 +47,34 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                        <Button onClick={() => { dispatch(cloudProxyActions.forceSynchronizeCloudConnectorAction.request({ caName: caName, connectorID: connectorID, caCetificate: caData.certificate.pem_base64, caSerialnumber: caData.serial_number })); onClose(); }} variant="contained">Synchronize</Button>
+                        <Button onClick={() => {
+                            dispatch(cloudProxyActions.forceSynchronizeCloudConnectorAction.request({
+                                connectorID: connectorID,
+                                eventType: "io.lamassu.ca.create",
+                                eventPayload: {
+                                    name: caData.name,
+                                    status: caData.status,
+                                    certificate: caData.certificate,
+                                    serial_number: caData.serial_number,
+                                    key_metadata: {
+                                        type: caData.key_metadata.type,
+                                        bits: caData.key_metadata.bits,
+                                        strength: caData.key_metadata.strength
+                                    },
+                                    subject: {
+                                        common_name: caData.subject.common_name,
+                                        organization: caData.subject.organization,
+                                        organization_unit: caData.subject.organization_unit,
+                                        country: caData.subject.country,
+                                        state: caData.subject.state,
+                                        locality: caData.subject.locality
+                                    },
+                                    valid_from: caData.valid_from,
+                                    valid_to: caData.valid_to,
+                                    issuance_duration: caData.issuance_duration
+                                }
+                            })); onClose();
+                        }} variant="contained">Synchronize</Button>
                     </DialogActions>
                 </Dialog>
             )

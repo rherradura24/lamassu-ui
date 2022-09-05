@@ -8,7 +8,6 @@ import { logTypeToColor } from "./utils";
 
 interface DeviceLogsInfo {
     logs: Array<DeviceLog>;
-    total: number
 }
 
 export interface DevicesLogsState {
@@ -33,7 +32,16 @@ export const devicesLogsReducer = createReducer<DevicesLogsState, RootAction>(in
 
     .handleAction(actions.devicesLogsActions.getDeviceLogs.success, (state, action) => {
         const currentLogMap = state.map;
-        currentLogMap.set(action.meta.deviceID, { logs: action.payload.logs.map((log: DeviceLog) => { log.log_type_color = logTypeToColor(log.log_type); return log; }), total: action.payload.total_logs });
+        let newLogs = action.payload.logs.map((log: DeviceLog) => { log.log_type_color = logTypeToColor(log.log_type); return log; });
+        const slotLogsKeys = Object.keys(action.payload.slot_logs);
+        for (const i in slotLogsKeys) {
+            const slotLogs = action.payload.slot_logs;
+            const coloredLogs: Array<DeviceLog> = slotLogs[slotLogsKeys[i]]!.map((log: DeviceLog) => { log.log_type_color = logTypeToColor(log.log_type); return log; });
+            newLogs = newLogs.concat(coloredLogs);
+        }
+        console.log(newLogs);
+
+        currentLogMap.set(action.meta.deviceID, { logs: newLogs });
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, map: currentLogMap };
     })
 

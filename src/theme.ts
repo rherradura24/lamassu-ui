@@ -61,6 +61,7 @@ export const light : any = {
             yellow: "#F3A83B",
             red: "#da565f",
             purple: "#8F56FE",
+            gray: "#ddd",
             background: "#eee",
             text: "#111"
         },
@@ -148,6 +149,7 @@ export const dark : any = {
             yellow: "#F3A83B",
             red: "#da565f",
             purple: "#8F56FE",
+            gray: "#ddd",
             background: "#22343C",
             text: "#fff"
         },

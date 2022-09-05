@@ -8,16 +8,16 @@ import * as dmsSelector from "ducks/features/dms-enroller/reducer";
 import * as dmsAction from "ducks/features/dms-enroller/actions";
 
 interface Props {
-    dmsID: string,
+    dmsName: string,
     isOpen: boolean,
     onClose: any
 }
 
-export const DeclineDMS: React.FC<Props> = ({ dmsID, isOpen, onClose = () => { } }) => {
+export const DeclineDMS: React.FC<Props> = ({ dmsName, isOpen, onClose = () => { } }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
 
-    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsID)!);
+    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
 
     return (
         <Dialog open={isOpen} onClose={() => onClose()} maxWidth={"xl"}>
@@ -31,15 +31,11 @@ export const DeclineDMS: React.FC<Props> = ({ dmsID, isOpen, onClose = () => { }
                         <Typography variant="button">DMS Name: </Typography>
                         <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{dms.name}</Typography>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Typography variant="button">DMS ID: </Typography>
-                        <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{dms.id}</Typography>
-                    </Grid>
                 </Grid>
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={() => { dispatch(dmsAction.declineDMSRequestAction.request({ dmsID: dmsID, status: "DENIED" })); onClose(); }} variant="contained">Decline</Button>
+                <Button onClick={() => { dispatch(dmsAction.declineDMSRequestAction.request({ dmsName: dms.name, status: "REJECTED" })); onClose(); }} variant="contained">Decline</Button>
             </DialogActions>
         </Dialog>
     );

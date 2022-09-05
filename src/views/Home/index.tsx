@@ -57,9 +57,14 @@ export const Home = () => {
         refreshAction();
     }, []);
 
-    const issuedCerts = caStats.issued_certs;
+    const issuedCerts = caStats.issued_certificates;
     const cas = totalCAs;
     const dmss = dmsList.length;
+
+    console.log(issuedCerts);
+    console.log(cas);
+    console.log(dmss);
+    console.log(devices);
 
     console.log(caStats, issuedCerts);
 

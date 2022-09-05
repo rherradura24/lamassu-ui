@@ -3,10 +3,12 @@ import { Grid, Paper, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { Doughnut as DoughnutChart } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
+import CachedIcon from '@mui/icons-material/Cached';
+import IconButton from '@mui/material/IconButton';
 
 Chart.register(...registerables)
 
-export const Doughnut = ({ dataset, small = true, title, primaryStat, percentage = true, statLabel, cardColor, primaryTextColor, secondaryTextColor, ...props }) => {
+export const Doughnut = ({ dataset, small = true, title, subtitle, onRefresh, primaryStat, percentage = true, statLabel, cardColor, primaryTextColor, secondaryTextColor, ...props }) => {
   const localDataset = dataset.map(dataCategory => dataCategory.value)
   const localLabels = dataset.map(dataCategory => dataCategory.label)
   const localColors = dataset.map(dataCategory => dataCategory.color)
@@ -22,7 +24,7 @@ export const Doughnut = ({ dataset, small = true, title, primaryStat, percentage
   }
 
   const options = {
-    cutout: small ? 90 : 95,
+    cutout: small ? 115 : 120,
     borderWidth: 0,
     backgroundColor: localColors,
     hoverBackgroundColor: localColors,
@@ -50,36 +52,54 @@ export const Doughnut = ({ dataset, small = true, title, primaryStat, percentage
   }
 
   return (
-        <Box sx={{ width: small ? "250px" : "300px", height: "fit-content", borderRadius: "15px", padding: "20px", bgcolor: cardColor }} component={Paper} {...props}>
-            <Typography variant="button" sx={{ color: primaryTextColor }}>{title}</Typography>
-            <Box sx={{ position: "relative", marginTop: "0px" }} >
-                <Box sx={{}} >
-                    <DoughnutChart data={data} options={options} style={{ zIndex: 10, position: "relative" }}/>
-                </Box>
-                <Box sx={{ marginTop: "-185px", marginBottom: "80px", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                    <Box style={{ display: "flex", alignItems: "end" }}>
-                        <Typography sx={{ fontSize: "35px", fontWeight: "600", color: primaryTextColor }}>{primaryStat}</Typography>
-                        {
-                            percentage && (
-                                <Typography sx={{ fontSize: "22px", fontWeight: "600", color: secondaryTextColor, lineHeight: "45px" }}>%</Typography>
-                            )
-                        }
-                    </Box>
-                    <Typography sx={{ fontSize: "18px", fontWeight: "400", width: "50%", textTransform: "uppercase", color: secondaryTextColor, textAlign: "center" }}>{statLabel}</Typography>
-                </Box>
-            </Box>
-            <Grid container spacing={1}>
-                {
-                    dataset.map((dataCategory, idx) => {
-                      return (
-                            <Grid item xs={6} container alignItems={"center"} key={idx}>
-                                <Box sx={{ bgcolor: dataCategory.color, height: "10px", width: "10px", borderRadius: "50%", marginRight: "5px" }}/>
-                                <Typography sx={{ fontSize: "14px", color: primaryTextColor }}>{dataCategory.label}</Typography>
-                            </Grid>
-                      )
-                    })
-                }
-            </Grid>
+    <Box sx={{ width: small ? "250px" : "360px", height: "fit-content", borderRadius: "15px", padding: "20px", bgcolor: cardColor }} component={Paper} {...props}>
+      <Grid container justifyContent="space-between" alignItems="start">
+        <Grid item xs="auto" container flexDirection="column">
+          <Grid item xs="auto">
+            <Typography variant="button" fontWeight="bold" sx={{ color: primaryTextColor }}>{title}</Typography>
+          </Grid>
+          {
+            subtitle !== "" && (
+              <Grid item xs="auto">
+                <Typography fontSize="13px" fontStyle="italic" sx={{ color: primaryTextColor }}>{subtitle}</Typography>
+              </Grid>
+            )
+          }
+        </Grid>
+        <Grid item xs="auto">
+          <IconButton size="small" sx={{ color: primaryTextColor }} onClick={onRefresh}>
+            <CachedIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Box sx={{ position: "relative", marginTop: "0px" }} >
+        <Box sx={{}} >
+          <DoughnutChart data={data} options={options} style={{ zIndex: 10, position: "relative" }} />
         </Box>
+        <Box sx={{ marginTop: "-215px", marginBottom: "90px", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+          <Box style={{ display: "flex", alignItems: "end" }}>
+            <Typography sx={{ fontSize: "35px", fontWeight: "600", color: primaryTextColor }}>{primaryStat}</Typography>
+            {
+              percentage && (
+                <Typography sx={{ fontSize: "22px", fontWeight: "600", color: secondaryTextColor, lineHeight: "45px" }}>%</Typography>
+              )
+            }
+          </Box>
+          <Typography sx={{ fontSize: "18px", fontWeight: "400", width: "50%", textTransform: "uppercase", color: secondaryTextColor, textAlign: "center" }}>{statLabel}</Typography>
+        </Box>
+      </Box>
+      <Grid container spacing={1}>
+        {
+          dataset.map((dataCategory, idx) => {
+            return (
+              <Grid item xs={6} container alignItems={"center"} key={idx}>
+                <Box sx={{ bgcolor: dataCategory.color, height: "10px", width: "10px", borderRadius: "50%", marginRight: "5px" }} />
+                <Typography sx={{ fontSize: "13px", color: primaryTextColor }}>{dataCategory.label}</Typography>
+              </Grid>
+            )
+          })
+        }
+      </Grid>
+    </Box>
   )
 }

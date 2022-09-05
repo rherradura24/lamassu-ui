@@ -26,12 +26,6 @@ export const AzureIcon : React.FC<Props> = ({ style = {}, props }) => {
     );
 };
 
-export const GoogleCloudIcon: React.FC<Props> = ({ style = {}, props }) => {
-    return (
-        <img src={process.env.PUBLIC_URL + "/assets/GCLOUD.png"} height={25} style={{ marginRight: "10px", marginLeft: "5px", ...style }} {...props} />
-    );
-};
-
 interface CloudProviderIconProps {
   cloudProvider: CloudProvider
 }
@@ -41,9 +35,6 @@ export const CloudProviderIcon: React.FC<CloudProviderIconProps> = ({ cloudProvi
     switch (cloudProvider) {
     case OCloudProvider.Aws:
         image = <AwsIcon />;
-        break;
-    case OCloudProvider.GCloud:
-        image = <GoogleCloudIcon />;
         break;
     case OCloudProvider.Azure:
         image = <AzureIcon />;
