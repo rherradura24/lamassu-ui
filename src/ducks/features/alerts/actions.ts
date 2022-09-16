@@ -1,8 +1,9 @@
 import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { CloudEvent, UserSubscription } from "./models";
+import { AlertsInfo, CloudEvent, UserSubscription } from "./models";
 
 export const actionTypes = {
+    GET_INFO_ALERTS_API: "GET_INFO_ALERTS_API",
     GET_EVENTS: "GET_EVENTS",
     GET_SUBSCRIPTIONS: "GET_SUBSCRIPTIONS",
     SUBSCRIBE: "SUBSCRIBE",
@@ -15,6 +16,12 @@ export type SubscribeAction = {
 export type UnsubscribeAction = {
     EventType: string,
 }
+
+export const getInfoAction = createAsyncAction(
+    [actionTypes.GET_INFO_ALERTS_API, () => { }],
+    [success(actionTypes.GET_INFO_ALERTS_API), (req: AlertsInfo) => req],
+    [failed(actionTypes.GET_INFO_ALERTS_API), (req: Error) => req]
+)();
 
 export const getEvents = createAsyncAction(
     [actionTypes.GET_EVENTS, () => { }],

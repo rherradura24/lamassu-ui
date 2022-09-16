@@ -65,6 +65,17 @@ export const approveDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
             )
         )
     );
+export const updateDMSAuthorizedCAsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.approveDMSRequestAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.UpdateAuthorizedCAsRequest>) =>
+            from(apicalls.updateDMSAuthorizedCAs(action.payload.dmsName, action.payload.authorized_cas)).pipe(
+                map(actions.approveDMSRequestAction.success),
+                catchError((message) => of(actions.approveDMSRequestAction.failure(message)))
+            )
+        )
+    );
 
 export const revokeDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(

@@ -1,3 +1,11 @@
+export class AlertsInfo {
+    public build_version!: string
+    public build_time!: string
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}
+
 export class CloudEvent {
     public specversion!: string
     public id!: string

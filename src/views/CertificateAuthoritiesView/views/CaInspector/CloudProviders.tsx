@@ -91,8 +91,8 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
 
     const cloudConnectorTableColumns = [
         { key: "connectorId", dataKey: "id", title: "Connector ID", query: true, type: OperandTypes.string, align: "start", size: 4 },
-        { key: "syncStatus", title: "Synchronization Status", align: "center", size: 2 },
         { key: "connectorStatus", dataKey: "status", title: "Connector Status", type: OperandTypes.enum, align: "center", size: 2 },
+        { key: "syncStatus", title: "Synchronization Status", align: "center", size: 2 },
         { key: "connectorType", dataKey: "cloud_provider", title: "Connector Type", type: OperandTypes.enum, align: "center", size: 2 },
         { key: "connectorAlias", dataKey: "name", title: "Alias", type: OperandTypes.string, query: true, align: "center", size: 2 },
         { key: "connectorEnabled", title: "Connector Enabled", align: "center", size: 2 },
@@ -157,15 +157,17 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
                                     )
                                 )
                                 : (
-                                    <>
-                                        <Grid item>
-                                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                <IconButton onClick={() => setIsEnableConnectorOpen({ isOpen: true, connectorId: cloudConnector.id })} >
-                                                    <AddIcon fontSize={"small"} />
-                                                </IconButton>
-                                            </Box>
-                                        </Grid>
-                                    </>
+                                    cloudConnector.status === "passing" && (
+                                        <>
+                                            <Grid item>
+                                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                    <IconButton onClick={() => setIsEnableConnectorOpen({ isOpen: true, connectorId: cloudConnector.id })} >
+                                                        <AddIcon fontSize={"small"} />
+                                                    </IconButton>
+                                                </Box>
+                                            </Grid>
+                                        </>
+                                    )
                                 )
                         }
                     </Grid>

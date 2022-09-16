@@ -50,7 +50,7 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
                         <Button onClick={() => {
                             dispatch(cloudProxyActions.forceSynchronizeCloudConnectorAction.request({
                                 connectorID: connectorID,
-                                eventType: "io.lamassu.ca.create",
+                                eventType: "io.lamassuiot.ca.create",
                                 eventPayload: {
                                     name: caData.name,
                                     status: caData.status,

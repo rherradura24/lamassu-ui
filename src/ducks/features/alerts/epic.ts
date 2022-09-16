@@ -9,6 +9,18 @@ import * as apicalls from "./apicalls";
 import { isActionOf, PayloadAction } from "typesafe-actions";
 import { RootAction } from "ducks/actions";
 
+export const getInfoEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.getInfoAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action) =>
+            from(apicalls.getInfo()).pipe(
+                map(actions.getInfoAction.success),
+                catchError((message) => of(actions.getInfoAction.failure(message)))
+            )
+        )
+    );
+
 export const getEventsEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
         filter(isActionOf(actions.getEvents.request)),

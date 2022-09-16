@@ -43,7 +43,7 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
             filterQuery: [],
             limit: paginationOptions.itemsPerPage,
             offset: paginationOptions.selectedPage * paginationOptions.itemsPerPage,
-            sortField: "name",
+            sortField: "ca_name",
             sortMode: "asc"
         }));
     }, []);
@@ -53,7 +53,7 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
             filterQuery: [],
             limit: paginationOptions.itemsPerPage,
             offset: paginationOptions.selectedPage * paginationOptions.itemsPerPage,
-            sortField: "name",
+            sortField: "ca_name",
             sortMode: "asc"
         }));
     }, [paginationOptions]);
@@ -69,13 +69,13 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
     const filterCAs = (name: string) => {
         const filterQuery = [];
         if (name !== "") {
-            filterQuery.push("name[contains]=" + name);
+            filterQuery.push("ca_name[contains]=" + name);
         }
         dispatch(caActions.getCAsAction.request({
             filterQuery: filterQuery,
             limit: paginationOptions.itemsPerPage,
             offset: paginationOptions.selectedPage * paginationOptions.itemsPerPage,
-            sortField: "name",
+            sortField: "ca_name",
             sortMode: "asc"
         }));
     };

@@ -5,7 +5,7 @@ import * as cloudProxyEpic from "./features/cloud-proxy/epic";
 import * as devicesEpic from "./features/devices/epic";
 import * as devicesLogsEpic from "./features/devices-logs/epic";
 import * as dmsEpic from "./features/dms-enroller/epic";
-import * as eventsEpic from "./features/events/epic";
+import * as alertsEpic from "./features/alerts/epic";
 
 const combinedEpics = [
     ...Object.values(casEpic),
@@ -13,7 +13,7 @@ const combinedEpics = [
     ...Object.values(devicesEpic),
     ...Object.values(devicesLogsEpic),
     ...Object.values(dmsEpic),
-    ...Object.values(eventsEpic)
+    ...Object.values(alertsEpic)
 ];
 
 const epics = combineEpics(...combinedEpics);

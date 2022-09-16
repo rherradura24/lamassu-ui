@@ -23,6 +23,8 @@ import { RevokeDMS } from "../DmsActions/RevokeDms";
 import { DeclineDMS } from "../DmsActions/DeclineDms";
 import { ApproveDMS } from "../DmsActions/ApproveDms/index";
 import { capitalizeFirstLetter } from "ducks/reducers_utils";
+import EditAttributesIcon from "@mui/icons-material/EditAttributes";
+import { UpdateDMSCAs } from "../DmsActions/UpdateDMSCAs";
 
 export const DmsList = () => {
     const theme = useTheme();
@@ -34,7 +36,7 @@ export const DmsList = () => {
     const dmsList = useAppSelector((state) => dmsSelector.getDMSs(state));
     const totalDMSs = useAppSelector((state) => dmsSelector.getTotalDMSs(state));
 
-    const [isDialogOpen, setIsDialogOpen] = useState<{ open: boolean, type: "APPROVE" | "REVOKE" | "DECLINE", id: string }>({ open: false, type: "APPROVE", id: "" });
+    const [isDialogOpen, setIsDialogOpen] = useState<{ open: boolean, type: "APPROVE" | "REVOKE" | "DECLINE" | "UPDATE_CAS", id: string }>({ open: false, type: "APPROVE", id: "" });
     const [anchorElSort, setAnchorElSort] = useState(null);
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
@@ -172,6 +174,16 @@ export const DmsList = () => {
                                                         </IconButton>
                                                     </Box>
                                                 </Grid>
+                                                <Grid item>
+                                                    <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                        <IconButton onClick={(ev) => {
+                                                            ev.stopPropagation();
+                                                            setIsDialogOpen({ open: true, type: "UPDATE_CAS", id: dms.name });
+                                                        }}>
+                                                            <EditAttributesIcon fontSize={"small"} />
+                                                        </IconButton>
+                                                    </Box>
+                                                </Grid>
                                             </>
                                         )
                                         : (
@@ -281,14 +293,17 @@ export const DmsList = () => {
                         {
                             isDialogOpen.type === "DECLINE" && (
                                 <DeclineDMS dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
-
                             )
                         }
 
                         {
                             isDialogOpen.type === "REVOKE" && (
                                 <RevokeDMS dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
-
+                            )
+                        }
+                        {
+                            isDialogOpen.type === "UPDATE_CAS" && (
+                                <UpdateDMSCAs dmsName={isDialogOpen.id} isOpen={isDialogOpen.open} onClose={() => { setIsDialogOpen((prev: any) => { return { ...prev, open: false }; }); }} />
                             )
                         }
                     </>

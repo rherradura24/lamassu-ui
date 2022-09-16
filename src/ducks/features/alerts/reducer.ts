@@ -1,19 +1,23 @@
 /* eslint-disable prefer-const */
 import { createReducer } from "typesafe-actions";
-import { CloudEvent, UserSubscription } from "./models";
+import { AlertsInfo, CloudEvent, UserSubscription } from "./models";
 import { ActionStatus, ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { RootState } from "ducks/reducers";
 import { actions, RootAction } from "ducks/actions";
 
-export interface EventsState {
+export interface AlertsState {
     events: Array<CloudEvent>
     eventsStatus: ActionStatus
     subscription: UserSubscription
     subscriptionsStatus: ActionStatus
-
+    info: AlertsInfo
 }
 
 const initialState = {
+    info: {
+        build_version: "",
+        build_time: ""
+    },
     eventsStatus: {
         isLoading: false,
         status: ORequestStatus.Idle,
@@ -31,56 +35,71 @@ const initialState = {
     }
 };
 
-export const eventsReducer = createReducer<EventsState, RootAction>(initialState)
-    .handleAction(actions.eventsActions.getEvents.request, (state, action) => {
-        return { ...state, eventsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, events: [] };
+export const alertsReducer = createReducer<AlertsState, RootAction>(initialState)
+    .handleAction(actions.alertsActions.getInfoAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
     })
-
-    .handleAction(actions.eventsActions.getEvents.success, (state, action) => {
-        return { ...state, eventsStatus: { ...state.eventsStatus, isLoading: false, status: ORequestStatus.Success }, events: action.payload };
+    .handleAction(actions.alertsActions.getInfoAction.success, (state, action) => {
+        return { ...state, info: action.payload, eventsStatus: { ...state.eventsStatus, isLoading: false, status: ORequestStatus.Success } };
     })
-
-    .handleAction(actions.eventsActions.getEvents.failure, (state, action) => {
+    .handleAction(actions.alertsActions.getInfoAction.failure, (state, action) => {
         return { ...state, eventsStatus: { ...state.eventsStatus, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.eventsActions.getSubscriptions.request, (state, action) => {
+    .handleAction(actions.alertsActions.getEvents.request, (state, action) => {
+        return { ...state, eventsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, events: [] };
+    })
+
+    .handleAction(actions.alertsActions.getEvents.success, (state, action) => {
+        return { ...state, eventsStatus: { ...state.eventsStatus, isLoading: false, status: ORequestStatus.Success }, events: action.payload };
+    })
+
+    .handleAction(actions.alertsActions.getEvents.failure, (state, action) => {
+        return { ...state, eventsStatus: { ...state.eventsStatus, isLoading: false, status: ORequestStatus.Failed } };
+    })
+
+    .handleAction(actions.alertsActions.getSubscriptions.request, (state, action) => {
         return { ...state, subscriptionsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, subscription: { email: "", subscriptions: [] } };
     })
 
-    .handleAction(actions.eventsActions.getSubscriptions.success, (state, action) => {
+    .handleAction(actions.alertsActions.getSubscriptions.success, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Success }, subscription: action.payload };
     })
 
-    .handleAction(actions.eventsActions.getSubscriptions.failure, (state, action) => {
+    .handleAction(actions.alertsActions.getSubscriptions.failure, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.eventsActions.subscribeAction.request, (state, action) => {
+    .handleAction(actions.alertsActions.subscribeAction.request, (state, action) => {
         return { ...state, subscriptionsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
     })
 
-    .handleAction(actions.eventsActions.subscribeAction.success, (state, action) => {
+    .handleAction(actions.alertsActions.subscribeAction.success, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Success } };
     })
 
-    .handleAction(actions.eventsActions.subscribeAction.failure, (state, action) => {
+    .handleAction(actions.alertsActions.subscribeAction.failure, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.eventsActions.unsubscribeAction.request, (state, action) => {
+    .handleAction(actions.alertsActions.unsubscribeAction.request, (state, action) => {
         return { ...state, subscriptionsStatus: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read } };
     })
 
-    .handleAction(actions.eventsActions.unsubscribeAction.success, (state, action) => {
+    .handleAction(actions.alertsActions.unsubscribeAction.success, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Success } };
     })
 
-    .handleAction(actions.eventsActions.unsubscribeAction.failure, (state, action) => {
+    .handleAction(actions.alertsActions.unsubscribeAction.failure, (state, action) => {
         return { ...state, subscriptionsStatus: { ...state.subscriptionsStatus, isLoading: false, status: ORequestStatus.Failed } };
     });
 
-const getSelector = (state: RootState): EventsState => state.events;
+const getSelector = (state: RootState): AlertsState => state.alerts;
+
+export const getInfo = (state: RootState): AlertsInfo => {
+    const caReducer = getSelector(state);
+    return caReducer.info;
+};
 
 export const getEvents = (state: RootState): Array<CloudEvent> => {
     const reducer = getSelector(state);

@@ -8,7 +8,8 @@ export const actionTypes = {
     CREATE_DMS: "CREATE_DMS",
     APPROVE_DMS_REQUEST: "APPROVE_DMS_REQUEST",
     DECLINE_DMS_REQUEST: "DECLINE_DMS_REQUEST",
-    REVOKE_DMS: "REVOKE_DMS"
+    REVOKE_DMS: "REVOKE_DMS",
+    UPDATE_AUTHORIZE_CAS: "UPDATE_AUTHORIZE_CAS"
 };
 
 export const getInfoAction = createAsyncAction(
@@ -70,6 +71,16 @@ export const approveDMSRequestAction = createAsyncAction(
     [actionTypes.APPROVE_DMS_REQUEST, (req: ApproveDMSRequest) => req],
     [success(actionTypes.APPROVE_DMS_REQUEST), (req: any) => req],
     [failed(actionTypes.APPROVE_DMS_REQUEST), (req: Error) => req]
+)();
+
+export type UpdateAuthorizedCAsRequest = {
+    dmsName: string
+    authorized_cas: Array<string>
+}
+export const UpdateAuthorizedCAsAction = createAsyncAction(
+    [actionTypes.UPDATE_AUTHORIZE_CAS, (req: UpdateAuthorizedCAsRequest) => req],
+    [success(actionTypes.UPDATE_AUTHORIZE_CAS), (req: any) => req],
+    [failed(actionTypes.UPDATE_AUTHORIZE_CAS), (req: Error) => req]
 )();
 
 export type RevokeDMSRequest = {

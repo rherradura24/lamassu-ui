@@ -23,7 +23,7 @@ const initialState = {
         build_time: ""
     },
     cryptoEngine: {
-        provider: "HSM",
+        provider: "",
         cryptoki_version: "",
         manufacturer: "",
         model: "",

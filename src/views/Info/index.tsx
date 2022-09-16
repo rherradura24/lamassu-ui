@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
 import * as cloudProxyAction from "ducks/features/cloud-proxy/actions";
 import * as cloudProxySelector from "ducks/features/cloud-proxy/reducer";
+import * as alertsAction from "ducks/features/alerts/actions";
+import * as alertsSelector from "ducks/features/alerts/reducer";
 import * as devicesAction from "ducks/features/devices/actions";
 import * as devicesSelector from "ducks/features/devices/reducer";
 import * as caAction from "ducks/features/cas/actions";
@@ -21,6 +23,7 @@ export const InfoView = () => {
     const dmsManagerApiInfo = useAppSelector((state) => dmsEnrollerSelector.getInfo(state));
     const deviceManagerApiInfo = useAppSelector((state) => devicesSelector.getInfo(state));
     const cloudProxyApiInfo = useAppSelector((state) => cloudProxySelector.getInfo(state));
+    const alertsApiInfo = useAppSelector((state) => alertsSelector.getInfo(state));
     const caApiInfo = useAppSelector((state) => caSelector.getInfo(state));
     const caCryptoEngine = useAppSelector((state) => caSelector.getCryptoEngine(state));
 
@@ -30,6 +33,7 @@ export const InfoView = () => {
         dispatch(caAction.getInfoAction.request());
         dispatch(caAction.getCryptoEngineAction.request());
         dispatch(devicesAction.getInfoAction.request());
+        dispatch(alertsAction.getInfoAction.request());
         dispatch(dmsEnrollerAction.getInfoAction.request());
         dispatch(cloudProxyAction.getInfoAction.request());
     };
@@ -46,6 +50,10 @@ export const InfoView = () => {
 
     case "vault":
         crypyoEngineManufacturerImage = "assets/vault.png";
+        break;
+
+    case "golang":
+        crypyoEngineManufacturerImage = "assets/golang.png";
         break;
 
     default:
@@ -96,6 +104,11 @@ export const InfoView = () => {
     const cloudProxyInfo: Array<[string, any]> = [
         ["Build Version", cloudProxyApiInfo.build_version],
         ["Build Time", cloudProxyApiInfo.build_time]
+    ];
+
+    const alertsInfo: Array<[string, any]> = [
+        ["Build Version", alertsApiInfo.build_version],
+        ["Build Time", alertsApiInfo.build_time]
     ];
 
     return (
@@ -243,6 +256,42 @@ export const InfoView = () => {
                         </Grid>
                         {
                             cloudProxyInfo.map((info: any, index: number) => {
+                                return (
+                                    <Grid key={index} item container spacing={2} justifyContent="space-between">
+                                        <Grid item xs={6}>
+                                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 13, marginTop: "10px" }}>{info[0]}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {
+                                                typeof info[1] === "boolean" && (
+                                                    <CheckCircleIcon htmlColor={theme.palette.success.main} />
+                                                )
+                                            }
+                                            {
+                                                typeof info[1] === "string" && (
+                                                    <Typography style={{ color: theme.palette.text.primaryLight, fontWeight: "500", fontSize: 13 }}>
+                                                        {info[1]}
+                                                    </Typography>
+                                                )
+                                            }
+                                        </Grid>
+                                    </Grid>
+                                );
+                            })
+                        }
+                        <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
+                        <Grid item container spacing={2} justifyContent="flex-start">
+                            <Grid item xs={12}>
+                                <Box style={{ display: "flex", alignItems: "center" }}>
+                                    <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 26, lineHeight: "24px", marginRight: "10px" }}>Alerts</Typography>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Grid sx={{ marginBottom: "10px" }}>
+                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13, marginTop: "10px" }}>Version, Build number, and other information regarding Lamassu Alerts API</Typography>
+                        </Grid>
+                        {
+                            alertsInfo.map((info: any, index: number) => {
                                 return (
                                     <Grid key={index} item container spacing={2} justifyContent="space-between">
                                         <Grid item xs={6}>

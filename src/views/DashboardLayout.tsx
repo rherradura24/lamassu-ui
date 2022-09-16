@@ -24,7 +24,7 @@ import * as notificationsSelector from "ducks/features/notifications/reducer";
 import { InfoView } from "./Info";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import SelectAllOutlinedIcon from "@mui/icons-material/SelectAllOutlined";
-import { EventsView } from "./EventsView";
+import { AlertsView } from "./AlertsView";
 
 export const DashboardLayout = () => {
     const cookies = new Cookies();
@@ -92,14 +92,14 @@ export const DashboardLayout = () => {
             ]
         },
         {
-            menuTitle: "Events",
+            menuTitle: "Alerts",
             menuItems: [
                 {
-                    title: "Events",
-                    path: "/events/*",
-                    link: "/events",
+                    title: "Alerts",
+                    path: "/alerts/*",
+                    link: "/alerts",
                     icon: <MailOutlinedIcon/>,
-                    content: <EventsView/>
+                    content: <AlertsView/>
 
                 }
             ]

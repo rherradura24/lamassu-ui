@@ -4,7 +4,7 @@ import { cloudProxyReducer, CloudProxyState } from "./features/cloud-proxy/reduc
 import { devicesLogsReducer, DevicesLogsState } from "./features/devices-logs/reducer";
 import { devicesReducer, DevicesState } from "./features/devices/reducer";
 import { dmsReducer, DeviceManufacturingSystemStatus } from "./features/dms-enroller/reducer";
-import { eventsReducer, EventsState } from "./features/events/reducer";
+import { alertsReducer, AlertsState } from "./features/alerts/reducer";
 import { notificationsReducer, NotificationsState } from "./features/notifications/reducer";
 
 export type RootState = {
@@ -14,7 +14,7 @@ export type RootState = {
   devicesLogs: DevicesLogsState,
   notifications: NotificationsState,
   dmss: DeviceManufacturingSystemStatus
-  events: EventsState
+  alerts: AlertsState
 }
 
 const reducers = combineReducers({
@@ -24,7 +24,7 @@ const reducers = combineReducers({
     devices: devicesReducer,
     devicesLogs: devicesLogsReducer,
     dmss: dmsReducer,
-    events: eventsReducer
+    alerts: alertsReducer
 });
 
 export default reducers;
