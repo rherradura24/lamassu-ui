@@ -81,7 +81,7 @@ export const revokeActiveDeviceCertificateEpic: Epic<RootAction, RootAction, Roo
         filter(isActionOf(actions.revokeActiveDeviceCertificateAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.RevokeActiveDeviceCertificate>) =>
-            from(apicalls.revokeActiveDeviceCertificate(action.payload.deviceID)).pipe(
+            from(apicalls.revokeActiveDeviceCertificate(action.payload.deviceID, action.payload.slotID)).pipe(
                 map((val) => actions.revokeActiveDeviceCertificateAction.success(val, { deviceID: action.payload.deviceID })),
                 catchError((message) => of(actions.revokeActiveDeviceCertificateAction.failure(message)))
             )
@@ -123,12 +123,25 @@ export const registerDeviceEpic: Epic<RootAction, RootAction, RootState, {}> = (
         )
     );
 
+export const forceDeviceReenrolment: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.forceDeviceReenrollmentAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.ForceDeviceReenrollment>) =>
+            from(apicalls.forceDeviceReenrollment(action.payload.deviceID, action.payload.slotID)).pipe(
+                map(actions.forceDeviceReenrollmentAction.success),
+                catchError((message) => of(actions.forceDeviceReenrollmentAction.failure(message)))
+            )
+        )
+    );
+
 export const reportError: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
     action$.pipe(
         filter((rootAction, value) => isActionOf([
             actions.getDevicesAction.failure,
             actions.getDeviceByIDAction.failure,
             actions.revokeActiveDeviceCertificateAction.failure,
+            actions.forceDeviceReenrollmentAction.failure,
             actions.registerDeviceAction.failure
         ], rootAction)),
         tap((item: any) => console.log("%c Epic ", "background:#884101; border-radius:5px;font-weight: bold;", "", item)),

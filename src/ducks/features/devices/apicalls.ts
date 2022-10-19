@@ -34,10 +34,10 @@ export const getDeviceByID = async (deviceID: string): Promise<any> => {
     });
 };
 
-export const revokeActiveDeviceCertificate = async (deviceID: string): Promise<any> => {
+export const revokeActiveDeviceCertificate = async (deviceID: string, slotID: string): Promise<any> => {
     return apiRequest({
         method: "DELETE",
-        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/revoke"
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/slots/" + slotID
     });
 };
 
@@ -60,6 +60,16 @@ export const registerDevice = async (deviceID: string, alias: string, descriptio
             icon_name: iconName,
             icon_color: iconColor,
             dms_name: dmsName
+        }
+    });
+};
+
+export const forceDeviceReenrollment = async (deviceID: string, slotID: string): Promise<any> => {
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/slots/" + slotID,
+        data: {
+            require_reenrollment: true
         }
     });
 };

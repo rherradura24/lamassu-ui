@@ -3,7 +3,7 @@ window._env_ =  {
     REACT_APP_AUTH_REALM: "lamassu",
     REACT_APP_AUTH_CLIENT_ID: "frontend",
     REACT_APP_LAMASSU_CLOUD_PROXY_API: "https://dev-lamassu.zpd.ikerlan.es/api/cloudproxy",
-    // REACT_APP_LAMASSU_CLOUD_PROXY_API: "https://dev-lamassu.zpd.ikerlan.es:8081",
+    // REACT_APP_LAMASSU_CLOUD_PROXY_API: "https://dev-lamassu.zpd.ikerlan.es:8082",
     REACT_APP_LAMASSU_CA_API: "https://dev-lamassu.zpd.ikerlan.es/api/ca",
     // REACT_APP_LAMASSU_CA_API: "https://dev-lamassu.zpd.ikerlan.es:8087",
     REACT_APP_LAMASSU_DMS_MANAGER_API: "https://dev-lamassu.zpd.ikerlan.es/api/dmsmanager",

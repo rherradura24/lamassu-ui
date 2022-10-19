@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Chip, Divider, Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -11,6 +11,10 @@ import { useAppSelector } from "ducks/hooks";
 import { ORequestStatus } from "ducks/reducers_utils";
 import moment from "moment";
 import { SubscribeDialog } from "./SubscribeDialog";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
+import { Subscription } from "ducks/features/alerts/models";
+import { ViewSubscriptionDialog } from "./ViewSubscriptionDialog";
 
 export const AlertsView = () => {
     const theme = useTheme();
@@ -18,6 +22,8 @@ export const AlertsView = () => {
 
     const [subscriptionEvent, setSubscriptionEvent] = useState<any | undefined>(undefined);
     const [expandedEvents, setExpandedEvents] = useState<Array<string>>([]);
+
+    const [viewSubscription, setViewSubscription] = useState<Subscription>();
 
     const eventRequestStatus = useAppSelector((state) => eventsSelector.getEventRequestStatus(state));
     const subscriptionsRequestStatus = useAppSelector((state) => eventsSelector.getSubscriptionRequestStatus(state));
@@ -63,10 +69,11 @@ export const AlertsView = () => {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} container>
-                            <Grid item xs={4}><Typography fontSize="13px" color="#999eaa">Event</Typography></Grid>
+                            <Grid item xs={2}><Typography fontSize="13px" color="#999eaa">Event</Typography></Grid>
                             <Grid item xs={2} container justifyContent="center"><Typography fontSize="13px" color="#999eaa">Source</Typography></Grid>
                             <Grid item xs={2} container justifyContent="center"><Typography fontSize="13px" color="#999eaa">Last Seen</Typography></Grid>
                             <Grid item xs={2} container justifyContent="center"><Typography fontSize="13px" color="#999eaa">Actions</Typography></Grid>
+                            <Grid item xs={2} container justifyContent="center"><Typography fontSize="13px" color="#999eaa">Subscriptions Channels</Typography></Grid>
                             <Grid item xs={2}></Grid>
                         </Grid>
                         <Grid item xs={12}>
@@ -79,7 +86,7 @@ export const AlertsView = () => {
                                 events.map((event, index) => (
                                     <>
                                         <Grid item xs={12} container alignItems="center" key={index}>
-                                            <Grid item xs={4}><Typography>{event.EventTitle}</Typography></Grid>
+                                            <Grid item xs={2}><Typography>{event.EventTitle}</Typography></Grid>
                                             <Grid item xs={2} container justifyContent="center"><Typography>{event.EventSource}</Typography></Grid>
                                             <Grid item xs={2} container justifyContent="center" alignItems="center" spacing={2}>
                                                 <Grid item>
@@ -90,14 +97,36 @@ export const AlertsView = () => {
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={2} container justifyContent="center">
-                                                <Button size="small" variant={event.Subscribed ? "outlined" : "contained"} onClick={() => {
-                                                    if (event.Subscribed) {
-                                                        dispatch(eventsActions.unsubscribeAction.request({ EventType: event.EventType }));
-                                                    } else {
-                                                        setSubscriptionEvent(event.Event);
-                                                        // dispatch(eventsActions.subscribeAction.request({ EventType: event.EventType }));
-                                                    }
-                                                }}>{event.Subscribed ? "Unsubscribe" : "Subscribe"}</Button>
+                                                <Button size="small" variant={"contained"} onClick={() => {
+                                                    setSubscriptionEvent(event.Event);
+                                                }}>Add Subscriptions</Button>
+                                            </Grid>
+                                            <Grid item xs={2} container justifyContent={"center"} spacing={2}>
+                                                {
+                                                    userSubscription.subscriptions.map((sub, idx) => {
+                                                        let icon = <></>;
+                                                        if (sub.channel.type === "email") {
+                                                            icon = <EmailOutlinedIcon />;
+                                                        } else if (sub.channel.type === "msteams") {
+                                                            icon = <img src={process.env.PUBLIC_URL + "assets/msteams.png"} height="18px" />;
+                                                        } else if (sub.channel.type === "webhook") {
+                                                            icon = <WebhookOutlinedIcon />;
+                                                        }
+
+                                                        return (
+                                                            <Grid key={idx} item xs="auto">
+                                                                <Chip
+                                                                    icon={icon}
+                                                                    label={sub.channel.name}
+                                                                    onClick={() => {
+                                                                        setViewSubscription(sub);
+                                                                    }}
+                                                                    onDelete={() => dispatch(eventsActions.unsubscribeAction.request({ SubscriptionID: sub.id }))}
+                                                                />
+                                                            </Grid>
+                                                        );
+                                                    })
+                                                }
                                             </Grid>
                                             <Grid item xs={2} container justifyContent={"flex-end"} spacing={2}>
                                                 <Grid item xs="auto">
@@ -137,9 +166,8 @@ export const AlertsView = () => {
                     }
                 </Grid>
             </Box>
-            {
-                <SubscribeDialog isOpen={subscriptionEvent !== undefined} event={subscriptionEvent} onClose={() => { setSubscriptionEvent(undefined); }} />
-            }
+            <ViewSubscriptionDialog isOpen={viewSubscription !== undefined} subscription={viewSubscription} onClose={() => { setViewSubscription(undefined); }} />
+            <SubscribeDialog isOpen={subscriptionEvent !== undefined} event={subscriptionEvent} onClose={() => { setSubscriptionEvent(undefined); }} />
         </Box>
     );
 };

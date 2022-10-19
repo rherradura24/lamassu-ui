@@ -9,7 +9,8 @@ export const actionTypes = {
     GET_DEVICE: "GET_DEVICE",
     REVOKE_ACTIVE_DEVICE_CERTIFICATE: "REVOKE_ACTIVE_DEVICE_CERTIFICATE",
     DECOMMISSION_DEVICE: "DECOMMISSION_DEVICE",
-    REGISTER_DEVICE: "REGISTER_DEVICE"
+    REGISTER_DEVICE: "REGISTER_DEVICE",
+    FORCE_DEVICE_REENROLLMENT: "FORCE_DEVICE_REENROLLMENT"
 };
 export type GetStats = {
     force: boolean
@@ -63,6 +64,7 @@ export const decommissionDeviceAction = createAsyncAction(
 
 export type RevokeActiveDeviceCertificate = {
     deviceID: string
+    slotID: string
 }
 
 export const revokeActiveDeviceCertificateAction = createAsyncAction(
@@ -85,4 +87,15 @@ export const registerDeviceAction = createAsyncAction(
     [actionTypes.REGISTER_DEVICE, (req: RegisterDevice) => req],
     [success(actionTypes.REGISTER_DEVICE), (req: any) => { return req; }],
     [failed(actionTypes.REGISTER_DEVICE), (req: Error) => req]
+)();
+
+export type ForceDeviceReenrollment = {
+    deviceID: string,
+    slotID: string,
+}
+
+export const forceDeviceReenrollmentAction = createAsyncAction(
+    [actionTypes.FORCE_DEVICE_REENROLLMENT, (req: ForceDeviceReenrollment) => req],
+    success(actionTypes.FORCE_DEVICE_REENROLLMENT),
+    [failed(actionTypes.FORCE_DEVICE_REENROLLMENT), (req: Error) => req]
 )();

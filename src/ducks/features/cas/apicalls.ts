@@ -10,7 +10,7 @@ export const getInfo = async (): Promise<any> => {
 export const getStats = async (): Promise<any> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/stats"
+        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/stats?force_refresh=true"
     });
 };
 

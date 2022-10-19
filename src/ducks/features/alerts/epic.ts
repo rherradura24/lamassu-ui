@@ -2,7 +2,7 @@ import { Epic } from "redux-observable";
 import { RootState } from "../../reducers";
 import * as actions from "./actions";
 import { filter, exhaustMap, catchError, map } from "rxjs/operators";
-import { from, of, tap } from "rxjs";
+import { from, of, tap, forkJoin, defaultIfEmpty } from "rxjs";
 import * as notificationsActions from "ducks/features/notifications/actions";
 
 import * as apicalls from "./apicalls";
@@ -50,7 +50,18 @@ export const subscribeEpic: Epic<RootAction, RootAction, RootState, {}> = (actio
         filter(isActionOf(actions.subscribeAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#25eee3; border-radius:5px;font-weight: bold;", "", item)),
         exhaustMap((action: PayloadAction<string, actions.SubscribeAction>) =>
-            from(apicalls.subscribe(action.payload.EventType)).pipe(
+            forkJoin(
+                action.payload.Channels.map(async channel => {
+                    try {
+                        apicalls.subscribe(action.payload.EventType, channel, action.payload.Conditions);
+                        return new Promise(resolve => resolve(true));
+                    } catch (er) {
+                        return new Promise(resolve => resolve(true));
+                    }
+                })
+            ).pipe(
+                defaultIfEmpty({}),
+                tap((item: any) => console.log("%c Epic ", "background:#887751; border-radius:5px;font-weight: bold;", "", item)),
                 map(actions.subscribeAction.success),
                 catchError((message) => of(actions.subscribeAction.failure(message)))
             )
@@ -61,8 +72,8 @@ export const unsubscribeEpic: Epic<RootAction, RootAction, RootState, {}> = (act
     action$.pipe(
         filter(isActionOf(actions.unsubscribeAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#25eee3; border-radius:5px;font-weight: bold;", "", item)),
-        exhaustMap((action: PayloadAction<string, actions.SubscribeAction>) =>
-            from(apicalls.unsubscribe(action.payload.EventType)).pipe(
+        exhaustMap((action: PayloadAction<string, actions.UnsubscribeAction>) =>
+            from(apicalls.unsubscribe(action.payload.SubscriptionID)).pipe(
                 map(actions.unsubscribeAction.success),
                 catchError((message) => of(actions.unsubscribeAction.failure(message)))
             )

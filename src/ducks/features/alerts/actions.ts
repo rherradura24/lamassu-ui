@@ -12,9 +12,11 @@ export const actionTypes = {
 
 export type SubscribeAction = {
     EventType: string,
+    Channels: any[],
+    Conditions: string[]
 }
 export type UnsubscribeAction = {
-    EventType: string,
+    SubscriptionID: string
 }
 
 export const getInfoAction = createAsyncAction(

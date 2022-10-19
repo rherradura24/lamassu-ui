@@ -93,7 +93,7 @@ export const dark : any = {
         mode: "dark",
         primary: {
             light: "#184d60", // 184d60    4a6952
-            main: "#63B2F6", // 2099C6    25ee32
+            main: "#2099C6", // 2099C6    25ee32
             dark: "#104c63" // 104c63   2F6140
         },
         secondary: {

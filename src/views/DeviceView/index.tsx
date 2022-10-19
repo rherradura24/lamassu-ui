@@ -11,7 +11,7 @@ const RoutedDeviceInspector = () => {
     const location = useLocation();
     // console.log(params, location);
     return (
-        <DeviceInspector deviceID={params.deviceId!}/>
+        <DeviceInspector deviceID={params.deviceId!} slotID={params.slotId!}/>
     );
 };
 
@@ -30,6 +30,7 @@ export const DeviceView = () => {
             <Route path="/" element={<Outlet/>}>
                 <Route path="create" element={<CreateDevice />} />
                 <Route path=":deviceId/edit" element={<RoutedEditDevice />} />
+                <Route path=":deviceId/:slotId/*" element={<RoutedDeviceInspector />} />
                 <Route path=":deviceId/*" element={<RoutedDeviceInspector />} />
                 <Route index element={<DeviceList />} />
             </Route>

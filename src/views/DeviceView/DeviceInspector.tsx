@@ -5,7 +5,7 @@ import { DynamicIcon } from "components/IconDisplayer/DynamicIcon";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { Outlet, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as cloudProxyActions from "ducks/features/cloud-proxy/actions";
 import * as devicesAction from "ducks/features/devices/actions";
 import * as devicesSelector from "ducks/features/devices/reducer";
@@ -20,9 +20,10 @@ import { ODeviceStatus } from "ducks/features/devices/models";
 
 interface Props {
     deviceID: string,
+    slotID: string,
 }
 
-export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
+export const DeviceInspector: React.FC<Props> = ({ deviceID, slotID }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -50,6 +51,19 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     const handleDeviceActionClose = (event: any) => {
         setAnchorDeviceActionEl(null);
     };
+
+    console.log(deviceID, slotID);
+
+    const deviceActions = [
+        { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Edit", onClick: () => { } },
+        { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Decommission Device", onClick: () => { dispatch(devicesAction.decommissionDeviceAction.request({ deviceID: deviceID })); } }
+    ];
+
+    if (slotID !== undefined) {
+        deviceActions.push({ disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Force Slot Certificate Renewal", onClick: () => { dispatch(devicesAction.forceDeviceReenrollmentAction.request({ deviceID: deviceID, slotID: slotID })); } });
+        deviceActions.push({ disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Revoke Slot Certificate", onClick: () => { dispatch(devicesAction.revokeActiveDeviceCertificateAction.request({ deviceID: deviceID, slotID: slotID })); } });
+    }
+    console.log(device);
 
     if (requestStatus.isLoading || device !== undefined) {
         return (
@@ -152,14 +166,7 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                                             </IconButton>
                                         </Grid>
                                         <Grid item>
-                                            <SplitButton options={
-                                                [
-                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Edit", onClick: () => { } },
-                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Force Certificate Renewal", onClick: () => { } },
-                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Revoke Slot Certificate", onClick: () => { } },
-                                                    { disabled: device?.status === ODeviceStatus.DECOMMISSIONED, label: "Decommission Device", onClick: () => { dispatch(devicesAction.decommissionDeviceAction.request({ deviceID: deviceID })); } }
-                                                ]
-                                            } />
+                                            <SplitButton options={deviceActions} />
                                         </Grid>
                                     </>
                                 )
@@ -169,17 +176,15 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
                 </Box>
                 {
                     device !== undefined && (
-                        <Routes>
-                            <Route path="/" element={<Outlet />}>
-                                <Route path=":slotID" element={<RoutedDeviceInspectorSlotView deviceID={deviceID} />} />
-                                <Route index element={
-                                    <DeviceInspectorSlotList deviceID={deviceID} onSlotClick={(slotID: any) => {
-                                        navigate(slotID);
-                                    }} />
-                                }
-                                />
-                            </Route>
-                        </Routes>
+                        slotID !== undefined
+                            ? (
+                                <DeviceInspectorSlotView slotID={slotID} deviceID={deviceID} />
+                            )
+                            : (
+                                <DeviceInspectorSlotList deviceID={deviceID} onSlotClick={(slotId: any) => {
+                                    navigate(slotId);
+                                }} />
+                            )
                     )
                 }
             </Box>
@@ -188,15 +193,4 @@ export const DeviceInspector: React.FC<Props> = ({ deviceID }) => {
     return <Box padding="20px">
         <Typography sx={{ marginTop: "10px", fontStyle: "italic" }}>Device with ID {deviceID} does not exist</Typography>
     </Box>;
-};
-
-interface RoutedDeviceInspectorSlotViewProps {
-    deviceID: string,
-}
-const RoutedDeviceInspectorSlotView: React.FC<RoutedDeviceInspectorSlotViewProps> = ({ deviceID }) => {
-    const params = useParams();
-    // console.log(params, location);
-    return (
-        <DeviceInspectorSlotView slotID={params.slotID!} deviceID={deviceID} />
-    );
 };

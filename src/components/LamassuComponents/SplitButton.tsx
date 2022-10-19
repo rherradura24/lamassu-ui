@@ -19,12 +19,18 @@ interface Props {
 }
 
 const SplitButton: React.FC<Props> = ({ options }) => {
+    const [internalOpts, setInternalOpts] = React.useState(options);
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef<HTMLDivElement>(null);
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+    React.useEffect(() => {
+        setInternalOpts(options);
+        setSelectedIndex(0);
+    }, [options]);
 
     const handleClick = () => {
-        options[selectedIndex].onClick();
+        internalOpts[selectedIndex].onClick();
     };
 
     const handleMenuItemClick = (
@@ -53,7 +59,7 @@ const SplitButton: React.FC<Props> = ({ options }) => {
     return (
         <React.Fragment>
             <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                <Button onClick={handleClick}>{options[selectedIndex].label}</Button>
+                <Button onClick={handleClick}>{internalOpts[selectedIndex].label}</Button>
                 <Button
                     size="small"
                     aria-controls={open ? "split-button-menu" : undefined}
@@ -83,7 +89,7 @@ const SplitButton: React.FC<Props> = ({ options }) => {
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList id="split-button-menu" autoFocusItem>
-                                    {options.map((option: Option, index: number) => (
+                                    {internalOpts.map((option: Option, index: number) => (
                                         <MenuItem
                                             disabled={option.disabled}
                                             key={option.label}

@@ -17,11 +17,19 @@ export class CloudEvent {
 }
 
 export class Subscription {
+    public id!: string
     public event_type!: string
-    public subscription_date!: string
+    public subscription_date!: number
+    public user_id!: string
+    public conditions!: Array<string>
+    public channel!: Channel
+}
+export class Channel {
+    public type!: "email" | "webhook" | "msteams"
+    public name!: string
+    public config!: any
 }
 
 export class UserSubscription {
-    public email!: string
     public subscriptions!: Array<Subscription>
 }

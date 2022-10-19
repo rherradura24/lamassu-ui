@@ -71,7 +71,7 @@ export type ForceSynchronizeCloudConnector = {
 
 export const forceSynchronizeCloudConnectorAction = createAsyncAction(
     [actionTypes.FORCE_SYNCHRONIZE_CONNECTOR, (req: ForceSynchronizeCloudConnector) => req],
-    [failed(actionTypes.FORCE_SYNCHRONIZE_CONNECTOR), (req: any) => req],
+    [success(actionTypes.FORCE_SYNCHRONIZE_CONNECTOR), (req: any) => req],
     [failed(actionTypes.FORCE_SYNCHRONIZE_CONNECTOR), (req: Error) => req]
 
 )();
