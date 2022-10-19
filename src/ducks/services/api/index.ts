@@ -40,7 +40,7 @@ export const apiRequest = async ({ method = "GET", url, data, query, headers = {
             ...(method === "POST" && { "Content-Type": "application/json" }),
             ...headers
         },
-        ...(data !== {} && { body: JSON.stringify(data) })
+        ...({ body: JSON.stringify(data) })
     });
 
     console.log("resp", response);
