@@ -659,6 +659,8 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
                     <Grid item xs container justifyContent={"flex-end"} gap={2}>
                         {
                             config.filter.filters!.map((filter: any, idx: number) => {
+                                console.log(config.filter.filters);
+
                                 if (filter.propertyKey !== "") {
                                     return (
                                         <Grid item xs="auto" key={idx} sx={{ borderRadius: "10px", border: `1px solid ${theme.palette.divider}`, padding: "5px 10px", cursor: "pointer", display: "flex", alignItems: "center" }}>

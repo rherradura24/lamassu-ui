@@ -18,6 +18,7 @@ import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { capitalizeFirstLetter } from "ducks/reducers_utils";
+import moment from "moment";
 
 export const DeviceList = () => {
     const theme = useTheme();
@@ -79,24 +80,15 @@ export const DeviceList = () => {
         { key: "id", dataKey: "id", title: "Device ID", query: true, type: OperandTypes.string, align: "start", size: 4 },
         { key: "alias", dataKey: "alias", title: "Alias", query: true, type: OperandTypes.string, align: "center", size: 3 },
         { key: "status", dataKey: "status", title: "Status", type: OperandTypes.enum, align: "center", size: 2 },
-        // { key: "creation_ts", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
-        { key: "dms", dataKey: "dms_id", title: "DMS ID", type: OperandTypes.string, align: "center", size: 2 },
+        { key: "creation_ts", dataKey: "creation_timestamp", title: "Creation Date", type: OperandTypes.date, align: "center", size: 2 },
         { key: "slots", dataKey: "slots", title: "Slots", align: "center", size: 3 },
         { key: "tags", dataKey: "tags", title: "Tags", type: OperandTypes.tags, align: "center", size: 2 },
         { key: "actions", title: "", align: "end", size: 2 }
     ];
 
-    // const dmsKeyList = {};
-    // for (let i = 0; i < dmsList.length; i++) {
-    //     const dms = dmsList[i];
-    //     dmsKeyList[dms.id] = dms;
-    // }
-
     const deviceRender = (device: Device) => {
         const dmsContent = device.dms_name;
-        // if (dmsKeyList[device.dms_id] !== undefined) {
-        //     dmsContent = dmsKeyList[device.dms_id].name;
-        // }
+
         return {
             icon: (
                 <Box component={Paper} sx={{ padding: "5px", background: device.icon_color, borderRadius: 2, width: 20, height: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -106,7 +98,7 @@ export const DeviceList = () => {
             id: <Typography style={{ fontWeight: "700", fontSize: 14, color: theme.palette.text.primary }}>#{device.id}</Typography>,
             alias: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{device.alias}</Typography>,
             status: <LamassuChip label={capitalizeFirstLetter(device.status)} color={device.status_color} />,
-            // creation_ts: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
+            creation_ts: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(device.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
             dms: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{dmsContent}</Typography>,
             slots: (
                 <Grid item xs={12} container spacing={1} justifyContent="center">

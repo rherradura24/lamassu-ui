@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Box, Paper, Typography, useTheme } from "@mui/material";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import EqualizerRoundedIcon from "@mui/icons-material/EqualizerRounded";
-import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
 import { DeviceStatusChart } from "./charts/DeviceStatus";
@@ -61,153 +60,11 @@ export const Home = () => {
     const cas = totalCAs;
     const dmss = dmsList.length;
 
-    console.log(issuedCerts);
-    console.log(cas);
-    console.log(dmss);
-    console.log(devices);
-
-    console.log(caStats, issuedCerts);
-
     function getRandomInt (min: number, max: number) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
     const now = new Date();
-    const daysToShow = 14;
-    const numCAs = 8;
-    const numDMSs = 3;
-
-    const daysLabels = [];
-    const casDatasetData = [];
-    const dmsDatasetData = [];
-
-    const colors = [
-    // "#3F4E51",
-    // "#FD625E",
-    // "#3599B8",
-    // "#DFBFBF",
-    // "#4AC5BB",
-        "#606C6E",
-        "#FB8281",
-        "#F4D25B",
-        "#808A8B",
-        "#A4DDEE",
-        // "#F2C80F",
-        // "#5F6B6D",
-        // "#8AD4EB",
-        "#FE9666",
-        "#A66999",
-        "#01B8AA"
-    ];
-
-    for (let i = 0; i < daysToShow; i++) {
-        const current = moment(now).subtract(daysToShow + i + 1, "days").format("DD/MM");
-        daysLabels.push(current);
-    }
-
-    for (let j = 0; j < numCAs; j++) {
-        const currentCAData = [];
-        for (let i = 0; i < daysToShow; i++) {
-            currentCAData.push(getRandomInt(10, 75));
-        }
-        casDatasetData.push(
-            {
-                label: "CA " + (j + 1),
-                data: currentCAData,
-                backgroundColor: colors[j % colors.length]
-            }
-        );
-    }
-
-    for (let j = 0; j < numDMSs; j++) {
-        const currentDMSData = [];
-        for (let i = 0; i < daysToShow; i++) {
-            currentDMSData.push(getRandomInt(10, 75));
-        }
-        dmsDatasetData.push(
-            {
-                label: "DMS " + (j + 1),
-                data: currentDMSData,
-                backgroundColor: colors[j % colors.length]
-            }
-        );
-    }
-
-    const casData = {
-        labels: daysLabels,
-        datasets: casDatasetData
-    };
-
-    const dmsData = {
-        labels: daysLabels,
-        datasets: dmsDatasetData
-    };
-
-    const casConfig = {
-        plugins: {
-            title: {
-                display: false
-            },
-            legend: {
-                display: false
-            }
-        },
-        responsive: true,
-        scales: {
-            x: {
-                stacked: true,
-                grid: {
-                    display: false
-                },
-                ticks: {
-                    color: theme.palette.homeCharts.issuedCertsPerCA.text
-                }
-            },
-            y: {
-                stacked: true,
-                beginAtZero: true,
-                ticks: {
-                    color: theme.palette.homeCharts.issuedCertsPerCA.text
-                },
-                grid: {
-                    display: false
-                }
-            }
-        }
-    };
-
-    const dmsConfig = {
-        plugins: {
-            title: {
-                display: false
-            },
-            legend: {
-                display: false
-            }
-        },
-        responsive: true,
-        scales: {
-            x: {
-                stacked: true,
-                grid: {
-                    display: false
-                },
-                ticks: {
-                    color: theme.palette.homeCharts.enrolledDevicesPerDMS.text
-                }
-            },
-            y: {
-                stacked: true,
-                beginAtZero: true,
-                ticks: {
-                    color: theme.palette.homeCharts.enrolledDevicesPerDMS.text
-                },
-                grid: {
-                    display: false
-                }
-            }
-        }
-    };
 
     return (
         <Box sx={{ padding: "30px", display: "flex" }}>
@@ -262,7 +119,7 @@ export const Home = () => {
                         onClick={(ev: any) => { ev.stopPropagation(); navigate("/dms"); }}
                     >
                         <Box>
-                            <Typography variant="h3" style={{ color: theme.palette.homeCharts.mainCard.text, fontSize: 25 }}>{devicesRequestStatus.isLoading ? "-" : numberToHumanReadableString(dmss, ".")}</Typography>
+                            <Typography variant="h3" style={{ color: theme.palette.homeCharts.mainCard.text, fontSize: 25 }}>{dmsRequestStatus.isLoading ? "-" : numberToHumanReadableString(dmss, ".")}</Typography>
                             <Typography variant="h5" style={{ color: theme.palette.homeCharts.mainCard.text, fontSize: 15 }}>Device Manufacturing Systems</Typography>
                         </Box>
                         <Box>
