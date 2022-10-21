@@ -259,7 +259,7 @@ export const DmsList = () => {
                                 variant="contained"
                                 sx={{ marginTop: "10px", color: theme.palette.primary.main, background: theme.palette.primary.light }}
                                 onClick={() => {
-                                    window.open("https://github.com/lamassuiot/lamassu-compose", "_blank");
+                                    window.open("https://www.lamassu.io/docs/usage/#register-a-new-device-manufacturing-system", "_blank");
                                 }}
                             >
                                 Go to DMS enrollment instructions
