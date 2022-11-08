@@ -1,6 +1,5 @@
 import React from "react";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
-import { LoadingDashboard } from "components/DashboardComponents/LoadingDashboard";
 
 import { Provider } from "react-redux";
 import { store } from "ducks";
@@ -15,7 +14,9 @@ export const App = () => {
                 silentCheckSsoRedirectUri: window.location.origin + "/silent-check-sso.html",
                 checkLoginIframe: false
             }}
-            LoadingComponent={<LoadingDashboard checkAuthServer={false} />}
+            LoadingComponent={
+                <div>Loading: Checking authority service status</div>
+            }
             autoRefreshToken={true}
         >
             <Provider store={store}>

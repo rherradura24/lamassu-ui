@@ -209,8 +209,8 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose }) => 
                                                             value={selectedSubscriptionConfig.webhook_method}
                                                             onChange={(ev) => setSelectedSubscriptionConfig((prev: any) => { return { ...prev, webhook_method: ev.target.value }; })}
                                                         >
-                                                            <MenuItem value="email">POST</MenuItem>
-                                                            <MenuItem value="email">PUT</MenuItem>
+                                                            <MenuItem value="POST">POST</MenuItem>
+                                                            <MenuItem value="PUT">PUT</MenuItem>
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>

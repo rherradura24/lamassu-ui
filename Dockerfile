@@ -5,6 +5,7 @@ WORKDIR /app
 
 # install app dependencies
 COPY ./package.json package.json
+COPY ./package-lock.json package-lock.json
 RUN npm install
 
 COPY . .
@@ -29,4 +30,4 @@ EXPOSE 443
 RUN apk add --no-cache bash
 
 # Start Nginx server
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["bash", "/docker-entrypoint.sh"]

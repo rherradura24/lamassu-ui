@@ -397,13 +397,14 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
                     }
                 </Grid>
 
-                <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ overflowX: "hidden", padding: "20px" }}>
-                    <Grid item container justifyContent={"flex-end"}>
+                <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ padding: "20px" }}>
+                    <Grid item container justifyContent={"flex-end"} sx={{ marginBottom: "10px" }}>
                         <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => { logsRefreshAction(); }}>
                             <RefreshIcon style={{ color: theme.palette.primary.main }} />
                         </IconButton>
                     </Grid>
-                    <Grid item>
+
+                    <Grid item sx={{ flexGrow: 1, overflowY: "auto", overflowX: "hidden", height: "0px" }}>
                         {
                             logRequestStatus.isLoading
                                 ? (

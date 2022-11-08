@@ -25,12 +25,20 @@ import { InfoView } from "./Info";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import SelectAllOutlinedIcon from "@mui/icons-material/SelectAllOutlined";
 import { AlertsView } from "./AlertsView";
+import { useKeycloak } from "@react-keycloak/web";
 
 export const DashboardLayout = () => {
     const cookies = new Cookies();
     if (cookies.get("paletteMode") === undefined) {
         cookies.set("paletteMode", "light", { path: "/" });
     }
+
+    const keycloak = useKeycloak();
+    useEffect(() => {
+        if (!keycloak.keycloak.authenticated) {
+            keycloak.keycloak.login();
+        }
+    }, [keycloak]);
 
     const notificationsList : Array<Notification> = useAppSelector((state) => notificationsSelector.getNotificationList(state));
 
@@ -66,9 +74,16 @@ export const DashboardLayout = () => {
                     title: "CAs",
                     path: "/cas/*",
                     link: "/cas",
-                    icon: <AccountBalanceOutlinedIcon key="/1"/>,
+                    icon: <AccountBalanceOutlinedIcon key="/1b"/>,
                     content: <CAView />
                 }
+                // {
+                //     title: "CA Scan Jobs",
+                //     path: "/ca-jobs/*",
+                //     link: "/ca-jobs",
+                //     icon: <AiOutlineFileSync key="/1a"/>,
+                //     content: <CertificateAuthoritiesLogsView />
+                // }
             ]
         },
         {
@@ -109,15 +124,15 @@ export const DashboardLayout = () => {
             menuItems: [
                 {
                     title: "Virtual DMS",
-                    path: "/vdms/*",
-                    link: "/vdms",
+                    path: `http://${location.hostname}:7002`,
+                    link: `http://${location.hostname}:7002`,
                     icon: <SelectAllOutlinedIcon/>,
                     content: <DMSView/>
                 },
                 {
                     title: "Virtual Device",
-                    path: "/vdev/*",
-                    link: "/vdev",
+                    path: `http://${location.hostname}:7001`,
+                    link: `http://${location.hostname}:7001`,
                     icon: <SelectAllOutlinedIcon/>,
                     content: <DMSView/>
                 }
