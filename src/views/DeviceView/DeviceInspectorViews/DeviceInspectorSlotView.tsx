@@ -364,7 +364,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
                                         </Box>
                                         <Divider />
                                         <Box sx={{ height: "100%", padding: "20px" }}>
-                                            <LamassuTable columnConf={certTableColumns} data={slot!.archive_certificates} renderDataItem={certificatesRenderer} />
+                                            <LamassuTable columnConf={certTableColumns} data={[...slot!.archive_certificates, slot!.active_certificate]} renderDataItem={certificatesRenderer} />
                                         </Box>
                                     </Box>
                                 </Grid>
