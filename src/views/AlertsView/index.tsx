@@ -103,7 +103,7 @@ export const AlertsView = () => {
                                             </Grid>
                                             <Grid item xs={2} container justifyContent={"center"} spacing={2}>
                                                 {
-                                                    userSubscription.subscriptions.map((sub, idx) => {
+                                                    userSubscription.subscriptions.filter(sub => sub.event_type === event.EventType).map((sub, idx) => {
                                                         let icon = <></>;
                                                         if (sub.channel.type === "email") {
                                                             icon = <EmailOutlinedIcon />;
