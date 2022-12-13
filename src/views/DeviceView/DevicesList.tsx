@@ -105,7 +105,7 @@ export const DeviceList = () => {
                     {
                         device.slots.map((slot, idx) => (
                             <Grid item key={idx}>
-                                <LamassuChip color={theme.palette.mode === "dark" ? ["#EEE", "#555"] : ["#555", "#EEEEEE"]} label={"slot " + slot.id} compact={true} compactFontSize />
+                                <LamassuChip color={slot.active_certificate.status_color} label={"slot " + slot.id} compact={true} compactFontSize />
                             </Grid>
                         ))
                     }
@@ -128,7 +128,15 @@ export const DeviceList = () => {
                         <Grid item container spacing={2}>
                             <Grid item>
                                 <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                    <IconButton onClick={() => navigate(device.id)}>
+                                    <IconButton onClick={() => {
+                                        if (device.slots.length > 1) {
+                                            navigate(device.id);
+                                        } else if (device.slots.length === 1) {
+                                            navigate(device.id + "/" + device.slots[0].id);
+                                        } else {
+                                            navigate(device.id);
+                                        }
+                                    }}>
                                         <FormatAlignJustifyIcon fontSize={"small"} />
                                     </IconButton>
                                 </Box>
