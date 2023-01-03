@@ -44,7 +44,10 @@ export type CreateDMSForm= {
     key_metadata: {
         type: "RSA" | "ECDSA",
         bits: number
-    }
+    },
+    host_cloud_dms: boolean,
+    bootstrap_cas: Array<string>,
+    ca_name: string
 }
 export type CreateDMSRequest = {
     form: CreateDMSForm

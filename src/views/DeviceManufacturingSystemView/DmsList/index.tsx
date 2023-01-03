@@ -175,6 +175,7 @@ export const DmsList = () => {
                                                     </Box>
                                                 </Grid>
                                                 <Grid item>
+                                                    { !dms.host_cloud_dms &&
                                                     <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
                                                         <IconButton onClick={(ev) => {
                                                             ev.stopPropagation();
@@ -182,7 +183,7 @@ export const DmsList = () => {
                                                         }}>
                                                             <EditAttributesIcon fontSize={"small"} />
                                                         </IconButton>
-                                                    </Box>
+                                                    </Box> }
                                                 </Grid>
                                             </>
                                         )
@@ -211,6 +212,17 @@ export const DmsList = () => {
                                             ))
                                         }
                                     </Grid>
+                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Bootstrap CAs</Typography>
+                                    { !dms.host_cloud_dms && <Grid container spacing={2}>
+                                        {
+                                            dms.bootstrap_cas.map(caName => (
+                                                <Grid item key={caName} xs="auto">
+                                                    <LamassuChip label={caName} color={"gray"} />
+                                                </Grid>
+                                            ))
+                                        }
+                                    </Grid>
+                                    }
                                 </>
                             )
                             : (
