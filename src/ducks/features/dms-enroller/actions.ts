@@ -46,8 +46,7 @@ export type CreateDMSForm= {
         bits: number
     },
     host_cloud_dms: boolean,
-    bootstrap_cas: Array<string>,
-    ca_name: string
+    bootstrap_cas: Array<string>
 }
 export type CreateDMSRequest = {
     form: CreateDMSForm

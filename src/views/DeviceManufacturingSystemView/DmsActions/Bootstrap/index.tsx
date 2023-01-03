@@ -25,7 +25,6 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
     const caList = useAppSelector((state) => caSelector.getCAs(state));
     const totalCAs = useAppSelector((state) => caSelector.getTotalCAs(state));
     const [selectedCas, setSelectedCas] = useState<Array<string>>([]);
-    const [caName, setCaName] = useState("");
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -68,7 +67,6 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
 
     const casTableColumns = [
         { key: "bootstrap", title: "Bootstrap CAs", align: "start", size: 1 },
-        { key: "ca", title: "Main CA", align: "start", size: 1 },
         { key: "name", title: "Name", dataKey: "name", align: "center", query: true, size: 2 },
         { key: "serialnumber", title: "Serial Number", align: "center", size: 3 },
         { key: "status", title: "Status", align: "center", size: 1 },
@@ -90,13 +88,6 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
                 }); console.log(selectedCas);
             }} />
             </>,
-            ca: (ca.name === caName
-                ? <LamassuSwitch value={ca.name} style={{ color: theme.palette.secondary.dark }} checked={true} onChange={() => {
-                    setCaName(ca.name); console.log(caName);
-                }} />
-                : <LamassuSwitch value={ca.name} style={{ color: "grey" }} checked={false} onChange={() => {
-                    setCaName(ca.name); console.log(caName);
-                }} />),
             name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.name}</Typography>,
             serialnumber: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.serial_number}</Typography>,
             status: <LamassuChip label={ca.status} color={ca.status_color} />,
@@ -135,7 +126,7 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
                     />
                 </Grid>
                 <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={() => childToParent(selectedCas, caName)} variant="contained">Accept</Button>
+                <Button onClick={() => childToParent(selectedCas)} variant="contained">Accept</Button>
             </Grid>
         </Grid>
     );

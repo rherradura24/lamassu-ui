@@ -89,15 +89,13 @@ export const CreateDms = () => {
                     type: keyType
                 },
                 host_cloud_dms: hostCloudDMS,
-                bootstrap_cas: bootstrap_cas,
-                ca_name: caName
+                bootstrap_cas: bootstrap_cas
             }
         }));
     };
 
     const [hostCloudDMS, setHostCloudDMS] = useState(false);
     const [bootstrap_cas, setBootstrap_cas] = useState<Array<string>>([]);
-    const [caName, setCaName] = useState("");
     const [dmsName, setDmsName] = useState("");
     const [country, setCountry] = useState("");
     const [state, setState] = useState("");
@@ -111,11 +109,8 @@ export const CreateDms = () => {
         setHostCloudDMS(event.target.checked);
     };
 
-    const childToParent = (bootstrap_cas: any, ca: any) => {
+    const childToParent = (bootstrap_cas: any) => {
         setBootstrap_cas(bootstrap_cas);
-        console.log("BOOTSTRAP CAs");
-        console.log(bootstrap_cas);
-        setCaName(ca);
     };
 
     useEffect(() => {
@@ -131,7 +126,7 @@ export const CreateDms = () => {
     }, [keyType]);
 
     const keyBitsOptions = keyType === "RSA" ? rsaOptions : ecOptions;
-    const disabledCreateDmsButton = cn === "" || dmsName === "" || (hostCloudDMS && (caName === "" || bootstrap_cas.length === 0));
+    const disabledCreateDmsButton = cn === "" || dmsName === "" || (hostCloudDMS && bootstrap_cas.length === 0);
 
     return (
         displayPrivKeyView === false
@@ -204,7 +199,6 @@ export const CreateDms = () => {
                     { hostCloudDMS && (
                         <Grid item xs={12}>
                             <Typography>Assign multiple Bootstrap CAs to authenticate a device when enrolling.</Typography>
-                            <Typography display="inline" >Select a single CA to emit the certificate.</Typography>
                             <BootstrapDMS onClose={() => { setHostCloudDMS(false); }} childToParent={childToParent}/>
                         </Grid>
                     )}
