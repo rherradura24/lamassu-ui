@@ -211,6 +211,19 @@ export const DmsList = () => {
                                             ))
                                         }
                                     </Grid>
+                                    { !dms.host_cloud_dms &&
+                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Bootstrap CAs</Typography>
+                                    }
+                                    { !dms.host_cloud_dms && <Grid container spacing={2}>
+                                        {
+                                            dms.bootstrap_cas.map(caName => (
+                                                <Grid item key={caName} xs="auto">
+                                                    <LamassuChip label={caName} color={"gray"} />
+                                                </Grid>
+                                            ))
+                                        }
+                                    </Grid>
+                                    }
                                 </>
                             )
                             : (

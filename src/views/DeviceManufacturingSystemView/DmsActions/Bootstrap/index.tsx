@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Typography, useTheme } from "@mui/material";
+
+import { Button, Grid, Typography, useTheme } from "@mui/material";
 
 import { LamassuSwitch } from "components/LamassuComponents/Switch";
 import { LamassuChip } from "components/LamassuComponents/Chip";
@@ -8,28 +9,22 @@ import { useAppSelector } from "ducks/hooks";
 import * as caSelector from "ducks/features/cas/reducer";
 import * as caActions from "ducks/features/cas/actions";
 import { CertificateAuthority } from "ducks/features/cas/models";
-import * as dmsSelector from "ducks/features/dms-enroller/reducer";
-import * as dmsAction from "ducks/features/dms-enroller/actions";
 import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigProps } from "components/LamassuComponents/Table";
 import deepEqual from "fast-deep-equal/es6";
 
 interface Props {
-    dmsName: string,
-    isOpen: boolean,
-    onClose: any
+    onClose: any,
+    childToParent: any
 }
 
-export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () => { } }) => {
+export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToParent }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
 
     const caRequestStatus = useAppSelector((state) => caSelector.getRequestStatus(state));
     const caList = useAppSelector((state) => caSelector.getCAs(state));
     const totalCAs = useAppSelector((state) => caSelector.getTotalCAs(state));
-    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
-
     const [selectedCas, setSelectedCas] = useState<Array<string>>([]);
-    const [tempCa, setTempCA] = useState("");
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -65,12 +60,13 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
 
     useEffect(() => {
         if (tableConfig !== undefined) {
+            console.log("call ", tableConfig);
             refreshAction();
         }
     }, [tableConfig]);
 
     const casTableColumns = [
-        { key: "actions", title: "", align: "start", size: 1 },
+        { key: "bootstrap", title: "Bootstrap CAs", align: "start", size: 1 },
         { key: "name", title: "Name", dataKey: "name", align: "center", query: true, size: 2 },
         { key: "serialnumber", title: "Serial Number", align: "center", size: 3 },
         { key: "status", title: "Status", align: "center", size: 1 },
@@ -79,25 +75,19 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     ];
 
     const casRender = (ca: CertificateAuthority) => {
+        console.log(ca.name, selectedCas.includes(ca.name));
         return {
-            actions: (dms.host_cloud_dms
-                ? <LamassuSwitch value={selectedCas.includes(ca.name)} style={{ color: "grey" }} checked={tempCa === ca.name} onChange={() => {
-                    const temp = [];
-                    temp.push(ca.name);
-                    setSelectedCas(temp);
-                    setTempCA(ca.name);
-                    console.log(temp);
-                }} />
-                : <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
-                    setSelectedCas(prev => {
-                        if (prev.includes(ca.name)) {
-                            prev.splice(prev.indexOf(ca.name), 1);
-                        } else {
-                            prev.push(ca.name);
-                        }
-                        return prev;
-                    });
-                }} />),
+            bootstrap: <><LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
+                setSelectedCas((prev: string[]) => {
+                    if (prev.includes(ca.name)) {
+                        prev.splice(prev.indexOf(ca.name), 1);
+                    } else {
+                        prev.push(ca.name);
+                    }
+                    return prev;
+                }); console.log(selectedCas);
+            }} />
+            </>,
             name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.name}</Typography>,
             serialnumber: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.serial_number}</Typography>,
             status: <LamassuChip label={ca.status} color={ca.status_color} />,
@@ -107,16 +97,11 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     };
 
     return (
-        <Dialog open={isOpen} onClose={() => onClose()} maxWidth={"xl"}>
-            <DialogTitle>Update DMS Enrollment: {dms.name}</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    You are about to approve the enrollment of a new DMS instance. The DMS will only be able to enroll devices with the selects CAs from below. Please, select the enrollable CAs granted to this DMS and confirm your action.
-                </DialogContentText>
+        <Grid container spacing={12} justifyContent="center" alignItems="center" >
+            <Grid item xs={12}>
                 <Grid container style={{ marginTop: "10px" }}>
                     <Grid item xs={12}>
-                        <Typography variant="button">DMS Name: </Typography>
-                        <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{dms.name}</Typography>
+                        <Typography variant="button">Bootstrap CA Name: </Typography>
                     </Grid>
                 </Grid>
                 <Grid item xs={12} container sx={{ marginTop: "20px" }}>
@@ -132,6 +117,7 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         }
                         config={tableConfig}
                         onChange={(ev: any) => {
+                            console.log(ev, tableConfig);
                             if (!deepEqual(ev, tableConfig)) {
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();
@@ -139,11 +125,9 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         }}
                     />
                 </Grid>
-            </DialogContent>
-            <DialogActions>
                 <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={() => { dispatch(dmsAction.approveDMSRequestAction.request({ status: "APPROVED", dmsName: dms.name, authorized_cas: selectedCas })); onClose(); }} variant="contained">Approve</Button>
-            </DialogActions>
-        </Dialog>
+                <Button onClick={() => childToParent(selectedCas)} variant="contained">Accept</Button>
+            </Grid>
+        </Grid>
     );
 };
