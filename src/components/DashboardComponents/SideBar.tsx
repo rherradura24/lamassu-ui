@@ -27,8 +27,12 @@ const SideBar: React.FC<Props> = ({ onToggleDark, onCollapse, collapsed, menuCon
     const [selectedPath, setSelectedPath] = useState("");
 
     const handleSelectedPath = (newPath: string) => {
-        setSelectedPath(newPath);
-        routerNavigation(newPath);
+        if (newPath.charAt(0) !== "/") {
+            window.open(newPath, "_blank")?.focus();
+        } else {
+            setSelectedPath(newPath);
+            routerNavigation(newPath);
+        }
     };
 
     useEffect(() => {

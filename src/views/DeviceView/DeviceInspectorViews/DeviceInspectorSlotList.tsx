@@ -21,7 +21,7 @@ export const DeviceInspectorSlotList: React.FC<Props> = ({ deviceID, onSlotClick
                 {
                     device?.slots.map((slot, idx) => {
                         return (
-                            <Grid key={idx} item xs={4}>
+                            <Grid key={idx} item xl={4} xs={6}>
                                 <Box component={Paper} padding="20px" sx={{ cursor: "pointer" }} onClick={() => { onSlotClick(slot.id); }}>
                                     <Grid flexDirection={"column"} >
                                         <Grid item xs sx={{ margin: "20px" }}>

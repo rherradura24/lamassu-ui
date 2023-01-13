@@ -146,11 +146,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
         };
     };
 
-    console.log(deviceCloudConfiguration);
-
     const cloudConnectorsRender = (connector: CloudConnector) => {
-        console.log(connector, connector.cloud_provider === OCloudProvider.Aws);
-        console.log(connector, connector.cloud_provider === OCloudProvider.Azure);
         let enabledConnectorSync = false;
         const filteredSyncCAs = connector.synchronized_cas.filter((syncCA) => syncCA.ca_name === slot!.active_certificate.ca_name);
         if (filteredSyncCAs.length > 0) {
@@ -161,7 +157,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
             return <>a</>;
         }
 
-        console.log(connector.cloud_provider);
         const awsTableRenderer = (cert: any) => {
             return {
                 serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
@@ -177,7 +172,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
 
         const awsRenderer = (deviceConfig: any) => {
             const awsDeviceConfig = (deviceConfig as AWSDeviceConfig);
-            console.log(awsDeviceConfig);
             return (
                 <>
                     <Box style={{ marginTop: "5px" }}>
@@ -191,7 +185,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
 
         const azureRender = (deviceConfig: any) => {
             const azureDeviceConfig = (deviceConfig as AzureDeviceConfig);
-            console.log(azureDeviceConfig);
             return (
                 <>
                     <Box style={{ marginTop: "5px" }}>
@@ -364,7 +357,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
                                         </Box>
                                         <Divider />
                                         <Box sx={{ height: "100%", padding: "20px" }}>
-                                            <LamassuTable columnConf={certTableColumns} data={slot!.archive_certificates} renderDataItem={certificatesRenderer} />
+                                            <LamassuTable columnConf={certTableColumns} data={[...slot!.archive_certificates, slot!.active_certificate]} renderDataItem={certificatesRenderer} />
                                         </Box>
                                     </Box>
                                 </Grid>
@@ -397,13 +390,14 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
                     }
                 </Grid>
 
-                <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ overflowX: "hidden", padding: "20px" }}>
-                    <Grid item container justifyContent={"flex-end"}>
+                <Grid item xs={3} container flexDirection={"column"} component={Paper} borderRadius={0} sx={{ padding: "20px" }}>
+                    <Grid item container justifyContent={"flex-end"} sx={{ marginBottom: "10px" }}>
                         <IconButton style={{ backgroundColor: theme.palette.primary.light }} onClick={() => { logsRefreshAction(); }}>
                             <RefreshIcon style={{ color: theme.palette.primary.main }} />
                         </IconButton>
                     </Grid>
-                    <Grid item>
+
+                    <Grid item sx={{ flexGrow: 1, overflowY: "auto", overflowX: "hidden", height: "0px" }}>
                         {
                             logRequestStatus.isLoading
                                 ? (

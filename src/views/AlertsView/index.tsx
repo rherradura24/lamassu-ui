@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Divider, Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
+import { Box, Chip, Divider, Grid, IconButton, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -15,6 +15,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
 import { Subscription } from "ducks/features/alerts/models";
 import { ViewSubscriptionDialog } from "./ViewSubscriptionDialog";
+import { ColoredButton } from "components/LamassuComponents/ColoredButton";
 
 export const AlertsView = () => {
     const theme = useTheme();
@@ -97,13 +98,18 @@ export const AlertsView = () => {
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={2} container justifyContent="center">
-                                                <Button size="small" variant={"contained"} onClick={() => {
-                                                    setSubscriptionEvent(event.Event);
-                                                }}>Add Subscriptions</Button>
+                                                <ColoredButton
+                                                    customtextcolor={theme.palette.primary.main}
+                                                    customcolor={theme.palette.primary.light}
+                                                    size="small"
+                                                    variant={"contained"}
+                                                    onClick={() => {
+                                                        setSubscriptionEvent(event.Event);
+                                                    }}>Add Subscriptions</ColoredButton>
                                             </Grid>
                                             <Grid item xs={2} container justifyContent={"center"} spacing={2}>
                                                 {
-                                                    userSubscription.subscriptions.map((sub, idx) => {
+                                                    userSubscription.subscriptions.filter(sub => sub.event_type === event.EventType).map((sub, idx) => {
                                                         let icon = <></>;
                                                         if (sub.channel.type === "email") {
                                                             icon = <EmailOutlinedIcon />;
@@ -146,7 +152,7 @@ export const AlertsView = () => {
                                         {
                                             expandedEvents.indexOf(event.Event.id) >= 0 && (
                                                 <Grid item xs={12} container alignItems="center" key={index}>
-                                                    <SyntaxHighlighter wrapLongLines={true} language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 12, padding: 20, borderRadius: 10, width: "100", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight, wordBreak: "break-all", whiteSpace: "pre-wrap" } }}>
+                                                    <SyntaxHighlighter wrapLongLines={true} language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 12, padding: 20, borderRadius: 10, width: "100%", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight, wordBreak: "break-all", whiteSpace: "pre-wrap" } }}>
                                                         {JSON.stringify(event.Event, null, 4)}
                                                     </SyntaxHighlighter>
                                                 </Grid>

@@ -27,8 +27,6 @@ export const InfoView = () => {
     const caApiInfo = useAppSelector((state) => caSelector.getInfo(state));
     const caCryptoEngine = useAppSelector((state) => caSelector.getCryptoEngine(state));
 
-    console.log(dmsManagerApiInfo, deviceManagerApiInfo, cloudProxyApiInfo, caApiInfo);
-
     const refreshAction = () => {
         dispatch(caAction.getInfoAction.request());
         dispatch(caAction.getCryptoEngineAction.request());
@@ -60,9 +58,6 @@ export const InfoView = () => {
         break;
     }
 
-    console.log(caCryptoEngine.provider.toLowerCase());
-    console.log(crypyoEngineManufacturerImage);
-
     const caInfo: Array<[string, any]> = [
         ["Build Version", caApiInfo.build_version],
         ["Build Time", caApiInfo.build_time],
@@ -73,7 +68,6 @@ export const InfoView = () => {
     ];
     if (caCryptoEngine.supported_key_types.filter(key => key.type === "RSA").length > 0) {
         const rsaInfo = caCryptoEngine.supported_key_types.filter(key => key.type === "RSA")[0];
-        console.log(rsaInfo.minimum_size);
 
         caInfo.push(["RSA Supported", true]);
         caInfo.push(["RSA Minimum Key Size (bits)", rsaInfo.minimum_size]);
@@ -139,8 +133,6 @@ export const InfoView = () => {
 
                         {
                             caInfo.map((info: any, index: number) => {
-                                console.log(info[1], typeof info[1] === "string");
-
                                 return (
                                     <Grid key={index} item container spacing={2} justifyContent="space-between">
                                         <Grid item xs={6}>

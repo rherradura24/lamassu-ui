@@ -183,7 +183,7 @@ export const LamassuTable: React.FC<LamassuTableProps> = ({ columnConf, data, re
                             })
                         )
                         : (
-                            <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", fontStyle: "italic", marginTop: "10px", fontSize: "12px" }}>
+                            <Grid item xs sx={{ display: "flex", justifyContent: "center", fontStyle: "italic", marginTop: "10px", fontSize: "12px" }}>
                                 No data
                             </Grid>
                         )

@@ -15,7 +15,6 @@ export const DeviceStatusChart = ({ ...props }) => {
     const dispatch = useDispatch();
 
     const deviceManagerStats = useAppSelector((state) => devicesSelector.getDevicesStats(state));
-    console.log(deviceManagerStats);
     const refreshAction = (forceRefresh: boolean) => {
         dispatch(devicesAction.getStatsAction.request({ force: forceRefresh }));
     };
@@ -34,7 +33,6 @@ export const DeviceStatusChart = ({ ...props }) => {
 
     const dataset: any = [];
     deviceManagerStats.devices_stats.forEach((value, key) => {
-        console.log(value, key);
         dataset.push({
             label: capitalizeFirstLetter(key),
             value: value,

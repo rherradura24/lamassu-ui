@@ -85,8 +85,6 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
     const requestStatus = useAppSelector((state) => cloudProxySelector.getRequestStatus(state));
     const cloudConnectors = useAppSelector((state) => cloudProxySelector.getCloudConnectors(state)!);
 
-    console.log(cloudConnectors);
-
     const [isEnableConnectorOpen, setIsEnableConnectorOpen] = useState({ isOpen: false, connectorId: "" });
 
     const cloudConnectorTableColumns = [
@@ -101,7 +99,6 @@ export const CloudProviderSelector: React.FC<Props> = ({ caName }) => {
 
     const cloudConnectorsRender = (cloudConnector: CloudConnector) => {
         const filteredSynchronizedCAs = cloudConnector.synchronized_cas.filter(syncCa => syncCa.ca_name === caName);
-        console.log(filteredSynchronizedCAs, cloudConnector.synchronized_cas);
 
         const enabledConnectorSync = filteredSynchronizedCAs.length === 1;
         return {

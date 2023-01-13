@@ -131,7 +131,6 @@ export const devicesReducer = createReducer<DevicesState, RootAction>(initialSta
     })
 
     .handleAction(actions.devicesActions.getDeviceByIDAction.failure, (state, action) => {
-        console.log(action);
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 

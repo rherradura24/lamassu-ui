@@ -46,8 +46,12 @@ export class DMS {
 
     constructor (args?: {}) {
         this.authorized_cas = [];
+        this.bootstrap_cas = [];
         Object.assign(this, args);
     }
+
+    public host_cloud_dms!: boolean
+    public bootstrap_cas!: Array<string>
 }
 
 export const ODMSStatus = {

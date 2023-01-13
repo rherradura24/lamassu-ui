@@ -7,7 +7,6 @@ export const getDeviceLogs = async (deviceID: string/*, limit: number, offset: n
     //         url = url + `&filter=${filter}`;
     //     });
     // }
-    console.log(url);
 
     return apiRequest({
         method: "GET",

@@ -2,7 +2,7 @@ import { Epic } from "redux-observable";
 import { RootState } from "../../reducers";
 import * as actions from "./actions";
 import * as notificationsActions from "ducks/features/notifications/actions";
-import { filter, exhaustMap, catchError, map } from "rxjs/operators";
+import { filter, exhaustMap, mergeMap, catchError, map } from "rxjs/operators";
 import { from, of, tap } from "rxjs";
 
 import * as apicalls from "./apicalls";
@@ -53,9 +53,9 @@ export const approveDMSEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
     action$.pipe(
         filter(isActionOf(actions.approveDMSRequestAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
-        exhaustMap((action: PayloadAction<string, actions.ApproveDMSRequest>) =>
+        mergeMap((action: PayloadAction<string, actions.ApproveDMSRequest>) =>
             from(apicalls.updateDMSStatus(action.payload.dmsName, action.payload.status)).pipe(
-                exhaustMap(() =>
+                mergeMap(() =>
                     from(apicalls.updateDMSAuthorizedCAs(action.payload.dmsName, action.payload.authorized_cas)).pipe(
                         map(actions.approveDMSRequestAction.success),
                         catchError((message) => of(actions.approveDMSRequestAction.failure(message)))
@@ -69,7 +69,7 @@ export const updateDMSAuthorizedCAsEpic: Epic<RootAction, RootAction, RootState,
     action$.pipe(
         filter(isActionOf(actions.approveDMSRequestAction.request)),
         tap((item: any) => console.log("%c Epic ", "background:#399999; border-radius:5px;font-weight: bold;", "", item)),
-        exhaustMap((action: PayloadAction<string, actions.UpdateAuthorizedCAsRequest>) =>
+        mergeMap((action: PayloadAction<string, actions.UpdateAuthorizedCAsRequest>) =>
             from(apicalls.updateDMSAuthorizedCAs(action.payload.dmsName, action.payload.authorized_cas)).pipe(
                 map(actions.approveDMSRequestAction.success),
                 catchError((message) => of(actions.approveDMSRequestAction.failure(message)))

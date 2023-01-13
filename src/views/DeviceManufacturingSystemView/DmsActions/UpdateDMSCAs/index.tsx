@@ -29,7 +29,7 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
 
     const [selectedCas, setSelectedCas] = useState<Array<string>>([]);
-    console.log(selectedCas);
+    const [tempCa, setTempCA] = useState("");
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -65,7 +65,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
 
     useEffect(() => {
         if (tableConfig !== undefined) {
-            console.log("call ", tableConfig);
             refreshAction();
         }
     }, [tableConfig]);
@@ -80,18 +79,25 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     ];
 
     const casRender = (ca: CertificateAuthority) => {
-        console.log(ca.name, selectedCas.includes(ca.name));
         return {
-            actions: <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
-                setSelectedCas(prev => {
-                    if (prev.includes(ca.name)) {
-                        prev.splice(prev.indexOf(ca.name), 1);
-                    } else {
-                        prev.push(ca.name);
-                    }
-                    return prev;
-                });
-            }} />,
+            actions: (dms.host_cloud_dms
+                ? <LamassuSwitch value={selectedCas.includes(ca.name)} style={{ color: "grey" }} checked={tempCa === ca.name} onChange={() => {
+                    const temp = [];
+                    temp.push(ca.name);
+                    setSelectedCas(temp);
+                    setTempCA(ca.name);
+                    console.log(temp);
+                }} />
+                : <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
+                    setSelectedCas(prev => {
+                        if (prev.includes(ca.name)) {
+                            prev.splice(prev.indexOf(ca.name), 1);
+                        } else {
+                            prev.push(ca.name);
+                        }
+                        return prev;
+                    });
+                }} />),
             name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.name}</Typography>,
             serialnumber: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.serial_number}</Typography>,
             status: <LamassuChip label={ca.status} color={ca.status_color} />,
@@ -126,7 +132,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         }
                         config={tableConfig}
                         onChange={(ev: any) => {
-                            console.log(ev, tableConfig);
                             if (!deepEqual(ev, tableConfig)) {
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();

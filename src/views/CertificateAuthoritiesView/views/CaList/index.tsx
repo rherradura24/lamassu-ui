@@ -82,7 +82,7 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
 
     return (
         <Grid container style={{ height: "100%" }}>
-            <Grid item xs={12} md={3} container direction="column" style={{ background: theme.palette.background.lightContrast, width: "100%" }}>
+            <Grid item xs={12} xl={3} md={4} container direction="column" style={{ background: theme.palette.background.lightContrast, width: "100%" }}>
                 <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                     <Box sx={{ padding: "20px" }}>
                         <Grid item xs={12} container alignItems="flex-start">
@@ -161,7 +161,7 @@ export const CaList: React.FC<Props> = ({ preSelectedCaName }) => {
                 </Box>
             </Grid>
 
-            <Grid item xs={12} md={9} style={{ height: "100%", overflow: "hidden", background: theme.palette.background.default }} ref={containerRef}>
+            <Grid item xs={12} xl={9} md={8} style={{ height: "100%", overflow: "hidden", background: theme.palette.background.default }} ref={containerRef}>
                 <Slide direction="left" in={isMainModalOpen} container={containerRef.current} style={{ height: "100%" }}>
                     <Box>
                         <Outlet />

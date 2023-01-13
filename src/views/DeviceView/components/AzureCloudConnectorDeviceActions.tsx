@@ -14,8 +14,6 @@ interface Props {
 }
 
 export const AzureCloudConnectorDeviceActions: React.FC<Props> = ({ deviceID, connectorID, caName, serialNumber, status }) => {
-    console.log(deviceID, connectorID, caName, serialNumber, status);
-
     const theme = useTheme();
     const dispatch = useDispatch();
 

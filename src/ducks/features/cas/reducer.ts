@@ -175,7 +175,6 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
     })
 
     .handleAction(actions.caActions.revokeCAAction.success, (state, action) => {
-        console.log(action);
         let currentList: Array<CertificateAuthority> = state.list;
         let index = currentList.map(ca => ca.name).indexOf(action.meta.caName);
         if (index >= 0) {
@@ -195,7 +194,6 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
     })
 
     .handleAction(actions.caActions.revokeCertAction.success, (state, action) => {
-        console.log(action);
         let currentList: Array<CertificateAuthority> = state.list;
         let index = currentList.map(ca => ca.name).indexOf(action.meta.caName);
         if (index >= 0) {
