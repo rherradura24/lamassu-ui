@@ -58,7 +58,7 @@ export const ViewSubscriptionDialog: React.FC<Props> = ({ subscription, isOpen, 
                                 </Grid>
                                 <Grid item xs={12} container spacing={2}>
                                     <Grid item xs="auto">
-                                        <Typography variant="button">Conditions:</Typography>
+                                        <Typography variant="button">Filters:</Typography>
                                     </Grid>
                                     <Grid item xs={12} container>
                                         {

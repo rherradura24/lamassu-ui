@@ -101,8 +101,6 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                 setAwsSyncCA(newSelectedCAConfig);
             }
 
-            console.log(awsCloudConnector);
-
             if (newSelectedCAConfig !== undefined && newSelectedCAConfig.configuration) {
                 if (newSelectedCAConfig.configuration.policy_status === OAWSPolicyStatus.Active) {
                     setAwsPolicy(JSON.stringify(JSON.parse(newSelectedCAConfig.configuration.policy_document!), null, 4));

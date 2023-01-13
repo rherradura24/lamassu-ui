@@ -146,11 +146,7 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
         };
     };
 
-    console.log(deviceCloudConfiguration);
-
     const cloudConnectorsRender = (connector: CloudConnector) => {
-        console.log(connector, connector.cloud_provider === OCloudProvider.Aws);
-        console.log(connector, connector.cloud_provider === OCloudProvider.Azure);
         let enabledConnectorSync = false;
         const filteredSyncCAs = connector.synchronized_cas.filter((syncCA) => syncCA.ca_name === slot!.active_certificate.ca_name);
         if (filteredSyncCAs.length > 0) {
@@ -161,7 +157,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
             return <>a</>;
         }
 
-        console.log(connector.cloud_provider);
         const awsTableRenderer = (cert: any) => {
             return {
                 serialNumber: <Typography style={{ fontWeight: "500", fontSize: 13, color: theme.palette.text.primary }}>#{cert.serial_number}</Typography>,
@@ -177,7 +172,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
 
         const awsRenderer = (deviceConfig: any) => {
             const awsDeviceConfig = (deviceConfig as AWSDeviceConfig);
-            console.log(awsDeviceConfig);
             return (
                 <>
                     <Box style={{ marginTop: "5px" }}>
@@ -191,7 +185,6 @@ export const DeviceInspectorSlotView: React.FC<Props> = ({ slotID, deviceID }) =
 
         const azureRender = (deviceConfig: any) => {
             const azureDeviceConfig = (deviceConfig as AzureDeviceConfig);
-            console.log(azureDeviceConfig);
             return (
                 <>
                     <Box style={{ marginTop: "5px" }}>

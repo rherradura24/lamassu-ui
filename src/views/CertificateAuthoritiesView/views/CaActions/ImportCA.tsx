@@ -92,8 +92,6 @@ export const ImportCA = () => {
         }
     }, [caKey]);
 
-    console.log(validCrt, validKey, caName);
-
     const cloudConnectorRender = (cloudConnector: CloudConnector) => {
         return {
             settings: (

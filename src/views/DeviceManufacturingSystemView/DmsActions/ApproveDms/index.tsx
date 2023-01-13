@@ -81,7 +81,6 @@ export const ApproveDMS: React.FC<Props> = ({ dmsName, isOpen, onClose = () => {
     ];
 
     const casRender = (ca: CertificateAuthority) => {
-        console.log(ca.name, selectedCas.includes(ca.name));
         return {
             actions: <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
                 setSelectedCas(prev => {
@@ -127,7 +126,6 @@ export const ApproveDMS: React.FC<Props> = ({ dmsName, isOpen, onClose = () => {
                         }
                         config={tableConfig}
                         onChange={(ev: any) => {
-                            console.log(ev, tableConfig);
                             if (!deepEqual(ev, tableConfig)) {
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();

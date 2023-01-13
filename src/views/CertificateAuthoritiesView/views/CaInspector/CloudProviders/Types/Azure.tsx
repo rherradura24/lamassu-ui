@@ -20,9 +20,6 @@ const Azure: React.FC<Props> = ({ caName, connectorID }) => {
     const cloudConnector = useAppSelector((state) => cloudProxySelector.getCloudConnector(state, connectorID));
     const [azureCloudConnector, setAzureCloudConnector] = useState<AzureCloudConnector>();
 
-    console.log(cloudConnector);
-    console.log(azureCloudConnector);
-
     useEffect(() => {
         if (cloudConnector !== undefined && cloudConnector.cloud_provider === OCloudProvider.Azure) {
             setAzureCloudConnector(new AzureCloudConnector(cloudConnector));

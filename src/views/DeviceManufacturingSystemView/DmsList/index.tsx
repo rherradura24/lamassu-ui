@@ -233,7 +233,6 @@ export const DmsList = () => {
                 withAdd={() => { navigate("create"); }}
                 config={tableConfig}
                 onChange={(ev: any) => {
-                    console.log(ev, tableConfig);
                     if (!deepEqual(ev, tableConfig)) {
                         setTableConfig(prev => ({ ...prev, ...ev }));
                     }

@@ -29,7 +29,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
 
     const [selectedCas, setSelectedCas] = useState<Array<string>>([]);
-    console.log(selectedCas);
 
     const [tableConfig, setTableConfig] = useState<LamassuTableWithDataControllerConfigProps>(
         {
@@ -65,7 +64,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
 
     useEffect(() => {
         if (tableConfig !== undefined) {
-            console.log("call ", tableConfig);
             refreshAction();
         }
     }, [tableConfig]);
@@ -80,7 +78,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
     ];
 
     const casRender = (ca: CertificateAuthority) => {
-        console.log(ca.name, selectedCas.includes(ca.name));
         return {
             actions: <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
                 setSelectedCas(prev => {
@@ -126,7 +123,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         }
                         config={tableConfig}
                         onChange={(ev: any) => {
-                            console.log(ev, tableConfig);
                             if (!deepEqual(ev, tableConfig)) {
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();
