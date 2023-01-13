@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, Grid, Typography, useTheme } from "@mui/material";
+import { Grid, Typography, useTheme } from "@mui/material";
 
 import { LamassuSwitch } from "components/LamassuComponents/Switch";
 import { LamassuChip } from "components/LamassuComponents/Chip";
@@ -60,10 +60,13 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
 
     useEffect(() => {
         if (tableConfig !== undefined) {
-            console.log("call ", tableConfig);
             refreshAction();
         }
     }, [tableConfig]);
+
+    useEffect(() => {
+        childToParent(selectedCas);
+    }, [selectedCas]);
 
     const casTableColumns = [
         { key: "bootstrap", title: "Bootstrap CAs", align: "start", size: 1 },
@@ -75,19 +78,16 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
     ];
 
     const casRender = (ca: CertificateAuthority) => {
-        console.log(ca.name, selectedCas.includes(ca.name));
         return {
-            bootstrap: <><LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
-                setSelectedCas((prev: string[]) => {
-                    if (prev.includes(ca.name)) {
-                        prev.splice(prev.indexOf(ca.name), 1);
-                    } else {
-                        prev.push(ca.name);
-                    }
-                    return prev;
-                }); console.log(selectedCas);
-            }} />
-            </>,
+            bootstrap: <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
+                const newSelectedCAs = selectedCas;
+                if (newSelectedCAs.includes(ca.name)) {
+                    newSelectedCAs.splice(newSelectedCAs.indexOf(ca.name), 1);
+                } else {
+                    newSelectedCAs.push(ca.name);
+                }
+                setSelectedCas([...newSelectedCAs]);
+            }} />,
             name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.name}</Typography>,
             serialnumber: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>{ca.serial_number}</Typography>,
             status: <LamassuChip label={ca.status} color={ca.status_color} />,
@@ -124,14 +124,6 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
                             }
                         }}
                     />
-                </Grid>
-                <Grid item xs={12} container spacing={1}>
-                    <Grid item>
-                        <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                    </Grid>
-                    <Grid item>
-                        <Button onClick={() => childToParent(selectedCas)} variant="contained">Accept</Button>
-                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

@@ -25,6 +25,8 @@ import { ApproveDMS } from "../DmsActions/ApproveDms/index";
 import { capitalizeFirstLetter } from "ducks/reducers_utils";
 import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 import { UpdateDMSCAs } from "../DmsActions/UpdateDMSCAs";
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 export const DmsList = () => {
     const theme = useTheme();
@@ -64,7 +66,7 @@ export const DmsList = () => {
         limit: tableConfig.pagination.selectedItemsPerPage!,
         sortField: tableConfig.sort.selectedField!,
         sortMode: tableConfig.sort.selectedMode!,
-        filterQuery: tableConfig.filter.filters!.map((f:any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
+        filterQuery: tableConfig.filter.filters!.map((f: any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
     }));
 
     useEffect(() => {
@@ -80,6 +82,7 @@ export const DmsList = () => {
     const dmsTableColumns = [
         { key: "name", title: "DMS Name", dataKey: "name", align: "center", query: true, type: OperandTypes.string, size: 2 },
         { key: "creation_timestamp", title: "Creation Date", dataKey: "creation_timestamp", type: OperandTypes.date, align: "center", size: 1 },
+        { key: "cloudHosted", title: "Cloud Hosted DMS", dataKey: "status", type: OperandTypes.string, align: "center", size: 1 },
         { key: "status", title: "Status", dataKey: "status", type: OperandTypes.enum, align: "center", size: 1 },
         { key: "expiration", title: "Expiration / Revocation / Rejection Date", dataKey: "modification_timestamp", type: OperandTypes.date, align: "center", size: 1 },
         { key: "keyprops", title: "Key Properties", align: "center", size: 1 },
@@ -91,6 +94,13 @@ export const DmsList = () => {
     const dmsRender = (dms: DMS) => {
         return {
             name: <Typography style={{ fontWeight: "500", fontSize: 14, color: theme.palette.text.primary }}>#{dms.name}</Typography>,
+            cloudHosted: dms.host_cloud_dms
+                ? (
+                    <CheckCircleOutlineOutlinedIcon sx={{ fontSize: "1.15rem", color: "#5CA36B" }} />
+                )
+                : (
+                    <CancelOutlinedIcon sx={{ fontSize: "1.15rem", color: "#DA565F" }} />
+                ),
             status: <LamassuChip label={capitalizeFirstLetter(dms.status)} color={dms.status_color} />,
             creation_timestamp: <Typography style={{ fontWeight: "400", fontSize: 14, color: theme.palette.text.primary, textAlign: "center" }}>{moment(dms.creation_timestamp).format("DD/MM/YYYY HH:mm")}</Typography>,
             keystrength: <LamassuChip label={dms.key_metadata.strength} color={dms.key_metadata.strength_color} />,
@@ -200,31 +210,34 @@ export const DmsList = () => {
 
                         dms.status === ODMSStatus.APPROVED
                             ? (
-                                <>
-                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Authorized CAs</Typography>
-                                    <Grid container spacing={2}>
-                                        {
-                                            dms.authorized_cas.map(caName => (
-                                                <Grid item key={caName} xs="auto">
-                                                    <LamassuChip label={caName} color={"gray"} />
-                                                </Grid>
-                                            ))
-                                        }
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12} container>
+                                        <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Authorized CAs</Typography>
+                                        <Grid container spacing={2}>
+                                            {
+                                                dms.authorized_cas.map(caName => (
+                                                    <Grid item key={caName} xs="auto">
+                                                        <LamassuChip label={caName} color={"gray"} />
+                                                    </Grid>
+                                                ))
+                                            }
+                                        </Grid>
                                     </Grid>
-                                    { !dms.host_cloud_dms &&
-                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Bootstrap CAs</Typography>
+                                    {dms.host_cloud_dms &&
+                                        <Grid item xs={12} container>
+                                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 14 }}>Bootstrap CAs</Typography>
+                                            <Grid container spacing={2}>
+                                                {
+                                                    dms.bootstrap_cas.map(caName => (
+                                                        <Grid item key={caName} xs="auto">
+                                                            <LamassuChip label={caName} color={"gray"} />
+                                                        </Grid>
+                                                    ))
+                                                }
+                                            </Grid>
+                                        </Grid>
                                     }
-                                    { !dms.host_cloud_dms && <Grid container spacing={2}>
-                                        {
-                                            dms.bootstrap_cas.map(caName => (
-                                                <Grid item key={caName} xs="auto">
-                                                    <LamassuChip label={caName} color={"gray"} />
-                                                </Grid>
-                                            ))
-                                        }
-                                    </Grid>
-                                    }
-                                </>
+                                </Grid>
                             )
                             : (
                                 <Typography fontStyle={"italic"} fontSize="12px">{"The DMS has not yet been APPROVED or has been REVOKED permanently"}</Typography>

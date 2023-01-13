@@ -14,7 +14,7 @@ import * as dmsAction from "ducks/features/dms-enroller/actions";
 import { ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { useDispatch } from "react-redux";
 import * as caSelector from "ducks/features/cas/reducer";
-import { BootstrapDMS } from "../Bootstrap";
+import { BootstrapDMS } from "./Bootstrap";
 import { LamassuSwitch } from "components/LamassuComponents/Switch";
 
 export const CreateDms = () => {
@@ -87,13 +87,13 @@ export const CreateDms = () => {
                     type: keyType
                 },
                 host_cloud_dms: hostCloudDMS,
-                bootstrap_cas: bootstrap_cas
+                bootstrap_cas: selectedBootstrapCAs
             }
         }));
     };
 
     const [hostCloudDMS, setHostCloudDMS] = useState(false);
-    const [bootstrap_cas, setBootstrap_cas] = useState<Array<string>>([]);
+    const [selectedBootstrapCAs, setSelectedBootstrapCAs] = useState<Array<string>>([]);
     const [dmsName, setDmsName] = useState("");
     const [country, setCountry] = useState("");
     const [state, setState] = useState("");
@@ -107,8 +107,10 @@ export const CreateDms = () => {
         setHostCloudDMS(event.target.checked);
     };
 
-    const childToParent = (bootstrap_cas: any) => {
-        setBootstrap_cas(bootstrap_cas);
+    const updateSelectedBootstrapCAs = (bootstrap_cas: any) => {
+        console.log(bootstrap_cas);
+
+        setSelectedBootstrapCAs(bootstrap_cas);
     };
 
     useEffect(() => {
@@ -124,7 +126,7 @@ export const CreateDms = () => {
     }, [keyType]);
 
     const keyBitsOptions = keyType === "RSA" ? rsaOptions : ecOptions;
-    const disabledCreateDmsButton = cn === "" || dmsName === "" || (hostCloudDMS && bootstrap_cas.length === 0);
+    const disabledCreateDmsButton = cn === "" || dmsName === "" || (hostCloudDMS && selectedBootstrapCAs.length === 0);
 
     return (
         displayPrivKeyView === false
@@ -197,7 +199,7 @@ export const CreateDms = () => {
                     { hostCloudDMS && (
                         <Grid item xs={12}>
                             <Typography>Assign multiple Bootstrap CAs to authenticate a device when enrolling.</Typography>
-                            <BootstrapDMS onClose={() => { setHostCloudDMS(false); }} childToParent={childToParent}/>
+                            <BootstrapDMS onClose={() => { setHostCloudDMS(false); }} childToParent={updateSelectedBootstrapCAs}/>
                         </Grid>
                     )}
 
