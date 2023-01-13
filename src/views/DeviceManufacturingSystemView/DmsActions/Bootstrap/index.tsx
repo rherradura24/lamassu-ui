@@ -51,7 +51,7 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
         limit: tableConfig.pagination.selectedItemsPerPage!,
         sortField: tableConfig.sort.selectedField!,
         sortMode: tableConfig.sort.selectedMode!,
-        filterQuery: tableConfig.filter.filters!.map((f:any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
+        filterQuery: tableConfig.filter.filters!.map((f: any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
     }));
 
     useEffect(() => {
@@ -125,8 +125,14 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
                         }}
                     />
                 </Grid>
-                <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
-                <Button onClick={() => childToParent(selectedCas)} variant="contained">Accept</Button>
+                <Grid item xs={12} container spacing={1}>
+                    <Grid item>
+                        <Button onClick={() => onClose()} variant="outlined">Cancel</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button onClick={() => childToParent(selectedCas)} variant="contained">Accept</Button>
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     );

@@ -191,7 +191,7 @@ export const CreateDms = () => {
                         <TextField variant="standard" fullWidth label="Common Name" required value={cn} onChange={(ev) => setCN(ev.target.value)} disabled />
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography>Use Bootstrap CAs</Typography>
+                        <Typography>Lamassu Hosted DMS - Use Bootstrap CAs</Typography>
                         <LamassuSwitch checked={hostCloudDMS} onChange={handleChangeBootstrap} />
                     </Grid>
                     { hostCloudDMS && (
@@ -240,25 +240,6 @@ export const CreateDms = () => {
                         <Grid item container sx={{ width: "100%" }} spacing={1}>
                             <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
                                 {privateKey !== undefined ? window.atob(privateKey) : ""}
-                            </SyntaxHighlighter>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6} spacing={2} container flexDirection="column" >
-                        <Grid item>
-                            <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 22, lineHeight: "24px", marginRight: "10px" }}>Run the Virtual DMS</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 13 }}>Start enrolling your devices using the Virtual DMS, a demo tool that performs automatic device registration</Typography>
-                        </Grid>
-                        <Grid item container sx={{ width: "100%" }} spacing={1}>
-                            <SyntaxHighlighter
-                                style={theme.palette.mode === "light" ? materialLight : materialOceanic}
-                                customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }}
-                                wrapLines={true}
-                                wrapLongLines={true}
-                                lineProps={{ style: { color: theme.palette.text.primaryLight, overflowWrap: "break-word" } }}
-                            >
-                                {privateKey !== undefined ? `docker run -e DMS_B64_PRIVATE_KEY=${privateKey.replace(/(\r\n|\n|\r)/gm, "")} lamassuiot/virtual-dms` : ""}
                             </SyntaxHighlighter>
                         </Grid>
                     </Grid>
