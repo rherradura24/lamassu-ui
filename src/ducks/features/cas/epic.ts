@@ -165,3 +165,17 @@ export const revokeCertEpic: Epic<RootAction, RootAction, RootState, {}> = (acti
             )
         )
     );
+
+export const signCertEpic: Epic<RootAction, RootAction, RootState, {}> = (action$, store$) =>
+    action$.pipe(
+        filter(isActionOf(actions.signCertAction.request)),
+        tap((item: any) => console.log("%c Epic ", "background:#8500ff; border-radius:5px;font-weight: bold;", "", item)),
+        exhaustMap((action: PayloadAction<string, actions.SignCert>) =>
+            from(apicalls.signCertificate(action.payload.caName, action.payload.csr)).pipe(
+                tap((item: any) => console.log("%c Epic ", "background:#ff8400; border-radius:5px;font-weight: bold;", "", item)),
+                map(actions.signCertAction.success),
+                tap((item: any) => console.log("%c Epic ", "background:#ff1477; border-radius:5px;font-weight: bold;", "", item)),
+                catchError((message) => of(actions.signCertAction.failure(message)))
+            )
+        )
+    );

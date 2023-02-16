@@ -118,27 +118,39 @@ export const DashboardLayout = () => {
 
                 }
             ]
-        },
-        {
-            menuTitle: "Simulation Tools",
-            menuItems: [
-                {
-                    title: "Virtual DMS",
-                    path: `http://${location.hostname}:7002`,
-                    link: `http://${location.hostname}:7002`,
-                    icon: <SelectAllOutlinedIcon/>,
-                    content: <DMSView/>
-                },
-                {
-                    title: "Virtual Device",
-                    path: `http://${location.hostname}:7001`,
-                    link: `http://${location.hostname}:7001`,
-                    icon: <SelectAllOutlinedIcon/>,
-                    content: <DMSView/>
-                }
-            ]
         }
     ];
+
+    const simulationToolsItems = [];
+    if (window._env_.REACT_APP_LAMASSU_VDMS !== "") {
+        simulationToolsItems.push(
+            {
+                title: "Virtual Device",
+                path: window._env_.REACT_APP_LAMASSU_VDEVICE,
+                link: window._env_.REACT_APP_LAMASSU_VDEVICE,
+                icon: <SelectAllOutlinedIcon/>,
+                content: <DeviceView/>
+            }
+        );
+    }
+    if (window._env_.REACT_APP_LAMASSU_VDMS !== "") {
+        simulationToolsItems.push(
+            {
+                title: "Virtual DMS",
+                path: window._env_.REACT_APP_LAMASSU_VDMS,
+                link: window._env_.REACT_APP_LAMASSU_VDMS,
+                icon: <SelectAllOutlinedIcon/>,
+                content: <DMSView/>
+            }
+        );
+    }
+
+    if (simulationToolsItems.length > 0) {
+        routes.push({
+            menuTitle: "Simulation Tools",
+            menuItems: simulationToolsItems
+        });
+    }
 
     return (
         <ThemeProvider theme={theme}>

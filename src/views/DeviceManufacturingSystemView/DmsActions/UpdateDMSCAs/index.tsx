@@ -71,7 +71,7 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
 
     const casTableColumns = [
         { key: "actions", title: "", align: "start", size: 1 },
-        { key: "name", title: "Name", dataKey: "name", align: "center", query: true, size: 2 },
+        { key: "name", title: "CA Name", dataKey: "ca_name", align: "center", query: true, type: "string", size: 2 },
         { key: "serialnumber", title: "Serial Number", align: "center", size: 3 },
         { key: "status", title: "Status", align: "center", size: 1 },
         { key: "keystrength", title: "Key Strength", align: "center", size: 1 },
@@ -133,6 +133,7 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         config={tableConfig}
                         onChange={(ev: any) => {
                             if (!deepEqual(ev, tableConfig)) {
+                                console.log(tableConfig);
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();
                             }

@@ -14,7 +14,8 @@ export interface CertificateAuthoritiesState {
     caStats: CAStats
     list: Array<CertificateAuthority>
     issuedCertsStatus: ActionStatus
-    totalCAs: number
+    totalCAs: number,
+    signedCertificate: string | undefined
 }
 
 const initialState = {
@@ -45,6 +46,7 @@ const initialState = {
         status: ORequestStatus.Idle,
         type: ORequestType.None
     },
+    signedCertificate: undefined,
     list: [],
     totalCAs: 0
 };
@@ -211,6 +213,18 @@ export const certificateAuthoritiesReducer = createReducer<CertificateAuthoritie
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 
+    .handleAction(actions.caActions.signCertAction.request, (state, action) => {
+        return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Create } };
+    })
+
+    .handleAction(actions.caActions.signCertAction.success, (state, action) => {
+        return { ...state, status: { isLoading: false, status: ORequestStatus.Success, type: ORequestType.Create }, signedCertificate: action.payload.certificate };
+    })
+
+    .handleAction(actions.caActions.signCertAction.failure, (state, action) => {
+        return { ...state, status: { isLoading: false, status: ORequestStatus.Failed, type: ORequestType.Create } };
+    })
+
     .handleAction(actions.caActions.resetStateAction, (state, _) => {
         return { ...state, status: { isLoading: false, status: ORequestStatus.Idle, type: ORequestType.None } };
     });
@@ -274,4 +288,8 @@ export const getTotalIssuedCerts = (state: RootState, caName: string): number | 
         return ca.total_issued_certificates;
     }
     return undefined;
+};
+export const getSignedCertificate = (state: RootState): string | undefined => {
+    const caReducer = getSelector(state);
+    return caReducer.signedCertificate;
 };
