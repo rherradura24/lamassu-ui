@@ -53,7 +53,8 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                         "iot:Connect"
                     ],
                     Resource: [
-                        "arn:aws:iot:" + region + ":" + accountId + ":client/${iot:Connection.Thing.ThingName}"
+                        "arn:aws:iot:" + region + ":" + accountId + ":client/${iot:Connection.Thing.ThingName}",
+                        "arn:aws:iot:" + region + ":" + accountId + ":client/dt/lms/well-known/cacerts"
                     ]
                 },
                 {
@@ -64,8 +65,8 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                     ],
                     Resource: [
                         "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/get",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/update"
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/get",
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/update"
                     ]
                 },
                 {
@@ -74,12 +75,13 @@ const AwsIotCore: React.FC<Props> = ({ caName, connectorID }) => {
                         "iot:Subscribe"
                     ],
                     Resource: [
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/dt/lms/well-known/cacerts",
                         "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/update/delta",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/update/accepted",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/update/rejected",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/get/accepted",
-                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/get/rejected"
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/update/delta",
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/update/accepted",
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/update/rejected",
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/get/accepted",
+                        "arn:aws:iot:" + region + ":" + accountId + ":topic/${iot:Connection.Thing.ThingName}/shadow/name/lamassu-identity/get/rejected"
                     ]
                 }
             ]

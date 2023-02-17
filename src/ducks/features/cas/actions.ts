@@ -1,6 +1,6 @@
 import { createAsyncAction, createAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { CertificateAuthority, CAStats, GetCAsListAPIResponse, CAInfo, CryptoEngine } from "./models";
+import { CertificateAuthority, CAStats, GetCAsListAPIResponse, CAInfo, CryptoEngine, SignResponse } from "./models";
 
 export const actionTypes = {
     RESET_CA_REQUEST_STATE: "RESET_CA_REQUEST_STATE",
@@ -12,7 +12,8 @@ export const actionTypes = {
     CREATE_CA: "CREATE_CA",
     IMPORT_CA: "IMPORT_CA",
     REVOKE_CA: "REVOKE_CA",
-    REVOKE_CERT: "REVOKE_CERT"
+    REVOKE_CERT: "REVOKE_CERT",
+    SIGN_CERT: "SIGN_CERT"
 };
 
 export const resetStateAction = createAction(
@@ -128,4 +129,13 @@ export const revokeCertAction = createAsyncAction(
     [actionTypes.REVOKE_CERT, (req: RevokeCert) => req],
     [success(actionTypes.REVOKE_CERT), (req: any, meta: RevokeCert) => req, (req: any, meta: RevokeCert) => meta],
     [failed(actionTypes.REVOKE_CERT), (req: Error) => req]
+)();
+export type SignCert = {
+    csr: string,
+    caName: string,
+}
+export const signCertAction = createAsyncAction(
+    [actionTypes.SIGN_CERT, (req: SignCert) => req],
+    [success(actionTypes.SIGN_CERT), (req: SignResponse) => req],
+    [failed(actionTypes.SIGN_CERT), (req: Error) => req]
 )();

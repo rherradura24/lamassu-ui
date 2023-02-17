@@ -156,7 +156,7 @@ export const LamassuTable: React.FC<LamassuTableProps> = ({ columnConf, data, re
                                         }
                                     }
                                 }}>
-                                    <Typography style={{ color: theme.palette.text.secondary, fontWeight: "400", fontSize: 12, textAlign: "center" }}>{item.title}</Typography>
+                                    <Typography style={{ color: (sort.enabled && item.key === sort.prop) ? theme.palette.background.default : theme.palette.text.secondary, fontWeight: "400", fontSize: 12, textAlign: "center", padding: "2px 6px", borderRadius: "5px", background: (sort.enabled && item.key === sort.prop) ? theme.palette.primary.main : "transparent" }}>{item.title}</Typography>
                                     {
                                         sort.enabled && item.key === sort.prop && (
                                             sort.mode === "asc"
@@ -512,7 +512,7 @@ export const LamassuTableWithDataController: React.FC<LamassuTableWithDataContro
     };
 
     return (
-        <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <Box style={{ display: "flex", flexDirection: "column", height: "100%", width: "inherit" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "start", width: "100%" }}>
                 <Box sx={{ display: "flex" }}>
                     <Box>

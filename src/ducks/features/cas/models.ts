@@ -130,3 +130,12 @@ export const OCAStatus = {
 export type KeyStrength = typeof OKeyStrength[keyof typeof OKeyStrength];
 export type KeyType = typeof OKeyType[keyof typeof OKeyType];
 export type CAStatus = typeof OCAStatus[keyof typeof OCAStatus];
+
+export class SignResponse {
+    public certificate!: string
+    public ca_certificate!: string
+
+    constructor (args?: {}) {
+        Object.assign(this, args);
+    }
+}

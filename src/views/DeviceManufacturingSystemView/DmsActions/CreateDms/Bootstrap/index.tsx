@@ -70,7 +70,7 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
 
     const casTableColumns = [
         { key: "bootstrap", title: "Bootstrap CAs", align: "start", size: 1 },
-        { key: "name", title: "Name", dataKey: "name", align: "center", query: true, size: 2 },
+        { key: "name", title: "Name", dataKey: "ca_name", align: "center", query: true, type: "string", size: 2 },
         { key: "serialnumber", title: "Serial Number", align: "center", size: 3 },
         { key: "status", title: "Status", align: "center", size: 1 },
         { key: "keystrength", title: "Key Strength", align: "center", size: 1 },
@@ -99,11 +99,6 @@ export const BootstrapDMS: React.FC<Props> = ({ onClose = () => { }, childToPare
     return (
         <Grid container spacing={12} justifyContent="center" alignItems="center" >
             <Grid item xs={12}>
-                <Grid container style={{ marginTop: "10px" }}>
-                    <Grid item xs={12}>
-                        <Typography variant="button">Bootstrap CA Name: </Typography>
-                    </Grid>
-                </Grid>
                 <Grid item xs={12} container sx={{ marginTop: "20px" }}>
                     <LamassuTableWithDataController
                         data={caList}

@@ -99,3 +99,13 @@ export const revokeCertificate = async (caName: string, serialNumber: string) =>
         }
     });
 };
+export const signCertificate = async (caName: string, csr: string) : Promise<any> => {
+    return apiRequest({
+        method: "POST",
+        url: window._env_.REACT_APP_LAMASSU_CA_API + "/v1/pki/" + caName + "/sign",
+        data: {
+            certificate_request: btoa(csr),
+            sign_verbatim: true
+        }
+    });
+};
