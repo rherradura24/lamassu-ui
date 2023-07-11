@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, Paper, DialogContent, DialogContentText, DialogTitle, Grid, Tooltip, Typography, useTheme, IconButton } from "@mui/material";
+import { Button, Dialog, DialogActions, Paper, DialogContent, DialogTitle, Grid, Tooltip, Typography, useTheme, IconButton } from "@mui/material";
 import { LamassuChip } from "components/LamassuComponents/Chip";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "ducks/hooks";
 import * as caSelector from "ducks/features/cas/reducer";
 import * as caActions from "ducks/features/cas/actions";
+import * as dmsApiCalls from "ducks/features/dms-enroller/apicalls";
 import { CertificateAuthority } from "ducks/features/cas/models";
-import * as dmsSelector from "ducks/features/dms-enroller/reducer";
 import { LamassuTableWithDataController, LamassuTableWithDataControllerConfigProps } from "components/LamassuComponents/Table";
 import deepEqual from "fast-deep-equal/es6";
 import Radio from "@mui/material/Radio";
@@ -30,14 +30,21 @@ import downloadFile from "components/utils/FileDownloader";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import { ORequestStatus, ORequestType } from "ducks/reducers_utils";
 import { Certificate } from "@fidm/x509";
+import { DMS } from "ducks/features/dms-enroller/models";
 
 interface Props {
     dmsName: string,
     isOpen: boolean,
-    onClose: any
+    onClose: any,
+    defaultCN?: string,
+    onCreate?: (
+        certSN: string,
+        caName: string,
+        certPEM: string,
+    ) => void
 }
 
-export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, onClose = () => { } }) => {
+export const IssueCertificateFromDMS: React.FC<Props> = ({ dmsName, defaultCN = "bootstrap", isOpen, onClose = () => { }, onCreate = () => { } }) => {
     const theme = useTheme();
     const themeMode = theme.palette.mode;
     const dispatch = useDispatch();
@@ -45,11 +52,11 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
     const caRequestStatus = useAppSelector((state) => caSelector.getRequestStatus(state));
     const caList = useAppSelector((state) => caSelector.getCAs(state));
     const totalCAs = useAppSelector((state) => caSelector.getTotalCAs(state));
-    const dms = useAppSelector((state) => dmsSelector.getDMS(state, dmsName)!);
 
     const signedCert = useAppSelector((state) => caSelector.getSignedCertificate(state));
     const [parsedSignedCert, setParsedSignedCert] = useState<undefined | Certificate>(undefined);
 
+    const [dms, setDMS] = useState<undefined | DMS>();
     const [step, setStep] = useState(0);
 
     const [selectedCA, setSelectedCA] = useState<string | undefined>(undefined);
@@ -59,7 +66,7 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
     const [city, setCity] = useState<string | undefined>(undefined);
     const [org, setOrg] = useState<string | undefined>(undefined);
     const [orgUnit, setOrgUnit] = useState<string | undefined>(undefined);
-    const [cn, setCN] = useState<string>("bootstrap");
+    const [cn, setCN] = useState<string>(defaultCN);
 
     const rsaOptions = [
         {
@@ -127,13 +134,20 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
         }
     );
 
-    const refreshAction = () => dispatch(caActions.getCAsAction.request({
-        offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
-        limit: tableConfig.pagination.selectedItemsPerPage!,
-        sortField: tableConfig.sort.selectedField!,
-        sortMode: tableConfig.sort.selectedMode!,
-        filterQuery: tableConfig.filter.filters!.map((f: any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
-    }));
+    const refreshAction = async () => {
+        const dmsList = await dmsApiCalls.getDMSList(20, 0, "asc", "", []);
+        const filteredDMSList = dmsList.dmss.filter((dms: any) => dms.name === dmsName);
+        if (filteredDMSList.length === 1) {
+            setDMS(filteredDMSList[0]);
+            dispatch(caActions.getCAsAction.request({
+                offset: tableConfig.pagination.selectedPage! * tableConfig.pagination.selectedItemsPerPage!,
+                limit: tableConfig.pagination.selectedItemsPerPage!,
+                sortField: tableConfig.sort.selectedField!,
+                sortMode: tableConfig.sort.selectedMode!,
+                filterQuery: tableConfig.filter.filters!.map((f: any) => { return f.propertyKey + "[" + f.propertyOperator + "]=" + f.propertyValue; })
+            }));
+        }
+    };
 
     useEffect(() => {
         const run = async () => {
@@ -195,11 +209,8 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
 
     return (
         <Dialog open={isOpen} onClose={() => onClose()} maxWidth={"xl"}>
-            <DialogTitle>Generate a Bootstrap Certificate for: {dms.name}</DialogTitle>
+            <DialogTitle>Certificate Issuance</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Generate a new temporal and generic identity to be used during the enrollment process of the device. This credentials shall be preinstalled and used by all devices belonging to the same fleet.
-                </DialogContentText>
                 <Grid container style={{ marginTop: "20px" }}>
                     <Grid item xs={12}>
                         <Stepper activeStep={step} alternativeLabel>
@@ -214,24 +225,30 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                 <Grid item xs={12} container sx={{ marginTop: "20px" }}>
                     {
                         step === 0 && (
-                            <LamassuTableWithDataController
-                                data={caList.filter(ca => dms.bootstrap_cas.includes(ca.name))}
-                                invertContrast={true}
-                                totalDataItems={totalCAs}
-                                columnConf={casTableColumns}
-                                renderDataItem={casRender}
-                                isLoading={caRequestStatus.isLoading}
-                                emptyContentComponent={
-                                    <Typography>No CAs</Typography>
-                                }
-                                config={tableConfig}
-                                onChange={(ev: any) => {
-                                    if (!deepEqual(ev, tableConfig)) {
-                                        setTableConfig(prev => ({ ...prev, ...ev }));
-                                        // refreshAction();
-                                    }
-                                }}
-                            />
+                            dms === undefined
+                                ? (
+                                    <></>
+                                )
+                                : (
+                                    <LamassuTableWithDataController
+                                        data={caList.filter(ca => dms.identity_profile.enrollment_settings.bootstrap_cas.includes(ca.name) || dms.identity_profile.enrollment_settings.authorized_ca === ca.name)}
+                                        invertContrast={true}
+                                        totalDataItems={totalCAs}
+                                        columnConf={casTableColumns}
+                                        renderDataItem={casRender}
+                                        isLoading={caRequestStatus.isLoading}
+                                        emptyContentComponent={
+                                            <Typography>No CAs</Typography>
+                                        }
+                                        config={tableConfig}
+                                        onChange={(ev: any) => {
+                                            if (!deepEqual(ev, tableConfig)) {
+                                                setTableConfig(prev => ({ ...prev, ...ev }));
+                                                // refreshAction();
+                                            }
+                                        }}
+                                    />
+                                )
                         )
                     }
                     {
@@ -305,7 +322,7 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                     }
                     {
                         step === 2 && (
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} flexDirection="column">
                                 {
                                     privKeyAndCSR === undefined
                                         ? (
@@ -318,62 +335,66 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                                         )
                                         : (
                                             <>
-                                                <Grid item xs={12}>
+                                                {/* <Grid item xs>
                                                     <Box sx={{ background: theme.palette.primary.light, padding: "10px", borderRadius: "5px", width: "fit-content" }}>
                                                         <Typography sx={{ color: theme.palette.primary.main, fontSize: "0.85rem" }}>The private key was generated in the browser and will not be sent nor stored in any server</Typography>
                                                     </Box>
-                                                </Grid>
-                                                <Grid item xs={6} container justifyContent={"center"} spacing={1}>
-                                                    <Grid item xs="auto">
-                                                        <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                                            {privKeyAndCSR.privateKey}
-                                                        </SyntaxHighlighter>
-                                                    </Grid>
-                                                    <Grid item xs="auto" container flexDirection={"column"} spacing={1}>
-                                                        <Grid item>
-                                                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                                <Tooltip title="Copy to Clipboard">
-                                                                    <IconButton onClick={(ev) => { ev.stopPropagation(); navigator.clipboard.writeText(privKeyAndCSR.privateKey); }}>
-                                                                        <ContentPasteIcon fontSize={"small"} />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </Box>
+                                                </Grid> */}
+
+                                                <Grid item xs container spacing={2}>
+                                                    <Grid item xs={6} container justifyContent={"center"} spacing={1}>
+                                                        <Grid item xs="auto">
+                                                            <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                                                {privKeyAndCSR.privateKey}
+                                                            </SyntaxHighlighter>
                                                         </Grid>
-                                                        <Grid item>
-                                                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                                <Tooltip title="Download Bootstrap Certificate">
-                                                                    <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("bootstrap-" + selectedCA + ".key", privKeyAndCSR.privateKey); }}>
-                                                                        <FileDownloadRoundedIcon fontSize={"small"} />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </Box>
+                                                        <Grid item xs="auto" container flexDirection={"column"} spacing={1}>
+                                                            <Grid item xs="auto">
+                                                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                                    <Tooltip title="Copy to Clipboard">
+                                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); navigator.clipboard.writeText(privKeyAndCSR.privateKey); }}>
+                                                                            <ContentPasteIcon fontSize={"small"} />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </Grid>
+                                                            <Grid item xs="auto">
+                                                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                                    <Tooltip title="Download Bootstrap Certificate">
+                                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("bootstrap-" + selectedCA + ".key", privKeyAndCSR.privateKey); }}>
+                                                                            <FileDownloadRoundedIcon fontSize={"small"} />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </Grid>
                                                         </Grid>
                                                     </Grid>
-                                                </Grid>
-                                                <Grid item xs={6} container justifyContent={"center"} spacing={1}>
-                                                    <Grid item xs="auto">
-                                                        <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                                            {privKeyAndCSR.csr}
-                                                        </SyntaxHighlighter>
-                                                    </Grid>
-                                                    <Grid item xs="auto" container flexDirection={"column"} spacing={1}>
-                                                        <Grid item>
-                                                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                                <Tooltip title="Copy to Clipboard">
-                                                                    <IconButton onClick={(ev) => { ev.stopPropagation(); navigator.clipboard.writeText(privKeyAndCSR.csr); }}>
-                                                                        <ContentPasteIcon fontSize={"small"} />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </Box>
+
+                                                    <Grid item xs={6} container justifyContent={"center"} spacing={1}>
+                                                        <Grid item xs="auto">
+                                                            <SyntaxHighlighter language="json" style={themeMode === "light" ? materialLight : materialOceanic} customStyle={{ fontSize: 10, padding: 20, borderRadius: 10, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
+                                                                {privKeyAndCSR.csr}
+                                                            </SyntaxHighlighter>
                                                         </Grid>
-                                                        <Grid item>
-                                                            <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
-                                                                <Tooltip title="Download Bootstrap CSR">
-                                                                    <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("bootstrap-" + selectedCA + ".csr", privKeyAndCSR.csr); }}>
-                                                                        <FileDownloadRoundedIcon fontSize={"small"} />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </Box>
+                                                        <Grid item xs="auto" container flexDirection={"column"} spacing={1}>
+                                                            <Grid item>
+                                                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                                    <Tooltip title="Copy to Clipboard">
+                                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); navigator.clipboard.writeText(privKeyAndCSR.csr); }}>
+                                                                            <ContentPasteIcon fontSize={"small"} />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <Box component={Paper} elevation={0} style={{ borderRadius: 8, background: theme.palette.background.lightContrast, width: 35, height: 35 }}>
+                                                                    <Tooltip title="Download Bootstrap CSR">
+                                                                        <IconButton onClick={(ev) => { ev.stopPropagation(); downloadFile("bootstrap-" + selectedCA + ".csr", privKeyAndCSR.csr); }}>
+                                                                            <FileDownloadRoundedIcon fontSize={"small"} />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </Grid>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
@@ -406,13 +427,10 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                                                                     <>
                                                                         <Grid item xs={12}>
                                                                             <Box sx={{ background: theme.palette.success.light, padding: "10px", borderRadius: "5px", width: "fit-content" }}>
-                                                                                <Typography sx={{ color: theme.palette.success.main, fontSize: "0.85rem" }}>Bootstrap generated successfully</Typography>
+                                                                                <Typography sx={{ color: theme.palette.success.main, fontSize: "0.85rem" }}>Certificate generated successfully</Typography>
+                                                                                <Typography sx={{ color: theme.palette.success.main, fontSize: "0.85rem" }}>CA: <b>{selectedCA}</b></Typography>
+                                                                                <Typography sx={{ color: theme.palette.success.main, fontSize: "0.85rem" }}>Serial Number: <b>{chunk(parsedSignedCert.serialNumber, 2).join("-")}</b></Typography>
                                                                             </Box>
-                                                                        </Grid>
-                                                                        <Grid item xs={12} container>
-                                                                            <Grid item xs={4}>
-                                                                                <Typography>{chunk(parsedSignedCert.serialNumber, 2).join("-")}</Typography>
-                                                                            </Grid>
                                                                         </Grid>
                                                                     </>
                                                                 )
@@ -421,7 +439,7 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                                                                 caRequestStatus.status === ORequestStatus.Failed && (
                                                                     <Grid item xs={12}>
                                                                         <Box sx={{ background: theme.palette.error.light, padding: "10px", borderRadius: "5px", width: "fit-content" }}>
-                                                                            <Typography sx={{ color: theme.palette.error.main, fontSize: "0.85rem" }}>Bootstrap generation went wrong</Typography>
+                                                                            <Typography sx={{ color: theme.palette.error.main, fontSize: "0.85rem" }}>Certificate generation went wrong</Typography>
                                                                         </Box>
                                                                     </Grid>
                                                                 )
@@ -511,6 +529,11 @@ export const GenDMSBootstrapCertificate: React.FC<Props> = ({ dmsName, isOpen, o
                                 if (step < 3) {
                                     setStep(step + 1);
                                 } else {
+                                    onCreate(
+                                        chunk(parsedSignedCert!.serialNumber, 2).join("-"),
+                                        selectedCA!,
+                                        signedCert!
+                                    );
                                     onClose();
                                 }
                             }} variant="contained">{step === 3 ? "Finish" : "Next"}</Button>

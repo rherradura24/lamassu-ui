@@ -19,6 +19,7 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
 
     const caData = useAppSelector((state) => caSelector.getCA(state, caName)!);
     const cloudConnector = useAppSelector((state) => cloudProxySelector.getCloudConnector(state, connectorID)!);
+
     return (
         isOpen
             ? (
@@ -69,7 +70,7 @@ export const EnabledConnectorSynchronizationModal: React.FC<Props> = ({ caName, 
                                     },
                                     valid_from: caData.valid_from,
                                     valid_to: caData.valid_to,
-                                    issuance_duration: caData.issuance_duration
+                                    issuance_duration: caData.issuance_expiration
                                 }
                             })); onClose();
                         }} variant="contained">Synchronize</Button>

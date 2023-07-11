@@ -1,16 +1,15 @@
 import { apiRequest } from "ducks/services/api";
-import { CreateDMSForm } from "./actions";
 import { DMSStatus } from "./models";
 
 export const getInfo = async (): Promise<any> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/info"
+        url: window._env_.LAMASSU_DMS_MANAGER_API + "/info"
     });
 };
 
 export const getDMSList = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
-    let url = window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/?" + `sort=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
+    let url = window._env_.LAMASSU_DMS_MANAGER_API + "/v1/?" + `sort=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
     filterQuery.forEach(filter => {
         url += `&filter=${filter}`;
     });
@@ -19,11 +18,26 @@ export const getDMSList = async (limit: number, offset: number, sortMode: "asc" 
         url: url
     });
 };
+export const getDMS = async (name: string): Promise<any> => {
+    const url = window._env_.LAMASSU_DMS_MANAGER_API + `/v1/${name}`;
+    return apiRequest({
+        method: "GET",
+        url: url
+    });
+};
 
-export const createDMS = async (dmsForm: CreateDMSForm): Promise<any> => {
+export const createDMS = async (dmsForm: any): Promise<any> => {
     return apiRequest({
         method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/",
+        url: window._env_.LAMASSU_DMS_MANAGER_API + "/v1/",
+        data: dmsForm
+    });
+};
+
+export const updateDMS = async (dmsForm: any): Promise<any> => {
+    return apiRequest({
+        method: "PUT",
+        url: window._env_.LAMASSU_DMS_MANAGER_API + "/v1/",
         data: dmsForm
     });
 };
@@ -36,7 +50,7 @@ export const updateDMSStatus = async (dmsName: string, status: DMSStatus): Promi
 
     return apiRequest({
         method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/status",
+        url: window._env_.LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/status",
         data: payload
     });
 };
@@ -49,7 +63,7 @@ export const updateDMSAuthorizedCAs = async (dmsName: string, authorizedCAs: Arr
 
     return apiRequest({
         method: "PUT",
-        url: window._env_.REACT_APP_LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/auth",
+        url: window._env_.LAMASSU_DMS_MANAGER_API + "/v1/" + dmsName + "/auth",
         data: payload
     });
 };

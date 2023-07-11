@@ -80,13 +80,12 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
 
     const casRender = (ca: CertificateAuthority) => {
         return {
-            actions: (dms.host_cloud_dms
+            actions: (dms.cloud_dms
                 ? <LamassuSwitch value={selectedCas.includes(ca.name)} style={{ color: "grey" }} checked={tempCa === ca.name} onChange={() => {
                     const temp = [];
                     temp.push(ca.name);
                     setSelectedCas(temp);
                     setTempCA(ca.name);
-                    console.log(temp);
                 }} />
                 : <LamassuSwitch value={selectedCas.includes(ca.name)} onChange={() => {
                     setSelectedCas(prev => {
@@ -133,7 +132,6 @@ export const UpdateDMSCAs: React.FC<Props> = ({ dmsName, isOpen, onClose = () =>
                         config={tableConfig}
                         onChange={(ev: any) => {
                             if (!deepEqual(ev, tableConfig)) {
-                                console.log(tableConfig);
                                 setTableConfig(prev => ({ ...prev, ...ev }));
                                 // refreshAction();
                             }

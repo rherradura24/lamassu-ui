@@ -28,8 +28,6 @@ export const CreateDevice: React.FC<Props> = () => {
     const dmsRequestStatus = useAppSelector((state) => dmsSelector.getRequestStatus(state));
     const dmsList = useAppSelector((state) => dmsSelector.getDMSs(state));
 
-    console.log(requestStatus);
-
     useEffect(() => {
         dispatch(dmsActions.getDMSListAction.request({
             offset: 0,
@@ -40,12 +38,8 @@ export const CreateDevice: React.FC<Props> = () => {
         }));
     }, []);
 
-    const [device, setDevice] = useState<Device>(new Device({ icon_name: "Cg/CgSmartphoneChip", icon_color: "#0068D1", alias: "", tags: [], description: "" }));
+    const [device, setDevice] = useState<Device>(new Device({ id: "", icon_name: "Cg/CgSmartphoneChip", icon_color: "#0068D1", alias: "", tags: [], description: "" }));
     const [anchorElColorPicker, setAnchorElColorPicker] = useState(null);
-
-    useEffect(() => {
-        console.log(device);
-    }, [device]);
 
     useEffect(() => {
         if (requestStatus.status === ORequestStatus.Success && requestStatus.type === ORequestType.Create) {
@@ -99,9 +93,8 @@ export const CreateDevice: React.FC<Props> = () => {
                                             InputProps={{
                                                 endAdornment: (
                                                     <Tooltip title="Generate UUID">
-                                                        <IconButton onClick={() => {
-                                                            const uuid = uuidv4();
-                                                            setDevice((prevData: any) => ({ ...prevData, id: uuid }));
+                                                        <IconButton onClick={(ev) => {
+                                                            setDevice((prevData: any) => ({ ...prevData, id: uuidv4() }));
                                                         }}>
                                                             <CachedIcon />
                                                         </IconButton>
@@ -192,7 +185,6 @@ export const CreateDevice: React.FC<Props> = () => {
                                         <TagsInput
                                             tags={device!.tags}
                                             label={"Tags"}
-                                            // selectedTags={(tags: string) => { console.log(tags); }}
                                             fullWidth
                                             onChange={(tags: any) => { setDevice((prevData: any) => ({ ...prevData, tags: tags })); }}
                                             variant="standard"

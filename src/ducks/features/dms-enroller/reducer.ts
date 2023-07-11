@@ -41,11 +41,22 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 
-    .handleAction(actions.dmsActions.getDMSListAction.request, (state, action) => {
+    .handleAction(actions.dmsActions.getDMSAction.success, (state, action) => {
+        let dms: DMS = action.payload;
+        dms.status_color = dmsStatusToColor(dms.status);
+
+        if (!dms.cloud_dms) {
+            dms.remote_access_identity.key_metadata.strength_color = keyStrengthToColor(dms.remote_access_identity.key_metadata.strength);
+        }
+
+        return { ...state, status: { isLoading: false, status: ORequestStatus.Success, type: ORequestType.Read }, list: [dms], totalDMSs: 0 };
+    })
+
+    .handleAction([actions.dmsActions.getDMSListAction.request, actions.dmsActions.getDMSAction.request], (state, action) => {
         return { ...state, status: { isLoading: true, status: ORequestStatus.Pending, type: ORequestType.Read }, list: [], totalDMSs: 0 };
     })
 
-    .handleAction(actions.dmsActions.getDMSListAction.failure, (state, action) => {
+    .handleAction([actions.dmsActions.getDMSListAction.failure, actions.dmsActions.getDMSAction.failure], (state, action) => {
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     })
 
@@ -54,7 +65,9 @@ export const dmsReducer = createReducer<DeviceManufacturingSystemStatus, RootAct
         for (let i = 0; i < dmss.length; i++) {
             dmss[i].status_color = dmsStatusToColor(dmss[i].status);
 
-            dmss[i].key_metadata.strength_color = keyStrengthToColor(dmss[i].key_metadata.strength);
+            if (!dmss[i].cloud_dms) {
+                dmss[i].remote_access_identity.key_metadata.strength_color = keyStrengthToColor(dmss[i].remote_access_identity.key_metadata.strength);
+            }
         }
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Success }, list: dmss, totalDMSs: action.payload.total_dmss };
     })

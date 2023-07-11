@@ -1,6 +1,41 @@
 import { createTheme } from "@mui/material/styles";
 
-export const light : any = {
+const componentsTheme = (theme: CustomTheme) => {
+    return {
+        // Name of the component
+        MuiTextField: {
+            defaultProps: {
+                // The props to change the default for.
+                variant: "filled" // No more ripple, on the whole application 💣!
+            }
+        },
+        MuiFilledInput: {
+            defaultProps: {
+                // The props to change the default for.
+                disableUnderline: true,
+                fullWidth: true
+            },
+            styleOverrides: {
+                root: {
+                    borderRadius: "5px",
+                    fontSize: "14px"
+                },
+                input: {
+                    padding: "10px"
+                }
+            }
+        },
+        MuiDivider: {
+            styleOverrides: {
+                root: {
+                    background: theme.palette.divider
+                }
+            }
+        }
+    };
+};
+
+export const light: any = {
     palette: {
         mode: "light",
         primary: {
@@ -65,6 +100,10 @@ export const light : any = {
             background: "#eee",
             text: "#111"
         },
+        textField: {
+            label: "#6f6f6f",
+            background: "#efefef"
+        },
         homeCharts: {
             mainCard: {
                 primary: "#3F66FE",
@@ -88,7 +127,7 @@ export const light : any = {
     }
 } as const;
 
-export const dark : any = {
+export const dark: any = {
     palette: {
         mode: "dark",
         primary: {
@@ -153,6 +192,10 @@ export const dark : any = {
             background: "#22343C",
             text: "#fff"
         },
+        textField: {
+            label: "#6f6f6f",
+            background: "#efefef"
+        },
         homeCharts: {
             mainCard: {
                 primary: "#1B2A32",
@@ -171,15 +214,6 @@ export const dark : any = {
             enrolledDevicesPerDMS: {
                 primary: "#142024",
                 text: "#eee"
-            }
-        }
-    },
-    components: {
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundImage: "none"
-                }
             }
         }
     }
@@ -207,5 +241,5 @@ declare module "@mui/material/styles/createPalette" {
     interface TypeText extends CustomTypeText { }
 }
 
-export const createLightTheme = () => createTheme(light);
-export const createDarkTheme = () => createTheme(dark);
+export const createLightTheme = () => createTheme({ ...light, components: componentsTheme(light) });
+export const createDarkTheme = () => createTheme({ ...dark, components: componentsTheme(dark) });

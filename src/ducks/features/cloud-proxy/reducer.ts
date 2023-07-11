@@ -144,8 +144,6 @@ export const cloudProxyReducer = createReducer<CloudProxyState, RootAction>(init
     })
 
     .handleAction(actions.cloudProxyActions.getCloudConnectorDeviceConfigAction.failure, (state, action) => {
-        console.log(action);
-
         return { ...state, status: { ...state.status, isLoading: false, status: ORequestStatus.Failed } };
     });
 
@@ -171,9 +169,10 @@ export const getDeviceCloudConfiguration = (state: RootState, deviceID: string):
 
 export const getCloudConnector = (state: RootState, id: string): CloudConnector | undefined => {
     const reducer = getSelector(state);
-    const filteredList = reducer.list.filter((ca: CloudConnector) => ca.id === id);
-    if (filteredList.length === 1) {
-        return filteredList[0];
+
+    const connector = reducer.list.find((ca: CloudConnector) => ca.id === id);
+    if (connector) {
+        return connector;
     }
     return undefined;
 };
