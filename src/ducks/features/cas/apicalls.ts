@@ -1,5 +1,5 @@
 import { apiRequest } from "ducks/services/api";
-import { GetCAsListAPIResponse } from "./models";
+import { CertificateAuthority, GetCAsListAPIResponse, SignPayloadResponse, VerifyPayloadResponse } from "./models";
 
 export const getInfo = async (): Promise<any> => {
     return apiRequest({
@@ -27,6 +27,14 @@ export const getCAs = async (limit: number, offset: number, sortMode: "asc" | "d
     filterQuery.forEach(filter => {
         url += `&filter=${filter}`;
     });
+    return apiRequest({
+        method: "GET",
+        url: url
+    });
+};
+
+export const getCA = async (caName: string): Promise<CertificateAuthority> => {
+    const url = window._env_.LAMASSU_CA_API + "/v1/pki/" + caName;
     return apiRequest({
         method: "GET",
         url: url
@@ -69,14 +77,27 @@ export const createCA = async (payload: CreateCA) => {
     });
 };
 
-export const importCA = async (caName: string, enrollerTTL: number, certificateB64: string, privatekeyB64: string) => {
+export const importCA = async (certificateB64: string, privatekeyB64: string, issuanceExpirationSeconds: string) => {
     return apiRequest({
         method: "POST",
-        url: window._env_.LAMASSU_CA_API + "/v1/pki/import/" + caName,
+        url: window._env_.LAMASSU_CA_API + "/v1/pki/import",
         data: {
-            enroller_ttl: enrollerTTL,
-            crt: certificateB64,
+            certificate: certificateB64,
+            with_private_key: true,
+            issuance_expiration: issuanceExpirationSeconds,
+            expiration_type: "DURATION",
             private_key: privatekeyB64
+        }
+    });
+};
+
+export const importReadOnlyCA = async (certificateB64: string) => {
+    return apiRequest({
+        method: "POST",
+        url: window._env_.LAMASSU_CA_API + "/v1/pki/import",
+        data: {
+            certificate: certificateB64,
+            with_private_key: false
         }
     });
 };
@@ -107,6 +128,31 @@ export const signCertificate = async (caName: string, csr: string) : Promise<any
         data: {
             certificate_request: btoa(csr),
             sign_verbatim: true
+        }
+    });
+};
+
+export const signPayload = async (caName: string, message: string, messageType: string, algorithm: string): Promise<SignPayloadResponse> => {
+    return apiRequest({
+        method: "POST",
+        url: window._env_.LAMASSU_CA_API + "/v1/ca/" + caName + "/signature/sign",
+        data: {
+            message: message,
+            message_type: messageType,
+            signing_algorithm: algorithm
+        }
+    });
+};
+
+export const verifyPayload = async (caName: string, signature: string, message: string, messageType: string, algorithm: string): Promise<VerifyPayloadResponse> => {
+    return apiRequest({
+        method: "POST",
+        url: window._env_.LAMASSU_CA_API + "/v1/ca/" + caName + "/signature/verify",
+        data: {
+            signature: signature,
+            message: message,
+            message_type: messageType,
+            signing_algorithm: algorithm
         }
     });
 };
