@@ -43,10 +43,24 @@ const CertificateImporter: React.FC<CertificateImporterProps> = ({ onChange }) =
         run();
     }, [crt]);
 
+    useEffect(() => {
+        const run = async () => {
+            if (crt) {
+                try {
+                    await parseCRT(crt);
+                    onChange(crt);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        };
+        run();
+    }, [crt]);
+
     return (
         <Grid item xs container spacing={1}>
             <Grid item xs={12}>
-                <TextField label="x509 PEM Certificate" value={crt} onChange={(ev) => setCrt(ev.target.value)} multiline placeholder={crtPlaceHolder} sx={{ fontFamily: "monospace", fontSize: "0.7rem", minWidth: "500px", width: "100%" }} />
+                <TextField error={!crt} helperText="Certificate can not be empty" spellCheck={false} label="x509 PEM Certificate" value={crt} onChange={(ev) => setCrt(ev.target.value)} multiline placeholder={crtPlaceHolder} sx={{ fontFamily: "monospace", fontSize: "0.7rem", minWidth: "500px", width: "100%" }} />
             </Grid>
             {
                 crt && (
@@ -55,7 +69,7 @@ const CertificateImporter: React.FC<CertificateImporterProps> = ({ onChange }) =
                             <Divider />
                         </Grid>
                         <Grid item xs={12}>
-                            <CertificateDecoder crt={crt} />
+                            <CertificateDecoder crtPem={crt} />
                         </Grid>
                     </>
                 )

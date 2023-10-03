@@ -22,6 +22,9 @@ const componentsTheme = (theme: CustomTheme) => {
                 },
                 input: {
                     padding: "10px"
+                },
+                multiline: {
+                    padding: "5px 5px 5px 5px"
                 }
             }
         },
@@ -38,40 +41,16 @@ const componentsTheme = (theme: CustomTheme) => {
 export const light: any = {
     palette: {
         mode: "light",
+        tonalOffset: 0.8,
+        contrastThreshold: 4.5,
         primary: {
-            light: "#d7ebff",
-            main: "#0068D1",
-            dark: "#1F528F"
+            main: "#0068D1"
         },
         secondary: {
-            light: "#70A8EB",
-            main: "#00E0FC",
-            dark: "#1F528F"
-        },
-        success: {
-            light: "#e3f8ef",
-            main: "#5CA36B",
-            dark: "#2F6140"
-        },
-        warning: {
-            light: "#FFF0C0",
-            main: "#F3A83B",
-            dark: "#907057"
-        },
-        error: {
-            light: "#FCE5E8",
-            main: "#da565f",
-            dark: "#8C3239"
-        },
-        blue: {
-            light: "#CDDEF5",
-            main: "#2099C6",
-            dark: "#214A75"
+            main: "#00E0FC"
         },
         gray: {
-            light: "#fff",
-            main: "#EFF0F2",
-            dark: "#6A6A6B"
+            main: "#EFF0F2"
         },
         scrollbar: {
             thumb: "#555555",

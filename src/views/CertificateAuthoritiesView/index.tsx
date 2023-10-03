@@ -1,69 +1,70 @@
-import React, { useState } from "react";
-import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
-import { Box } from "@mui/system";
-import { Divider, Tab, Tabs, useTheme } from "@mui/material";
-import { CaList } from "./views/CaList";
-import { CaInspector } from "./views/CaInspector";
-import { CreateCA } from "./views/CaActions/CreateCA";
+import React from "react";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import { useTheme } from "@mui/material";
+import { CAInspector } from "./views/CaInspector";
 import { FormattedView } from "components/DashboardComponents/FormattedView";
-import { CAReadonlyImporter } from "components/LamassuComponents/composed/CreateCAForm/CAImporterRadonly";
-import { CAImporter } from "components/LamassuComponents/composed/CreateCAForm/CAImporter";
+import { TabsList } from "components/LamassuComponents/dui/TabsList";
+import { CreateCA } from "./views/CaActions/CreateCA";
+import { CAReadonlyImporter } from "views/CertificateAuthoritiesView/views/CaActions/CAImporterRadonly";
+import { CAListView } from "./views/CAListView";
+import { FetchViewer } from "components/LamassuComponents/lamassu/FetchViewer";
+import { CryptoEngine, getEngines } from "ducks/features/cav3/apicalls";
+import { CAImporter } from "./views/CaActions/CAImporter";
 
 export const CAView = () => {
     return (
-        <Routes>
-            <Route path="/" element={<RoutedCaList />}>
-                <Route path="actions" element={<CaCreationActionsWrapper />} >
-                    <Route path="create" element={<CreateCA />} />
-                    <Route path="import" element={<CAImporter />} />
-                    <Route path="roimport" element={<CAReadonlyImporter />} />
-                </Route>
-                <Route path=":caName/*" element={<RoutedCaInspector />} />
-            </Route>
-        </Routes>
+        <FetchViewer fetcher={() => getEngines()} renderer={engines => {
+            return (
+                <Routes>
+                    <Route path="/" element={<RoutedCAList engines={engines} />}>
+                        <Route path="create" element={<CaCreationActionsWrapper engines={engines} />} />
+                        <Route path=":caName/*" element={<RoutedCaInspector engines={engines} />} />
+                    </Route>
+                </Routes>
+            );
+        }}
+        />
     );
 };
 
-const RoutedCaList = () => {
+const RoutedCAList = ({ engines }: { engines: CryptoEngine[] }) => {
     const params = useParams();
     const location = useLocation();
     return (
-        <CaList preSelectedCaName={params.caName} />
+        <CAListView preSelectedCaName={params.caName} engines={engines} />
     );
 };
 
-const RoutedCaInspector = () => {
+const RoutedCaInspector = ({ engines }: { engines: CryptoEngine[] }) => {
     const params = useParams();
 
     return (
-        <CaInspector caName={params.caName} />
+        <CAInspector caName={params.caName!} engines={engines} />
     );
 };
 
-const CaCreationActionsWrapper = () => {
+const CaCreationActionsWrapper = ({ engines }: { engines: CryptoEngine[] }) => {
     const theme = useTheme();
-    const [selectedTab, setSelectedTab] = useState(0);
-
     return (
         <FormattedView
             title="Create a new CA"
             subtitle="To create a new CA certificate, please provide the appropriate information"
         >
-            <>
-                <Box style={{ position: "relative", left: "-15px" }}>
-                    <Tabs value={selectedTab} onChange={(ev, newValue) => setSelectedTab(newValue)}>
-                        <Tab component={Link} to="create" label="Standard" />
-                        <Tab component={Link} to="import" label="Import" />
-                        <Tab component={Link} to="roimport" label="Read-only Import" />
-                    </Tabs>
-                </Box>
-                <Divider sx={{ width: "100" }} />
-                <Box style={{ display: "flex", height: "100%", marginTop: "15px", width: "100%" }}>
-                    <Box sx={{ flexGrow: 1 }}>
-                        <Outlet />
-                    </Box>
-                </Box>
-            </>
+            <TabsList tabs={[
+                {
+                    label: "Standard",
+                    element: <CreateCA defaultEngine={engines.find(engine => engine.default)!}/>
+                },
+                {
+                    label: "Import",
+                    element: <CAImporter defaultEngine={engines.find(engine => engine.default)!}/>
+                },
+                {
+                    label: "Read-Only Import",
+                    element: <CAReadonlyImporter />
+                }
+            ]}
+            />
         </FormattedView>
     );
 };

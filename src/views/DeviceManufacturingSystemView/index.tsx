@@ -90,8 +90,6 @@ const UpdateDMSForm: React.FC<UpdateDMSFormProps> = ({ dmsName }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    console.log(dms);
-
     useEffect(() => {
         dispatch(dmsActions.getDMSAction.request({ name: dmsName }));
     }, []);
@@ -106,9 +104,12 @@ const UpdateDMSForm: React.FC<UpdateDMSFormProps> = ({ dmsName }) => {
         );
     }
 
+    console.log(dms);
+
     if (requestStatus.status === ORequestStatus.Success && dms !== undefined) {
         return <DMSForm
             dms={dms}
+            actionLabel="Update"
             onSubmit={async (dms) => {
                 await dmsApicalls.updateDMS({ ...dms });
                 navigate("/dms");

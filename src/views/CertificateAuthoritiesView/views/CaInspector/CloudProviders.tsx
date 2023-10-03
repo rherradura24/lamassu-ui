@@ -18,22 +18,23 @@ import { useDispatch } from "react-redux";
 import { EnabledConnectorSynchronizationModal } from "./CloudProviders/Actions/EnabledConnectorSynchronization";
 import AwsIotCore from "./CloudProviders/Types/AWSIotCore";
 import Azure from "./CloudProviders/Types/Azure";
+import { CertificateAuthority } from "ducks/features/cav3/apicalls";
 
 interface CloudProvidersProps {
-    caName: string
+    caData: CertificateAuthority
 }
 
-export const CloudProviders: React.FC<CloudProvidersProps> = ({ caName }) => {
+export const CloudProviders: React.FC<CloudProvidersProps> = ({ caData }) => {
     return (
         <Routes>
             <Route path="/" element={<Outlet />}>
                 <Route path="aws" element={<Outlet />}>
-                    <Route path=":connectorId" element={<RoutedAwsIotCoreConnector caName={caName} />} />
+                    <Route path=":connectorId" element={<RoutedAwsIotCoreConnector caName={caData.id} />} />
                 </Route>
                 <Route path="azure" element={<Outlet />}>
-                    <Route path=":connectorId" element={<RoutedAzureConnector caName={caName} />} />
+                    <Route path=":connectorId" element={<RoutedAzureConnector caName={caData.id} />} />
                 </Route>
-                <Route index element={<CloudProviderSelector caName={caName} />} />
+                <Route index element={<CloudProviderSelector caName={caData.id} />} />
             </Route>
         </Routes>
     );

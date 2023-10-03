@@ -17,7 +17,6 @@ export const FormMultiTextInput: React.FC<FormMultiTextInputProps> = (props) => 
             name={props.name}
             control={props.control}
             render={({ field: { onChange, value } }) => {
-                console.log(onChange, value);
                 return (
                     <TagsInput onChange={onChange} tags={value} label={props.label} placeholder=""/>
                 );

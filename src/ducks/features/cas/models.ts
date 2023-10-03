@@ -1,3 +1,4 @@
+
 export class CAInfo {
     public build_version!: string
     public build_time!: string
@@ -16,12 +17,12 @@ export class CryptoEngineSupportedKey {
 }
 
 export class CryptoEngine {
+    public type!: string
     public provider!: string
-    public cryptoki_version!: string
-    public manufacturer!: string
-    public model!: string
-    public library!: string
+    public name!: string
+    public engine_name!: string
     public supported_key_types!: Array<CryptoEngineSupportedKey>
+    public metadata!: Map<string, any>
     constructor (args?: {}) {
         Object.assign(this, args);
     }

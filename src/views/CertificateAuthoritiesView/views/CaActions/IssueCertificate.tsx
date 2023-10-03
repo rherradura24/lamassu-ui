@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography, useTheme } from "@mui/material";
 import { useDispatch } from "react-redux";
-import * as caApicalls from "ducks/features/cas/apicalls";
+import * as caApicalls from "ducks/features/cav3/apicalls";
 import Stepper from "@mui/material/Stepper/Stepper";
 import Step from "@mui/material/Step/Step";
 import StepLabel from "@mui/material/StepLabel/StepLabel";
@@ -10,7 +10,7 @@ import Box from "@mui/material/Box/Box";
 import { Certificate } from "@fidm/x509";
 import CertRequestForm from "components/LamassuComponents/composed/CertRequestForm";
 import { CodeCopier } from "components/LamassuComponents/dui/CodeCopier";
-import CertificateDecoder from "components/LamassuComponents/composed/CreateCAForm/CertificateDecoder";
+import CertificateDecoder from "components/LamassuComponents/composed/Certificates/CertificateDecoder";
 
 interface Props {
     caName: string,
@@ -36,8 +36,7 @@ export const IssueCert: React.FC<Props> = ({ caName, isOpen, onClose = () => { }
             if (step === 1) {
                 setLoading(true);
                 try {
-                    const resp = await caApicalls.signCertificate(caName!, csr!);
-                    console.log(resp);
+                    const resp = await caApicalls.signCertificateRequest(caName!, window.btoa(csr!));
                     setRawCrt(resp.certificate);
                     setParsedSignedCert(Certificate.fromPEM(Buffer.from(window.atob(resp.certificate), "utf8")));
                     setLoading(false);
@@ -136,10 +135,10 @@ export const IssueCert: React.FC<Props> = ({ caName, isOpen, onClose = () => { }
                                                     rawCrt !== undefined && (
                                                         <>
                                                             <Grid item xs={6} justifyContent={"center"} spacing={1}>
-                                                                <CodeCopier code={atob(rawCrt)} enableDownload downloadFileName={caName + "_" + parsedSignedCert.subject.commonName + "crt"} />
+                                                                <CodeCopier code={window.atob(rawCrt)} enableDownload downloadFileName={caName + "_" + parsedSignedCert.subject.commonName + "crt"} />
                                                             </Grid>
                                                             <Grid item xs={6} justifyContent={"center"} spacing={1}>
-                                                                <CertificateDecoder crt={atob(rawCrt)} />
+                                                                <CertificateDecoder crtPem={window.atob(rawCrt)} />
                                                             </Grid>
                                                         </>
                                                     )
