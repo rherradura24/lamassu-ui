@@ -5,10 +5,11 @@ import { Doughnut as DoughnutChart } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
 import CachedIcon from '@mui/icons-material/Cached';
 import IconButton from '@mui/material/IconButton';
+import { numberToHumanReadableString } from "components/utils/NumberToHumanReadableString"
 
 Chart.register(...registerables)
 
-export const Doughnut = ({ dataset, small = true, title, subtitle, onRefresh, primaryStat, percentage = true, statLabel, cardColor, primaryTextColor, secondaryTextColor, ...props }) => {
+export const Doughnut = ({ dataset, small = true, title, subtitle, primaryStat, percentage = true, statLabel, cardColor, primaryTextColor, secondaryTextColor, ...props }) => {
   const localDataset = dataset.map(dataCategory => dataCategory.value)
   const localLabels = dataset.map(dataCategory => dataCategory.label)
   const localColors = dataset.map(dataCategory => dataCategory.color)
@@ -24,7 +25,7 @@ export const Doughnut = ({ dataset, small = true, title, subtitle, onRefresh, pr
   }
 
   const options = {
-    cutout: small ? 115 : 120,
+    cutout: small ? 90 : 120,
     borderWidth: 0,
     backgroundColor: localColors,
     hoverBackgroundColor: localColors,
@@ -66,17 +67,17 @@ export const Doughnut = ({ dataset, small = true, title, subtitle, onRefresh, pr
             )
           }
         </Grid>
-        <Grid item xs="auto">
+        {/* <Grid item xs="auto">
           <IconButton size="small" sx={{ color: primaryTextColor }} onClick={onRefresh}>
             <CachedIcon />
           </IconButton>
-        </Grid>
+        </Grid> */}
       </Grid>
       <Box sx={{ position: "relative", marginTop: "0px" }} >
         <Box sx={{}} >
           <DoughnutChart data={data} options={options} style={{ zIndex: 10, position: "relative" }} />
         </Box>
-        <Box sx={{ marginTop: "-215px", marginBottom: "90px", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+        <Box sx={{ marginTop: small ? "-180px" : "-215px", marginBottom: small ? "60px" : "90px", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
           <Box style={{ display: "flex", alignItems: "end" }}>
             <Typography sx={{ fontSize: "35px", fontWeight: "600", color: primaryTextColor }}>{primaryStat}</Typography>
             {
@@ -94,7 +95,7 @@ export const Doughnut = ({ dataset, small = true, title, subtitle, onRefresh, pr
             return (
               <Grid item xs={6} container alignItems={"center"} key={idx}>
                 <Box sx={{ bgcolor: dataCategory.color, height: "10px", width: "10px", borderRadius: "50%", marginRight: "5px" }} />
-                <Typography sx={{ fontSize: "13px", color: primaryTextColor }}>{dataCategory.label}</Typography>
+                <Typography sx={{ fontSize: "13px", color: primaryTextColor }}>{`${dataCategory.label} [${numberToHumanReadableString(dataCategory.value, ".")}]`}</Typography>
               </Grid>
             )
           })

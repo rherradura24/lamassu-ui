@@ -9,7 +9,7 @@ import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 
-interface Option {
+export interface Option {
     label: string
     disabled: boolean
     onClick: Function
@@ -59,7 +59,7 @@ const SplitButton: React.FC<Props> = ({ options }) => {
     return (
         <React.Fragment>
             <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                <Button onClick={handleClick}>{internalOpts[selectedIndex].label}</Button>
+                <Button onClick={handleClick} disabled={internalOpts[selectedIndex].disabled}>{internalOpts[selectedIndex].label}</Button>
                 <Button
                     size="small"
                     aria-controls={open ? "split-button-menu" : undefined}

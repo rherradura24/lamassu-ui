@@ -10,6 +10,7 @@ interface TabsListWithRouterProps extends TabsListProps {
 
 export interface TabsListItemsWithRoute extends TabsListItemsProps {
     path: string
+    goto: string
 }
 
 const TabsListWithRouter: React.FC<TabsListWithRouterProps> = ({ tabs, headerStyle = {}, contentStyle = {}, useParamsKey }) => {
@@ -19,7 +20,7 @@ const TabsListWithRouter: React.FC<TabsListWithRouterProps> = ({ tabs, headerSty
     const [value, setValue] = useState(2);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
-        navigate(tabs[newValue].path);
+        navigate(tabs[newValue].goto);
     };
 
     useEffect(() => {
@@ -38,7 +39,7 @@ const TabsListWithRouter: React.FC<TabsListWithRouterProps> = ({ tabs, headerSty
     }, []);
 
     return (
-        <Grid container direction={"column"} spacing={2}>
+        <Grid container direction={"column"} spacing={2} sx={{ height: "100%" }}>
             <Grid item sx={{ borderBottom: 1, borderColor: "divider", ...headerStyle }}>
                 <Tabs value={value} onChange={handleChange}>
                     {
@@ -50,7 +51,7 @@ const TabsListWithRouter: React.FC<TabsListWithRouterProps> = ({ tabs, headerSty
                     }
                 </Tabs>
             </Grid>
-            <Grid item flex={1} sx={contentStyle}>
+            <Grid item flex={1} sx={{ ...contentStyle, height: "1px", overflowY: "auto" }}>
                 <Routes>
                     <Route path="/" element={<Outlet />}>
                         {

@@ -1,86 +1,57 @@
-import { apiRequest } from "ducks/services/api";
+import { ListResponse, QueryParameters } from "ducks/models";
+import { apiRequest, queryParametersToURL } from "ducks/services/api";
+import { CreateDevicePayload, Device, DeviceStats, Slot } from "./models";
 
-export const getInfo = async (): Promise<any> => {
+export const getStats = async (): Promise<DeviceStats> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.LAMASSU_DEVMANAGER + "/info"
-    });
+        url: window._env_.LAMASSU_DEVMANAGER + "/v1/stats"
+    }) as Promise<DeviceStats>;
 };
 
-export const getDevices = async (limit: number, offset: number, sortMode: "asc" | "desc", sortField: string, filterQuery: Array<string>): Promise<any> => {
-    let url = window._env_.LAMASSU_DEVMANAGER + "/v1/devices?" + `sort_by=${sortField}.${sortMode}&limit=${limit}&offset=${offset}`;
-    if (filterQuery.length > 0) {
-        filterQuery.forEach(filter => {
-            url = url + `&filter=${filter}`;
-        });
-    }
+export const getDevices = async (params: QueryParameters): Promise<ListResponse<Device>> => {
     return apiRequest({
         method: "GET",
-        url: url
-    });
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices${queryParametersToURL(params)}`
+    }) as Promise<ListResponse<Device>>;
 };
 
-export const getStats = async (force: boolean): Promise<any> => {
+export const getDeviceByID = async (id: string): Promise<Device> => {
     return apiRequest({
         method: "GET",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/stats?force_refresh=" + force
-    });
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices/${id}`
+    }) as Promise<Device>;
 };
 
-export const getDeviceByID = async (deviceID: string): Promise<any> => {
-    return apiRequest({
-        method: "GET",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID
-    });
-};
-
-export const assignCertificateToDevice = async (deviceID: string, slotID: string, caName: string, certSN: string): Promise<any> => {
+export const createDevice = async (payload: CreateDevicePayload): Promise<ListResponse<Device>> => {
     return apiRequest({
         method: "POST",
-        url: window._env_.REACT_APP_LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/slots/" + slotID,
-        data: {
-            serial_number: certSN,
-            ca_name: caName
-        }
-    });
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices`,
+        data: payload
+    }) as Promise<ListResponse<Device>>;
 };
 
-export const revokeActiveDeviceCertificate = async (deviceID: string, slotID: string): Promise<any> => {
-    return apiRequest({
-        method: "DELETE",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/slots/" + slotID
-    });
-};
-
-export const decommissionDevice = async (deviceID: string): Promise<any> => {
-    return apiRequest({
-        method: "DELETE",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID
-    });
-};
-
-export const registerDevice = async (deviceID: string, alias: string, description: string, tags: Array<string>, iconName: string, iconColor: string, dmsName: string): Promise<any> => {
-    return apiRequest({
-        method: "POST",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/devices",
-        data: {
-            id: deviceID,
-            alias: alias,
-            description: description,
-            tags: tags,
-            icon_name: iconName,
-            icon_color: iconColor,
-            dms_name: dmsName
-        }
-    });
-};
-
-export const forceDeviceReenrollment = async (deviceID: string, slotID: string): Promise<any> => {
+export const updateDeviceMetadata = async (id: string, meta: { [key: string]: any }): Promise<Device> => {
     return apiRequest({
         method: "PUT",
-        url: window._env_.LAMASSU_DEVMANAGER + "/v1/devices/" + deviceID + "/slots/" + slotID,
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices/${id}/metadata`,
         data: {
-            require_reenrollment: true
+            metadata: meta
         }
-    });
+    }) as Promise<Device>;
+};
+
+export const updateDeviceIdentitySlot = async (id: string, idSlot: Slot<string>): Promise<Device> => {
+    return apiRequest({
+        method: "PUT",
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices/${id}/idslot`,
+        data: idSlot
+    }) as Promise<Device>;
+};
+
+export const decommissionDevice = async (id: string): Promise<Device> => {
+    return apiRequest({
+        method: "DELETE",
+        url: `${window._env_.LAMASSU_DEVMANAGER}/v1/devices/${id}/decommission`
+    }) as Promise<Device>;
 };

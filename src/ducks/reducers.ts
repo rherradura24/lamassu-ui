@@ -1,30 +1,35 @@
 import { combineReducers } from "redux";
-import { certificateAuthoritiesReducer, CertificateAuthoritiesState } from "./features/cas/reducer";
-import { cloudProxyReducer, CloudProxyState } from "./features/cloud-proxy/reducer";
-import { devicesLogsReducer, DevicesLogsState } from "./features/devices-logs/reducer";
-import { devicesReducer, DevicesState } from "./features/devices/reducer";
-import { dmsReducer, DeviceManufacturingSystemStatus } from "./features/dms-enroller/reducer";
-import { alertsReducer, AlertsState } from "./features/alerts/reducer";
+import * as cas from "./features/cav3/reducer";
+import * as certs from "./features/certificates/reducer";
+import * as devices from "./features/devices/reducer";
 import { notificationsReducer, NotificationsState } from "./features/notifications/reducer";
+import * as dms from "./features/ra/reducer";
+import * as alerts from "./features/alerts/reducer";
 
 export type RootState = {
-  cas: CertificateAuthoritiesState,
-  cloudproxy: CloudProxyState,
-  devices: DevicesState,
-  devicesLogs: DevicesLogsState,
+  cav3: cas.CertificateAuthoritiesState,
+  certs: certs.CertificatesState,
   notifications: NotificationsState,
-  dmss: DeviceManufacturingSystemStatus
-  alerts: AlertsState
+  devices: devices.DevicesState
+  dmss: dms.DMSsState
+  alerts: alerts.AlertsState
 }
 
 const reducers = combineReducers({
-    cas: certificateAuthoritiesReducer,
+    cav3: cas.certificateAuthoritiesReducer,
+    certs: certs.certificatesReducer,
     notifications: notificationsReducer,
-    cloudproxy: cloudProxyReducer,
-    devices: devicesReducer,
-    devicesLogs: devicesLogsReducer,
-    dmss: dmsReducer,
-    alerts: alertsReducer
+    devices: devices.devicesReducer,
+    dmss: dms.dmssReducer,
+    alerts: alerts.alertsReducer
 });
+
+export const selectors = {
+    alerts: alerts,
+    certs: certs,
+    cas: cas,
+    devices: devices,
+    dms: dms
+};
 
 export default reducers;

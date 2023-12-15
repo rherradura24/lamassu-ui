@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography, useTheme } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { Subscription } from "ducks/features/alerts/models";
+import { SubChannelType, Subscription } from "ducks/features/alerts/models";
 import { materialLight, materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter";
 
@@ -10,6 +10,7 @@ interface Props {
     isOpen: boolean,
     onClose: any
 }
+
 export const ViewSubscriptionDialog: React.FC<Props> = ({ subscription, isOpen, onClose }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -19,7 +20,7 @@ export const ViewSubscriptionDialog: React.FC<Props> = ({ subscription, isOpen, 
             {
                 subscription && (
                     <>
-                        <DialogTitle>Subscription to event: {subscription.channel.name}</DialogTitle>
+                        <DialogTitle>Subscription to event: {subscription.channel.type}</DialogTitle>
                         <DialogContent>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} container spacing={2}>
@@ -27,7 +28,15 @@ export const ViewSubscriptionDialog: React.FC<Props> = ({ subscription, isOpen, 
                                         <Typography variant="button">Subscription Name:</Typography>
                                     </Grid>
                                     <Grid item xs="auto">
-                                        <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>{subscription.channel.name}</Typography>
+                                        <Typography variant="button" style={{ background: theme.palette.background.darkContrast, padding: 5, fontSize: 12 }}>
+                                            {subscription.channel.type === SubChannelType.Email
+                                                ? (
+                                                    subscription.channel.config.email
+                                                )
+                                                : (
+                                                    subscription.channel.name
+                                                )}
+                                        </Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12} container spacing={2}>
@@ -66,7 +75,7 @@ export const ViewSubscriptionDialog: React.FC<Props> = ({ subscription, isOpen, 
                                                 <Grid key={index} item xs={6} container>
                                                     <Grid item xs={12} container sx={{ background: theme.palette.mode === "light" ? "#fafafa" : "#263238", borderRadius: "10px", padding: "5px", overflowX: "auto", maxHeight: "320px" }}>
                                                         <SyntaxHighlighter language="json" style={theme.palette.mode === "light" ? materialLight : materialOceanic} customStyle={{ margin: 0, padding: 10, fontSize: 12, width: "fit-content", height: "fit-content" }} wrapLines={true} lineProps={{ style: { color: theme.palette.text.primaryLight } }}>
-                                                            {JSON.stringify(JSON.parse(condition), null, 2)}
+                                                            {JSON.stringify(JSON.parse(condition.condition), null, 2)}
                                                         </SyntaxHighlighter>
                                                     </Grid>
                                                 </Grid>

@@ -1,101 +1,31 @@
-import { createAsyncAction } from "typesafe-actions";
 import { failed, success } from "ducks/actionTypes";
-import { Device, GetDeviceListAPIResponse, DevicesStats, DeviceManagerInfo } from "./models";
+import { ListRequest, ListResponse } from "ducks/models";
+import { createAction, createAsyncAction } from "typesafe-actions";
+import { Device } from "./models";
 
 export const actionTypes = {
-    GET_INFO_DEVICE_MANAGER_API: "GET_INFO_DEVICE_MANAGER_API",
-    GET_STATS: "GET_STATS",
     GET_DEVICES: "GET_DEVICES",
-    GET_DEVICE: "GET_DEVICE",
-    REVOKE_ACTIVE_DEVICE_CERTIFICATE: "REVOKE_ACTIVE_DEVICE_CERTIFICATE",
-    DECOMMISSION_DEVICE: "DECOMMISSION_DEVICE",
-    REGISTER_DEVICE: "REGISTER_DEVICE",
-    FORCE_DEVICE_REENROLLMENT: "FORCE_DEVICE_REENROLLMENT"
+    GET_DEVICE_BY_ID: "GET_DEVICE_BY_ID",
+
+    CREATE_DEVICE_SUCCESS: "CREATE_DEVICE_SUCCESS",
+    UPDATE_ID_SLOT_SUCCESS: "UPDATE_ID_SLOT_SUCCESS",
+    UPDATE_DEVICE_METADATA_SUCCESS: "UPDATE_DEVICE_METADATA_SUCCESS",
+    DECOMMISSION_DEVICE_SUCCESS: "DECOMMISSION_DEVICE_SUCCESS"
 };
-export type GetStats = {
-    force: boolean
-}
 
-export const getInfoAction = createAsyncAction(
-    [actionTypes.GET_INFO_DEVICE_MANAGER_API, () => { }],
-    [success(actionTypes.GET_INFO_DEVICE_MANAGER_API), (req: DeviceManagerInfo) => req],
-    [failed(actionTypes.GET_INFO_DEVICE_MANAGER_API), (req: Error) => req]
-)();
+export const getDevices = createAsyncAction(
+    actionTypes.GET_DEVICES,
+    success(actionTypes.GET_DEVICES),
+    failed(actionTypes.GET_DEVICES)
+)<ListRequest, ListResponse<Device>, Error>();
 
-export const getStatsAction = createAsyncAction(
-    [actionTypes.GET_STATS, (req: GetStats) => req],
-    [success(actionTypes.GET_STATS), (req: DevicesStats) => { return req; }],
-    [failed(actionTypes.GET_STATS), (req: Error) => req]
-)();
+export const getDeviceByID = createAsyncAction(
+    actionTypes.GET_DEVICE_BY_ID,
+    success(actionTypes.GET_DEVICE_BY_ID),
+    failed(actionTypes.GET_DEVICE_BY_ID)
+)<string, Device, Error>();
 
-export type GetDevicesAction = {
-    sortMode: "asc" | "desc",
-    sortField: string,
-    limit: number,
-    offset: number,
-    filterQuery: Array<string>,
-}
-
-export const getDevicesAction = createAsyncAction(
-    [actionTypes.GET_DEVICES, (req: GetDevicesAction) => req],
-    [success(actionTypes.GET_DEVICES), (req: GetDeviceListAPIResponse) => { return req; }],
-    [failed(actionTypes.GET_DEVICES), (req: Error) => req]
-)();
-
-export type GetDeviceByIDAction = {
-    deviceID: string
-}
-
-export const getDeviceByIDAction = createAsyncAction(
-    [actionTypes.GET_DEVICE, (req: GetDeviceByIDAction) => req],
-    [success(actionTypes.GET_DEVICE), (req: Device, meta: any) => { return req; }, (req: Device, meta: any) => { return meta; }],
-    [failed(actionTypes.GET_DEVICE), (req: Error) => req]
-)();
-
-export type DecommissionDeviceAction = {
-    deviceID: string
-}
-
-export const decommissionDeviceAction = createAsyncAction(
-    [actionTypes.DECOMMISSION_DEVICE, (req: DecommissionDeviceAction) => req],
-    [success(actionTypes.DECOMMISSION_DEVICE), (req: any, meta: any) => { return req; }, (req: any, meta: any) => { return meta; }],
-    [failed(actionTypes.DECOMMISSION_DEVICE), (req: Error) => req]
-)();
-
-export type RevokeActiveDeviceCertificate = {
-    deviceID: string
-    slotID: string
-}
-
-export const revokeActiveDeviceCertificateAction = createAsyncAction(
-    [actionTypes.REVOKE_ACTIVE_DEVICE_CERTIFICATE, (req: RevokeActiveDeviceCertificate) => req],
-    [success(actionTypes.REVOKE_ACTIVE_DEVICE_CERTIFICATE), (req: any, meta: any) => { return req; }, (req: any, meta: any) => { return meta; }],
-    [failed(actionTypes.REVOKE_ACTIVE_DEVICE_CERTIFICATE), (req: Error) => req]
-)();
-
-export type RegisterDevice = {
-    deviceID: string,
-    deviceAlias: string,
-    deviceDescription: string,
-    tags: Array<string>,
-    color: string,
-    icon: string,
-    dmsName: string,
-}
-
-export const registerDeviceAction = createAsyncAction(
-    [actionTypes.REGISTER_DEVICE, (req: RegisterDevice) => req],
-    [success(actionTypes.REGISTER_DEVICE), (req: any) => { return req; }],
-    [failed(actionTypes.REGISTER_DEVICE), (req: Error) => req]
-)();
-
-export type ForceDeviceReenrollment = {
-    deviceID: string,
-    slotID: string,
-}
-
-export const forceDeviceReenrollmentAction = createAsyncAction(
-    [actionTypes.FORCE_DEVICE_REENROLLMENT, (req: ForceDeviceReenrollment) => req],
-    success(actionTypes.FORCE_DEVICE_REENROLLMENT),
-    [failed(actionTypes.FORCE_DEVICE_REENROLLMENT), (req: Error) => req]
-)();
+export const createDevice = createAction(actionTypes.CREATE_DEVICE_SUCCESS)();
+export const updateIDSlot = createAction(actionTypes.UPDATE_ID_SLOT_SUCCESS)();
+export const updateDeviceMetadata = createAction(actionTypes.UPDATE_DEVICE_METADATA_SUCCESS)();
+export const decommissionDevice = createAction(actionTypes.DECOMMISSION_DEVICE_SUCCESS)();

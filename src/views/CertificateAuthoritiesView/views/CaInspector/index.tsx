@@ -6,7 +6,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useTheme } from "@mui/system";
-import { CertificateAuthority, CryptoEngine, getCA } from "ducks/features/cav3/apicalls";
 import { CertificateOverview } from "./CertificateOverview";
 import { CAMetadata } from "./CAMetadata";
 import { CertificateView } from "./CertificateView";
@@ -16,7 +15,6 @@ import { SignVerifyView } from "./SignVerify";
 import Label from "components/LamassuComponents/dui/typographies/Label";
 import { CloudProviders } from "./CloudProviders";
 import { TabsListWithRouter } from "components/LamassuComponents/dui/TabsListWithRouter";
-import { errorToString } from "ducks/services/api";
 import { MonoChromaticButton } from "components/LamassuComponents/dui/MonoChromaticButton";
 import { Modal } from "components/LamassuComponents/dui/Modal";
 import { TextField } from "components/LamassuComponents/dui/TextField";
@@ -25,6 +23,14 @@ import { FetchViewer } from "components/LamassuComponents/lamassu/FetchViewer";
 import CAViewer from "components/LamassuComponents/lamassu/CAViewer";
 import * as caApiCalls from "ducks/features/cav3/apicalls";
 import { Select } from "components/LamassuComponents/dui/Select";
+import { CAStatsByCA, CertificateStatus, CryptoEngine } from "ducks/features/cav3/models";
+import { useDispatch } from "react-redux";
+import { actions } from "ducks/actions";
+import { useAppSelector } from "ducks/hooks";
+import { selectors } from "ducks/reducers";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { apicalls } from "ducks/apicalls";
+import { SingleStatDoughnut } from "components/Charts/SingleStatDoughnut";
 
 const revokeCodes = [
     ["AACompromise", "It is known, or suspected, that aspects of the Attribute Authority (AA) validated in the attribute certificate have been compromised."],
@@ -47,65 +53,158 @@ interface Props {
 
 export const CAInspector: React.FC<Props> = ({ caName, engines }) => {
     const theme = useTheme();
+    const dispatch = useDispatch();
 
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
 
-    const [caData, setCAData] = React.useState<CertificateAuthority | undefined>(undefined);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [error, setError] = React.useState<any | undefined>(undefined);
+    const caData = useAppSelector(state => selectors.cas.getCA(state, caName));
+    const requestState = useAppSelector(state => selectors.cas.getCAItemRequestStatus(state));
+    const [caStats, setCAStats] = useState<CAStatsByCA>({});
+
     const [revokeReason, setRevokeReason] = useState("Unspecified");
 
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const resp = await getCA(caName);
-            setCAData(resp);
-        } catch (err: any) {
-            setError(errorToString(err));
-        }
-        setIsLoading(false);
+    const refreshAction = async () => {
+        const run = async () => {
+            dispatch(actions.caActionsV3.getCAByID.request(caName));
+            const stats = await apicalls.cas.getStatsByCA(caName);
+            setCAStats(stats);
+        };
+        run();
     };
 
     useEffect(() => {
-        fetchData();
+        refreshAction();
     }, []);
 
     useEffect(() => {
-        fetchData();
+        refreshAction();
     }, [caName]);
 
-    if (isLoading) {
+    const statsActive = caStats[CertificateStatus.Active] ? caStats[CertificateStatus.Active] : 0;
+    const statsRevoked = caStats[CertificateStatus.Revoked] ? caStats[CertificateStatus.Revoked] : 0;
+    const statsExpired = caStats[CertificateStatus.Expired] ? caStats[CertificateStatus.Expired] : 0;
+
+    const totalCerts = statsActive + statsExpired + statsRevoked;
+
+    let percentageActive = 0;
+    if (statsActive > 0) {
+        percentageActive = Math.round(statsActive * 100 / totalCerts);
+    }
+
+    if (requestState.isLoading) {
         return (
             <Box padding={"30px"}>
                 <Skeleton variant="rectangular" width={"100%"} height={75} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
             </Box>
         );
     } else if (caData !== undefined) {
-        return (
+        let tabs = [
+            {
+                label: "Overview",
+                path: "",
+                goto: "",
+                element: <div style={{ margin: "0 35px" }}>
+                    <CertificateOverview caData={caData} engines={engines} />
+                </div>
+            },
+            {
+                label: "Metadata",
+                path: "metadata",
+                goto: "metadata",
+                element: <div style={{ margin: "0 35px" }}>
+                    <CAMetadata caData={caData} />
+                </div>
+            },
+            {
+                label: "CA Certificate",
+                path: "root",
+                goto: "root",
+                element: (
+                    <div style={{ margin: "0 35px" }}>
+                        <Grid container padding={"20px 0px"}>
+                            <Grid item xs={6}>
+                                <CertificateView certificate={caData} />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <CertificateDecoder crtPem={window.window.atob(caData.certificate)} />
+                            </Grid>
+                        </Grid>
+                    </div>
+                )
+            }
+        ];
 
+        if (caData.type !== "EXTERNAL") {
+            tabs = [...tabs, {
+                label: "Issued Certificate",
+                path: "certificates",
+                goto: "certificates",
+                element: <div style={{ margin: "0 35px" }}>
+                    <IssuedCertificates caData={caData} />
+                </div>
+            },
+            {
+                label: "Sign & Verify",
+                path: "signature",
+                goto: "signature",
+                element: <div style={{ margin: "0 35px" }}>
+                    <SignVerifyView caData={caData} />
+                </div>
+            },
+            {
+                label: "Cloud Providers",
+                path: "cloud/*",
+                goto: "cloud",
+                element: <div style={{ margin: "0 35px" }}>
+                    <CloudProviders caData={caData} />
+                </div>
+            }];
+        }
+
+        return (
             <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                <Box style={{ padding: "40px 40px 0 40px" }}>
-                    <Grid item container spacing={2} justifyContent="flex-start">
-                        <Grid item xs container spacing={"10px"}>
+                <Box style={{ padding: "30px 40px 0 40px" }}>
+                    <Grid container spacing={2} justifyContent="flex-start">
+                        <Grid item xs container spacing={"100px"}>
                             <Grid item xs="auto">
-                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 26, lineHeight: "24px", marginRight: "10px" }}>{caData.metadata["lamassu.io/name"]}</Typography>
+                                <Grid item xs="auto" container spacing={1}>
+                                    {
+                                        <Grid item xs="auto">
+                                            <LamassuChip label={caData.type} color={[theme.palette.primary.main, theme.palette.primary.light]} />
+                                        </Grid>
+                                    }
+                                    <Grid item xs="auto">
+                                        <LamassuChip label={`Key Strength: ${caData.key_metadata.strength}`} rounded />
+                                    </Grid>
+                                    <Grid item xs="auto">
+                                        <LamassuChip label={caData.status} color={caData.status !== CertificateStatus.Active ? "red" : "gray"} rounded style={{ marginLeft: "5px" }} />
+                                    </Grid>
+                                </Grid>
+                                <Typography style={{ color: theme.palette.text.primary, fontWeight: "500", fontSize: 26, lineHeight: "24px", marginRight: "10px", marginTop: "10px" }}>{caData.subject.common_name}</Typography>
                                 <Label sx={{ marginTop: "5px", color: theme.palette.text.secondary }}>{caData.id}</Label>
                             </Grid>
                             {
-                                <Grid item xs="auto">
-                                    <LamassuChip label={caData.type} color={[theme.palette.primary.main, theme.palette.primary.light]} />
-                                </Grid>
+                                caData.type !== "EXTERNAL" && totalCerts > 0 && (
+                                    <Grid item xs="auto" container spacing={2}>
+                                        <Grid item xs="auto">
+                                            <SingleStatDoughnut statNumber={statsActive} total={totalCerts} color="green" label="Active" />
+                                        </Grid>
+                                        <Grid item xs="auto">
+                                            <SingleStatDoughnut statNumber={statsExpired} total={totalCerts} color="orange" label="Expired" />
+                                        </Grid>
+                                        <Grid item xs="auto">
+                                            <SingleStatDoughnut statNumber={statsRevoked} total={totalCerts} color="red" label="Revoked" />
+                                        </Grid>
+                                    </Grid>
+                                )
                             }
-                            <Grid item xs="auto" container>
-                                <Grid item xs="auto">
-                                    <LamassuChip label={caData.key_metadata.strength} rounded />
-                                </Grid>
-                                <Grid item xs="auto">
-                                    <LamassuChip label={caData.status} color={caData.status !== caApiCalls.CertificateStatus.Active ? "red" : "gray"} rounded style={{ marginLeft: "5px" }} />
-                                </Grid>
-                            </Grid>
                         </Grid>
-                        <Grid item xs="auto" container justifyContent="flex-end">
+                        <Grid item xs="auto" container justifyContent="flex-end" spacing={2}>
+                            <Grid item>
+                                <IconButton style={{ background: theme.palette.primary.light }} onClick={() => { refreshAction(); }}>
+                                    <RefreshIcon style={{ color: theme.palette.primary.main }} />
+                                </IconButton>
+                            </Grid>
                             <Grid item>
                                 <IconButton onClick={() => setIsRevokeDialogOpen(true)} style={{ background: theme.palette.error.light }}>
                                     <DeleteIcon style={{ color: theme.palette.error.main }} />
@@ -115,7 +214,7 @@ export const CAInspector: React.FC<Props> = ({ caName, engines }) => {
                     </Grid>
                     <Grid item container spacing={2} justifyContent="flex-start" style={{ marginTop: 0 }}>
                         <Grid item style={{ paddingTop: 0 }}>
-                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13 }}>#{`${caData.key_metadata.type} ${caData.key_metadata.bits}`}</Typography>
+                            <Typography style={{ color: theme.palette.text.secondary, fontWeight: "500", fontSize: 13 }}>{`${caData.key_metadata.type} ${caData.key_metadata.bits} - ${caData.key_metadata.strength}`}</Typography>
                         </Grid>
                         <Grid item style={{ paddingTop: 0 }}>
                             <Box style={{ display: "flex", alignItems: "center" }}>
@@ -125,52 +224,14 @@ export const CAInspector: React.FC<Props> = ({ caName, engines }) => {
                         </Grid>
                     </Grid>
                 </Box>
-                <TabsListWithRouter
-                    headerStyle={{ margin: "0 25px" }}
-                    contentStyle={{ margin: "0 35px" }}
-                    useParamsKey="*"
-                    tabs={[
-                        {
-                            label: "Overview",
-                            path: "",
-                            element: <CertificateOverview caData={caData} engines={engines} />
-                        },
-                        {
-                            label: "Metadata",
-                            path: "metadata",
-                            element: <CAMetadata caData={caData} />
-                        },
-                        {
-                            label: "CA Certificate",
-                            path: "root",
-                            element: (
-                                <Grid container padding={"20px 0px"}>
-                                    <Grid item xs={6}>
-                                        <CertificateView certificate={caData} />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <CertificateDecoder crtPem={window.window.atob(caData.certificate)} />
-                                    </Grid>
-                                </Grid>
-                            )
-                        },
-                        {
-                            label: "Issued Certificate",
-                            path: "certificates",
-                            element: <IssuedCertificates caData={caData} />
-                        },
-                        {
-                            label: "Sign & Verify",
-                            path: "signature",
-                            element: <SignVerifyView caData={caData} />
-                        },
-                        {
-                            label: "Cloud Providers",
-                            path: "cloud",
-                            element: <CloudProviders caData={caData} />
-                        }
-                    ]}
-                />
+                <div style={{ height: "1px", flex: 1 }}>
+                    <TabsListWithRouter
+                        headerStyle={{ margin: "0 25px" }}
+                        contentStyle={{}}
+                        useParamsKey="*"
+                        tabs={tabs}
+                    />
+                </div>
                 <Modal
                     title={"Revoke CA Certificate"}
                     subtitle={""}
@@ -224,7 +285,8 @@ export const CAInspector: React.FC<Props> = ({ caName, engines }) => {
                         <Box>
                             <Button onClick={() => { setIsRevokeDialogOpen(false); }}>Close</Button>
                             <MonoChromaticButton onClick={async () => {
-                                caApiCalls.updateCAStatus(caData.id, caApiCalls.CertificateStatus.Revoked, revokeReason);
+                                await caApiCalls.updateCAStatus(caData.id, CertificateStatus.Revoked, revokeReason);
+                                dispatch(actions.caActionsV3.revokeCA(caData.id));
                                 setIsRevokeDialogOpen(false);
                             }}>Revoke CA Certificate</MonoChromaticButton>
                         </Box>
@@ -241,8 +303,8 @@ export const CAInspector: React.FC<Props> = ({ caName, engines }) => {
                     "Could not fetch CA"
                 }
                 {
-                    typeof error === "string" && error.length > 1 && (
-                        <>: {error}</>
+                    typeof requestState.err === "string" && requestState.err.length > 1 && (
+                        <>: {requestState.err}</>
                     )
                 }
 

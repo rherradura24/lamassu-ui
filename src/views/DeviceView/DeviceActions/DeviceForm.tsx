@@ -8,7 +8,7 @@ import { Icon } from "components/LamassuComponents/dui/IconInput";
 import { useForm } from "react-hook-form";
 import { FormTextField } from "components/LamassuComponents/dui/form/TextField";
 import DMSSelector from "components/LamassuComponents/lamassu/DMSSelector";
-import { DMS } from "ducks/features/dms-enroller/models";
+import { DMS } from "ducks/features/ra/models";
 import { Device } from "ducks/features/devices/models";
 
 type FormData = {
@@ -17,7 +17,6 @@ type FormData = {
         icon: Icon
         color: string
         tags: string[]
-        alias: string
         dms: DMS | undefined
     },
 };
@@ -37,7 +36,6 @@ export const CreateDevice: React.FC<Props> = ({ onSubmit }) => {
         defaultValues: {
             deviceReg: {
                 id: window.crypto.randomUUID(),
-                alias: "",
                 dms: undefined,
                 icon: {
                     bg: "#25eee2",
@@ -52,16 +50,17 @@ export const CreateDevice: React.FC<Props> = ({ onSubmit }) => {
     const watchAll = watch();
 
     const submit = handleSubmit(data => {
+        console.log(data);
+        console.log(data.deviceReg.dms?.settings.enrollment_settings.device_provisioning_profile);
+        console.log(data.deviceReg.dms?.settings.enrollment_settings.device_provisioning_profile.tags);
+
         const run = async () => {
             const actionPayload = {
                 id: data.deviceReg.id,
-                alias: data.deviceReg.alias,
-                dms_name: data.deviceReg.dms?.name,
-                tags: data.deviceReg.dms?.identity_profile.enrollment_settings.tags,
-                description: "",
-                icon_name: data.deviceReg.dms?.identity_profile.enrollment_settings.icon,
-                icon_color: data.deviceReg.dms?.identity_profile.enrollment_settings.color
-
+                dms_id: data.deviceReg.dms?.id,
+                tags: data.deviceReg.dms?.settings.enrollment_settings.device_provisioning_profile.tags,
+                icon_name: data.deviceReg.dms?.settings.enrollment_settings.device_provisioning_profile.icon,
+                icon_color: data.deviceReg.dms?.settings.enrollment_settings.device_provisioning_profile.icon_color
             };
             onSubmit(actionPayload);
         };
@@ -80,9 +79,6 @@ export const CreateDevice: React.FC<Props> = ({ onSubmit }) => {
                             <Grid item container spacing={2}>
                                 <Grid item xs={12}>
                                     <FormTextField label="Device ID" control={control} name="deviceReg.id" disabled={editMode} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormTextField label="Alias" control={control} name="deviceReg.alias" disabled={editMode} />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <DMSSelector selectLabel="Select DMS Owner" onSelect={(dms) => {

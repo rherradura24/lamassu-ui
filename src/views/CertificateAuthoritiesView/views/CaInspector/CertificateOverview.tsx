@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { useTheme } from "@mui/system";
-import { Grid, Skeleton } from "@mui/material";
-import { CertificateAuthority, CryptoEngine } from "ducks/features/cav3/apicalls";
+import { } from "@mui/system";
+import { Grid, Skeleton, useTheme } from "@mui/material";
 import { SubsectionTitle } from "components/LamassuComponents/dui/typographies";
 import { TextField } from "components/LamassuComponents/dui/TextField";
 import { X509Certificate, parseCRT } from "components/utils/cryptoUtils/crt";
 import { CryptoEngineViewer } from "components/LamassuComponents/lamassu/CryptoEngineViewer";
+import { CertificateAuthority, CryptoEngine } from "ducks/features/cav3/models";
+import CAFetchViewer from "components/LamassuComponents/lamassu/CAFetchViewer";
+import { CATimeline } from "views/CertificateAuthoritiesView/components/CATimeline";
 
 interface Props {
     caData: CertificateAuthority
@@ -21,7 +23,6 @@ export const CertificateOverview: React.FC<Props> = ({ caData, engines }) => {
             const crt = await parseCRT(window.atob(caData.certificate));
             setParsedCertificate(crt);
         };
-
         run();
     }, []);
 
@@ -70,63 +71,74 @@ export const CertificateOverview: React.FC<Props> = ({ caData, engines }) => {
     }
 
     return (
-        <Grid item container sx={{ width: "100%" }} spacing={0}>
-            <Grid item xs={12} container spacing={2}>
-                {
-                    caData.type !== "EXTERNAL" && (
-                        <Grid item xs={12} container flexDirection={"column"}>
-                            <Grid item>
-                                <SubsectionTitle>Crypto Engine</SubsectionTitle>
-                            </Grid>
-                            <Grid item flexDirection={"column"} spacing={1}>
-                                <CryptoEngineViewer engine={engines.find(engine => engine.id === caData.engine_id)!} withDebugMetadata/>
-                            </Grid>
+        <Grid container columns={12} spacing={2}>
+            {
+                caData.type !== "EXTERNAL" && (
+                    <>
+                        <Grid item xs height={"75px"}>
+                            <CATimeline
+                                caIssuedAt={moment(caData.valid_from)}
+                                caExpiration={moment(caData.valid_to)}
+                                issuanceDuration={caData.issuance_expiration.type === "Duration" ? caData.issuance_expiration.duration : (caData.issuance_expiration.type === "Time" ? caData.issuance_expiration.time : "")}
+                            />
                         </Grid>
-                    )
-                }
-                <Grid item xs={12} xl={6} container flexDirection={"column"}>
-                    <Grid item>
-                        <SubsectionTitle>Subject</SubsectionTitle>
+                    </>
+                )
+            }
+            {
+                caData.issuer_metadata.id !== caData.id && (
+                    <Grid item xs={12} container flexDirection={"column"}>
+                        <Grid item>
+                            <SubsectionTitle>Parent CA</SubsectionTitle>
+                        </Grid>
+                        <Grid item flexDirection={"column"} spacing={1}>
+                            <CAFetchViewer caName={caData.issuer_metadata.id} elevation={false} />
+                        </Grid>
                     </Grid>
-                    <Grid container flexDirection={"column"} spacing={1}>
-                        {
-                            Object.keys(certificateSubject).map(key => (
-                                <Grid key={key} item>
-                                    {/* @ts-ignore} */}
-                                    <TextField label={certificateSubject[key]} value={caData.subject[key]} disabled />
-                                </Grid>
-                            ))
-                        }
+                )
+            }
+            {
+                caData.type !== "EXTERNAL" && (
+                    <Grid item xs={12} container flexDirection={"column"}>
+                        <Grid item>
+                            <SubsectionTitle>Crypto Engine</SubsectionTitle>
+                        </Grid>
+                        <Grid item flexDirection={"column"} spacing={1}>
+                            <CryptoEngineViewer engine={engines.find(engine => engine.id === caData.engine_id)!} withDebugMetadata />
+                        </Grid>
                     </Grid>
+                )
+            }
+            <Grid item xs={6} container flexDirection={"column"}>
+                <Grid item>
+                    <SubsectionTitle>Subject</SubsectionTitle>
                 </Grid>
-                <Grid item xs={12} xl={6} container>
-                    <Grid item>
-                        <SubsectionTitle>Other Properties</SubsectionTitle>
-                    </Grid>
-                    <Grid container flexDirection={"column"} spacing={1}>
-                        {
-                            Object.keys(certificateProperties).map(key => (
-                                <Grid key={key} item>
-                                    {/* @ts-ignore} */}
-                                    <TextField label={certificateProperties[key].title} value={certificateProperties[key].value} disabled />
-                                </Grid>
-                            ))
-                        }
-                    </Grid>
+                <Grid item container flexDirection={"column"} spacing={1}>
+                    {
+                        Object.keys(certificateSubject).map(key => (
+                            <Grid key={key} item>
+                                {/* @ts-ignore} */}
+                                <TextField label={certificateSubject[key]} value={caData.subject[key]} disabled />
+                            </Grid>
+                        ))
+                    }
                 </Grid>
-            </Grid >
+            </Grid>
+            <Grid item xs={6} container>
+                <Grid item>
+                    <SubsectionTitle>Other Properties</SubsectionTitle>
+                </Grid>
+                <Grid item container flexDirection={"column"} spacing={1}>
+                    {
+                        Object.keys(certificateProperties).map(key => (
+                            <Grid key={key} item>
+                                {/* @ts-ignore} */}
+                                <TextField label={certificateProperties[key].title} value={certificateProperties[key].value} disabled />
+                            </Grid>
+                        ))
+                    }
+                </Grid>
+            </Grid>
         </Grid >
     );
-};
-
-function chunk (str: string, n: number) {
-    const ret = [];
-    let i;
-    let len;
-
-    for (i = 0, len = str.length; i < len; i += n) {
-        ret.push(str.substr(i, n));
-    }
-
-    return ret;
 };

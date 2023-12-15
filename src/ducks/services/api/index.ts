@@ -2,6 +2,29 @@ import { map } from "rxjs/operators";
 import { from as rxjsFrom } from "rxjs";
 import { failed, success } from "ducks/actionTypes";
 import { getToken } from "./token";
+import { QueryParameters } from "ducks/models";
+
+export const queryParametersToURL = (params: QueryParameters): string => {
+    if (params.bookmark !== "") {
+        return "?bookmark=" + params.bookmark;
+    }
+
+    const query: string[] = [];
+    if (params.sortField !== "") {
+        query.push(`sort_by=${params.sortField}`);
+        query.push(`sort_mode=${params.sortMode}`);
+    }
+
+    if (params.limit > 0) {
+        query.push(`page_size=${params.limit}`);
+    }
+
+    params.filters.forEach(f => {
+        query.push(`filter=${f}`);
+    });
+
+    return "?" + query.join("&");
+};
 
 interface apiRequestProps {
     method: "GET" | "POST" | "PUT" | "DELETE",
@@ -48,7 +71,6 @@ export const apiRequest = async ({ method = "GET", url, data, query, headers = {
                 const json = await response.json();
                 return json;
             }
-            console.log("no JSOn");
 
             const text = await response.text();
             return text;
@@ -66,7 +88,6 @@ export const apiRequest = async ({ method = "GET", url, data, query, headers = {
 export const makeRequestWithActions = (fetchPromise: Promise<any>, actionType: string, meta = {}) =>
     rxjsFrom(fetchPromise).pipe(
         map((data) => {
-            console.log(data);
             // console.log(data && !data.error);
             if (data && !data.error) {
                 return {

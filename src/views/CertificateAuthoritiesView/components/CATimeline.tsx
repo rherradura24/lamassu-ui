@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { useTheme } from "@mui/material";
 import Label from "components/LamassuComponents/dui/typographies/Label";
 import * as duration from "components/utils/duration";
 import moment, { Moment } from "moment";
-import assert from "assert";
+import * as assert from "assert";
+import { Timeline } from "components/Charts/Timeline";
 
 interface Props {
     issuanceDuration: string | Moment
+    caIssuedAt: Moment
     caExpiration: string | Moment
 }
 
-export const CATimeline: React.FC<Props> = ({ issuanceDuration, caExpiration }) => {
+export const CATimeline: React.FC<Props> = ({ issuanceDuration, caIssuedAt, caExpiration }) => {
+    const theme = useTheme();
     const [timelineStages, setTimelineStages] = useState<{
         label: string,
         size: number,
@@ -22,17 +24,19 @@ export const CATimeline: React.FC<Props> = ({ issuanceDuration, caExpiration }) 
     }[]>([]);
 
     useEffect(() => {
-        const now = moment();
-
-        let inactiveDate = now.clone();
-        let expDate = now.clone();
+        let inactiveDate = caIssuedAt.clone();
+        let expDate = caIssuedAt.clone();
 
         if (typeof caExpiration === "string" && duration.validDurationRegex(caExpiration)) {
             const expDurSplit = caExpiration.match(duration.durationValueUnitSplitRegex);
-            assert(expDurSplit !== null);
-            assert(expDurSplit!.length === 2);
-            // @ts-ignore
-            expDate.add(parseInt(expDurSplit![0]) * duration.unitConverterToSeconds[expDurSplit[1]], "seconds");
+            assert.ok(expDurSplit !== null);
+            assert.ok(expDurSplit!.length % 2 === 0);
+            for (let i = 0; i < expDurSplit.length; i = i + 2) {
+                const tupleV = expDurSplit[i];
+                const tupleU = expDurSplit[i + 1];
+                // @ts-ignore
+                expDate.add(parseInt(tupleV) * duration.unitConverterToSeconds[tupleU], "seconds");
+            }
         } else if (moment.isMoment(caExpiration)) {
             expDate = caExpiration;
         } else {
@@ -41,10 +45,17 @@ export const CATimeline: React.FC<Props> = ({ issuanceDuration, caExpiration }) 
 
         if (typeof issuanceDuration === "string" && duration.validDurationRegex(issuanceDuration)) {
             const expDurSplit = issuanceDuration.match(duration.durationValueUnitSplitRegex);
-            assert(expDurSplit !== null);
-            assert(expDurSplit!.length === 2);
-            // @ts-ignore
-            inactiveDate = expDate.clone().subtract(parseInt(expDurSplit![0]) * duration.unitConverterToSeconds[expDurSplit[1]], "seconds");
+            inactiveDate = expDate.clone();
+
+            assert.ok(expDurSplit !== null);
+            assert.ok(expDurSplit!.length % 2 === 0);
+
+            for (let i = 0; i < expDurSplit.length; i = i + 2) {
+                const tupleV = expDurSplit[i];
+                const tupleU = expDurSplit[i + 1];
+                // @ts-ignore
+                inactiveDate.subtract(parseInt(tupleV) * duration.unitConverterToSeconds[tupleU], "seconds");
+            }
         } else if (moment.isMoment(issuanceDuration)) {
             inactiveDate = issuanceDuration;
         }
@@ -52,91 +63,44 @@ export const CATimeline: React.FC<Props> = ({ issuanceDuration, caExpiration }) 
         const timelineStages = [
             {
                 label: "Issuable Period",
-                size: inactiveDate.diff(now),
-                background: "#333",
-                color: "#ddd",
+                size: inactiveDate.diff(caIssuedAt, "year"),
+                background: theme.palette.chartsColors.green,
+                color: "#fff",
                 startLabel: <>
-                    <Label>{now.format("DD/MM/YYYY")}</Label>
-                    <Label>(now)</Label>
+                    <Label>{caIssuedAt.format("DD/MM/YYYY")}</Label>
                 </>,
                 endLabel: undefined
             },
             {
                 label: "Inactive",
-                size: expDate.diff(now) - inactiveDate.diff(now),
-                background: "#ddd",
-                color: "#555",
+                size: expDate.diff(caIssuedAt, "year") - inactiveDate.diff(caIssuedAt, "year"),
+                background: theme.palette.chartsColors.yellow,
+                color: "#333",
                 startLabel: inactiveDate.format("DD/MM/YYYY"),
                 endLabel: expDate.format("DD/MM/YYYY")
             }
         ];
 
+        const stageMinSize = 15;
+
+        const getBaseLog = (x: number, y: number) => {
+            return Math.log(y) / Math.log(x);
+        };
+        // apply logarithmic scale
+        for (let i = 0; i < timelineStages.length; i++) {
+            const logSize = getBaseLog(1.1, timelineStages[i].size);
+            console.log(timelineStages[i].size, logSize);
+
+            if (logSize > stageMinSize) {
+                timelineStages[i].size = logSize;
+            } else {
+                timelineStages[i].size = stageMinSize;
+            }
+        }
         setTimelineStages(timelineStages);
     }, [issuanceDuration, caExpiration]);
 
     return (
-        <Grid item container flexDirection={"column"}>
-            <Grid container columns={timelineStages.reduce((accumulator, currentValue) => accumulator + currentValue.size, 0)} spacing={1}>
-                {
-                    timelineStages.map((stage, idx) => (
-                        <Grid key={idx} item xs={stage.size} height={"50px"}>
-                            <Box sx={{ background: stage.background, color: stage.color, borderRadius: "3px", height: "100%" }}>
-                                <Grid container alignItems={"center"} justifyContent={"center"} width={"100%"} height={"100%"}>
-                                    <Grid item xs="auto"><Typography>{stage.label}</Typography></Grid>
-                                </Grid>
-                            </Box>
-                        </Grid>
-                    ))
-                }
-            </Grid>
-            <Grid item container columns={timelineStages.reduce((accumulator, currentValue) => accumulator + currentValue.size, 0)} spacing={1} alignItems={"start"}>
-                {
-                    timelineStages.map((stage, idx) => (
-                        <Grid key={idx} item xs={stage.size} container alignItems={"flex-start"} justifyContent={"space-between"}>
-                            <Grid item xs="auto" container flexDirection={"column"}>
-                                {
-                                    stage.startLabel && (
-                                        <>
-                                            <Grid item><Box height={"20px"} borderLeft={"1px solid #aaa"} /></Grid>
-                                            <Grid item>
-                                                {
-                                                    typeof stage.startLabel === "string"
-                                                        ? (
-                                                            <Label>{stage.startLabel}</Label>
-                                                        )
-                                                        : (
-                                                            stage.startLabel
-                                                        )
-                                                }
-                                            </Grid>
-                                        </>
-                                    )
-                                }
-                            </Grid>
-                            <Grid item xs="auto" container flexDirection={"column"} alignItems={"end"}>
-                                {
-                                    stage.endLabel && (
-                                        <>
-                                            <Grid item><Box height={"20px"} borderLeft={"1px solid #aaa"} /></Grid>
-                                            <Grid item>
-                                                {
-                                                    typeof stage.endLabel === "string"
-                                                        ? (
-                                                            <Label>{stage.endLabel}</Label>
-                                                        )
-                                                        : (
-                                                            stage.endLabel
-                                                        )
-                                                }
-                                            </Grid>
-                                        </>
-                                    )
-                                }
-                            </Grid>
-                        </Grid>
-                    ))
-                }
-            </Grid>
-        </Grid>
+        <Timeline stages={timelineStages} />
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CryptoEngine } from "ducks/features/cav3/apicalls";
+import { CryptoEngine } from "ducks/features/cav3/models";
 import { Grid, Box, Paper, Typography, IconButton, Button, Dialog, DialogActions, DialogContent, useTheme } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { MultiKeyValueInput } from "../dui/MultiKeyValueInput";
@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { LamassuChip } from "../Chip";
 
-const engines = [
+export const EnginesIcons = [
     {
         uniqueID: "AWS_SECRETS_MANAGER",
         icon: process.env.PUBLIC_URL + "/assets/AWS-SM.png"
@@ -20,7 +20,7 @@ const engines = [
         icon: process.env.PUBLIC_URL + "/assets/AWS-KMS.png"
     },
     {
-        uniqueID: "VaultKV2",
+        uniqueID: "HASHICORP_VAULT_KV_V2",
         icon: process.env.PUBLIC_URL + "/assets/HASHICORP-VAULT.png"
     },
     {
@@ -65,7 +65,7 @@ export const CryptoEngineViewer: React.FC<CryptoEngineViewerProps> = ({ engine, 
         <Grid container spacing={2} alignItems={"center"} sx={{ ...style }}>
             <Grid item xs={"auto"}>
                 <Box component={Paper} sx={{ height: "40px", width: "40px" }}>
-                    <img src={engines.find(eng => eng.uniqueID === engine.type)?.icon} height={"100%"} width={"100%"} />
+                    <img src={EnginesIcons.find(eng => eng.uniqueID === engine.type)?.icon} height={"100%"} width={"100%"} />
                 </Box>
             </Grid>
             {
@@ -99,9 +99,9 @@ export const CryptoEngineViewer: React.FC<CryptoEngineViewerProps> = ({ engine, 
                             </IconButton>
                         </Grid>
                         <Dialog open={showMeta} onClose={(ev: any) => {
-                            console.log(ev); ev.stopPropagation(); setShowMeta(false);
+                            ev.stopPropagation(); setShowMeta(false);
                         }} fullWidth maxWidth={"lg"}>
-                            <DialogContent onClick={(ev: any) => { console.log(ev); ev.stopPropagation(); }} >
+                            <DialogContent onClick={(ev: any) => { ev.stopPropagation(); }} >
                                 <Grid container flexDirection={"column"} spacing={2}>
                                     <Grid item container flexDirection={"column"} spacing={1}>
                                         <Grid item>

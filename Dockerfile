@@ -1,4 +1,4 @@
-FROM node:16.14-alpine as build
+FROM node:18-alpine as build
 LABEL authors="hsaiz@ikerlan.es"
 
 WORKDIR /app
@@ -9,7 +9,10 @@ COPY ./package-lock.json package-lock.json
 RUN npm install
 
 COPY . .
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=16384"
+ENV NODE_OPTIONS="--openssl-legacy-provider"
+ENV GENERATE_SOURCEMAP=false
+
 RUN npm run build
 
 #production environment

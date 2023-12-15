@@ -1,18 +1,16 @@
 import { combineEpics } from "redux-observable";
 
-import * as casEpic from "./features/cas/epic";
-import * as cloudProxyEpic from "./features/cloud-proxy/epic";
+import * as casv3Epic from "./features/cav3/epic";
+import * as certsEpic from "./features/certificates/epic";
+import * as raEpic from "./features/ra/epic";
 import * as devicesEpic from "./features/devices/epic";
-import * as devicesLogsEpic from "./features/devices-logs/epic";
-import * as dmsEpic from "./features/dms-enroller/epic";
 import * as alertsEpic from "./features/alerts/epic";
 
 const combinedEpics = [
-    ...Object.values(casEpic),
-    ...Object.values(cloudProxyEpic),
+    ...Object.values(casv3Epic),
+    ...Object.values(certsEpic),
+    ...Object.values(raEpic),
     ...Object.values(devicesEpic),
-    ...Object.values(devicesLogsEpic),
-    ...Object.values(dmsEpic),
     ...Object.values(alertsEpic)
 ];
 

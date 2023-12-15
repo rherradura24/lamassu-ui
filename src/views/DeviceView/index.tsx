@@ -1,16 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeviceInspector } from "./DeviceInspector";
 import { DeviceList } from "./DevicesList";
 import { CreateDevice } from "./DeviceActions/DeviceForm";
-import * as devicesApiCall from "ducks/features/devices/apicalls";
+import { apicalls } from "ducks/apicalls";
+import { useAppSelector } from "ducks/hooks";
+import { useDispatch } from "react-redux";
+import { actions } from "ducks/actions";
+import { selectors } from "ducks/reducers";
+import { RequestStatus } from "ducks/reducers_utils";
+import { Skeleton, Box } from "@mui/material";
 
 const RoutedDeviceInspector = () => {
+    const dispatch = useDispatch();
     const params = useParams();
     const location = useLocation();
+
+    const deviceID = params.deviceId!;
+    const requestStatus = useAppSelector(state => selectors.devices.getDeviceListRequestStatus(state));
+    const device = useAppSelector(state => selectors.devices.getDevice(state, deviceID));
+
+    const refreshAction = () => {
+        dispatch(actions.devicesActions.getDeviceByID.request(deviceID));
+    };
+
+    useEffect(() => {
+        refreshAction();
+    }, []);
+
+    if (requestStatus.isLoading) {
+        return (
+            <Box padding={"20px"}>
+                <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+                <Skeleton variant="rectangular" width={"100%"} height={25} sx={{ borderRadius: "5px", marginBottom: "20px" }} />
+            </Box>
+        );
+    }
+
+    if (requestStatus.status === RequestStatus.Success && device !== undefined) {
+        return (
+            <DeviceInspector device={device} />
+        );
+    }
+
     return (
-        <DeviceInspector deviceID={params.deviceId!} slotID={params.slotId!} />
+        <>something went wrong</>
     );
 };
 
@@ -22,7 +58,15 @@ export const DeviceView = () => {
             <Route path="/" element={<Outlet />}>
                 <Route path="create" element={
                     <CreateDevice onSubmit={async (device) => {
-                        await devicesApiCall.registerDevice(device.id, device.alias, device.description, device.tags, device.icon_name, device.icon_color, device.dms_name);
+                        console.log(device);
+                        await apicalls.devices.createDevice({
+                            id: device.id,
+                            tags: device.tags,
+                            metadata: {},
+                            dms_id: device.dms_id,
+                            icon: device.icon_name,
+                            icon_color: device.icon_color
+                        });
                         navigate("/devmanager");
                     }} />
                 } />

@@ -1,31 +1,39 @@
 import { Autocomplete, AutocompleteCloseReason, Box, ClickAwayListener, Grid, Paper, Popper, TextField, autocompleteClasses, styled, useTheme } from "@mui/material";
 import React from "react";
-import { MatchSorterOptions, matchSorter } from "match-sorter";
 import { KeyValueLabel } from "../dui/KeyValueLabel";
 import { MonoChromaticButton } from "../dui/MonoChromaticButton";
 import deepEqual from "fast-deep-equal/es6";
+import { FieldType, Filter, Filters, Field } from "components/FilterInput";
 
 interface WrapperProps<T> {
-    fetcher: () => Promise<T[]>
+    fetcher: (filters: Filter[]) => Promise<T[]>
+    filters?: Filter[]
+    filtrableProps: Field[]
+    searchBarFilterKey: string
     optionRenderer: (item: T) => React.ReactElement
     optionID: (item: T) => string
     label: string
     selectLabel: string
-    filterKeys?: string[]
     multiple: boolean
-    onSelect: (cert: T | T[]) => void
+    onSelect: (cert: T | T[] | undefined) => void
     value?: T | T[]
 }
 
 type GenericSelectorProps<T> = React.PropsWithChildren<WrapperProps<T>>;
 
 export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>) => {
-    let filterOpts: MatchSorterOptions<T>;
-    if (props.filterKeys) {
-        filterOpts = { keys: props.filterKeys };
-    }
-
     const [inputValue, setInputValue] = React.useState("");
+    const [fastTypeQuery, setFastTypeQuery] = React.useState(inputValue);
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setInputValue(fastTypeQuery);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [fastTypeQuery]);
+
+    const [filters, setFilters] = React.useState<Filter[]>(props.filters ? props.filters : []);
+
     const [loading, setLoading] = React.useState(false);
     const [options, setOptions] = React.useState<readonly T[]>([]);
 
@@ -40,10 +48,11 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
         setAnchorEl(event.currentTarget);
     };
 
-    const handleClose = () => {
-        if (anchorEl) {
-            anchorEl.focus();
+    const handleClose = (ev: any) => {
+        if (ev.target.localName === "body") {
+            return;
         }
+
         setAnchorEl(null);
     };
 
@@ -60,7 +69,7 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
     React.useEffect(() => {
         if (props.multiple) {
             props.onSelect(selectedOptions);
-        } else if (selectedOption) {
+        } else {
             props.onSelect(selectedOption);
         }
     }, [selectedOptions, selectedOption]);
@@ -69,7 +78,22 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
         const run = async () => {
             setLoading(true);
             try {
-                const opts = await props.fetcher();
+                const filtersSearch = [...filters];
+                console.log(inputValue);
+
+                if (inputValue !== "") {
+                    filtersSearch.push({
+                        propertyField: {
+                            key: props.searchBarFilterKey,
+                            label: "",
+                            type: FieldType.String,
+                            fieldOptions: undefined
+                        },
+                        propertyOperator: "contains",
+                        propertyValue: inputValue
+                    });
+                }
+                const opts = await props.fetcher(filtersSearch);
                 setOptions([...opts]);
             } catch (err) {
                 setOptions([]);
@@ -78,7 +102,7 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
             return true;
         };
         run();
-    }, [inputValue]);
+    }, [inputValue, filters]);
 
     const open = Boolean(anchorEl);
 
@@ -119,16 +143,30 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
                     </Grid>
                     <StyledPopper open={open} anchorEl={anchorEl} placement="bottom-start">
                         <ClickAwayListener onClickAway={handleClose}>
-                            <div>
-                                <Box
+                            <Box>
+                                <Grid container flexDirection={"column"} spacing={1}
                                     sx={{
                                         borderBottom: `1px solid ${theme.palette.mode === "light" ? "#eaecef" : "#30363d"}`,
                                         padding: "8px 10px",
                                         fontWeight: 600
                                     }}
+                                    onClick={(ev: any) => {
+                                        ev.preventDefault();
+                                        ev.stopPropagation();
+                                    }}
                                 >
-                                    {props.selectLabel}
-                                </Box>
+                                    <Grid item>
+                                        {props.selectLabel}
+                                    </Grid>
+                                    <Grid item>
+                                        <Filters
+                                            filters={filters}
+                                            modal={false}
+                                            onChange={(f) => { setFilters(f); }}
+                                            fields={props.filtrableProps}
+                                        />
+                                    </Grid>
+                                </Grid>
                                 <Autocomplete
                                     loading={loading}
                                     options={options}
@@ -140,12 +178,12 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
                                         } else {
                                             setSelectedOption(newValue);
                                             if (newValue) {
-                                                handleClose();
+                                                handleClose(event);
                                             }
                                         }
                                     }}
                                     onInputChange={(event, newInputValue) => {
-                                        setInputValue(newInputValue);
+                                        setFastTypeQuery(newInputValue);
                                     }}
                                     PopperComponent={PopperComponent}
                                     disableCloseOnSelect={!props.multiple}
@@ -154,7 +192,7 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
                                         reason: AutocompleteCloseReason
                                     ) => {
                                         if (reason === "escape") {
-                                            handleClose();
+                                            handleClose(event);
                                         }
                                     }}
                                     getOptionLabel={(option: T) => props.optionID(option)}
@@ -172,10 +210,11 @@ export const GenericSelector = <T extends object>(props: GenericSelectorProps<T>
                                             {props.optionRenderer(option)}
                                         </li>
                                     )}
+                                    filterOptions={(x) => x}
                                     isOptionEqualToValue={(option, value) => { return props.optionID(option) === props.optionID(value); }}
-                                    filterOptions={(options, { inputValue }) => matchSorter(options, inputValue, filterOpts)}
+                                // filterOptions={(options, { inputValue }) => matchSorter(options, inputValue, filterOpts)}
                                 />
-                            </div>
+                            </Box>
                         </ClickAwayListener>
                     </StyledPopper>
                 </>
