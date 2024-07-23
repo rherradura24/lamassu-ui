@@ -24,12 +24,12 @@ export const createPrivateKey = (keyType: "ECDSA" | "RSA", keySize: number, hash
     return crypto.generateKey(algParams.algorithm, true, algParams.usages);
 };
 
-export const keyPairToPEM = async (keyPair: CryptoKeyPair, keyType: "ECDSA" | "RSA"): Promise<{ privateKey: string }> => {
+export const keyPairToPEM = async (keyPair: CryptoKeyPair): Promise<{ privateKey: string }> => {
     const crypto = pkijs.getCrypto(true);
     const privBuffer = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
 
     return {
-        privateKey: toPEM(privBuffer, `${keyType} PRIVATE KEY`)
+        privateKey: toPEM(privBuffer, `$PRIVATE KEY`)
     };
 };
 

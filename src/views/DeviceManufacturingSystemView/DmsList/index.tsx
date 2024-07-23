@@ -546,7 +546,7 @@ const BootstrapGenerator: React.FC<BootstrapGeneratorProps> = ({ cn, ca }) => {
             try {
                 const keyPair = await createPrivateKey("RSA", 2048, "SHA-256");
                 const csr = await createCSR(keyPair, "SHA-256", { cn: cn }, { dnss: undefined });
-                const { privateKey } = await keyPairToPEM(keyPair, "RSA");
+                const { privateKey } = await keyPairToPEM(keyPair);
 
                 const cert = await apicalls.cas.signCertificateRequest(ca.id, window.window.btoa(csr));
 
