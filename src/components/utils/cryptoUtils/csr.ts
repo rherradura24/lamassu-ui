@@ -29,7 +29,7 @@ export const keyPairToPEM = async (keyPair: CryptoKeyPair): Promise<{ privateKey
     const privBuffer = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
 
     return {
-        privateKey: toPEM(privBuffer, `$PRIVATE KEY`)
+        privateKey: toPEM(privBuffer, `PRIVATE KEY`)
     };
 };
 
