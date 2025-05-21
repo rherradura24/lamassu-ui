@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Tooltip, Typography, lighten } from "@mui/material";
 import { CAMetadata } from "./CAMetadata";
-import { CertificateAuthority, CertificateStatus, CryptoEngine, RevocationReason, getRevocationReasonDescription } from "ducks/features/cas/models";
+import { CertificateAuthority, CertificateStatus, RevocationReason, getRevocationReasonDescription } from "ducks/features/cas/models";
 import { CertificateDecoder } from "components/Certificates/CertificateDecoder";
 import { CertificateOverview } from "./CertificateOverview";
 import { CertificateView } from "./CertificateView";
@@ -29,6 +29,7 @@ import download from "utils/downloader";
 import { useLoading } from "components/Spinner/LoadingContext";
 import { getCA } from "ducks/features/cas/apicalls";
 import { ErrorBox } from "components/ErrorBox/ErrorBox";
+import { CAOutletContext } from "./CAListView";
 
 export const CAInspector: React.FC = () => {
     const theme = useTheme();
@@ -47,10 +48,7 @@ export const CAInspector: React.FC = () => {
 
     const caRef = React.useRef<FetchHandle>(null);
 
-    const { engines } = useOutletContext<{
-        preselectedCAParent: CertificateAuthority | undefined;
-        engines: CryptoEngine[];
-    }>();
+    const { engines, shoulUpdateCAs } = useOutletContext<CAOutletContext>();
 
     useEffect(() => {
         fetchCA(caName);
@@ -76,6 +74,17 @@ export const CAInspector: React.FC = () => {
     const refreshAction = () => {
         if (caRef.current) {
             caRef.current.refresh();
+        }
+    };
+
+    const handlePermanentlyDelete = async () => {
+        try {
+            await apicalls.cas.deleteCA(caData.id);
+            shoulUpdateCAs();
+            navigate("/cas");
+            enqueueSnackbar(`CA with ID ${caData.id} and CN ${caData.certificate.subject.common_name} deleted`, { variant: "success" });
+        } catch (e) {
+            enqueueSnackbar(`Error while deleting CA with ID ${caData.id} and CN ${caData.certificate.subject.common_name}: ${e}`, { variant: "error" });
         }
     };
 
@@ -155,6 +164,18 @@ export const CAInspector: React.FC = () => {
         ];
     }
 
+    const handleRevokeCertificate = async () => {
+        try {
+            apicalls.cas.updateCAStatus(revokeDialog!.id, CertificateStatus.Revoked, revokeReason);
+            refreshAction();
+            enqueueSnackbar(`CA with ID ${revokeDialog?.id} and CN ${revokeDialog?.certificate.subject.common_name} revoked`, { variant: "success" });
+            setRevokeDialog(undefined);
+            shoulUpdateCAs();
+        } catch (err) {
+            enqueueSnackbar(`Error while revoking CA with ID ${revokeDialog?.id} and CN ${revokeDialog?.certificate.subject.common_name}: ${err}`, { variant: "error" });
+        }
+    };
+
     return (
         <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
             <Box style={{ padding: "30px 40px 0 40px" }}>
@@ -212,15 +233,13 @@ export const CAInspector: React.FC = () => {
                             (
                                 (caData.certificate.type === "EXTERNAL" || caData.certificate.status !== CertificateStatus.Active)) && (
                                 <Grid xs="auto">
-                                    <Button variant="contained" color="error" onClick={async () => {
-                                        try {
-                                            await apicalls.cas.deleteCA(caData.id);
-                                            navigate("/cas");
-                                            enqueueSnackbar(`CA with ID ${caData.id} and CN ${caData.certificate.subject.common_name} deleted`, { variant: "success" });
-                                        } catch (e) {
-                                            enqueueSnackbar(`Error while deleting CA with ID ${caData.id} and CN ${caData.certificate.subject.common_name}: ${e}`, { variant: "error" });
-                                        }
-                                    }}>Permanently Delete</Button>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={handlePermanentlyDelete}
+                                    >
+                                        Permanently Delete
+                                    </Button>
                                 </Grid>
                             )
                         }
@@ -340,16 +359,7 @@ export const CAInspector: React.FC = () => {
                 actions={
                     < Grid container spacing={2} >
                         <Grid xs md="auto">
-                            <Button fullWidth variant="contained" onClick={async () => {
-                                try {
-                                    apicalls.cas.updateCAStatus(revokeDialog!.id, CertificateStatus.Revoked, revokeReason);
-                                    refreshAction();
-                                    enqueueSnackbar(`CA with ID ${revokeDialog?.id} and CN ${revokeDialog?.certificate.subject.common_name} revoked`, { variant: "success" });
-                                    setRevokeDialog(undefined);
-                                } catch (err) {
-                                    enqueueSnackbar(`Error while revoking CA with ID ${revokeDialog?.id} and CN ${revokeDialog?.certificate.subject.common_name}: ${err}`, { variant: "error" });
-                                }
-                            }}>Revoke Certificate</Button>
+                            <Button fullWidth variant="contained" onClick={handleRevokeCertificate}>Revoke Certificate</Button>
                         </Grid>
                         <Grid xs="auto" md="auto">
                             <Button variant="text" onClick={() => { setRevokeDialog(undefined); }}>Close</Button>

@@ -17,7 +17,7 @@ import apicalls from "ducks/apicalls";
 import { enqueueSnackbar } from "notistack";
 import Sandbox from "@nyariv/sandboxjs";
 import msteams from "assets/msteams.png";
-import AuthService from "auths/AuthService";
+import { getEmail, getToken } from "ducks/services/token";
 
 interface Props {
     event: CloudEvent,
@@ -32,7 +32,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [disableNextStepBtn, setDisableNextStepBtn] = useState<boolean>(false);
 
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string | null>();
 
     const [subscription, setSubscription] = useState<SubChannel>({ type: SubChannelType.Email, config: { email: "" } });
 
@@ -71,10 +71,11 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
     };
 
     const trySetEmail = () => {
-        if (AuthService.getToken()) {
-            setEmail(AuthService.getEmail());
-            if (AuthService.getEmail()) {
-                setSubscription({ type: SubChannelType.Email, config: { email: AuthService.getEmail() } });
+        if (getToken()) {
+            const email = getEmail();
+            setEmail(email);
+            if (email) {
+                setSubscription({ type: SubChannelType.Email, config: { email } });
             } else {
                 setSubscription({ type: SubChannelType.Email, config: { email: "" } });
             }
