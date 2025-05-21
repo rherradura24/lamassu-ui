@@ -10,6 +10,7 @@ import { FormTextField } from "./Textfield";
 interface FormExpirationProps<T extends FieldValues> extends Omit<ExpirationInputProps, "value" | "onChange"> {
     control: Control<T, any>,
     name: FieldPath<T>,
+    resetTrigger?: number
 }
 
 export const FormExpirationInput = <T extends FieldValues>(props: FormExpirationProps<T>) => {
@@ -33,17 +34,22 @@ type FormData = {
 interface ExpirationInputProps {
     value: FormData
     onChange: (data: FormData) => void,
-    enableInfiniteDate?: boolean
+    enableInfiniteDate?: boolean,
+  resetTrigger?: number
 }
 
 export const ExpirationInput = (props: ExpirationInputProps) => {
-    const { control, getValues, setValue, handleSubmit, formState: { errors }, watch } = useForm<FormData>({
+    const { control, watch, reset } = useForm<FormData>({
         defaultValues: {
             type: props.value.type,
             duration: props.value.duration,
             date: props.value.date
         }
     });
+
+    React.useEffect(() => {
+        reset(props.value);
+    }, [props.resetTrigger]);
 
     const watchAll = watch();
 

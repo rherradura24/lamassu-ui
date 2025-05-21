@@ -40,11 +40,11 @@ export const getSub = (): string| null => {
     return profile.sub;
 };
 
-export const getEmail = ():string | undefined| null => {
+export const getEmail = ():string | null => {
     const profile = getProfile();
     if (!profile) {
         return null;
     }
 
-    return profile.email;
+    return profile.email || null;
 };

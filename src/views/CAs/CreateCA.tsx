@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import apicalls from "ducks/apicalls";
 import moment, { Moment } from "moment";
 import { FormExpirationInput } from "components/forms/Expiration";
+import { CAOutletContext } from "./CAListView";
 
 type FormData = {
     cryptoEngine: CryptoEngine
@@ -52,7 +53,7 @@ export const CreateCA: React.FC<CreateCAProps> = ({ defaultEngine }) => {
     const theme = useTheme();
 
     const navigate = useNavigate();
-    const [preselectedCAParent] = useOutletContext<[CertificateAuthority | undefined]>();
+    const { preselectedCAParent, shoulUpdateCAs } = useOutletContext<CAOutletContext>();
 
     const [error, setError] = useState<string | undefined>();
     const [loading, setLoading] = useState(false);
@@ -126,6 +127,7 @@ export const CreateCA: React.FC<CreateCAProps> = ({ defaultEngine }) => {
                     ca_type: "MANAGED"
                 });
                 navigate(`/cas/${formData.id}`);
+                shoulUpdateCAs();
             } catch (error) {
                 setError(errorToString(error));
             }

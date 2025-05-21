@@ -6,7 +6,6 @@ import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
 import { createSchema } from "genson-js";
 import jsonschema from "jsonschema";
 import { JSONPath } from "jsonpath-plus";
-import { useAuth } from "react-oidc-context";
 import { SubChannel, SubChannelType, SubscriptionCondition, SubscriptionConditionType } from "ducks/features/alerts/models";
 import { Select } from "components/Select";
 import { TextField } from "components/TextField";
@@ -17,6 +16,8 @@ import { ChannelChip } from "./SubscriptionChip";
 import apicalls from "ducks/apicalls";
 import { enqueueSnackbar } from "notistack";
 import Sandbox from "@nyariv/sandboxjs";
+import msteams from "assets/msteams.png";
+import { getEmail, getToken } from "ducks/services/token";
 
 interface Props {
     event: CloudEvent,
@@ -27,12 +28,11 @@ interface Props {
 
 export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...rest }) => {
     const theme = useTheme();
-    const auth = useAuth();
 
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [disableNextStepBtn, setDisableNextStepBtn] = useState<boolean>(false);
 
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string | null>();
 
     const [subscription, setSubscription] = useState<SubChannel>({ type: SubChannelType.Email, config: { email: "" } });
 
@@ -71,10 +71,11 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
     };
 
     const trySetEmail = () => {
-        if (auth.user) {
-            setEmail(auth.user.profile.email);
-            if (auth.user.profile.email) {
-                setSubscription({ type: SubChannelType.Email, config: { email: auth.user.profile.email } });
+        if (getToken()) {
+            const email = getEmail();
+            setEmail(email);
+            if (email) {
+                setSubscription({ type: SubChannelType.Email, config: { email } });
             } else {
                 setSubscription({ type: SubChannelType.Email, config: { email: "" } });
             }
@@ -207,7 +208,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                                     render: () => (
                                         <Grid container spacing={2} alignItems={"center"}>
                                             <Grid xs="auto">
-                                                <img src={process.env.PUBLIC_URL + "assets/msteams.png"} height="20px" />
+                                                <img src={msteams} height="20px" />
                                             </Grid>
                                             <Grid xs>
                                                 <Typography>Microsoft Teams Webhook</Typography>
