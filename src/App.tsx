@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, ListItem, Paper, Typography, useTheme, useMediaQuery, IconButton, Drawer, Button } from "@mui/material";
+import { Box, ListItem, Paper, Typography, useTheme, useMediaQuery, IconButton, Drawer } from "@mui/material";
 import { CAView } from "views/CAs";
 import { CertificatesView } from "views/Certificates";
 import { DMSView } from "views/DMS";
@@ -8,7 +8,6 @@ import { Home } from "views/Home";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { TbCertificate } from "react-icons/tb";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
-import { useEffect, useState } from "react";
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import FactoryOutlinedIcon from "@mui/icons-material/FactoryOutlined";
@@ -21,10 +20,9 @@ import { InfoView } from "views/Info/info";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AlertsViewList } from "views/Alerts/AlertsList";
 import lamassuFullWhite from "assets/lamassu/lamassu_full_white.svg";
-import lamassuBackground from "assets/lamassu/lamassu-background.png";
-import titleImg from "assets/lamassu/title.png";
-import { useLoading } from "components/Spinner/LoadingContext";
-import AuthService from "auths/AuthService";
+import { useAuth } from "auths/AuthProvider";
+import { Landing } from "components/Landing/Landing";
+import AuthCallback from "views/AuthCallback/AuthCallback";
 
 type SidebarSection = {
     sectionTitle: string, sectionItems: Array<SidebarItem>
@@ -54,8 +52,9 @@ function sidebarBasePathPattern (basePath: string) {
 export default function Dashboard () {
     const theme = useTheme();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+    const { isAuthenticated, signinRedirect, signoutRedirect, isLoading } = useAuth();
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = React.useState(false);
     const handleCollapseClick = () => {
         setCollapsed(!collapsed);
     };
@@ -154,7 +153,7 @@ export default function Dashboard () {
                 {
                     kind: "button",
                     title: "Log out",
-                    onClick: () => AuthService.logout(),
+                    onClick: () => signoutRedirect(),
                     icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
                 }
             ]
@@ -168,27 +167,18 @@ export default function Dashboard () {
         return item.kind === "navigation";
     });
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const { setLoading } = useLoading();
+    const [redirecting, setRedirecting] = React.useState(false);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            setLoading(true);
-            const authenticated = await AuthService.isAuthenticated();
-            setIsAuthenticated(authenticated);
-            setLoading(false);
+    React.useEffect(() => {
+        if (!isLoading && !isAuthenticated && location.pathname !== "/callback") {
+            setRedirecting(true);
+            signinRedirect();
+        }
+    }, [isLoading, isAuthenticated, location.pathname]);
 
-            if (!authenticated) {
-                await AuthService.login();
-            }
-        };
-
-        checkAuth();
-    }, [setLoading]);
-
-    if (!isAuthenticated) {
+    if (isLoading || redirecting) {
         return <Landing />;
-    }
+    };
 
     return (
         <Box component={Paper} sx={{ height: "100%" }}>
@@ -242,6 +232,7 @@ export default function Dashboard () {
                                     );
                                 })
                             }
+                            <Route path="/callback" element={<AuthCallback />} />
                             <Route path="*" element={<Typography>404</Typography>} />
                         </Routes>
                     </Grid>
@@ -250,48 +241,6 @@ export default function Dashboard () {
         </Box >
     );
 }
-
-const Landing = React.memo(() => {
-    const handleClick = () => {
-        AuthService.login();
-    };
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                width: "100%",
-                height: "100vh",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundImage: `url("${lamassuBackground}")`
-            }}
-        >
-            <Box
-                sx={{
-                    marginBottom: "5%",
-                    display: "flex",
-                    justifyContent: "center"
-                }
-                }>
-                <img src={titleImg} style={{ margin: "0px auto" }} />
-            </Box>
-            <Box display="flex" justifyContent="center">
-                <Box component={Paper} sx={{ padding: "20px 30px 20px 30px", maxWidth: "500px" }} >
-                    <Box display="flex" flexDirection="column" gap={2}>
-                        <Button fullWidth variant="contained" onClick={handleClick}>
-                            Authenticate
-                        </Button>
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
-    );
-});
-Landing.displayName = "Landing";
 
 interface MenuBarProps {
     items: Array<SidebarSection>
@@ -367,6 +316,7 @@ const MenuBar = React.memo<MenuBarProps>((props) => {
 });
 
 MenuBar.displayName = "MenuBar";
+
 interface MainWrapperProps {
     component: React.ReactNode
 }

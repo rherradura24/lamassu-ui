@@ -2,20 +2,18 @@ import { FormattedView } from "components/FormattedView";
 import { useLoading } from "components/Spinner/LoadingContext";
 import { TabsList } from "components/TabsList";
 import { getEngines } from "ducks/features/cas/apicalls";
-import { CertificateAuthority, CryptoEngine } from "ducks/features/cas/models";
+import { CryptoEngine } from "ducks/features/cas/models";
 import React, { useState, useEffect } from "react";
 import { CAImporter } from "./CAImporter";
 import { CAReadonlyImporter } from "./CAImporterReadonly";
 import { CreateCA } from "./CreateCA";
 import { useOutletContext } from "react-router-dom";
+import { CAOutletContext } from "./CAListView";
 
 const CACreate:React.FC = () => {
     const [defaultEngine, setDefaultEngine] = useState({} as CryptoEngine);
     const { setLoading } = useLoading();
-    const { engines } = useOutletContext<{
-        preselectedCAParent: CertificateAuthority | undefined;
-        engines: CryptoEngine[];
-      }>();
+    const { engines } = useOutletContext<CAOutletContext>();
 
     useEffect(() => {
         loadEngines();

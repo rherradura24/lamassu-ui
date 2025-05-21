@@ -2,13 +2,13 @@ import "./index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import App from "./App";
-import React from "react";
 import ReactDOM from "react-dom/client";
 import ThemeProviderWrapper from "./theme/ThemeProvider";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import moment from "moment";
 import { LoadingProvider } from "components/Spinner/LoadingContext";
 import Spinner from "components/Spinner/Spinner";
+import { AuthProvider } from "auths/AuthProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -46,12 +46,14 @@ root.render(
     <FluentProvider theme={webLightTheme} style={{ height: "100%" }}>
         <ThemeProviderWrapper>
             <LoadingProvider>
-                <Router>
-                    <SnackbarProvider maxSnack={3}>
-                        <Spinner />
-                        <App />
-                    </SnackbarProvider>
-                </Router>
+                <AuthProvider>
+                    <Router>
+                        <SnackbarProvider maxSnack={3}>
+                            <Spinner />
+                            <App />
+                        </SnackbarProvider>
+                    </Router>
+                </AuthProvider>
             </LoadingProvider>
         </ThemeProviderWrapper>
     </FluentProvider>

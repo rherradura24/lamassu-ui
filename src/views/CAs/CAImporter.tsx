@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import apicalls from "ducks/apicalls";
 import moment, { Moment } from "moment";
 import { FormExpirationInput } from "components/forms/Expiration";
+import { CAOutletContext } from "./CAListView";
 
 const keyPlaceHolder = `-----BEGIN PRIVATE KEY-----
 MHcCAQEEIOUXa254YMYXWksCADpHFdJ+ly+nrQFsa0ozEuTZXmP5oAoGCCqGSM49
@@ -43,10 +44,7 @@ export const CAImporter: React.FC<CAImporterProps> = ({ defaultEngine }) => {
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const { preselectedCAParent, engines } = useOutletContext<{
-        preselectedCAParent: CertificateAuthority | undefined;
-        engines: CryptoEngine[];
-        }>();
+    const { preselectedCAParent, engines } = useOutletContext<CAOutletContext>();
 
     const { control, getValues, setValue, handleSubmit, formState: { errors }, watch } = useForm<FormData>({
         defaultValues: {

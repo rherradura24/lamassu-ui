@@ -35,6 +35,8 @@ export const UpdateCA: React.FC = () => {
     const caId = params.caName || "";
     const [caData, setCAData] = useState<CertificateAuthority | undefined>();
 
+    const [resetCount, setResetCount] = useState(0);
+
     useEffect(() => {
         if (caId !== "") {
             fetchCA();
@@ -67,6 +69,7 @@ export const UpdateCA: React.FC = () => {
 
     useEffect(() => {
         if (caData?.validity) {
+            console.log("caData", caData);
             reset({
                 issuerExpiration: {
                     type: caData.validity.type === "Duration" ? "duration" : "date",
@@ -76,6 +79,7 @@ export const UpdateCA: React.FC = () => {
                         : moment().add(100, "days")
                 }
             });
+            setResetCount((prev) => prev + 1);
         }
     }, [caData, reset]);
 
@@ -127,7 +131,7 @@ export const UpdateCA: React.FC = () => {
                             <Typography variant="h4">Issuance Expiration Settings</Typography>
                         </Grid>
                         <Grid>
-                            <FormExpirationInput control={control} name="issuerExpiration" enableInfiniteDate />
+                            <FormExpirationInput control={control} name="issuerExpiration" enableInfiniteDate resetTrigger={resetCount} />
                         </Grid>
                     </Grid>
 

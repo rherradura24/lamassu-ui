@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { Autocomplete, LinearProgress, Popper, TextField, styled, useTheme } from "@mui/material";
+import { Autocomplete, LinearProgress, Popper, TextField, styled } from "@mui/material";
 import { KeyValueLabel } from "./KeyValue";
 import Grid from "@mui/material/Unstable_Grid2";
 import React from "react";
 import deepEqual from "fast-deep-equal/es6";
 
-const StyledPopper = styled(Popper)(({ theme }) => ({
+const StyledPopper = styled(Popper)(() => ({
     zIndex: "9999999!important"
 }));
 
@@ -38,8 +38,6 @@ export const GenericSelector = <T extends any>(props: GenericSelectorProps<T>) =
 
     const [selectedOptions, setSelectedOptions] = React.useState<T[]>((props.value && Array.isArray(props.value)) ? props.value : []);
     const [selectedOption, setSelectedOption] = React.useState<T | undefined>();
-
-    const theme = useTheme();
 
     React.useEffect(() => {
         if (props.value !== undefined) {
@@ -97,11 +95,14 @@ export const GenericSelector = <T extends any>(props: GenericSelectorProps<T>) =
                     disableClearable={props.multiple ? true : selectedOption !== null}
                     getOptionLabel={(option: T) => props.optionLabel(option)}
                     {...(props.renderOption !== undefined && {
-                        renderOption: (otherProps, option, { selected }) => (
-                            <li {...otherProps} style={{ background: selected ? "#d9d9d9" : "none" }}>
-                                {props.renderOption!(otherProps, option, selected)}
-                            </li>
-                        )
+                        renderOption: (otherProps, option, { selected }) => {
+                            const { key, ...rest } = otherProps;
+                            return (
+                                <li key={key} {...rest} style={{ background: selected ? "#d9d9d9" : "none" }}>
+                                    {props.renderOption!(rest, option, selected)}
+                                </li>
+                            );
+                        }
                     })}
                     PopperComponent={StyledPopper}
                     multiple={props.multiple}

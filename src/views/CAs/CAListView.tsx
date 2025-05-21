@@ -27,6 +27,12 @@ import { useLoading } from "components/Spinner/LoadingContext";
 import { getCAs, getEngines } from "ducks/features/cas/apicalls";
 import { ErrorBox } from "components/ErrorBox/ErrorBox";
 
+export type CAOutletContext = {
+    preselectedCAParent: CertificateAuthority | undefined;
+    engines: CryptoEngine[];
+    shoulUpdateCAs:() => void;
+}
+
 const queryableFields = [
     { key: "subject.common_name", title: "CN", operator: "contains" },
     { key: "id", title: "ID", operator: "contains" }
@@ -77,31 +83,70 @@ export const CAListView: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
-        getCAs({ filters })
-            .then((result) => {
-                setCas(result);
-                const current = result.list.filter(ca => ca.id === selectedCa)[0];
-                if (current) {
-                    setRootChain([...rootChain, current]);
-                }
-            })
-            .catch(error => {
-                setError(error);
-            })
-            .finally(() => setLoading(false));
+        loadCas();
     }, []);
 
     useEffect(() => {
         setSelectedCa(preSelectedCaID);
         if (preSelectedCaID === undefined) {
             setRootChain([]);
+        } else {
+            getFullChain(cas.list.find(ca => ca.id === preSelectedCaID)!);
         }
     }, [preSelectedCaID]);
 
     useEffect(() => {
         setViewMode("list");
     }, [isMediumScreen]);
+
+    const loadCas = () => {
+        setLoading(true);
+        getCAs({ filters })
+            .then((result) => {
+                setCas(result);
+                const current = result.list.filter(ca => ca.id === selectedCa)[0];
+                if (current) {
+                    getFullChain(current, result);
+                }
+            })
+            .catch(error => {
+                setError(error);
+            })
+            .finally(() => setLoading(false));
+    };
+
+    const getFullChain = (ca: CertificateAuthority, caList?: ListResponse<CertificateAuthority>) => {
+        if (ca === undefined) {
+            return;
+        }
+
+        if (!caList) {
+            caList = cas;
+        }
+
+        const chain: CertificateAuthority[] = [];
+        let currentCA = ca;
+
+        while (currentCA.level > 0) {
+            const parent = caList.list.find(
+                (element) => element.id === currentCA.certificate.issuer_metadata.id
+            );
+
+            if (!parent) {
+                break;
+            }
+
+            chain.unshift(parent);
+
+            currentCA = parent;
+        }
+
+        chain.push(ca);
+
+        console.log("parent chain", chain);
+        console.log("root chain", rootChain);
+        setRootChain(chain);
+    };
 
     if (error) {
         return <ErrorBox error={error} errorPrefix="Could not fetch CA list" />;
@@ -156,7 +201,7 @@ export const CAListView: React.FC = () => {
                 </Grid>
                 <Grid flex={1}>
                     <Box component={Paper} borderRadius={0} sx={{ height: "100%" }}>
-                        <Outlet context={{ preselectedCAParent: [undefined], engines }} />
+                        <Outlet context={{ preselectedCAParent: [], engines, shoulUpdateCAs: () => { loadCas(); } }} />
                     </Box>
                 </Grid>
             </Grid>
@@ -187,9 +232,13 @@ export const CAListView: React.FC = () => {
                                                         component="a"
                                                         href="#"
                                                         onClick={() => {
-                                                            const newChain = rootChain;
-                                                            newChain.length = ca.level + 1;
-                                                            setRootChain([...newChain]);
+                                                            if (rootChain.length <= ca.level + 1) {
+                                                                getFullChain(ca);
+                                                            } else {
+                                                                const newChain = rootChain;
+                                                                newChain.length = ca.level + 1;
+                                                                setRootChain([...newChain]);
+                                                            }
                                                         }}
                                                         label={`${ca.level === 0 ? "Root: " : ""} Level ${ca.level}`}
                                                         icon={
@@ -214,7 +263,7 @@ export const CAListView: React.FC = () => {
                         </>
                     )
                 }
-                <Grid container padding={"20px"} spacing={"10px"} flexDirection={"column"}>
+                <Grid container padding={"20px"} spacing={"10px"} flexDirection={"column"} className="ca-list">
                     {
                         cas.list.filter(ca => {
                             if (rootChain.length === 0) {
@@ -228,6 +277,7 @@ export const CAListView: React.FC = () => {
                                         setIsMainModalOpen(true);
                                         navigate(caItem.id);
                                         setRootChain([...rootChain, caItem]);
+                                        console.log("rootChain", rootChain);
                                     }}
                                     ca={caItem}
                                     engine={engines.find(engine => caItem.certificate.engine_id === engine.id)!}
@@ -346,7 +396,8 @@ export const CAListView: React.FC = () => {
                             <Box>
                                 <Outlet context={{
                                     preselectedCAParent: rootChain.length > 0 ? rootChain[rootChain.length - 1] : undefined,
-                                    engines
+                                    engines,
+                                    shoulUpdateCAs: () => { loadCas(); }
                                 }} />
                             </Box>
                         </Slide>

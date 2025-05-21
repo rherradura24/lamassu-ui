@@ -1,6 +1,6 @@
 import { Control, Controller, FieldPath, FieldValues, useForm } from "react-hook-form";
 import Grid from "@mui/material/Unstable_Grid2";
-import React, { useEffect } from "react";
+import React from "react";
 import { FormSelect } from "./Select";
 import { Moment } from "moment";
 import { validDurationRegex } from "utils/duration";
@@ -10,6 +10,7 @@ import { FormTextField } from "./Textfield";
 interface FormExpirationProps<T extends FieldValues> extends Omit<ExpirationInputProps, "value" | "onChange"> {
     control: Control<T, any>,
     name: FieldPath<T>,
+    resetTrigger?: number
 }
 
 export const FormExpirationInput = <T extends FieldValues>(props: FormExpirationProps<T>) => {
@@ -33,27 +34,31 @@ type FormData = {
 interface ExpirationInputProps {
     value: FormData
     onChange: (data: FormData) => void,
-    enableInfiniteDate?: boolean
+    enableInfiniteDate?: boolean,
+  resetTrigger?: number
 }
 
 export const ExpirationInput = (props: ExpirationInputProps) => {
-    const { value, onChange, enableInfiniteDate } = props;
-
-    const { control, getValues, setValue, watch, formState: { errors }, handleSubmit } = useForm<FormData>({
+    const { control, watch, reset } = useForm<FormData>({
         defaultValues: {
-            type: value.type,
-            duration: value.duration,
-            date: value.date
+            type: props.value.type,
+            duration: props.value.duration,
+            date: props.value.date
         }
     });
 
-    useEffect(() => {
-        setValue("type", value.type);
-        setValue("duration", value.duration);
-        setValue("date", value.date);
-    }, [value, setValue]);
+    React.useEffect(() => {
+        reset(props.value);
+    }, [props.resetTrigger]);
 
     const watchAll = watch();
+
+    React.useEffect(() => {
+        const subscription = watch((value, { name, type }) => {
+            props.onChange(value as FormData);
+        });
+        return () => subscription.unsubscribe();
+    }, [watch]);
 
     return (
         <Grid container spacing={2} alignItems={"end"}>

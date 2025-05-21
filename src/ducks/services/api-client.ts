@@ -1,4 +1,4 @@
-import AuthService from "auths/AuthService";
+import { getToken } from "./token";
 
 interface apiRequestProps {
     method: "GET" | "POST" | "PUT" | "DELETE",
@@ -10,7 +10,7 @@ interface apiRequestProps {
 }
 
 export const apiRequest = async ({ method = "GET", url, data, headers = {}, controller = new AbortController() }: apiRequestProps) => {
-    const token = AuthService.getToken();
+    const token = getToken();
 
     const parseErrorResponse = async (resp: Response) => {
         const msg = "StatusCode=" + resp.status + " " + resp.statusText;
