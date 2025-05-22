@@ -4,7 +4,7 @@ import { CertificateAuthority, CertificateStatus, RevocationReason, getRevocatio
 import { CertificateDecoder } from "components/Certificates/CertificateDecoder";
 import { CertificateOverview } from "./CertificateOverview";
 import { CertificateView } from "./CertificateView";
-import { FetchHandle, FetchViewer } from "components/FetchViewer";
+import { FetchViewer } from "components/FetchViewer";
 import { IssuedCertificates } from "./IssuedCertificates";
 import { Modal } from "../../components/Modal";
 import { Select } from "components/Select";
@@ -46,8 +46,6 @@ export const CAInspector: React.FC = () => {
 
     const caName = params.caName || "";
 
-    const caRef = React.useRef<FetchHandle>(null);
-
     const { engines, shoulUpdateCAs } = useOutletContext<CAOutletContext>();
 
     useEffect(() => {
@@ -72,9 +70,7 @@ export const CAInspector: React.FC = () => {
     };
 
     const refreshAction = () => {
-        if (caRef.current) {
-            caRef.current.refresh();
-        }
+        fetchCA(caName);
     };
 
     const handlePermanentlyDelete = async () => {
@@ -195,7 +191,7 @@ export const CAInspector: React.FC = () => {
                     <Grid xs="auto" container>
                         <Grid xs="auto">
                             <Tooltip title="Reload CA data">
-                                <IconButton style={{ background: lighten(theme.palette.primary.main, 0.7) }} onClick={() => { refreshAction(); }}>
+                                <IconButton style={{ background: lighten(theme.palette.primary.main, 0.7) }} onClick={ refreshAction }>
                                     <RefreshIcon style={{ color: theme.palette.primary.main }} />
                                 </IconButton>
                             </Tooltip >
