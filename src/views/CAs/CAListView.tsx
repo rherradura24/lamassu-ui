@@ -4,7 +4,6 @@ import { AiOutlineSafetyCertificate } from "react-icons/ai";
 import { Box, Breadcrumbs, Divider, IconButton, Paper, Slide, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { CertificateAuthority, CertificateStatus, CryptoEngine } from "ducks/features/cas/models";
 import { CryptoEngineViewer, EnginesIcons } from "components/CryptoEngines/CryptoEngineViewer";
-import { FetchHandle } from "components/FetchViewer";
 import { MapInteractionCSS } from "react-map-interaction";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { QuerySearchbarInput } from "components/QuerySearchbarInput";
@@ -55,7 +54,6 @@ export const CAListView: React.FC = () => {
     const [isMainModalOpen, setIsMainModalOpen] = useState(true);
 
     const containerRef = React.useRef(null);
-    const caListRef = React.useRef<FetchHandle>(null);
 
     const [rootChain, setRootChain] = useState<CertificateAuthority[]>([]);
 
@@ -144,6 +142,10 @@ export const CAListView: React.FC = () => {
         chain.push(ca);
 
         setRootChain(chain);
+    };
+
+    const handleRefresh = () => {
+        loadCas();
     };
 
     if (error) {
@@ -347,9 +349,7 @@ export const CAListView: React.FC = () => {
                                     <Grid xs={"auto"}>
                                         <Box style={{ borderRadius: 8, background: theme.palette.divider, width: 40, height: 40 }}>
                                             <Tooltip title="Reload CA List">
-                                                <IconButton style={{ background: lighten(theme.palette.primary.main, 0.7) }} onClick={() => {
-                                                    caListRef.current?.refresh();
-                                                }}>
+                                                <IconButton style={{ background: lighten(theme.palette.primary.main, 0.7) }} onClick={handleRefresh}>
                                                     <RefreshIcon style={{ color: theme.palette.primary.main }} />
                                                 </IconButton>
                                             </Tooltip>
