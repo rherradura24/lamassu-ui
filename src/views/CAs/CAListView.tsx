@@ -143,8 +143,6 @@ export const CAListView: React.FC = () => {
 
         chain.push(ca);
 
-        console.log("parent chain", chain);
-        console.log("root chain", rootChain);
         setRootChain(chain);
     };
 
@@ -277,7 +275,6 @@ export const CAListView: React.FC = () => {
                                         setIsMainModalOpen(true);
                                         navigate(caItem.id);
                                         setRootChain([...rootChain, caItem]);
-                                        console.log("rootChain", rootChain);
                                     }}
                                     ca={caItem}
                                     engine={engines.find(engine => caItem.certificate.engine_id === engine.id)!}

@@ -15,8 +15,7 @@ type Props = {
 export const DMSSelector: React.FC<Props> = (props: Props) => {
     return (
         <GenericSelector
-            fetcher={async (query, controller) => {
-                alert("hola");
+            fetcher={async (_query, _controller) => {
                 const resp = await apicalls.dmss.getDMSs();
 
                 let list: DMS[] = resp.list;

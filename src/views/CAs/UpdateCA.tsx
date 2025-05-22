@@ -69,7 +69,6 @@ export const UpdateCA: React.FC = () => {
 
     useEffect(() => {
         if (caData?.validity) {
-            console.log("caData", caData);
             reset({
                 issuerExpiration: {
                     type: caData.validity.type === "Duration" ? "duration" : "date",
