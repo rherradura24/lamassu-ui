@@ -17,6 +17,7 @@ import { ShowCertificateModal } from "./Modals/ShowCertificate";
 import { RevokeCertificateModal } from "./Modals/RevokeCertificate";
 import { GrValidate } from "react-icons/gr";
 import { OCSPCertificateVerificationModal } from "./Modals/OCSPCertificate";
+import useCachedCA from "components/cache/cachedCA";
 
 interface Props {
     withActions?: boolean
@@ -37,6 +38,8 @@ const Table = React.forwardRef((props: Props, ref: Ref<FetchHandle>) => {
     const [showDialog, setShowDialog] = useState<Certificate | undefined>(undefined);
     const [ocspDialog, setOcspDialog] = useState<Certificate | undefined>(undefined);
     const [revokeDialog, setRevokeDialog] = useState<Certificate | undefined>(undefined);
+
+    const { getCAData } = useCachedCA();
 
     useImperativeHandle(ref, () => ({
         refresh () {
@@ -270,7 +273,7 @@ const Table = React.forwardRef((props: Props, ref: Ref<FetchHandle>) => {
 
                     const uniqueCAIDs = Array.from(new Set(certsList.list.map((cert) => cert.issuer_metadata.id)));
                     const casPromises: Promise<CertificateAuthority>[] = uniqueCAIDs.map((caID) => {
-                        return apicalls.cas.getCA(caID);
+                        return getCAData(caID);
                     });
 
                     let cas: CertificateAuthority[] = [];

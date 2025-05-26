@@ -62,6 +62,8 @@ const Fetcher = <T extends GridValidRowModel>(props: ComponentProps<T>, ref: Ref
     useEffect(() => {
         if (props.filter !== undefined && shouldUpdateFilters()) {
             setFilterModel({ ...filterModel, items: props.filter ? [props.filter] : [] });
+        } else if (props.filter === undefined && filterModel.items.length > 0) {
+            setFilterModel({ ...filterModel, items: [] });
         }
     }, [props.filter]);
 

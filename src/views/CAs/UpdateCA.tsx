@@ -113,7 +113,7 @@ export const UpdateCA: React.FC = () => {
         return <ErrorBox error={fetchError} errorPrefix="Could not fetch CA" />;
     }
 
-    if (!caData?.id || !caData) return <div>Loading...</div>;
+    if (!caData?.id || !caData) return <div></div>;
 
     return (
         <FormattedView

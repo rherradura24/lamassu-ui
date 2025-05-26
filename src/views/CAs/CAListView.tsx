@@ -57,7 +57,7 @@ export const CAListView: React.FC = () => {
 
     const [rootChain, setRootChain] = useState<CertificateAuthority[]>([]);
 
-    const [query, setQuery] = React.useState<{ value: string, field: string, operator: string }>({ value: "", field: "", operator: "" });
+    const [query, setQuery] = React.useState<{ value: string, field: string, operator: string }>({ value: "", field: queryableFields[0].key, operator: queryableFields[0].operator });
     const filters: string[] = [];
     if (query.field !== "" && query.value !== "") {
         filters.push(`${query.field}[${query.operator}]${query.value}`);
@@ -67,6 +67,7 @@ export const CAListView: React.FC = () => {
     const [engines, setEngines] = useState([] as CryptoEngine[]);
     const { setLoading } = useLoading();
     const [error, setError] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -97,13 +98,24 @@ export const CAListView: React.FC = () => {
         setViewMode("list");
     }, [isMediumScreen]);
 
+    useEffect(() => {
+        if (query.field !== "" && query.value !== "") {
+            setRootChain([]);
+            setIsSearching(true);
+            loadCas();
+        } else if (query.field !== "" && query.value === "") {
+            setIsSearching(false);
+            loadCas();
+        }
+    }, [query]);
+
     const loadCas = () => {
         setLoading(true);
         getCAs({ filters })
             .then((result) => {
                 setCas(result);
                 const current = result.list.filter(ca => ca.id === selectedCa)[0];
-                if (current) {
+                if (current && !isSearching) {
                     getFullChain(current, result);
                 }
             })
@@ -146,6 +158,10 @@ export const CAListView: React.FC = () => {
 
     const handleRefresh = () => {
         loadCas();
+    };
+
+    const handleChange = (value: string, field:string) => {
+        setQuery({ value, field, operator: queryableFields.find((f) => f.key === field)!.operator || "contains" });
     };
 
     if (error) {
@@ -277,6 +293,7 @@ export const CAListView: React.FC = () => {
                                         setIsMainModalOpen(true);
                                         navigate(caItem.id);
                                         setRootChain([...rootChain, caItem]);
+                                        setIsSearching(false);
                                     }}
                                     ca={caItem}
                                     engine={engines.find(engine => caItem.certificate.engine_id === engine.id)!}
@@ -367,10 +384,10 @@ export const CAListView: React.FC = () => {
                                 </Grid>
                             </Grid>
                             <Grid xs={12}>
-                                <QuerySearchbarInput sx={{ width: "100%" }} onChange={({ query, field }) => {
-                                    setQuery({ value: query, field, operator: queryableFields.find((f) => f.key === field)!.operator || "contains" });
-                                }}
-                                fieldSelector={queryableFields}
+                                <QuerySearchbarInput
+                                    sx={{ width: "100%" }}
+                                    onChange={({ query, field }) => { handleChange(query, field); }}
+                                    fieldSelector={queryableFields}
                                 />
                             </Grid>
                             {/*

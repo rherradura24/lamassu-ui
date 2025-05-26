@@ -159,6 +159,10 @@ const DMSCardRenderer: React.FC<DMSCardRendererProps> = ({ dms, onDelete, engine
         }
     };
 
+    const handleOnChangeEnroll = (ev: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        setEnrollDMSCmds({ ...enrollDMSCmds, deviceID: ev.target.value });
+    };
+
     const enrollDMSCmdsSteps = [
         {
             title: "Define Device to Enroll",
@@ -167,7 +171,8 @@ const DMSCardRenderer: React.FC<DMSCardRendererProps> = ({ dms, onDelete, engine
                 <TextField
                     fullWidth
                     label="Device ID"
-                    onChange={(ev) => setEnrollDMSCmds({ ...enrollDMSCmds, deviceID: ev.target.value })}
+                    onChange={(ev) => handleOnChangeEnroll(ev)}
+                    value={enrollDMSCmds.deviceID}
                 />
             )
         },

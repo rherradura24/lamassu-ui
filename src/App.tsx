@@ -23,6 +23,7 @@ import lamassuFullWhite from "assets/lamassu/lamassu_full_white.svg";
 import { useAuth } from "auths/AuthProvider";
 import { Landing } from "components/Landing/Landing";
 import AuthCallback from "views/AuthCallback/AuthCallback";
+import { isAuthEnabled } from "auths/oidcConfig";
 
 type SidebarSection = {
     sectionTitle: string, sectionItems: Array<SidebarItem>
@@ -150,12 +151,16 @@ export default function Dashboard () {
                     icon: <InfoOutlinedIcon />,
                     content: <InfoView />
                 },
-                {
-                    kind: "button",
-                    title: "Log out",
-                    onClick: () => signoutRedirect(),
-                    icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
-                }
+                ...(isAuthEnabled
+                    ? [
+                        {
+                            kind: "button",
+                            title: "Log out",
+                            onClick: () => signoutRedirect(),
+                            icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
+                        } as SidebarItemButton
+                    ]
+                    : [])
             ]
         }
     ];

@@ -93,7 +93,7 @@ export const CAInspector: React.FC = () => {
     }
 
     if (caData === undefined || caData.id === undefined) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     let tabs = [
