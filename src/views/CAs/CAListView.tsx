@@ -23,8 +23,9 @@ import lamassuFullBlue from "assets/lamassu/lamassu_full_blue.svg";
 import lamassuFullWhite from "assets/lamassu/lamassu_full_white.svg";
 import { ListResponse } from "ducks/services/api-client";
 import { useLoading } from "components/Spinner/LoadingContext";
-import { getCAs, getEngines } from "ducks/features/cas/apicalls";
+import { getCAs } from "ducks/features/cas/apicalls";
 import { ErrorBox } from "components/ErrorBox/ErrorBox";
+import useCachedEngines from "components/cache/cachedEngines";
 
 export type CAOutletContext = {
     preselectedCAParent: CertificateAuthority | undefined;
@@ -68,10 +69,11 @@ export const CAListView: React.FC = () => {
     const { setLoading } = useLoading();
     const [error, setError] = useState("");
     const [isSearching, setIsSearching] = useState(false);
+    const { getEnginesData } = useCachedEngines();
 
     useEffect(() => {
         setLoading(true);
-        getEngines()
+        getEnginesData()
             .then((result) => {
                 setEngines(result);
             })
@@ -170,7 +172,7 @@ export const CAListView: React.FC = () => {
 
     const renderCAHierarchy = (caList: CertificateAuthority[], parentChain: CertificateAuthority[], ca: CertificateAuthority) => {
         return (
-            <TreeNode label={
+            <TreeNode key={ca.id} label={
                 <div style={{ marginTop: "8px", display: "flex", justifyContent: "center" }}>
                     <CertificateCard
                         onClick={() => {

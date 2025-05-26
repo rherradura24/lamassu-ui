@@ -1,18 +1,19 @@
 import apicalls from "ducks/apicalls";
-import caCache from "./cache";
 import { CertificateAuthority } from "ducks/features/cas/models";
+
+const caCache = new Map<string, CertificateAuthority>();
 
 const useCachedCA = () => {
     const getCAData = async (caID: string): Promise<CertificateAuthority> => {
         const cached = caCache.get(caID);
         if (cached) {
-            console.log("Getting CA from cache: ", caID);
+            console.debug("Getting CA from cache: ", caID);
             return cached;
         }
 
         const data = await apicalls.cas.getCA(caID);
         caCache.set(caID, data);
-        console.log("Fetching CA: ", caID);
+        console.debug("Fetching CA: ", caID);
         return data;
     };
 

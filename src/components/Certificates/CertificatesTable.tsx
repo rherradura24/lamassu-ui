@@ -17,7 +17,7 @@ import { ShowCertificateModal } from "./Modals/ShowCertificate";
 import { RevokeCertificateModal } from "./Modals/RevokeCertificate";
 import { GrValidate } from "react-icons/gr";
 import { OCSPCertificateVerificationModal } from "./Modals/OCSPCertificate";
-import useCachedCA from "components/cache/cachedCA";
+import useCachedCA from "components/cache/cachedCAs";
 
 interface Props {
     withActions?: boolean

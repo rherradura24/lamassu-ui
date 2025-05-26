@@ -2,7 +2,7 @@ import { CertificateAuthority } from "ducks/features/cas/models";
 import { FetchHandle, FetchViewer } from "components/FetchViewer";
 import { Typography } from "@mui/material";
 import React, { ReactElement, Ref, useEffect } from "react";
-import useCachedCA from "components/cache/cachedCA";
+import useCachedCA from "components/cache/cachedCAs";
 
 type Props = {
     id: string

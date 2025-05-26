@@ -13,6 +13,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import React from "react";
 import apicalls from "ducks/apicalls";
+import useCachedEngines from "components/cache/cachedEngines";
 
 Chart.register(...registerables);
 
@@ -23,6 +24,7 @@ type HomeProps = {
 export const Home: React.FC<HomeProps> = ({ isMenuCollapsed = false }) => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const { getEnginesData } = useCachedEngines();
 
     return (
         <FetchViewer
@@ -30,7 +32,7 @@ export const Home: React.FC<HomeProps> = ({ isMenuCollapsed = false }) => {
                 apicalls.cas.getStats(),
                 apicalls.dmss.getStats(),
                 apicalls.devices.getStats(),
-                apicalls.cas.getEngines()
+                getEnginesData()
             ])}
             errorPrefix={"Could not fetch CA stats"}
             renderer={(item: [CAStats, DMSStats, DeviceStats, CryptoEngine[]]) => {
