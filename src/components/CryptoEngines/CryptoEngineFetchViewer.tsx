@@ -3,7 +3,7 @@ import { CryptoEngine } from "ducks/features/cas/models";
 import { CryptoEngineViewer, CryptoEngineViewerProps } from "./CryptoEngineViewer";
 import { FetchViewer } from "components/FetchViewer";
 import React from "react";
-import apicalls from "ducks/apicalls";
+import useCachedEngines from "components/cache/cachedEngines";
 
 interface Props extends Omit<CryptoEngineViewerProps, "engine"> {
     engineID?: string,
@@ -11,8 +11,9 @@ interface Props extends Omit<CryptoEngineViewerProps, "engine"> {
 }
 
 export const CryptoEngineFetchViewer: React.FC<Props> = ({ engineID, defaultEngine = false, ...rest }) => {
+    const { getEnginesData } = useCachedEngines();
     return (
-        <FetchViewer fetcher={() => apicalls.cas.getEngines()} renderer={(engines) => {
+        <FetchViewer fetcher={() => getEnginesData()} renderer={(engines) => {
             let engine: CryptoEngine | undefined;
             if (defaultEngine) {
                 engine = engines.find(engine => engine.default);

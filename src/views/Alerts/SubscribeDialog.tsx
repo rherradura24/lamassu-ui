@@ -159,22 +159,37 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
         }
     }, [jsonFilter, selectedConditionType]);
 
-    return (
-        <StepModal open={isOpen} onClose={() => { clean(); onClose(); }} size={"md"} title={"Subscribe to event"} onFinish={async () => {
-            let conditions: SubscriptionCondition[] = [];
-            if (selectedConditionType !== "None") {
-                conditions = [{ condition: jsonFilter, type: selectedConditionType }];
-            }
-            try {
-                await apicalls.alerts.subscribe("_lms_system", event.type, conditions, subscription);
-                enqueueSnackbar("Subscription created", { variant: "success" });
-                clean();
-                rest.onSubscribe();
-                onClose();
-            } catch (e) {
-                enqueueSnackbar("Error creating subscription", { variant: "error" });
-            }
-        }} steps={[{
+    const handleFinish = async () => {
+        let conditions: SubscriptionCondition[] = [];
+        if (selectedConditionType !== "None") {
+            conditions = [{ condition: jsonFilter, type: selectedConditionType }];
+        }
+        try {
+            await apicalls.alerts.subscribe("_lms_system", event.type, conditions, subscription);
+            enqueueSnackbar("Subscription created", { variant: "success" });
+            clean();
+            rest.onSubscribe();
+            onClose();
+        } catch (e) {
+            enqueueSnackbar("Error creating subscription", { variant: "error" });
+        }
+    };
+
+    const test = (select: React.ChangeEvent<{ value: unknown }>) => {
+        console.log("selected", select.target.value);
+        setSelectedConditionType(select.target.value as SubscriptionConditionType | "None");
+    };
+
+    const getSafeJson = () => {
+        if (jsonFilter === "") {
+            return "{}";
+        }
+
+        return JSON.stringify(JSON.parse(jsonFilter), null, 4);
+    };
+
+    const alertsSubscribeDialogSteps = [
+        {
             title: "Channels",
             subtitle: "",
             content: (
@@ -186,7 +201,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                             value={subscription.type}
                             // @ts-ignore
                             onChange={(ev) => {
-                                // @ts-ignore
+                            // @ts-ignore
                                 resetSubType(ev.target.value);
                             }}
                             options={[
@@ -235,7 +250,16 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                     {
                         subscription.type === SubChannelType.Email && (
                             <Grid xs={12}>
-                                <TextField label="Email Address" fullWidth value={email} onChange={(ev) => setSubscription({ ...subscription, config: { email: ev.target.value.trim() } })} />
+                                <TextField
+                                    label="Email Address"
+                                    fullWidth
+                                    value={email}
+                                    onChange={(ev) => {
+                                        const currentEmail = ev.target.value.trim();
+                                        setEmail(currentEmail);
+                                        setSubscription({ ...subscription, config: { email: currentEmail } });
+                                    }}
+                                />
                             </Grid>
                         )
                     }
@@ -291,7 +315,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                             label="Filter or Condition Format"
                             value={selectedConditionType}
                             // @ts-ignore
-                            onChange={(select) => setSelectedConditionType(select.target.value)}
+                            onChange={(select) => { test(select); }}
                             options={[
                                 { value: "None", render: () => <i>None</i> },
                                 { value: SubscriptionConditionType.JsonSchema, render: "JSON Schema" },
@@ -428,7 +452,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                                                         theme="vs-dark"
                                                         defaultLanguage="json"
                                                         height="50vh"
-                                                        value={JSON.stringify(JSON.parse(jsonFilter), null, 4)}
+                                                        value={getSafeJson()}
                                                         defaultValue="{}"
                                                     />
                                                 </Grid>
@@ -462,6 +486,15 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                 </Grid>
             )
         }
-        ]} />
+    ];
+
+    return (
+        <StepModal
+            open={isOpen}
+            onClose={() => { clean(); onClose(); }}
+            size={"md"}
+            title={"Subscribe to event"}
+            onFinish={handleFinish}
+            steps={alertsSubscribeDialogSteps} />
     );
 };

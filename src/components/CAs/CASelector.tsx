@@ -5,6 +5,7 @@ import CAViewer from "./CAViewer";
 import React from "react";
 import apicalls from "ducks/apicalls";
 import { QueryParameters } from "ducks/services/api-client";
+import useCachedEngines from "components/cache/cachedEngines";
 
 type Props = {
     limitSelection?: string[] // IDs
@@ -15,12 +16,14 @@ type Props = {
 }
 
 export const CASelector: React.FC<Props> = (props: Props) => {
+    const { getEnginesData } = useCachedEngines();
+
     return (
         <FetchViewer
-            fetcher={async () => { return apicalls.cas.getEngines(); }}
+            fetcher={async () => { return getEnginesData(); }}
             renderer={(engines) => {
                 return <GenericSelector
-                    fetcher={async (query, controller) => {
+                    fetcher={async (query, _controller) => {
                         let params: QueryParameters | undefined;
                         if (query !== "") {
                             params = {

@@ -135,24 +135,27 @@ const CertificateDecoder: React.FC<CertificateDecoderProps> = ({ crtPem }) => {
                             )
                         }
                         <Grid xs={12} sm={6}>
-                            <KeyValueLabel label="Valid From" value={
-                                <Grid container spacing={1} alignItems={"center"}>
-                                    <Grid xs={12} lg={6}>
-                                        <Label>{crtProps!.notBefore.format("DD/MM/YYYY HH:mm")}</Label>
+                            <KeyValueLabel
+                                label="Valid From"
+                                value={
+                                    <Grid container spacing={1} alignItems={"center"}>
+                                        <Grid xs={12} lg={12}>
+                                            <Label width="calc(100% - 20px)">{crtProps!.notBefore.format("DD/MM/YYYY HH:mm")}</Label>
+                                        </Grid>
+                                        <Grid xs={12} lg={12} sx={{ textAlign: "right", paddingRight: "10px" }}>
+                                            <Typography sx={{ fontSize: "12px" }}>{moment.duration(crtProps!.notBefore.diff(moment())).humanize(true)}</Typography>
+                                        </Grid>
                                     </Grid>
-                                    <Grid xs={12} lg={6}>
-                                        <Typography sx={{ fontSize: "12px" }}>{moment.duration(crtProps!.notBefore.diff(moment())).humanize(true)}</Typography>
-                                    </Grid>
-                                </Grid>
-                            } />
+                                }
+                            />
                         </Grid>
                         <Grid xs={12} sm={6}>
                             <KeyValueLabel label="Valid To" value={
                                 <Grid container spacing={1} alignItems={"center"}>
-                                    <Grid xs={12} lg={6}>
-                                        <Label>{crtProps!.notAfter.format("DD/MM/YYYY HH:mm")}</Label>
+                                    <Grid xs={12} lg={12}>
+                                        <Label width="calc(100% - 20px)">{crtProps!.notAfter.format("DD/MM/YYYY HH:mm")}</Label>
                                     </Grid>
-                                    <Grid xs={12} lg={6}>
+                                    <Grid xs={12} lg={12} sx={{ textAlign: "right", paddingRight: "10px" }}>
                                         <Typography sx={{ fontSize: "12px" }}>{moment.duration(crtProps!.notAfter.diff(moment())).humanize(true)}</Typography>
                                     </Grid>
                                 </Grid>

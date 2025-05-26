@@ -1,7 +1,6 @@
 import { FormattedView } from "components/FormattedView";
 import { useLoading } from "components/Spinner/LoadingContext";
 import { TabsList } from "components/TabsList";
-import { getEngines } from "ducks/features/cas/apicalls";
 import { CryptoEngine } from "ducks/features/cas/models";
 import React, { useState, useEffect } from "react";
 import { CAImporter } from "./CAImporter";
@@ -9,11 +8,13 @@ import { CAReadonlyImporter } from "./CAImporterReadonly";
 import { CreateCA } from "./CreateCA";
 import { useOutletContext } from "react-router-dom";
 import { CAOutletContext } from "./CAListView";
+import useCachedEngines from "components/cache/cachedEngines";
 
 const CACreate:React.FC = () => {
     const [defaultEngine, setDefaultEngine] = useState({} as CryptoEngine);
     const { setLoading } = useLoading();
     const { engines } = useOutletContext<CAOutletContext>();
+    const { getEnginesData } = useCachedEngines();
 
     useEffect(() => {
         loadEngines();
@@ -30,7 +31,7 @@ const CACreate:React.FC = () => {
 
     const fetchEngines = () => {
         setLoading(true);
-        getEngines()
+        getEnginesData()
             .then((result) => {
                 setDefaultEngine(result.find(engine => engine.default)!);
             })

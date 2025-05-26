@@ -34,6 +34,7 @@ import { enqueueSnackbar } from "notistack";
 import { Select } from "components/Select";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import { MetadataInput } from "components/forms/MetadataInput";
+import useCachedEngines from "components/cache/cachedEngines";
 
 export const DMSListView = () => {
     const theme = useTheme();
@@ -41,10 +42,11 @@ export const DMSListView = () => {
 
     const tableRef = React.useRef<FetchHandle>(null);
     const [engines, setEngines] = useState([] as CryptoEngine[]);
+    const { getEnginesData } = useCachedEngines();
 
     useEffect(() => {
         const loadEngines = async () => {
-            const fetched = await apicalls.cas.getEngines();
+            const fetched = await getEnginesData();
             setEngines(fetched);
         };
 
@@ -77,7 +79,7 @@ export const DMSListView = () => {
                 </Grid>
                 <Grid xs>
                     <FetchViewer
-                        fetcher={(controller) => { return apicalls.dmss.getDMSs({ pageSize: 15, bookmark: "" }); }}
+                        fetcher={(_controller) => { return apicalls.dmss.getDMSs({ pageSize: 15, bookmark: "" }); }}
                         renderer={(list: ListResponse<DMS>) => {
                             return (
                                 <Grid container spacing={2}>
@@ -159,6 +161,10 @@ const DMSCardRenderer: React.FC<DMSCardRendererProps> = ({ dms, onDelete, engine
         }
     };
 
+    const handleOnChangeEnroll = (ev: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        setEnrollDMSCmds({ ...enrollDMSCmds, deviceID: ev.target.value });
+    };
+
     const enrollDMSCmdsSteps = [
         {
             title: "Define Device to Enroll",
@@ -167,7 +173,8 @@ const DMSCardRenderer: React.FC<DMSCardRendererProps> = ({ dms, onDelete, engine
                 <TextField
                     fullWidth
                     label="Device ID"
-                    onChange={(ev) => setEnrollDMSCmds({ ...enrollDMSCmds, deviceID: ev.target.value })}
+                    onChange={(ev) => handleOnChangeEnroll(ev)}
+                    value={enrollDMSCmds.deviceID}
                 />
             )
         },
