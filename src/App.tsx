@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, ListItem, Paper, Typography, useTheme, useMediaQuery, IconButton, Drawer, Button, Alert, AlertTitle } from "@mui/material";
+import { Box, ListItem, Paper, Typography, useTheme, useMediaQuery, IconButton, Drawer } from "@mui/material";
 import { CAView } from "views/CAs";
 import { CertificatesView } from "views/Certificates";
 import { DMSView } from "views/DMS";
@@ -8,8 +8,6 @@ import { Home } from "views/Home";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { TbCertificate } from "react-icons/tb";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
-import { useAuth } from "react-oidc-context";
-import { useState } from "react";
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import FactoryOutlinedIcon from "@mui/icons-material/FactoryOutlined";
@@ -21,6 +19,11 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { InfoView } from "views/Info/info";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AlertsViewList } from "views/Alerts/AlertsList";
+import lamassuFullWhite from "assets/lamassu/lamassu_full_white.svg";
+import { useAuth } from "auths/AuthProvider";
+import { Landing } from "components/Landing/Landing";
+import AuthCallback from "views/AuthCallback/AuthCallback";
+import { isAuthEnabled } from "auths/oidcConfig";
 
 type SidebarSection = {
     sectionTitle: string, sectionItems: Array<SidebarItem>
@@ -48,11 +51,11 @@ function sidebarBasePathPattern (basePath: string) {
 }
 
 export default function Dashboard () {
-    const auth = useAuth();
     const theme = useTheme();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+    const { isAuthenticated, signinRedirect, signoutRedirect, isLoading, isLoginout } = useAuth();
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = React.useState(false);
     const handleCollapseClick = () => {
         setCollapsed(!collapsed);
     };
@@ -78,7 +81,7 @@ export default function Dashboard () {
                     goTo: "/",
                     basePath: "/",
                     icon: <DashboardOutlinedIcon />,
-                    content: <Home />
+                    content: <Home isMenuCollapsed={collapsed} />
                 }
             ]
         },
@@ -148,12 +151,16 @@ export default function Dashboard () {
                     icon: <InfoOutlinedIcon />,
                     content: <InfoView />
                 },
-                {
-                    kind: "button",
-                    title: "Log out",
-                    onClick: () => auth.signoutRedirect(),
-                    icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
-                }
+                ...(isAuthEnabled
+                    ? [
+                        {
+                            kind: "button",
+                            title: "Log out",
+                            onClick: () => signoutRedirect(),
+                            icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
+                        } as SidebarItemButton
+                    ]
+                    : [])
             ]
         }
     ];
@@ -165,48 +172,23 @@ export default function Dashboard () {
         return item.kind === "navigation";
     });
 
-    const interval = React.useRef<number>();
+    const [redirecting, setRedirecting] = React.useState(false);
 
     React.useEffect(() => {
-        if (window._env_.AUTH.ENABLED) {
-            if (!auth.isLoading && !auth.isAuthenticated) {
-                if (auth.error === undefined) {
-                    auth.signinRedirect();
-                } else {
-                    interval.current = window.setTimeout(() => {
-                        auth.signinRedirect();
-                    }, 3000);
-                }
-            }
+        if (!isLoading && !isAuthenticated && location.pathname !== "/callback" && !isLoginout) {
+            setRedirecting(true);
+            signinRedirect();
         }
+    }, [isLoading, isAuthenticated, location.pathname, isLoginout]);
 
-        return () => { };
-    }, [auth.isAuthenticated, auth.isLoading]);
-
-    if (window._env_.AUTH.ENABLED) {
-        if (auth.error) {
-            return <Landing>
-                <Alert severity="error">
-                    <AlertTitle sx={{ fontWeight: "bold" }}>Error</AlertTitle>
-                Oops... {auth.error.message}
-                </Alert>
-            </Landing>;
-        }
-
-        if (!auth.isAuthenticated) {
-            return <Landing>
-                <Alert severity="info">
-                    <AlertTitle sx={{ fontWeight: "bold" }}>Info</AlertTitle>
-                Not authenticated
-                </Alert>
-            </Landing>;
-        }
-    }
+    if (isLoading || redirecting) {
+        return <Landing />;
+    };
 
     return (
         <Box component={Paper} sx={{ height: "100%" }}>
             <Grid container sx={{ height: "100%" }} direction={"column"} spacing={0}>
-                <Grid container sx={{ background: theme.palette.primary.main, height: "40px", paddingX: "10px", width: "100%", margin: 0 }} alignItems={"center"} >
+                <Grid container sx={{ background: theme.palette.primary.main, height: "50px", paddingX: "10px", width: "100%", margin: 0 }} alignItems={"center"} >
                     {
                         !isMdUp && (
                             <Grid xs="auto">
@@ -217,7 +199,7 @@ export default function Dashboard () {
                         )
                     }
                     <Grid xs>
-                        <img src={process.env.PUBLIC_URL + "/assets/lamassu/lamassu_full_white.svg"} height={24} style={{ marginLeft: "10px" }} />
+                        <img src={lamassuFullWhite} height={30} style={{ marginLeft: "10px" }} />
                     </Grid>
                 </Grid>
                 <Grid flexGrow={1} container sx={{ height: "calc(100% - 50px)" }}>
@@ -255,6 +237,7 @@ export default function Dashboard () {
                                     );
                                 })
                             }
+                            <Route path="/callback" element={<AuthCallback />} />
                             <Route path="*" element={<Typography>404</Typography>} />
                         </Routes>
                     </Grid>
@@ -263,49 +246,6 @@ export default function Dashboard () {
         </Box >
     );
 }
-
-interface LandingProps {
-    children: React.ReactElement
-}
-
-const Landing = React.memo<LandingProps>((props) => {
-    const auth = useAuth();
-    return (
-        <Grid sx={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: `url("${process.env.PUBLIC_URL + "/assets/lamassu/lamassu-background.png"}")`,
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat"
-        }}
-        container
-        alignItems={"center"}
-        justifyContent={"center"}
-        padding={"50px"}
-        flexDirection={"column"}
-        >
-            <Grid sx={{ marginBottom: "75px" }}>
-                <img src={process.env.PUBLIC_URL + "/assets/lamassu/title.png"} style={{ margin: "0px auto" }} />
-            </Grid>
-            <Grid>
-                <Box component={Paper} sx={{ padding: "20px 40px 30px 40px", maxWidth: "500px" }}>
-                    <Grid container spacing={2}>
-                        <Grid xs={12}>
-                            {props.children}
-                        </Grid>
-                        <Grid xs={12}>
-                            <Button fullWidth variant="contained" onClick={() => {
-                                auth.signinRedirect();
-                            }}>Authenticate</Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Grid>
-        </Grid>
-    );
-});
-Landing.displayName = "Landing";
 
 interface MenuBarProps {
     items: Array<SidebarSection>
@@ -381,6 +321,7 @@ const MenuBar = React.memo<MenuBarProps>((props) => {
 });
 
 MenuBar.displayName = "MenuBar";
+
 interface MainWrapperProps {
     component: React.ReactNode
 }

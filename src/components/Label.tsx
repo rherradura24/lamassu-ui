@@ -13,11 +13,12 @@ export type BasicColor = "primary"
 
 interface LabelProps {
   className?: string;
-  color?: BasicColor | [string, string] | string
+  color?: BasicColor | [string, string] | string;
   size?: "small" | "medium" | "large";
   transparency?: number;
-  children?: ReactNode
-  onClick?: () => void | undefined,
+  children?: ReactNode;
+  onClick?: () => void | undefined;
+  width?: string;
 }
 
 const LabelWrapper = styled("span")(
@@ -40,15 +41,18 @@ const Label: FC<LabelProps> = ({
     size = "medium",
     transparency = 1,
     onClick = undefined,
+    width = "auto",
     ...rest
 }) => {
     const theme = useTheme();
     const btnStyle: SxProps = { cursor: onClick !== undefined ? "pointer" : "" };
 
     if (Array.isArray(color)) {
-        return <LabelWrapper sx={{ background: alpha(color[1], transparency), color: color[0], ...btnStyle }} onClick={onClick} {...rest}>
-            {children}
-        </LabelWrapper>;
+        return (
+            <LabelWrapper sx={{ background: alpha(color[1], transparency), color: color[0], width, ...btnStyle }} onClick={onClick} {...rest}>
+                {children}
+            </LabelWrapper>
+        );
     }
 
     let fg: string = grey[600];
@@ -99,7 +103,7 @@ const Label: FC<LabelProps> = ({
     }
 
     return (
-        <LabelWrapper sx={{ ...btnStyle, color: fg + "!important", background: alpha(bg, transparency), padding, fontSize, maxHeight }} onClick={onClick} {...rest}>
+        <LabelWrapper sx={{ ...btnStyle, color: fg + "!important", background: alpha(bg, transparency), padding, fontSize, maxHeight, width }} onClick={onClick} {...rest}>
             {children}
         </LabelWrapper>
     );

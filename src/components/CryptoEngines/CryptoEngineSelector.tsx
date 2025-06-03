@@ -2,7 +2,7 @@ import { CryptoEngine } from "ducks/features/cas/models";
 import { CryptoEngineViewer } from "./CryptoEngineViewer";
 import { GenericSelector } from "components/GenericSelector";
 import React from "react";
-import apicalls from "ducks/apicalls";
+import useCachedEngines from "components/cache/cachedEngines";
 
 type Props = {
     onSelect: (engine: CryptoEngine | CryptoEngine[] | undefined) => void
@@ -10,18 +10,22 @@ type Props = {
 }
 
 const CryptoEngineSelector: React.FC<Props> = (props: Props) => {
-    return <GenericSelector
-        fetcher={() => apicalls.cas.getEngines()}
-        label="Crypto Engine"
-        multiple={false}
-        optionID={(engine) => engine.id}
-        optionLabel={(engine) => engine.name}
-        renderOption={(props, engine, selected) => (
-            <CryptoEngineViewer engine={engine} />
-        )}
-        onSelect={(engine) => { props.onSelect(engine); }}
-        value={props.value}
-    />;
+    const { getEnginesData } = useCachedEngines();
+
+    return (
+        <GenericSelector
+            fetcher={() => getEnginesData()}
+            label="Crypto Engine"
+            multiple={false}
+            optionID={(engine) => engine.id}
+            optionLabel={(engine) => engine.name}
+            renderOption={(_props, engine, _selected) => (
+                <CryptoEngineViewer engine={engine} />
+            )}
+            onSelect={(engine) => { props.onSelect(engine); }}
+            value={props.value}
+        />
+    );
 };
 
 export default CryptoEngineSelector;

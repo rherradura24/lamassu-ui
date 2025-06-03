@@ -20,6 +20,7 @@ export const CAMetadata: React.FC<Props> = ({ caData, onMetadataChange }) => {
             <Grid container flexDirection={"column"}>
                 <MetadataInput label="" value={caData.metadata} onChange={async (meta) => {
                     try {
+                        console.log("Updating CA metadata: ", meta);
                         await apicalls.cas.updateCAMetadata(caData.id, meta);
                         enqueueSnackbar("CA metadata updated", { variant: "success" });
                         onMetadataChange(meta);

@@ -1,29 +1,46 @@
 import { CACustomFetchViewer } from "./CACustomFetchViewer";
-import { FetchHandle, FetchViewer } from "components/FetchViewer";
+import { FetchHandle } from "components/FetchViewer";
 import CAViewer, { Props as CAProps } from "./CAViewer";
-import React, { ReactElement, Ref } from "react";
-import apicalls from "ducks/apicalls";
+import React, { ReactElement, Ref, useEffect } from "react";
+import { CryptoEngine } from "ducks/features/cas/models";
+import useCachedEngines from "components/cache/cachedEngines";
 
 interface Props extends Omit<CAProps, "caData" | "engine"> {
     id: string
+    engines?: CryptoEngine[]
 }
 
 const Viewer = (props: Props, ref: Ref<FetchHandle>) => {
-    return <CACustomFetchViewer
-        id={props.id}
-        renderer={(ca) => {
-            return <FetchViewer
-                fetcher={() => apicalls.cas.getEngines()}
-                renderer={(engines) => {
-                    const engine = engines.find(eng => eng.id === ca.certificate.engine_id);
-                    if (engine) {
-                        return <CAViewer {...props} caData={ca} engine={engine} />;
-                    }
-                    return <>could not fetch engine</>;
-                }}
-            />;
-        }}
-    />;
+    const [engines, setEngines] = React.useState<CryptoEngine[]>();
+    const [loading, setLoading] = React.useState(false);
+    const { getEnginesData } = useCachedEngines();
+
+    useEffect(() => {
+        if (!props.engines || props.engines.length === 0) {
+            setLoading(true);
+            getEnginesData()
+                .then(setEngines)
+                .finally(() => setLoading(false));
+        } else {
+            setEngines(props.engines);
+        }
+    }, [props.engines]);
+
+    if (!engines && loading) return <>Loading engines...</>;
+    if (!engines) return <>Could not load engines</>;
+
+    return (
+        <CACustomFetchViewer
+            id={props.id}
+            renderer={(ca) => {
+                const engine = engines.find(eng => eng.id === ca.certificate.engine_id);
+                if (engine) {
+                    return <CAViewer {...props} caData={ca} engine={engine} />;
+                }
+                return <>Could not match engine</>;
+            }}
+        />
+    );
 };
 
 export const CAFetchViewer = React.forwardRef(Viewer) as (props: Props & { ref?: Ref<FetchHandle> }) => ReactElement;

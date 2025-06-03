@@ -13,12 +13,18 @@ import Grid from "@mui/material/Unstable_Grid2";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import React from "react";
 import apicalls from "ducks/apicalls";
+import useCachedEngines from "components/cache/cachedEngines";
 
 Chart.register(...registerables);
 
-export const Home = () => {
+type HomeProps = {
+    isMenuCollapsed?: boolean;
+}
+
+export const Home: React.FC<HomeProps> = ({ isMenuCollapsed = false }) => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const { getEnginesData } = useCachedEngines();
 
     return (
         <FetchViewer
@@ -26,7 +32,7 @@ export const Home = () => {
                 apicalls.cas.getStats(),
                 apicalls.dmss.getStats(),
                 apicalls.devices.getStats(),
-                apicalls.cas.getEngines()
+                getEnginesData()
             ])}
             errorPrefix={"Could not fetch CA stats"}
             renderer={(item: [CAStats, DMSStats, DeviceStats, CryptoEngine[]]) => {
@@ -34,9 +40,22 @@ export const Home = () => {
                 const dmsStats = item[1];
                 const deviceStats = item[2];
                 const engines = item[3];
+
                 return (
-                    <Grid container spacing={2} padding={"20px"}>
-                        <Grid xs={12} md="auto">
+                    <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                            padding: {
+                                xs: "20px 60px",
+                                sm: "20px 60px",
+                                md: "20px",
+                                lg: isMenuCollapsed ? "20px 50px" : "20px",
+                                xl: isMenuCollapsed ? "20px 50px" : "20px"
+                            }
+                        }}
+                    >
+                        <Grid xs={12} md={3} lg={4}>
                             <Box sx={{ display: "flex" }}>
                                 <Box component={Paper} style={{
                                     borderRadius: 10,
@@ -63,17 +82,18 @@ export const Home = () => {
                                             <Typography style={{ color: theme.palette.primary.contrastText, fontSize: 15 }}>Issued Certificates</Typography>
                                         </Box>
                                     </Box>
-                                    <Box style={{ marginTop: 50, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                                        <Box component={Paper} style={{
-                                            background: theme.palette.primary.light,
-                                            padding: 15,
-                                            width: 250,
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            cursor: "pointer"
-                                        }}
-                                        onClick={(ev: any) => { ev.stopPropagation(); navigate("/cas"); }}
+                                    <Box style={{ marginTop: 50, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%" }}>
+                                        <Box component={Paper}
+                                            style={{
+                                                background: theme.palette.primary.light,
+                                                padding: 15,
+                                                width: "80%",
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                cursor: "pointer"
+                                            }}
+                                            onClick={(ev: any) => { ev.stopPropagation(); navigate("/cas"); }}
                                         >
                                             <Box>
                                                 <Typography style={{ color: theme.palette.primary.contrastText, fontSize: 25 }}>{caStats.cas.total}</Typography>
@@ -85,7 +105,7 @@ export const Home = () => {
                                                 </Box>
                                             </Box>
                                         </Box>
-                                        <Box component={Paper} style={{ marginTop: 10, background: theme.palette.primary.light, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                        <Box component={Paper} style={{ marginTop: 10, background: theme.palette.primary.light, padding: 15, width: "80%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
                                             onClick={(ev: any) => { ev.stopPropagation(); navigate("/dms"); }}
                                         >
                                             <Box>
@@ -98,7 +118,7 @@ export const Home = () => {
                                                 </Box>
                                             </Box>
                                         </Box>
-                                        <Box component={Paper} style={{ marginTop: 10, background: theme.palette.primary.light, padding: 15, width: 250, display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                        <Box component={Paper} style={{ marginTop: 10, background: theme.palette.primary.light, padding: 15, width: "80%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
                                             onClick={(ev: any) => { ev.stopPropagation(); navigate("/devices"); }}>
                                             <Box>
                                                 <Typography style={{ color: theme.palette.primary.contrastText, fontSize: 25 }}>{numberToHumanReadableString(deviceStats.total, ".")}</Typography>
@@ -114,7 +134,7 @@ export const Home = () => {
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid xs={12} md={3}>
+                        <Grid xs={12} md={4} lg={4}>
                             <Box sx={{ display: "flex" }}>
                                 <Box component={Paper} style={{
                                     borderRadius: 10,
@@ -139,7 +159,7 @@ export const Home = () => {
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid xs={12} md={3}>
+                        <Grid xs={12} md={4} lg={4}>
                             <DeviceStatusChart deviceStats={deviceStats} />
                         </Grid>
                     </Grid>

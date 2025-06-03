@@ -216,7 +216,7 @@ export const SignVerifyView: React.FC<Props> = ({ caData }) => {
                             ]}/>
                         </Grid>
                         <Grid xs>
-                            <FormTextField label="Payload to Sign" control={control} name="sign.message" multiline rows={3} maxRows={5} />
+                            <FormTextField label="Payload to Sign" control={control} name="sign.message" multiline minRows={3} maxRows={5} />
                         </Grid>
                         <Grid xs>
                             <LoadingButton variant="contained" type="submit" loading={isSignLoading} disabled={warnSignInputPayload !== undefined}>Sign</LoadingButton>
@@ -289,11 +289,11 @@ export const SignVerifyView: React.FC<Props> = ({ caData }) => {
                             ]}/>
                         </Grid>
                         <Grid xs>
-                            <FormTextField label="Unsigned Payload" control={control} name="verify.message" multiline rows={3} maxRows={5} />
+                            <FormTextField label="Unsigned Payload" control={control} name="verify.message" multiline minRows={3} maxRows={5} />
                         </Grid>
 
                         <Grid xs>
-                            <FormTextField label="Signature" control={control} name="verify.signature" multiline rows={3} maxRows={5} />
+                            <FormTextField label="Signature" control={control} name="verify.signature" multiline minRows={3} maxRows={5} />
                         </Grid>
 
                         <Grid xs>

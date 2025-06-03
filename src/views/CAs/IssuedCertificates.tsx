@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import apicalls from "ducks/apicalls";
 import { errorToString } from "ducks/services/api-client";
+import useCachedEngines from "components/cache/cachedEngines";
 
 const queryableFields = [
     { key: "subject.common_name", title: "Common Name", operator: "contains" },
@@ -37,6 +38,8 @@ export const IssuedCertificates: React.FC<Props> = ({ caData }) => {
     const theme = useTheme();
     const containerRef = React.useRef(null);
     const tableRef = React.useRef<FetchHandle>(null);
+
+    const { getEnginesData } = useCachedEngines();
 
     const [hoveredItem, setHoveredItem] = useState(-1);
     const [addCertMode, setAddCertMode] = useState(-1);
@@ -153,7 +156,7 @@ export const IssuedCertificates: React.FC<Props> = ({ caData }) => {
                                         <KeyValueLabel
                                             label="Issuer CA"
                                             value={(
-                                                <FetchViewer fetcher={() => apicalls.cas.getEngines()} errorPrefix="Could not fetch Crypto Engines" renderer={(engines) => {
+                                                <FetchViewer fetcher={() => getEnginesData()} errorPrefix="Could not fetch Crypto Engines" renderer={(engines) => {
                                                     return (
                                                         <CAViewer caData={caData} engine={engines.find(eng => eng.id === caData.certificate.engine_id)!} />
                                                     );

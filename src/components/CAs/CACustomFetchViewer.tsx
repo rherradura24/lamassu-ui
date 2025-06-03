@@ -2,7 +2,7 @@ import { CertificateAuthority } from "ducks/features/cas/models";
 import { FetchHandle, FetchViewer } from "components/FetchViewer";
 import { Typography } from "@mui/material";
 import React, { ReactElement, Ref, useEffect } from "react";
-import apicalls from "ducks/apicalls";
+import useCachedCA from "components/cache/cachedCAs";
 
 type Props = {
     id: string
@@ -10,6 +10,8 @@ type Props = {
 }
 
 const Viewer = (props: Props, ref: Ref<FetchHandle>) => {
+    const { getCAData } = useCachedCA();
+
     if (props.id === "") {
         return <Typography sx={{ fontStyle: "italic" }}>Unspecified</Typography>;
     }
@@ -24,7 +26,7 @@ const Viewer = (props: Props, ref: Ref<FetchHandle>) => {
 
     return (
         <FetchViewer
-            fetcher={(controller) => { return apicalls.cas.getCA(props.id); }}
+            fetcher={(controller) => { return getCAData(props.id); }}
             renderer={(item: CertificateAuthority) => props.renderer(item)}
             ref={ref}
         />

@@ -1,7 +1,7 @@
-import { Alert, Button, Typography, useTheme } from "@mui/material";
+import { Alert, Button, Typography } from "@mui/material";
 import { Control, Controller } from "react-hook-form";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import React from "react";
+import React, { useEffect } from "react";
 import { Editor } from "@monaco-editor/react";
 
 interface FormMultiKeyValueInputProps extends Omit<MetadataInputProps, "value" | "onChange"> {
@@ -30,11 +30,40 @@ interface MetadataInputProps {
 }
 
 const MetadataInput: React.FC<MetadataInputProps> = (props) => {
-    const theme = useTheme();
-
-    const [metadata, setMetadata] = React.useState(props.value);
+    const [metadata, setMetadata] = React.useState("");
     const [enableSave, setEnableSave] = React.useState(false);
     const [hasError, setHasError] = React.useState(false);
+
+    useEffect(() => {
+        setMetadata(JSON.stringify(props.value, null, 4));
+    }, [props.value]);
+
+    const handleChange = (value: string | undefined) => {
+        if (!value) {
+            setMetadata("{}");
+            return;
+        }
+
+        setMetadata(value);
+
+        const isJsonFormat = isJson(value);
+        setEnableSave(isJsonFormat);
+        setHasError(!isJsonFormat);
+    };
+
+    const isJson = (text: string): boolean => {
+        try {
+            JSON.parse(text);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const handleClickSave = () => {
+        props.onChange(JSON.parse(metadata));
+        setEnableSave(false);
+    };
 
     return (
         <Grid container flexDirection={"column"} spacing={1}>
@@ -46,24 +75,9 @@ const MetadataInput: React.FC<MetadataInputProps> = (props) => {
                     theme="vs-dark"
                     defaultLanguage="json"
                     height="50vh"
-                    value={JSON.stringify(metadata, null, 4)}
-                    defaultValue={JSON.stringify(metadata, null, 4)}
-                    onChange={(value) => {
-                        if (!value) {
-                            setMetadata({});
-                            return;
-                        }
-
-                        try {
-                            setMetadata(JSON.parse(value));
-                            setEnableSave(true);
-                            setHasError(false);
-                        } catch (e) {
-                            setEnableSave(false);
-                            setHasError(true);
-                            console.error("Error parsing metadata", e);
-                        }
-                    }}
+                    value={metadata}
+                    defaultValue={metadata}
+                    onChange={(value) => { handleChange(value); }}
                 />
             </Grid>
             {hasError && (
@@ -72,7 +86,12 @@ const MetadataInput: React.FC<MetadataInputProps> = (props) => {
                 </Grid>
             )}
             <Grid>
-                <Button variant="contained" fullWidth disabled={!enableSave} onClick={() => { props.onChange(metadata); setEnableSave(false); }}>
+                <Button
+                    variant="contained"
+                    fullWidth
+                    disabled={!enableSave}
+                    onClick={handleClickSave}
+                >
                     Save changes
                 </Button>
             </Grid>

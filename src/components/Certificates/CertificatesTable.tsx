@@ -17,6 +17,7 @@ import { ShowCertificateModal } from "./Modals/ShowCertificate";
 import { RevokeCertificateModal } from "./Modals/RevokeCertificate";
 import { GrValidate } from "react-icons/gr";
 import { OCSPCertificateVerificationModal } from "./Modals/OCSPCertificate";
+import useCachedCA from "components/cache/cachedCAs";
 
 interface Props {
     withActions?: boolean
@@ -37,6 +38,8 @@ const Table = React.forwardRef((props: Props, ref: Ref<FetchHandle>) => {
     const [showDialog, setShowDialog] = useState<Certificate | undefined>(undefined);
     const [ocspDialog, setOcspDialog] = useState<Certificate | undefined>(undefined);
     const [revokeDialog, setRevokeDialog] = useState<Certificate | undefined>(undefined);
+
+    const { getCAData } = useCachedCA();
 
     useImperativeHandle(ref, () => ({
         refresh () {
@@ -260,19 +263,6 @@ const Table = React.forwardRef((props: Props, ref: Ref<FetchHandle>) => {
             <TableFetchViewer
                 columns={cols}
                 fetcher={async (params, controller) => {
-                    // if (props.query && props.query.field && props.query.value) {
-                    // check if params has filter
-                    // if (params.filters) {
-                    //     const queryIdx = params.filters.findIndex((f) => f.startsWith(props.query!.field!));
-                    //     const filter = `${props.query.field}[${props.query.operator}]${props.query.value}`;
-                    //     if (queryIdx !== -1) {
-                    //         params.filters[queryIdx] = filter;
-                    //     } else {
-                    //         params.filters.push(filter);
-                    //     }
-                    // }
-                    // }
-
                     let certsList: ListResponse<Certificate>;
 
                     if (props.caID !== undefined && props.caID !== "") {
@@ -283,14 +273,14 @@ const Table = React.forwardRef((props: Props, ref: Ref<FetchHandle>) => {
 
                     const uniqueCAIDs = Array.from(new Set(certsList.list.map((cert) => cert.issuer_metadata.id)));
                     const casPromises: Promise<CertificateAuthority>[] = uniqueCAIDs.map((caID) => {
-                        return apicalls.cas.getCA(caID);
+                        return getCAData(caID);
                     });
 
                     let cas: CertificateAuthority[] = [];
                     try {
                         cas = await Promise.all(casPromises);
                     } catch (err) {
-                        console.log("Error while fetching CAs: ", err);
+                        console.error("Error while fetching CAs: ", err);
                     }
 
                     return new Promise<ListResponse<CertificateWithCA>>(resolve => {

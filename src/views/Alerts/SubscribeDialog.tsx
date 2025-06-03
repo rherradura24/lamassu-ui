@@ -6,7 +6,6 @@ import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
 import { createSchema } from "genson-js";
 import jsonschema from "jsonschema";
 import { JSONPath } from "jsonpath-plus";
-import { useAuth } from "react-oidc-context";
 import { SubChannel, SubChannelType, SubscriptionCondition, SubscriptionConditionType } from "ducks/features/alerts/models";
 import { Select } from "components/Select";
 import { TextField } from "components/TextField";
@@ -17,6 +16,8 @@ import { ChannelChip } from "./SubscriptionChip";
 import apicalls from "ducks/apicalls";
 import { enqueueSnackbar } from "notistack";
 import Sandbox from "@nyariv/sandboxjs";
+import msteams from "assets/msteams.png";
+import { getEmail, getToken } from "ducks/services/token";
 
 interface Props {
     event: CloudEvent,
@@ -27,12 +28,11 @@ interface Props {
 
 export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...rest }) => {
     const theme = useTheme();
-    const auth = useAuth();
 
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [disableNextStepBtn, setDisableNextStepBtn] = useState<boolean>(false);
 
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string | null>();
 
     const [subscription, setSubscription] = useState<SubChannel>({ type: SubChannelType.Email, config: { email: "" } });
 
@@ -71,10 +71,11 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
     };
 
     const trySetEmail = () => {
-        if (auth.user) {
-            setEmail(auth.user.profile.email);
-            if (auth.user.profile.email) {
-                setSubscription({ type: SubChannelType.Email, config: { email: auth.user.profile.email } });
+        if (getToken()) {
+            const email = getEmail();
+            setEmail(email);
+            if (email) {
+                setSubscription({ type: SubChannelType.Email, config: { email } });
             } else {
                 setSubscription({ type: SubChannelType.Email, config: { email: "" } });
             }
@@ -158,22 +159,37 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
         }
     }, [jsonFilter, selectedConditionType]);
 
-    return (
-        <StepModal open={isOpen} onClose={() => { clean(); onClose(); }} size={"md"} title={"Subscribe to event"} onFinish={async () => {
-            let conditions: SubscriptionCondition[] = [];
-            if (selectedConditionType !== "None") {
-                conditions = [{ condition: jsonFilter, type: selectedConditionType }];
-            }
-            try {
-                await apicalls.alerts.subscribe("_lms_system", event.type, conditions, subscription);
-                enqueueSnackbar("Subscription created", { variant: "success" });
-                clean();
-                rest.onSubscribe();
-                onClose();
-            } catch (e) {
-                enqueueSnackbar("Error creating subscription", { variant: "error" });
-            }
-        }} steps={[{
+    const handleFinish = async () => {
+        let conditions: SubscriptionCondition[] = [];
+        if (selectedConditionType !== "None") {
+            conditions = [{ condition: jsonFilter, type: selectedConditionType }];
+        }
+        try {
+            await apicalls.alerts.subscribe("_lms_system", event.type, conditions, subscription);
+            enqueueSnackbar("Subscription created", { variant: "success" });
+            clean();
+            rest.onSubscribe();
+            onClose();
+        } catch (e) {
+            enqueueSnackbar("Error creating subscription", { variant: "error" });
+        }
+    };
+
+    const test = (select: React.ChangeEvent<{ value: unknown }>) => {
+        console.log("selected", select.target.value);
+        setSelectedConditionType(select.target.value as SubscriptionConditionType | "None");
+    };
+
+    const getSafeJson = () => {
+        if (jsonFilter === "") {
+            return "{}";
+        }
+
+        return JSON.stringify(JSON.parse(jsonFilter), null, 4);
+    };
+
+    const alertsSubscribeDialogSteps = [
+        {
             title: "Channels",
             subtitle: "",
             content: (
@@ -185,7 +201,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                             value={subscription.type}
                             // @ts-ignore
                             onChange={(ev) => {
-                                // @ts-ignore
+                            // @ts-ignore
                                 resetSubType(ev.target.value);
                             }}
                             options={[
@@ -207,7 +223,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                                     render: () => (
                                         <Grid container spacing={2} alignItems={"center"}>
                                             <Grid xs="auto">
-                                                <img src={process.env.PUBLIC_URL + "assets/msteams.png"} height="20px" />
+                                                <img src={msteams} height="20px" />
                                             </Grid>
                                             <Grid xs>
                                                 <Typography>Microsoft Teams Webhook</Typography>
@@ -234,7 +250,16 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                     {
                         subscription.type === SubChannelType.Email && (
                             <Grid xs={12}>
-                                <TextField label="Email Address" fullWidth value={email} onChange={(ev) => setSubscription({ ...subscription, config: { email: ev.target.value.trim() } })} />
+                                <TextField
+                                    label="Email Address"
+                                    fullWidth
+                                    value={email}
+                                    onChange={(ev) => {
+                                        const currentEmail = ev.target.value.trim();
+                                        setEmail(currentEmail);
+                                        setSubscription({ ...subscription, config: { email: currentEmail } });
+                                    }}
+                                />
                             </Grid>
                         )
                     }
@@ -290,7 +315,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                             label="Filter or Condition Format"
                             value={selectedConditionType}
                             // @ts-ignore
-                            onChange={(select) => setSelectedConditionType(select.target.value)}
+                            onChange={(select) => { test(select); }}
                             options={[
                                 { value: "None", render: () => <i>None</i> },
                                 { value: SubscriptionConditionType.JsonSchema, render: "JSON Schema" },
@@ -427,7 +452,7 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                                                         theme="vs-dark"
                                                         defaultLanguage="json"
                                                         height="50vh"
-                                                        value={JSON.stringify(JSON.parse(jsonFilter), null, 4)}
+                                                        value={getSafeJson()}
                                                         defaultValue="{}"
                                                     />
                                                 </Grid>
@@ -461,6 +486,15 @@ export const SubscribeDialog: React.FC<Props> = ({ event, isOpen, onClose, ...re
                 </Grid>
             )
         }
-        ]} />
+    ];
+
+    return (
+        <StepModal
+            open={isOpen}
+            onClose={() => { clean(); onClose(); }}
+            size={"md"}
+            title={"Subscribe to event"}
+            onFinish={handleFinish}
+            steps={alertsSubscribeDialogSteps} />
     );
 };
