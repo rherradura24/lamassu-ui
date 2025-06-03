@@ -24,7 +24,7 @@ jobs:
           
     - name: Checkout code
       uses: actions/checkout@v4
-
+    
     - name: Build Docker image
       uses: docker/build-push-action@v6
       with:
