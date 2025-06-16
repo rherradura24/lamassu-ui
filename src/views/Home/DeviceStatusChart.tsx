@@ -1,5 +1,5 @@
 import { DeviceStats, DeviceStatus, deviceStatusToColor } from "ducks/features/devices/models";
-import { Doughnut } from "components/Charts/Doughnut";
+import { PieChart } from "components/Charts/PieChart";
 import { capitalizeFirstLetter } from "utils/string-utils";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery, useTheme } from "@mui/material";
@@ -44,7 +44,7 @@ export const DeviceStatusChart : React.FC<Props> = ({ deviceStats, ...props }) =
     });
 
     return (
-        <Doughnut
+        <PieChart
             small={isMobileScreen}
             dataset={dataset}
             title="Device Provisioning Status"
@@ -55,11 +55,11 @@ export const DeviceStatusChart : React.FC<Props> = ({ deviceStats, ...props }) =
                 }
             }}
             primaryStat={primaryStat}
-            statLabel={isMobileScreen ? "" : "Provisioned Devices"}
+            statLabel={"Provisioned Devices"}
             percentage={enablePrimaryStat}
-            cardColor={theme.palette.primary.main}
-            primaryTextColor={theme.palette.primary.contrastText}
-            secondaryTextColor={theme.palette.primary.contrastText}
+            cardColor={theme.palette.common.white}
+            primaryTextColor={theme.palette.common.black}
+            secondaryTextColor={theme.palette.common.black}
             {...props}
         />
     );

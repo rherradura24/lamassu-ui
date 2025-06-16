@@ -12,7 +12,8 @@ import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlin
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import FactoryOutlinedIcon from "@mui/icons-material/FactoryOutlined";
 import Grid from "@mui/material/Unstable_Grid2";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import KeyboardDoubleArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowLeftOutlined";
+import KeyboardDoubleArrowRightOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowRightOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RouterOutlinedIcon from "@mui/icons-material/RouterOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -20,11 +21,13 @@ import { InfoView } from "views/Info/info";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AlertsViewList } from "views/Alerts/AlertsList";
 import lamassuFullWhite from "assets/lamassu/lamassu_full_white.svg";
+import lamassuFullBlue from "assets/lamassu/lamassu_full_blue.svg";
 import { useAuth } from "auths/AuthProvider";
 import { Landing } from "components/Landing/Landing";
 import AuthCallback from "views/AuthCallback/AuthCallback";
 import { isAuthEnabled, isCognitoAuth } from "auths/oidcConfig";
 import LogoutModal from "components/LogoutModal/LogoutModal";
+import NotFound from "views/NotFound/NotFound";
 
 type SidebarSection = {
     sectionTitle: string, sectionItems: Array<SidebarItem>
@@ -76,14 +79,17 @@ export default function Dashboard () {
     const sidebarContent: Array<SidebarSection> = [
         {
             sectionTitle: "",
-            sectionItems: [
-                {
-                    kind: "button",
-                    title: "Collapse",
-                    onClick: handleCollapseClick,
-                    icon: <KeyboardArrowLeftOutlinedIcon />
-                }
-            ]
+            sectionItems:
+                isMdUp
+                    ? [
+                        {
+                            kind: "button",
+                            title: "Collapse",
+                            onClick: handleCollapseClick,
+                            icon: collapsed ? <KeyboardDoubleArrowRightOutlinedIcon /> : <KeyboardDoubleArrowLeftOutlinedIcon />
+                        }
+                    ]
+                    : []
         },
         {
             sectionTitle: "",
@@ -94,7 +100,7 @@ export default function Dashboard () {
                     goTo: "/",
                     basePath: "/",
                     icon: <DashboardOutlinedIcon />,
-                    content: <Home isMenuCollapsed={collapsed} />
+                    content: <Home />
                 }
             ]
         },
@@ -163,17 +169,7 @@ export default function Dashboard () {
                     goTo: "/info",
                     icon: <InfoOutlinedIcon />,
                     content: <InfoView />
-                },
-                ...(isAuthEnabled
-                    ? [
-                        {
-                            kind: "button",
-                            title: "Log out",
-                            onClick: handleLogout,
-                            icon: <LogoutIcon style={{ color: theme.palette.error.main, cursor: "pointer" }} />
-                        } as SidebarItemButton
-                    ]
-                    : [])
+                }
             ]
         }
     ];
@@ -195,12 +191,24 @@ export default function Dashboard () {
     };
 
     return (
-        <Box component={Paper} sx={{ height: "100%" }}>
+        <Box component={Paper} sx={{ height: "100%", background: theme.palette.background.default }}>
 
             <LogoutModal open={open} onClose={() => setOpen(false)} onConfirm={() => signoutRedirect()} />
 
             <Grid container sx={{ height: "100%" }} direction={"column"} spacing={0}>
-                <Grid container sx={{ background: theme.palette.primary.main, height: "50px", paddingX: "10px", width: "100%", margin: 0 }} alignItems={"center"} >
+                <Grid
+                    container
+                    sx={{
+                        background: theme.palette.primary.main,
+                        height: "50px",
+                        px: "10px",
+                        width: "100%",
+                        m: 0,
+                        zIndex: 10,
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)"
+                    }}
+                    alignItems={"center"}
+                >
                     {
                         !isMdUp && (
                             <Grid xs="auto">
@@ -214,6 +222,8 @@ export default function Dashboard () {
                         <img src={lamassuFullWhite} height={30} style={{ marginLeft: "10px" }} />
                     </Grid>
                 </Grid>
+
+                {/* Menu */}
                 <Grid flexGrow={1} container sx={{ height: "calc(100% - 50px)" }}>
                     {
                         isMdUp
@@ -231,15 +241,38 @@ export default function Dashboard () {
                                             setMenuOpen(false);
                                         }}
                                     >
-                                        <Box width={300}>
-                                            <MenuBar collapsed={false} items={sidebarContent} onItemClick={(item) => {
-                                                setMenuOpen(false);
-                                            }} />
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                my: 2,
+                                                ml: 2
+                                            }}
+                                        >
+                                            <Box
+                                                component="img"
+                                                src={lamassuFullBlue}
+                                                sx={{
+                                                    width: "120px",
+                                                    height: "auto"
+                                                }}
+                                            />
+                                        </Box>
+
+                                        <Box width={250} sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                                            <MenuBar
+                                                collapsed={false}
+                                                items={sidebarContent}
+                                                onItemClick={(item) => {
+                                                    setMenuOpen(false);
+                                                }}
+                                            />
                                         </Box>
                                     </Drawer>
                                 </React.Fragment>
                             )
                     }
+
+                    {/* Main Content */}
                     <Grid xs sx={{ background: theme.palette.background.default, height: "100%", overflowY: "auto" }}>
                         <Routes>
                             {
@@ -250,7 +283,7 @@ export default function Dashboard () {
                                 })
                             }
                             <Route path="/callback" element={<AuthCallback />} />
-                            <Route path="*" element={<Typography>404</Typography>} />
+                            <Route path="*" element={<NotFound />} />
                         </Routes>
                     </Grid>
                 </Grid>
@@ -263,11 +296,18 @@ interface MenuBarProps {
     items: Array<SidebarSection>
     collapsed: boolean
     onItemClick?: (item: SidebarItem) => void
+    onLogout?: () => void
 }
 
 const MenuBar = React.memo<MenuBarProps>((props) => {
     const theme = useTheme();
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        if (props.onLogout) {
+            props.onLogout();
+        }
+    };
 
     return (
         <>
@@ -292,14 +332,20 @@ const MenuBar = React.memo<MenuBarProps>((props) => {
                                     }
 
                                     return (
-                                        <ListItem disableRipple key={idx} button sx={{ borderRadius: 0, borderLeft: `${borderLeftPxls}px solid ${theme.palette.primary.main}`, paddingLeft: `${16 - borderLeftPxls}px` }} onClick={() => {
-                                            if (item.kind === "button") {
-                                                item.onClick();
-                                            } else {
-                                                navigate(item.goTo);
-                                            }
-                                            props.onItemClick && props.onItemClick(item);
-                                        }}>
+                                        <ListItem
+                                            disableRipple
+                                            key={idx}
+                                            button
+                                            sx={{ borderRadius: 0, borderLeft: `${borderLeftPxls}px solid ${theme.palette.primary.main}`, paddingLeft: `${16 - borderLeftPxls}px` }}
+                                            onClick={() => {
+                                                if (item.kind === "button") {
+                                                    item.onClick();
+                                                } else {
+                                                    navigate(item.goTo);
+                                                }
+                                                props.onItemClick && props.onItemClick(item);
+                                            }}
+                                        >
                                             {
                                                 React.Children.map(item.icon, (child, key) => React.cloneElement(child, {
                                                     style: {
@@ -327,6 +373,30 @@ const MenuBar = React.memo<MenuBarProps>((props) => {
                         </Grid>
                     );
                 })
+            }
+            {
+                isAuthEnabled && (
+                    <Box sx={{ textAlign: "center", mt: "auto", justifyItems: "center", width: "100%" }}>
+                        <ListItem
+                            disableRipple
+                            button
+                            sx={{ borderRadius: 0, borderLeft: `0px solid ${theme.palette.primary.main}`, paddingLeft: "16px" }}
+                            onClick={handleLogout}
+                        >
+                            <LogoutIcon style={{ color: theme.sidebar.menuItemBg, cursor: "pointer" }} />
+                            {
+                                !props.collapsed && (
+                                    <Typography style={{
+                                        color: theme.sidebar.textColor,
+                                        marginLeft: 10,
+                                        width: "100%",
+                                        fontSize: 14
+                                    }}> Log out </Typography>
+                                )
+                            }
+                        </ListItem>
+                    </Box>
+                )
             }
         </>
     );
